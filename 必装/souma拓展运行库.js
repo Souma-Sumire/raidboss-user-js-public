@@ -1,7 +1,6 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
-  const prevent = {
-    partyMark: false,
-  };
+  let isInit = false;
+  const prevent = { partyMark: false };
   const jobs = {
     1: { 简体: "剑术", 繁体: "劍術", 单字: "剑" },
     2: { 简体: "格斗", 繁体: "格鬥", 单字: "格" },
@@ -33,19 +32,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     39: { 简体: "钐镰", 繁体: "釤鐮", 单字: "钐" },
     40: { 简体: "贤者", 繁体: "賢者", 单字: "贤" },
   };
-  const sleep = (ms) => new Promise((resolve, reject) => setTimeout(reject, ms));
+  const sleep = (ms) => new Promise((_resolve, reject) => setTimeout(reject, ms));
   const waitFor = async function waitFor(f) {
     while (!f()) await sleep(200);
     return f();
   };
-  const waitForData = async (data, attrName, overtime = 7000) =>
-    Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
+  const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
   if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.2.6");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
   const soumaData = {
+    // cactbotParty: [],
     myParty: [],
     targetMakers: {
       攻击1: "attack1", // 0
@@ -66,11 +65,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     pos4: ["上", "右", "下", "左"],
     pos8: ["上", "右上", "右", "右下", "下", "左下", "左", "左上"],
   };
+  function ifMissing() {
+    throw "缺少参数";
+  }
   function markTypeLegalityCheck(markTypeStr) {
     return Object.values(soumaData.targetMakers).find((v) => v === markTypeStr);
   }
   function getLegalityMarkType(markType, markNum, complementType) {
-    if (!markTypeLegalityCheck(complementType)) throw new Error("备用标记非法" + complementType);
+    if (!markTypeLegalityCheck(complementType)) throw "备用标记非法" + complementType;
     const result = markType + markNum;
     return markTypeLegalityCheck(result) ? result : complementType;
   }
@@ -78,81 +80,68 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     soumaData.myParty = party.filter((v) => v.inParty);
     updateNewPartyRP();
   }
-  function getRpByName(data, name) {
-    if (!(data && name)) console.trace(`getRpByName缺少参数`);
-    if (soumaData.myParty.length === 0) createMyParty(data.party.details);
+  function getRpByName(data = ifMissing(), name = ifMissing()) {
+    if (soumaData.myParty.length === 0) {
+      createMyParty(data.party.details);
+      // soumaData.cactbotParty = data.party;
+    }
     return soumaData.myParty.find((v) => v.name === name)?.myRP;
   }
-  function getRpByHexId(data, hexId) {
-    if (!(data && hexId)) console.trace(`getRpByHexId缺少参数`);
+  function getRpByHexId(data = ifMissing(), hexId = ifMissing()) {
     return getRpByName(data, getNameByHexId(data, hexId));
   }
-  function getNameByRp(data, rp) {
-    if (!(data && rp)) console.trace(`getNameByRp缺少参数`);
-    if (soumaData.myParty.length === 0) createMyParty(data.party.details);
+  function getNameByRp(data = ifMissing(), rp = ifMissing()) {
+    if (soumaData.myParty.length === 0) {
+      createMyParty(data.party.details);
+      // soumaData.cactbotParty = data.party;
+    }
     return soumaData.myParty.find((v) => v.myRP === rp)?.name;
   }
-  function getNameByHexId(data, hexId) {
-    if (!(data && hexId)) console.trace(`getNameByHexId缺少参数`);
+  function getNameByHexId(data = ifMissing(), hexId = ifMissing()) {
     return data.party.idToName_[hexId.toUpperCase()];
   }
-  function getHexIdByName(data, name) {
-    if (!(data && name)) console.trace(`getHexIdByName缺少参数`);
+  function getHexIdByName(data = ifMissing(), name = ifMissing()) {
     return data.party.details.find((v) => v.name === name).id;
   }
-  function getJobNameByRP(data, rp, type = "简体") {
-    if (!(data && rp)) console.trace(`getJobNameByRP缺少参数`);
+  function getJobNameByRP(data = ifMissing(), rp = ifMissing(), type = "简体") {
     return jobs?.[data.party.details.find((v) => v.name === getNameByRp(data, rp))?.job]?.[type] ?? "";
   }
-  function getJobNameByHexId(data, hexId, type = "简体") {
-    if (!(data && hexId)) console.trace(`getJobNameByHexId缺少参数`);
+  function getJobNameByHexId(data = ifMissing(), hexId = ifMissing(), type = "简体") {
     return jobs?.[data.party.details.find((v) => v.name === getNameByHexId(data, hexId))?.job]?.[type] ?? "";
   }
-  function getJobNameByName(data, name, type = "简体") {
-    if (!(data && name)) console.trace(`getJobNameByName缺少参数`);
+  function getJobNameByName(data = ifMissing(), name = ifMissing(), type = "简体") {
     return jobs?.[data.party.details.find((v) => v.name === name)?.job]?.[type] ?? "";
   }
-  function getHexIdByRp(data, rp) {
-    if (data === undefined) console.trace(`data为空`);
-    if (rp === undefined) console.trace(`rp为空`);
+  function getHexIdByRp(data = ifMissing(), rp = ifMissing()) {
     return data.party.partyIds_[data.party.partyNames_.indexOf(getNameByRp(data, rp))];
   }
-  function getpartyNamesGroupH1(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupH1(data = ifMissing()) {
     return [getNameByRp(data, "MT"), getNameByRp(data, "H1"), getNameByRp(data, "D1"), getNameByRp(data, "D3")];
   }
-  function getpartyNamesGroupH2(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupH2(data = ifMissing()) {
     return [getNameByRp(data, "ST"), getNameByRp(data, "H2"), getNameByRp(data, "D2"), getNameByRp(data, "D4")];
   }
-  function getpartyNamesGroupTank(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupTank(data = ifMissing()) {
     return [getNameByRp(data, "MT"), getNameByRp(data, "ST")];
   }
-  function getpartyNamesGroupHealer(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupHealer(data = ifMissing()) {
     return [getNameByRp(data, "H1"), getNameByRp(data, "H2")];
   }
-  function getpartyNamesGroupAllDps(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupAllDps(data = ifMissing()) {
     return [getNameByRp(data, "D1"), getNameByRp(data, "D2"), getNameByRp(data, "D3"), getNameByRp(data, "D4")];
   }
-  function getpartyNamesGroupMeleeDps(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupMeleeDps(data = ifMissing()) {
     return [getNameByRp(data, "D1"), getNameByRp(data, "D2")];
   }
-  function getpartyNamesGroupRangeDps(data) {
-    if (data === undefined) console.trace(`data为空`);
+  function getpartyNamesGroupRangeDps(data = ifMissing()) {
     return [getNameByRp(data, "D3"), getNameByRp(data, "D4")];
   }
-  function sortPartyHexIdsByRpRule(data, partyHexIdsArr, rpRuleArr) {
-    if (!(data && partyHexIdsArr && rpRuleArr)) console.trace(`sortPartyHexIdsByRpRule缺少参数`);
+  function sortPartyHexIdsByRpRule(data = ifMissing(), partyHexIdsArr = ifMissing(), rpRuleArr = ifMissing()) {
     return partyHexIdsArr.sort((a, b) => {
       return rpRuleArr.indexOf(getRpByHexId(data, a)) - rpRuleArr.indexOf(getRpByHexId(data, b));
     });
   }
-  function sortPartyNamsByRpRule(data, partyNamesArr, rpRuleArr) {
-    if (!(data && partyNamesArr && rpRuleArr)) console.trace(`sortPartyNamsByRpRule缺少参数`);
+  function sortPartyNamsByRpRule(data = ifMissing(), partyNamesArr = ifMissing(), rpRuleArr = ifMissing()) {
     return partyNamesArr.sort((a, b) => {
       return rpRuleArr.indexOf(getRpByName(data, a)) - rpRuleArr.indexOf(getRpByName(data, b));
     });
@@ -163,24 +152,28 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return (i = (i % max) + 1);
     };
   }
-  function mark(actorHexID, markType, localOnly = false) {
-    if (!(actorHexID && markType)) console.trace(`mark缺少参数`, actorHexID, markType, localOnly);
+  function mark(actorHexID = ifMissing(), markType = ifMissing(), localOnly = false) {
     if (prevent.partyMark) {
       localOnly = true;
       if (!localOnly && prevent.partyMark) console.log("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
     }
+    if (typeof actorHexID === "string") actorHexID = parseInt(actorHexID, 16);
     if (isNotInRaidboss) {
-      console.log("邮差mark", actorHexID, markType);
+      console.log(
+        "邮差mark",
+        actorHexID,
+        markType,
+        // getRpByHexId({ party: soumaData.cactbotParty }, actorHexID.toString(16).toUpperCase()),
+      );
     } else {
       callOverlayHandler({
         call: "PostNamazu",
         c: "mark",
-        p: JSON.stringify({ ActorID: parseInt(actorHexID, 16), MarkType: markType, LocalOnly: localOnly }),
+        p: JSON.stringify({ ActorID: actorHexID, MarkType: markType, LocalOnly: localOnly }),
       });
     }
   }
   function doTextCommand(text) {
-    if (text === undefined) console.trace(`text为空`);
     if (isNotInRaidboss) {
       console.log("邮差command", text);
     } else {
@@ -189,36 +182,42 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function clearMark(localOnly = false) {
     if (localOnly) {
-      doQueueActions([
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack1", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack2", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop1", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop2", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "square", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "circle", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "cross", LocalOnly: true }) },
-        { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "triangle", LocalOnly: true }) },
-      ]);
+      doQueueActions(
+        [
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack1", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack2", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop1", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop2", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "square", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "circle", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "cross", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "triangle", LocalOnly: true }) },
+        ],
+        "clearMark localOnly:true",
+      );
     } else {
-      doQueueActions([
-        { c: "DoTextCommand", p: "/mk off <1>" },
-        { c: "DoTextCommand", p: "/mk off <2>" },
-        { c: "DoTextCommand", p: "/mk off <3>" },
-        { c: "DoTextCommand", p: "/mk off <4>" },
-        { c: "DoTextCommand", p: "/mk off <5>" },
-        { c: "DoTextCommand", p: "/mk off <6>" },
-        { c: "DoTextCommand", p: "/mk off <7>" },
-        { c: "DoTextCommand", p: "/mk off <8>" },
-      ]);
+      doQueueActions(
+        [
+          { c: "DoTextCommand", p: "/mk off <1>" },
+          { c: "DoTextCommand", p: "/mk off <2>" },
+          { c: "DoTextCommand", p: "/mk off <3>" },
+          { c: "DoTextCommand", p: "/mk off <4>" },
+          { c: "DoTextCommand", p: "/mk off <5>" },
+          { c: "DoTextCommand", p: "/mk off <6>" },
+          { c: "DoTextCommand", p: "/mk off <7>" },
+          { c: "DoTextCommand", p: "/mk off <8>" },
+        ],
+        "clearMark localOnly:false",
+      );
     }
   }
-  function doWaymarks(waymark) {
+  function doWaymarks(waymark = ifMissing()) {
     if (isNotInRaidboss) {
       console.log("邮差doWaymarks", waymark);
     } else {
@@ -229,25 +228,46 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       });
     }
   }
+  function doQueueActionsDebug(queue, notes, data) {
+    console.log(
+      "debug queue",
+      notes,
+      JSON.stringify(
+        queue.map((v) => {
+          if (v.c === "mark") {
+            if (typeof v.p === "string") v.p = JSON.parse(v.p);
+            if (typeof v.p.ActorID === "string") v.p.ActorID = parseInt(v.p.ActorID, 16);
+            if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
+            if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
+            const decId = v.p.ActorID;
+            const hexId = v.p.ActorID.toString(16).toUpperCase();
+            v.debugHexId = hexId;
+            v.debugName = getNameByHexId(data, hexId);
+            v.debugRp = getRpByHexId(data, hexId);
+          }
+          return v;
+        }),
+        null,
+        1,
+      ),
+    );
+  }
   function doQueueActions(queue, notes) {
-    if (queue === undefined) console.trace(`queue为空`);
     queue.forEach((v, i) => {
       if (v.c === "mark") {
         if (typeof v.p === "string") v.p = JSON.parse(v.p);
         if (typeof v.p.ActorID === "string") v.p.ActorID = parseInt(v.p.ActorID, 16);
+        if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
+        if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
         if (prevent.partyMark) {
           if (!v.p.LocalOnly && prevent.partyMark)
-            console.log(
-              `邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`,
-              v.p.ActorID.toString(16).toUpperCase(),
-              v.p.MarkType,
-            );
+            console.log(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
           v.p.LocalOnly = true;
         }
       }
       if (typeof v.p === "object") v.p = JSON.stringify(v.p);
     });
-    if (isNotInRaidboss) console.log("邮差queue", notes, queue);
+    if (isNotInRaidboss) console.log("邮差queue", notes, JSON.stringify(queue, null, 1));
     else callOverlayHandler({ call: "PostNamazu", c: "DoQueueActions", p: JSON.stringify(queue) });
   }
   function placeReset() {
@@ -282,17 +302,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       doTextCommand(`/e 已设置${tarName}为${tarRP}`);
     }
   }
-  function rpSortByNames(data, names, sortRp) {
-    if (!(data && names && sortRp)) console.trace(`rpSortByNames缺少参数`, data, names, sortRp);
-    return names.sort(
-      (a, b) => sortRp.indexOf(getRpByName(data, a)) - sortRp.indexOf(data.soumaFL.getRpByName(data, b)),
-    );
+  function rpSortByNames(data = ifMissing(), names = ifMissing(), sortRp = ifMissing()) {
+    return names.sort((a, b) => sortRp.indexOf(getRpByName(data, a)) - sortRp.indexOf(data.soumaFL.getRpByName(data, b)));
   }
-  function rpSortByHexIds(data, hexIds, sortRp) {
-    if (!(data && hexIds && sortRp)) console.trace(`rpSortByHexIds缺少参数`, data, hexIds, sortRp);
-    return hexIds.sort(
-      (a, b) => sortRp.indexOf(getRpByHexId(data, a)) - sortRp.indexOf(data.soumaFL.getRpByHexId(data, b)),
-    );
+  function rpSortByHexIds(data = ifMissing(), hexIds = ifMissing(), sortRp = ifMissing()) {
+    return hexIds.sort((a, b) => sortRp.indexOf(getRpByHexId(data, a)) - sortRp.indexOf(data.soumaFL.getRpByHexId(data, b)));
   }
   function handleSettings(value) {
     switch (value.toLowerCase()) {
@@ -321,7 +335,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         return value.split("/").length >= 2 ? value.split("/") : value;
     }
   }
-  function getClearMarkQueue(localOnly, delayMs) {
+  function getClearMarkQueue(localOnly = ifMissing(), delayMs = 0) {
     return localOnly
       ? [
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack1", LocalOnly: true }), d: delayMs },
@@ -353,18 +367,30 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   function getRotationAngle(x, y) {
     return (Math.atan2(x, y) * 180) / Math.PI;
   }
-  function rotatePoint(pointX, pointY, angle) {
-    const x = pointX * Math.cos((angle * Math.PI) / 180) + pointY * Math.sin((angle * Math.PI) / 180);
-    const y = -pointX * Math.sin((angle * Math.PI) / 180) + pointY * Math.cos((angle * Math.PI) / 180);
-    return { x: x, y: y };
+  function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
-  function rotateCoord(x, y, x2, y2) {
+  /**
+   * 旋转坐标（FF反转坐标专用）
+   * @param {number} x 待处理X坐标
+   * @param {number} y 待处理Y坐标
+   * @param {number} x2 基准点X坐标
+   * @param {number} y2 基准点Y坐标
+   * @param {boolean} reverseAngle 是否反转角度，如果用于处理玩家坐标用于坐标排序则应传入true，处理waymarks则应为false或默认。
+   * @returns
+   */
+  function rotateCoord(x = ifMissing(), y = ifMissing(), x2 = ifMissing(), y2 = ifMissing(), reverseAngle = false) {
+    function rotateFFPoint(pointX, pointY, angle) {
+      const x = pointX * Math.cos((angle * Math.PI) / 180) + pointY * Math.sin((angle * Math.PI) / 180);
+      const y = -pointX * Math.sin((angle * Math.PI) / 180) + pointY * Math.cos((angle * Math.PI) / 180);
+      return { x: x, y: y };
+    }
     const nx = x - 100;
     const ny = -y + 100;
     const nx2 = x2 - 100;
     const ny2 = -y2 + 100;
     const angle = getRotationAngle(nx2, ny2);
-    const res = rotatePoint(nx, ny, angle);
+    const res = rotateFFPoint(nx, ny, reverseAngle ? -angle : angle);
     const resX = res.x + 100;
     const resY = -res.y + 100;
     return { x: resX, y: resY };
@@ -399,6 +425,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           clearMark,
           doWaymarks,
           doQueueActions,
+          doQueueActionsDebug,
           placeSave,
           placeLoad,
           placeClear,
@@ -409,6 +436,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           getClearMarkQueue,
           getLegalityMarkType,
           rotateCoord,
+          getDistance,
         },
         soumaData,
       };
@@ -417,11 +445,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma Runtime 总设置（优先级高于副本内设置）",
         netRegex: NetRegexes.startsUsing({ capture: false }),
-        suppressSeconds: 9999,
+        condition: !isInit,
+        suppressSeconds: 999,
         infoText: "",
         sound: "",
         soundVolume: 0,
         run: (_data, _matches, output) => {
+          isInit = true;
           prevent.partyMark = handleSettings(output.强制所有mark使用本地标点());
         },
         outputStrings: {
@@ -430,17 +460,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
       {
         id: "Souma Runtime 倒计时",
-        regex:
-          /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:距离战斗开始还有|Battle commencing in |戦闘開始まで)(?<cd>\d+)[^（]+（/i,
+        regex: /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:距离战斗开始还有|Battle commencing in |戦闘開始まで)(?<cd>\d+)[^（]+（/i,
         run: (_data, matches) => {
           if (isNotInRaidboss) console.log("start countdown");
           else
-            doQueueActions([
-              { c: "stop", p: "Souma Runtime Countdown Queue" },
-              { c: "qid", p: "Souma Runtime Countdown Queue" },
-              { c: "place", p: "reset" },
-              { c: "place", p: "save", d: Number(matches.cd) * 1000 },
-            ]);
+            doQueueActions(
+              [
+                { c: "stop", p: "Souma Runtime Countdown Queue" },
+                { c: "qid", p: "Souma Runtime Countdown Queue" },
+                { c: "place", p: "reset" },
+                { c: "place", p: "save", d: Number(matches.cd) * 1000 },
+              ],
+              "runtime countdown",
+            );
         },
       },
       {
@@ -448,9 +480,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         regex:
           /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:.+取消了战斗开始倒计时。|Countdown canceled by .+\.|.+により、戦闘開始カウントがキャンセルされました。)$/i,
         run: () =>
-          isNotInRaidboss
-            ? console.log("cancel countdown")
-            : doQueueActions([{ c: "stop", p: "Souma Runtime Countdown Queue" }]),
+          isNotInRaidboss ? console.log("cancel countdown") : doQueueActions([{ c: "stop", p: "Souma Runtime Countdown Queue" }], "runtime cancel countdown"),
       },
     ],
   });
@@ -477,7 +507,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         } else {
           soumaData.myParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
           sendBroadcast("updateNewPartyRP Success");
-          doTextCommand("/e 成功<se.9>");
+          // doTextCommand("/e 成功<se.9>");
         }
       }, 1000);
     }
@@ -523,15 +553,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     let t = 0;
     let h = 0;
     let d = 0;
-    soumaData.myParty = soumaData.myParty.sort(
-      (a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString()),
-    );
+    soumaData.myParty = soumaData.myParty.sort((a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString()));
     soumaData.myParty.forEach((v) => {
       if (role.tank.includes(Number(v.job))) v.myRP = tRP[t++];
       else if (role.healer.includes(Number(v.job))) v.myRP = hRP[h++];
       else if (role.dps.includes(Number(v.job))) v.myRP = dRP[d++];
       else v.myRP = "unknown";
     });
-    console.log("myParty", soumaData.myParty);
   }
 }
