@@ -43,7 +43,12 @@
 
 ## 其他说明
 
-不可以与其他人的同副本 JS 文件混用，这是毋庸置疑的。
+1. **不赞同**与其他人制作的的**同副本**JS 文件混用，这是 _十分危险_ 的。
+1. 悬浮窗中设置的职能位置与你小队列表的排序**无关**。
+1. 任何 JS 都**不需要**MoreLog（CactbotSelf）插件。
+1. 你**不应该**在打本的中途重启 ACT，这会影响到许多初始化的工作。
+1. 游戏内的 ID 设置为缩写并不会影响任何逻辑。
+1. 不支持小队内存在重名玩家，无论他们的服务器来自哪里。
 
 ## 默认打法
 
@@ -58,7 +63,7 @@
 
   [![dlrow.th.png](https://i.328888.xyz/2023/03/06/dlrow.th.png)](https://imgloc.com/i/dlrow) [![dlNRz.th.png](https://i.328888.xyz/2023/03/06/dlNRz.th.png)](https://imgloc.com/i/dlNRz)
 
-- P4 44散开 C分摊
+- P4 44 散开 C 分摊
 - P5 一运 [四人六手](https://nga.178.com/read.php?tid=35297656)
 
 - P5 一传 [![dlcjx.th.png](https://i.328888.xyz/2023/03/06/dlcjx.th.png)](https://imgloc.com/i/dlcjx)
