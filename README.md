@@ -44,3 +44,24 @@
 ## 其他说明
 
 不可以与其他人的同副本 JS 文件混用，这是毋庸置疑的。
+
+## 打法
+
+### 绝欧米茄验证战
+
+- 全程优先级 H1/MT/ST/D1/D2/D3/D4/H2
+- P1 MM+W 北/南分组 刷北南则东/西
+- P2 索尼横向排队 核爆硬吃
+- P3 小电视固定
+
+  [![dlrow.th.png](https://i.328888.xyz/2023/03/06/dlrow.th.png)](https://imgloc.com/i/dlrow) [![dlNRz.th.png](https://i.328888.xyz/2023/03/06/dlNRz.th.png)](https://imgloc.com/i/dlNRz)
+
+- P4 略
+- P5 一运 [四人六手](https://nga.178.com/read.php?tid=35297656)
+
+- P5 一传 [![dlcjx.th.png](https://i.328888.xyz/2023/03/06/dlcjx.th.png)](https://imgloc.com/i/dlcjx)
+- P5 二运 斜米 [![dlRVa.th.png](https://i.328888.xyz/2023/03/06/dlRVa.th.png)](https://imgloc.com/i/dlRVa)
+- P5 二运 踩塔 [踩塔固定](https://raidplan.io/plan/fTEfK64r3cnHG9kN)
+- P5 二传 [![dlmFk.th.png](https://i.328888.xyz/2023/03/06/dlmFk.th.png)](https://imgloc.com/i/dlmFk) [りょんめちゃんねる](https://www.bilibili.com/video/BV1E54y1c7gt?t=1076.8)
+- P5 三传 [![dlpQL.th.png](https://i.328888.xyz/2023/03/06/dlpQL.th.png)](https://imgloc.com/i/dlpQL)
+- P5 四传[![dlXlp.th.png](https://i.328888.xyz/2023/03/06/dlXlp.th.png)](https://imgloc.com/i/dlXlp)
