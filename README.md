@@ -66,11 +66,11 @@
 - P4 44 散开 C 分摊
 - P5 一运 [四人六手](https://nga.178.com/read.php?tid=35297656)
 
-- P5 一传 [![dlcjx.th.png](https://i.328888.xyz/2023/03/06/dlcjx.th.png)](https://imgloc.com/i/dlcjx)
-- P5 二运 斜米 [![dlRVa.th.png](https://i.328888.xyz/2023/03/06/dlRVa.th.png)](https://imgloc.com/i/dlRVa)
+- P5 一传 [![ot1HF.md.png](https://i.328888.xyz/2023/03/09/ot1HF.md.png)](https://imgloc.com/i/ot1HF)
+- P5 二运 斜米 [![otaZZ.md.png](https://i.328888.xyz/2023/03/09/otaZZ.md.png)](https://imgloc.com/i/otaZZ)
 - P5 二运 踩塔 [踩塔固定](https://raidplan.io/plan/fTEfK64r3cnHG9kN)
 - P5 二传 [![dlmFk.th.png](https://i.328888.xyz/2023/03/06/dlmFk.th.png)](https://imgloc.com/i/dlmFk) [りょんめちゃんねる](https://www.bilibili.com/video/BV1E54y1c7gt?t=1076.8)
 - P5 三运 暂无
-- P5 三传 [![dlpQL.th.png](https://i.328888.xyz/2023/03/06/dlpQL.th.png)](https://imgloc.com/i/dlpQL)
-- P5 四传[![dlXlp.th.png](https://i.328888.xyz/2023/03/06/dlXlp.th.png)](https://imgloc.com/i/dlXlp)
+- P5 三传 [![otQeH.md.png](https://i.328888.xyz/2023/03/09/otQeH.md.png)](https://imgloc.com/i/otQeH)
+- P5 四传 [![otYTQ.md.png](https://i.328888.xyz/2023/03/09/otYTQ.md.png)](https://imgloc.com/i/otYTQ)
 - P6 暂无
