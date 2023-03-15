@@ -56,21 +56,4 @@
 
 ### 绝欧米茄验证战
 
-- 全程优先级 H1/MT/ST/D1/D2/D3/D4/H2
-- P1 MM+W 北/南分组 刷北南则东/西
-- P2 索尼横向排队 核爆硬吃
-- P3 小电视固定
-
-  [![dlrow.th.png](https://i.328888.xyz/2023/03/06/dlrow.th.png)](https://imgloc.com/i/dlrow) [![dlNRz.th.png](https://i.328888.xyz/2023/03/06/dlNRz.th.png)](https://imgloc.com/i/dlNRz)
-
-- P4 44 散开 C 分摊
-- P5 一运 [四人六手](https://nga.178.com/read.php?tid=35297656)
-
-- P5 一传 [![ot1HF.md.png](https://i.328888.xyz/2023/03/09/ot1HF.md.png)](https://imgloc.com/i/ot1HF)
-- P5 二运 斜米 [![otaZZ.md.png](https://i.328888.xyz/2023/03/09/otaZZ.md.png)](https://imgloc.com/i/otaZZ)
-- P5 二运 踩塔 [踩塔固定](https://raidplan.io/plan/fTEfK64r3cnHG9kN)
-- P5 二传 [![dlmFk.th.png](https://i.328888.xyz/2023/03/06/dlmFk.th.png)](https://imgloc.com/i/dlmFk) [りょんめちゃんねる](https://www.bilibili.com/video/BV1E54y1c7gt?t=1076.8)
-- P5 三运 暂无
-- P5 三传 [![otQeH.md.png](https://i.328888.xyz/2023/03/09/otQeH.md.png)](https://imgloc.com/i/otQeH)
-- P5 四传 [![otYTQ.md.png](https://i.328888.xyz/2023/03/09/otYTQ.md.png)](https://imgloc.com/i/otYTQ)
-- P6 暂无
+https://docs.qq.com/doc/p/c7d739b04f864774fdcb68f07f1e22f3baff8c0b?&u=7576c43e8ab145dab45f38806e5550b4
