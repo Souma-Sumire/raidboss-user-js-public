@@ -4,7 +4,7 @@ Options.Triggers.push({
     {
       id: "TOP Souma 铁匠警察",
       type: "Ability",
-      regex: /^.{14} A\w+ 15:.{8}:(?<source>[^:]+):(?!0[78]:)(?<id>[^:]+):(?<ability>[^:]+):4.{7}:[^:]+:7:0:/,
+      regex: /^.{14} A\w+ 15:.{8}:(?<source>[^:]+):(?!0[78]:)(?<id>[^:]+):(?<ability>[^:]+):4.{7}:[^:]+:7\d*:0:/,
       promise: async (_data, matches, output) => {
         const name =
           output.铁匠名字缩写() === "是" ? matches.source.replace(/^([A-Z])\w+ ([A-Z])\w+/, "$1.$2.") : matches.source;
