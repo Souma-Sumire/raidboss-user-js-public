@@ -56,4 +56,4 @@
 
 所有对人标点与场地标记功能均**默认关闭**，按需手动开启。
 
-- [绝欧米茄](https://docs.qq.com/doc/p/c7d739b04f864774fdcb68f07f1e22f3baff8c0b?&u=7576c43e8ab145dab45f38806e5550b4)
+- [绝欧米茄](https://docs.qq.com/doc/DTVpVU3RxeVpmcG5j?&u=7576c43e8ab145dab45f38806e5550b4)
