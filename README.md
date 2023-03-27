@@ -39,7 +39,8 @@
 - 表示禁用：false、flase、0、否、关、关闭、取消、不、错
 
 不会有人找不到位置吧？
-![Cactbot Config](https://raw.fastgit.org/quisquous/cactbot/main/screenshots/config_panel.png)
+![config_panel](https://user-images.githubusercontent.com/33572696/227934036-3836b181-0283-4a9d-b644-4d49de489ee1.png)
+
 
 ## 其他说明
 
