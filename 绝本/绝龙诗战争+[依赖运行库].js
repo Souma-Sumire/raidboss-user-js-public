@@ -493,7 +493,7 @@ Options.Triggers.push({
             if (p.safePos[0].toString() === k.toString() || p.safePos[1].toString() === k.toString()) p.isSafe = false;
         }
         const safe = pos.find((v) => v.isSafe === true).marker;
-        data.soumaFL.doTextCommand("/p " + safe);
+        data.soumaFL.doTextCommand("/e " + safe);
         return output.safe({ safe: safe });
       },
       outputStrings: {
@@ -650,7 +650,7 @@ Options.Triggers.push({
           else if (farAwayRPArr.includes(sword[0]) && farAwayRPArr.includes(sword[1]))
             groupInfo = output.sameGroup({ who: output.closerGroupSwitch() });
           else groupInfo = output.notSameGroup();
-          data.soumaFL.doTextCommand("/p " + groupInfo);
+          data.soumaFL.doTextCommand("/e " + groupInfo);
           if (pov === data.soumaP2SwordList.One)
             return {
               alarmText: output.farAway(),
@@ -1709,7 +1709,7 @@ Options.Triggers.push({
         const pos = myMatchedPositionToDir(data.soumaP5Charibert.PosX, data.soumaP5Charibert.PosY, 8);
         const dir = output[`safe${pos}`]();
         const way = pos - data.soumaP5NorthIndex === 0 ? output.north() : output.south();
-        data.soumaFL.doTextCommand("/p " + dir.toUpperCase().repeat(3));
+        data.soumaFL.doTextCommand("/e " + dir.toUpperCase().repeat(3));
         return output.safe({ way: way, dir: dir });
       },
       sound: "",
@@ -1999,7 +1999,7 @@ Options.Triggers.push({
               tts: didIChange("左下", group.left[0], "右下", group.right[0]),
             };
           data.soumaP6IceFireConnectionCount = -1;
-          data.soumaFL.doTextCommand("/p " + res.infoText);
+          data.soumaFL.doTextCommand("/e " + res.infoText);
           if (data.role === "tank") return;
           return res;
           function didIChange(way1, role1, way2, role2) {
