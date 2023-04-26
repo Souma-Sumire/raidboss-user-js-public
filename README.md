@@ -35,7 +35,7 @@
 
 所有对人标点与场地标记功能均**默认关闭**，按需手动开启。
 
-- [绝欧米茄打法](https://docs.qq.com/doc/DTVpVU3RxeVpmcG5j?&u=7576c43e8ab145dab45f38806e5550b4)
+- [绝欧米茄打法（标准版JS）](https://docs.qq.com/doc/DTVpVU3RxeVpmcG5j?&u=7576c43e8ab145dab45f38806e5550b4)
 
 使用 Cactbot Config 面板修改配置，而不要修改源码。
 
