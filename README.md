@@ -33,14 +33,14 @@
 
 ## 修改配置、开关功能
 
-所有对人标点与场地标记功能均**默认关闭**，按需手动开启。
+对人标点与场地标记功能均**默认关闭**，按需手动开启。
 
-- [绝欧米茄打法（标准版JS）](https://docs.qq.com/doc/DTVpVU3RxeVpmcG5j?&u=7576c43e8ab145dab45f38806e5550b4)
+- [绝欧米茄标点站位](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
 
 使用 Cactbot Config 面板修改配置，而不要修改源码。
 
-- 表示启用：ture、ture、1、是、开、开启、启用、使能、确定、对
-- 表示禁用：false、flase、0、否、关、关闭、取消、不、错
+- 表示启用的：ture、ture、1、是、开、开启、启用、使能、确定、对
+- 表示禁用的：false、flase、0、否、关、关闭、取消、不、错
 
 不会有人找不到位置吧？
 ![config_panel](https://user-images.githubusercontent.com/33572696/227934036-3836b181-0283-4a9d-b644-4d49de489ee1.png)
