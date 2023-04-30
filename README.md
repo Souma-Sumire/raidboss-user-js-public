@@ -17,6 +17,12 @@
 
 1. 然后刷新 _Cactbot Raidboss_ 悬浮窗。
 
+## 特化打法说明
+
+- p6s：千星
+- p8s：菓子
+- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+
 ## 修改配置、开关功能
 
 ![config](https://i.328888.xyz/2023/04/30/iKKJgQ.png)
