@@ -4,19 +4,28 @@
 
 1. 悬浮窗插件 新建悬浮窗（类型：数据统计）：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`
 
-1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) 1.3.2.5 及以上。
+   并在高难副本中正确分配每个人的职能位置。
+
+1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) 1.3.2.5 及以上。（否则无法使用标点等功能）
 
 ## 下载
 
-- 我是萌新：能连上哪个用哪个 [原生](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 1](https://git.xfj0.cn/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 2](https://js.xxooo.ml/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 3](https://gh.con.sh/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 4](https://ghps.cc/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 5](https://archive.fastgit.org/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-  [节点 6](https://ghproxy.com/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
+- 我是萌新
+
+  点击：[本地下载](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 1](https://git.xfj0.cn/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 2](https://js.xxooo.ml/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 3](https://gh.con.sh/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 4](https://ghps.cc/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 5](https://archive.fastgit.org/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
+  [节点 6](https://ghproxy.com/https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) /
   [节点 7](https://kgithub.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)，然后解压。
-- 我是电脑高手：直接用 Git Clone 即可
+
+- 我是电脑高手
+
+  ```markdown
+  git clone https://github.com/Souma-Sumire/raidboss-user-js-public.git
+  ```
 
 ## 安装
 
@@ -35,7 +44,7 @@
 
 ## 修改配置、开关功能
 
-![config](https://i.328888.xyz/2023/04/30/iKKJgQ.png)
+[![iMOUzb.th.png](https://i.328888.xyz/2023/05/03/iMOUzb.th.png)](https://imgloc.com/i/iMOUzb)
 
 ### Tips
 
@@ -45,9 +54,13 @@
 
 ## 其他说明
 
-1. **不赞同**与其他人制作的的**同副本**JS 文件混用，这是 _十分危险_ 的。
-1. 悬浮窗中设置的职能位置与你小队列表的排序**无关**。
-1. 任何 JS 都**不需要**MoreLog（CactbotSelf）插件。
-1. 你**不应该**在打本的中途重启 ACT，这会影响到许多初始化的工作。
-1. 游戏内的 ID 设置为缩写并不会影响任何逻辑。
-1. 不支持小队内存在重名玩家，无论他们的服务器来自哪里。
+1. 不要在打本的中途重启 ACT。
+1. 不支持小队内存在重名玩家。
+1. 不需要 MoreLog（CactbotSelf）插件。
+1. 不保证兼容其他作者的同副本 JS 文件。
+1. 悬浮窗的职能位置分配与小队列表的排序无关。
+
+## 交流/反馈
+
+- 1 群：868116069（已满）
+- 2 群：231937107
