@@ -52,38 +52,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.2.6");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.3");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
-  const soumaData = {
-    // cactbotParty: [],
-    myParty: [],
-    targetMakers: {
-      攻击1: "attack1", // 0
-      攻击2: "attack2", // 1
-      攻击3: "attack3", // 2
-      攻击4: "attack4", // 3
-      攻击5: "attack5", // 4
-      止步1: "bind1", // 5
-      止步2: "bind2", // 6
-      止步3: "bind3", // 7
-      禁止1: "stop1", // 8
-      禁止2: "stop2", // 9
-      正方: "square", // 10
-      圆圈: "circle", // 11
-      十字: "cross", // 12
-      三角: "triangle", // 13
-    },
-    pos4: ["上", "右", "下", "左"],
-    pos8: ["上", "右上", "右", "右下", "下", "左下", "左", "左上"],
-  };
+  let soumaParty = [];
   function ifMissing() {
     console.trace("缺少参数");
     throw "缺少参数";
   }
   function markTypeLegalityCheck(markTypeStr) {
-    return Object.values(soumaData.targetMakers).find((v) => v === markTypeStr);
+    return ["attack1", "attack2", "attack3", "attack4", "attack5", "bind1", "bind2", "bind3", "stop1", "stop2", "square", "circle", "cross", "triangle"].find(
+      (v) => v === markTypeStr,
+    );
   }
   function getLegalityMarkType(markType, markNum, complementType) {
     if (!markTypeLegalityCheck(complementType)) throw "备用标记非法" + complementType;
@@ -91,25 +72,23 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return markTypeLegalityCheck(result) ? result : complementType;
   }
   function createMyParty(party) {
-    soumaData.myParty = party.filter((v) => v.inParty);
+    soumaParty = party.filter((v) => v.inParty);
     updateNewPartyRP();
   }
   function getRpByName(data = ifMissing(), name = ifMissing()) {
-    if (soumaData.myParty.length === 0) {
+    if (soumaParty.length === 0) {
       createMyParty(data.party.details);
-      // soumaData.cactbotParty = data.party;
     }
-    return soumaData.myParty.find((v) => v.name === name)?.myRP;
+    return soumaParty.find((v) => v.name === name)?.myRP;
   }
   function getRpByHexId(data = ifMissing(), hexId = ifMissing()) {
     return getRpByName(data, getNameByHexId(data, hexId));
   }
   function getNameByRp(data = ifMissing(), rp = ifMissing()) {
-    if (soumaData.myParty.length === 0) {
+    if (soumaParty.length === 0) {
       createMyParty(data.party.details);
-      // soumaData.cactbotParty = data.party;
     }
-    return soumaData.myParty.find((v) => v.myRP === rp)?.name;
+    return soumaParty.find((v) => v.myRP === rp)?.name;
   }
   function getNameByHexId(data = ifMissing(), hexId = ifMissing()) {
     return data.party.idToName_[hexId.toUpperCase()];
@@ -310,8 +289,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
   }
   function setRP(tarName, tarRP) {
-    const tar = soumaData.myParty.find((v) => v.name === tarName);
-    const repeat = soumaData.myParty.find((v) => v.myRP === tarRP);
+    const tar = soumaParty.find((v) => v.name === tarName);
+    const repeat = soumaParty.find((v) => v.myRP === tarRP);
     if (!tar) doTextCommand(`/e 未找到${tarName} <se.11>`);
     else {
       if (repeat && repeat.name !== tar.name) {
@@ -332,7 +311,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     switch (value.toLowerCase()) {
       case "true":
       case "ture": // 猪头专用
-      case "1":
       case "是":
       case "开":
       case "开启":
@@ -415,53 +393,51 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     const resY = -res.y + 100;
     return { x: resX, y: resY };
   }
+  Util.souma = {
+    getRpByName,
+    getRpByHexId,
+    getNameByRp,
+    getNameByHexId,
+    getHexIdByRp,
+    getHexIdByName,
+    getJobNameByRP,
+    getJobNameByHexId,
+    getJobNameByName,
+    getRoleByName,
+    getLBByName,
+    getpartyNamesGroupH1,
+    getpartyNamesGroupH2,
+    getpartyNamesGroupTank,
+    getpartyNamesGroupHealer,
+    getpartyNamesGroupAllDps,
+    getpartyNamesGroupMeleeDps,
+    getpartyNamesGroupRangedDps,
+    loop,
+    sleep,
+    waitFor,
+    waitForData,
+    mark,
+    doTextCommand,
+    clearMark,
+    doWaymarks,
+    doQueueActions,
+    doQueueActionsDebug,
+    placeSave,
+    placeLoad,
+    placeClear,
+    calculationDistance,
+    handleSettings,
+    rpSortByNames,
+    rpSortByHexIds,
+    getClearMarkQueue,
+    getLegalityMarkType,
+    rotateCoord,
+    getDistance,
+  };
   Options.Triggers.push({
     zoneId: ZoneId.MatchAll,
     initData: () => {
-      return {
-        soumaFL: {
-          getRpByName,
-          getRpByHexId,
-          getNameByRp,
-          getNameByHexId,
-          getHexIdByRp,
-          getHexIdByName,
-          getJobNameByRP,
-          getJobNameByHexId,
-          getJobNameByName,
-          getRoleByName,
-          getLBByName,
-          getpartyNamesGroupH1,
-          getpartyNamesGroupH2,
-          getpartyNamesGroupTank,
-          getpartyNamesGroupHealer,
-          getpartyNamesGroupAllDps,
-          getpartyNamesGroupMeleeDps,
-          getpartyNamesGroupRangedDps,
-          loop,
-          sleep,
-          waitFor,
-          waitForData,
-          mark,
-          doTextCommand,
-          clearMark,
-          doWaymarks,
-          doQueueActions,
-          doQueueActionsDebug,
-          placeSave,
-          placeLoad,
-          placeClear,
-          calculationDistance,
-          handleSettings,
-          rpSortByNames,
-          rpSortByHexIds,
-          getClearMarkQueue,
-          getLegalityMarkType,
-          rotateCoord,
-          getDistance,
-        },
-        soumaData,
-      };
+      return { soumaFL: Util.souma };
     },
     triggers: [
       {
@@ -529,7 +505,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           defaultSort();
           doTextCommand("/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime");
         } else {
-          soumaData.myParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
+          soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
           sendBroadcast("updateNewPartyRP Success");
           // doTextCommand("/e 成功<se.9>");
         }
@@ -577,8 +553,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     let t = 0;
     let h = 0;
     let d = 0;
-    soumaData.myParty = soumaData.myParty.sort((a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString()));
-    soumaData.myParty.forEach((v) => {
+    soumaParty = soumaParty.sort((a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString()));
+    soumaParty.forEach((v) => {
       if (role.tank.includes(Number(v.job))) v.myRP = tRP[t++];
       else if (role.healer.includes(Number(v.job))) v.myRP = hRP[h++];
       else if (role.dps.includes(Number(v.job))) v.myRP = dRP[d++];
