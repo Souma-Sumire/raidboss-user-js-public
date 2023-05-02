@@ -29,7 +29,7 @@
 
 ## 安装
 
-1. 将需要的 JS 文件放入本地对应文件夹中
+1. 将需要的 JS 文件放入本地对应文件夹中（必须有**Souma拓展运行库.js**）
 
    - 咖啡 ACT：`ACT\Plugins\cactbot-offline\user\raidboss\Souma\`
    - 呆萌、原生 ACT：`ACT.呆萌整合\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\`
