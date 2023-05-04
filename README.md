@@ -29,7 +29,7 @@
 
 ## 安装
 
-1. 将需要的 JS 文件放入本地对应文件夹中（必须有**Souma拓展运行库.js**）
+1. 将 raidboss 文件夹中，你需要的 **JS 文件** 放入本地的 `user\raidboss` 文件夹中（其中 `Souma 拓展运行库.js` 是必须的）
 
    - 咖啡 ACT：`ACT\Plugins\cactbot-offline\user\raidboss\Souma\`
    - 呆萌、原生 ACT：`ACT.呆萌整合\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\`
@@ -40,7 +40,7 @@
 
 - p6s：千星
 - p8s：菓子
-- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)（两个打法的 JS 只放能一个，否则会冲突）
 
 ## 修改配置、开关功能
 
