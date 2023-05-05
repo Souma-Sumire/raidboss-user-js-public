@@ -1,6 +1,6 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   let isInit = false;
-  const prevent = { partyMark: false };
+  const prevent = { forceLocalMark: false };
   const jobs = {
     0: { 简体: "冒险者", 繁体: "冒險者", 单字: "冒", 双字: "冒险", role: "none", LB: "none", job: "ADV" },
     1: { 简体: "剑术师", 繁体: "劍術師", 单字: "剑", 双字: "剑术", role: "tank", LB: "tank", job: "GLA" },
@@ -152,9 +152,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     };
   }
   function mark(actorHexID = ifMissing(), markType = ifMissing(), localOnly = false) {
-    if (prevent.partyMark) {
+    if (prevent.forceLocalMark && localOnly === false) {
       localOnly = true;
-      if (!localOnly && prevent.partyMark) console.log("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
+      console.log("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
     }
     if (typeof actorHexID === "string") actorHexID = parseInt(actorHexID, 16);
     if (isNotInRaidboss) {
@@ -258,9 +258,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         if (typeof v.p.ActorID === "string") v.p.ActorID = parseInt(v.p.ActorID, 16);
         if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
         if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
-        if (prevent.partyMark) {
-          if (!v.p.LocalOnly && prevent.partyMark)
-            console.log(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
+        if (prevent.forceLocalMark && v.p.LocalOnly === false) {
+          console.log(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
           v.p.LocalOnly = true;
         }
       }
@@ -394,6 +393,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return { x: resX, y: resY };
   }
   Util.souma = {
+    getParty: () => soumaParty,
     getRpByName,
     getRpByHexId,
     getNameByRp,
@@ -435,7 +435,17 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     getDistance,
   };
   Options.Triggers.push({
+    id: "SoumaRunLibrary",
     zoneId: ZoneId.MatchAll,
+    zoneLabel: { en: "通用 - 用户设置" },
+    config: [
+      {
+        id: "souma拓展运行库强制本地标点",
+        name: { en: "强制使用本地标点" },
+        type: "checkbox",
+        default: false,
+      },
+    ],
     initData: () => {
       return { soumaFL: Util.souma };
     },
@@ -443,17 +453,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma Runtime 总设置（优先级高于副本内设置）",
         netRegex: NetRegexes.startsUsing({ capture: false }),
-        condition: !isInit,
-        suppressSeconds: 999,
-        infoText: "",
-        sound: "",
-        soundVolume: 0,
-        run: (_data, _matches, output) => {
+        condition: () => !isInit,
+        run: (data, _matches) => {
           isInit = true;
-          prevent.partyMark = handleSettings(output.强制所有mark使用本地标点());
-        },
-        outputStrings: {
-          强制所有mark使用本地标点: { en: "否" },
+          prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点 || false;
+          // console.log("data.triggerSetConfig", data.triggerSetConfig);
         },
       },
       {
@@ -503,10 +507,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       timer = setTimeout(() => {
         if (!soumaRuntimeJSData) {
           defaultSort();
-          doTextCommand("/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime");
+          doQueueActions([
+            { c: "qid", p: "update party rp" },
+            { c: "command", p: "/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime", d: 3000 },
+          ]);
         } else {
           soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
           sendBroadcast("updateNewPartyRP Success");
+          doQueueActions([{ c: "stop", p: "update party rp" }]);
           // doTextCommand("/e 成功<se.9>");
         }
       }, 1000);
