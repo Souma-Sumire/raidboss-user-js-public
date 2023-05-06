@@ -29,7 +29,7 @@
 
 ## 安装
 
-1. 将 raidboss 文件夹中，你需要的 **JS 文件** 放入本地的 `user\raidboss` 文件夹中（其中 `Souma 拓展运行库.js` 是必须的）
+1. 将 raidboss 文件夹中，你**需要的 JS 文件** 放入本地的 `user\raidboss` 文件夹中（其中 `Souma 拓展运行库.js` 是必须的）
 
    - 咖啡 ACT：`ACT\Plugins\cactbot-offline\user\raidboss\Souma\`
    - 呆萌、原生 ACT：`ACT.呆萌整合\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\`
@@ -40,25 +40,20 @@
 
 - p6s：千星
 - p8s：菓子
-- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)（两个打法的 JS 只放能一个，否则会冲突）
+- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
 
 ## 修改配置、开关功能
 
-[![iMOUzb.th.png](https://i.328888.xyz/2023/05/03/iMOUzb.th.png)](https://imgloc.com/i/iMOUzb)
+![image](https://user-images.githubusercontent.com/33572696/236646515-46844cf6-0179-4fae-a471-1a37f078b1da.png)
 
-### Tips
+## 注意事项
 
-如果你不需要某个提示文本，请不要在下拉选项中禁用，因为这可能导致其逻辑也一同被禁用，导致其他触发器出错。
-
-安全的禁用方式：将对应文本改为空格。
-
-## 其他说明
-
-1. 不要在打本的中途重启 ACT。
-1. 不支持小队内存在重名玩家。
-1. 不需要 MoreLog（CactbotSelf）插件。
-1. 不保证兼容其他作者的同副本 JS 文件。
-1. 悬浮窗的职能位置分配与小队列表的排序无关。
+- **尽量避免禁用触发器，如果你不需要他的提示文本，将对应输出改为空格即可。**
+- 不要在打本的中途重启或开启 ACT。
+- 小队内不可以存在重名玩家。
+- 不需要 MoreLog（CactbotSelf）插件。
+- 不保证兼容其他作者的同副本 JS 文件。
+- 悬浮窗的职能位置分配与小队列表的排序无关。
 
 ## 交流/反馈
 
