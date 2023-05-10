@@ -456,8 +456,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         condition: () => !isInit,
         run: (data, _matches) => {
           isInit = true;
-          prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点 || false;
-          // console.log("data.triggerSetConfig", data.triggerSetConfig);
+          prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点;
         },
       },
       {
