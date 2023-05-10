@@ -106,6 +106,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   Options.Triggers.push({
     zoneId: ZoneId.AbyssosTheSixthCircleSavage,
+    config: [
+      {
+        id: "恶病质标点",
+        name: { en: "恶病质标点" },
+        type: "select",
+        options: { en: { "开(正常模式)": "开", "关": "关", "开(本地标点)": "本地" } },
+        default: "关",
+      },
+    ],
     initData: () => {
       if (!isRaidEmulator) {
         callOverlayHandler({
@@ -335,20 +344,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma P6S Headmarker Entrance",
         netRegex: NetRegexes.headMarker({}),
-        condition: (data, matches) =>
-          undefined !== data.soumaDecOffset &&
-          data.me === matches.target &&
-          !!headMakersStrings[getHeadmarkerId(data, matches)],
+        condition: (data, matches) => undefined !== data.soumaDecOffset && data.me === matches.target && !!headMakersStrings[getHeadmarkerId(data, matches)],
         infoText: (data, matches, output) => output[getHeadmarkerId(data, matches)](),
         outputStrings: headMakersStrings,
       },
       {
         id: "Souma P6S Headmarker 极苦交换第二次无点名",
         netRegex: NetRegexes.headMarker({}),
-        condition: (data, matches) =>
-          data.souma极苦交换 === 2 &&
-          undefined !== data.soumaDecOffset &&
-          !!headMakersStrings2[getHeadmarkerId(data, matches)],
+        condition: (data, matches) => data.souma极苦交换 === 2 && undefined !== data.soumaDecOffset && !!headMakersStrings2[getHeadmarkerId(data, matches)],
         delaySeconds: 0.5,
         durationSeconds: 7,
         suppressSeconds: 1,
@@ -367,8 +370,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma P6S Headmarker 极苦交换",
         netRegex: NetRegexes.headMarker({}),
-        condition: (data, matches) =>
-          undefined !== data.soumaDecOffset && !!headMakersStrings2[getHeadmarkerId(data, matches)],
+        condition: (data, matches) => undefined !== data.soumaDecOffset && !!headMakersStrings2[getHeadmarkerId(data, matches)],
         durationSeconds: 7,
         infoText: (data, matches, output) => {
           const marker = getHeadmarkerId(data, matches);
@@ -491,27 +493,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma P6S Gains Effects 双重捕食",
         netRegex: NetRegexes.gainsEffect({ effectId: "CF[7-9]" }),
-        infoText: (data, matches, output) => {
-          if (output.标记() === "是" || output.标记() === "开" || output.标记() === "true" || output.标记() === "1") {
-            const localOnly =
-              output.本地标点() === "是" ||
-              output.本地标点() === "开" ||
-              output.本地标点() === "true" ||
-              output.本地标点() === "1";
+        infoText: (data, matches) => {
+          if (["开", "本地"].includes(data.triggerSetConfig.恶病质标点)) {
+            const localOnly = data.triggerSetConfig.恶病质标点 === "本地";
             data.soumaP6SEffectsArr[matches.effectId].push(new Status(matches));
             //"CF7" 软体抗性下降
             //"CF8" 甲壳抗性下降
             //"CF9" 魔活细胞
-            if (
-              data.soumaP6SEffectsArr.CF7.length === 4 &&
-              data.soumaP6SEffectsArr.CF8.length === 4 &&
-              data.soumaP6SEffectsArr.CF9.length === 8
-            ) {
-              const arr = [
-                ...data.soumaP6SEffectsArr.CF7,
-                ...data.soumaP6SEffectsArr.CF8,
-                ...data.soumaP6SEffectsArr.CF9,
-              ].reduce((p, c) => {
+            if (data.soumaP6SEffectsArr.CF7.length === 4 && data.soumaP6SEffectsArr.CF8.length === 4 && data.soumaP6SEffectsArr.CF9.length === 8) {
+              const arr = [...data.soumaP6SEffectsArr.CF7, ...data.soumaP6SEffectsArr.CF8, ...data.soumaP6SEffectsArr.CF9].reduce((p, c) => {
                 if (!p[c.targetId]) p[c.targetId] = [];
                 p[c.targetId].push({ effectId: c.effectId, duration: c.duration });
                 return p;
@@ -525,17 +515,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
                   else if (p.find((v) => v.effectId === "CF9" && v.duration === "20.00")) mark(key, "stop1", localOnly);
                 } else if (p.find((v) => v.effectId === "CF8")) {
                   if (p.find((v) => v.effectId === "CF9" && v.duration === "8.00")) mark(key, "attack1", localOnly);
-                  else if (p.find((v) => v.effectId === "CF9" && v.duration === "12.00"))
-                    mark(key, "attack2", localOnly);
-                  else if (p.find((v) => v.effectId === "CF9" && v.duration === "16.00"))
-                    mark(key, "attack3", localOnly);
+                  else if (p.find((v) => v.effectId === "CF9" && v.duration === "12.00")) mark(key, "attack2", localOnly);
+                  else if (p.find((v) => v.effectId === "CF9" && v.duration === "16.00")) mark(key, "attack3", localOnly);
                   else if (p.find((v) => v.effectId === "CF9" && v.duration === "20.00")) mark(key, "stop2", localOnly);
                 }
               }
             }
           }
         },
-        outputStrings: { 标记: { en: "开" }, 本地标点: { en: "是" } },
       },
     ],
   });
