@@ -1,4 +1,4 @@
-//说明：必须同时加载"souma拓展运行库.js" 并阅读其内部的说明
+//说明：必须同时加载"souma拓展运行库.js" 
 //所有用户配置都暴露在Cactbot Config面板中，若非确定且必要，请勿修改源码。
 const headmarkers = {
   hyperdimensionalSlash: "00EA",
