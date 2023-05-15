@@ -1,10 +1,4 @@
-// 说明：必须同时加载"souma拓展运行库.js" 并阅读其内部的说明正确配置小队位置。（直接下最新的，有多新就用多新的）
-// 说明：几乎所有功能都依赖鲶鱼精邮差，版本号为1.3.2.4及以上。别用你那上古版本了。https://github.com/Natsukage/PostNamazu/releases
-// 使用 Cactbot Config 面板修改配置，而不要修改源码。
-// 启用：true、1、是、开
-// 禁用：false、0、否、关
-// 不可以与其他人的同副本JS文件混用，这是毋庸置疑的。
-
+// 说明：必须同时加载"souma拓展运行库.js" 
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   const startsUsingStrings = {
     // "7860": { en: "AoE" }, //半神冥暗
@@ -106,6 +100,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   Options.Triggers.push({
     zoneId: ZoneId.AbyssosTheSixthCircleSavage,
+    id: "SoumaAbyssosTheSixthCircleSavage",
     config: [
       {
         id: "恶病质标点",
