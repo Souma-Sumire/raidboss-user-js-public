@@ -12,7 +12,7 @@
   
 ## 手动下载
 
-1. 手动下载 [Github档案](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) 或者 `git clone <https://github.com/Souma-Sumire/raidboss-user-js-public.git>`
+1. 手动下载 [Github档案](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) 或者 `git clone https://github.com/Souma-Sumire/raidboss-user-js-public.git`
 1. 将 raidboss 文件夹中，你**需要的 JS 文件** 放入本地的 `user\raidboss` 文件夹中（其中 `Souma 拓展运行库.js` 是必须的）
     - 咖啡 ACT：`ACT\Plugins\cactbot-offline\user\raidboss\Souma\`
     - 呆萌、原生 ACT：`ACT.呆萌整合\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\`
