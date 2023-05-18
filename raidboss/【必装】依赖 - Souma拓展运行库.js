@@ -447,6 +447,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
     ],
     initData: () => {
+      placeReset();
       return { soumaFL: Util.souma };
     },
     triggers: [
