@@ -93,11 +93,11 @@ Options.Triggers.push({
       run: (data) => {
         if (data.挖宝曼德拉.length >= 5) {
           const arr = data.挖宝曼德拉.slice().sort((a, b) => Number(a.npcNameId) - Number(b.npcNameId));
-          if (["开", "本地"].includes(data.triggerSetConfig.育体蔓德拉标记)) {
-            const local = data.triggerSetConfig.育体蔓德拉标记 === "本地";
+          if (["开", "本地"].includes(data.triggerSetConfig.蔓德拉标记)) {
+            const local = data.triggerSetConfig.蔓德拉标记 === "本地";
             Util.souma.doQueueActions(
               arr.map((v, i) => ({ c: "mark", p: { ActorID: parseInt(v.id, 16), MarkType: `attack${i + 1}`, LocalOnly: local } })),
-              "育体蔓德拉标记",
+              "蔓德拉标记",
             );
           }
           data.挖宝曼德拉.length = 0;
