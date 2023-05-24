@@ -8,7 +8,7 @@
 
 ## 自动下载
 
-- 使用 [下崽器](https://github.com/Souma-Sumire/raidboss-user-js-public/releases/latest) ，加载到ACT中使用，一键同时解决下载、安装、更新。
+- 使用 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest) ，加载到ACT中使用，一键同时解决下载、安装、更新。
   
 ## 手动下载
 
