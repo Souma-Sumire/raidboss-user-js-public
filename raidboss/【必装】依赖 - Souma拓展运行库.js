@@ -1,4 +1,5 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
+  //#region
   let isInit = false;
   const prevent = { forceLocalMark: false };
   const jobs = {
@@ -52,7 +53,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.3");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.28");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -242,7 +243,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             const hexId = v.p.ActorID.toString(16).toUpperCase();
             v.debugHexId = hexId;
             v.debugName = getNameByHexId(data, hexId);
-            v.debugRp = getRpByHexId(data, hexId);
+            if (v.debugName) v.debugRp = getRpByHexId(data, hexId);
           }
           return v;
         }),
@@ -392,6 +393,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     const resY = -res.y + 100;
     return { x: resX, y: resY };
   }
+  //#endregion
   Util.souma = {
     getParty: () => soumaParty,
     getRpByName,
@@ -433,6 +435,30 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     getLegalityMarkType,
     rotateCoord,
     getDistance,
+    sortMatchesBy: function (data, arr, rule) {
+      return arr.sort((a, b) => {
+        return rule.indexOf(Util.souma.getRpByName(data, a.name)) - rule.indexOf(Util.souma.getRpByName(data, b.name));
+      });
+    },
+    customFillArray: function (arr, rules) {
+      if (rules.length > arr.length) rules.length = arr.length;
+      if (arr.length !== rules.length && arr.length !== rules.length + 1) {
+        throw "customFillArray 接受的长度不一致" + arr.length + rules.length;
+      }
+      const result = Array(arr.length);
+      for (let i = 0; i < rules.length; i++) {
+        for (const item of rules[i]) {
+          const t = arr.find((f) => f.rp === item && (i === 0 || !result.find((r) => r?.rp === item)));
+          if (t) {
+            result[i] = t;
+            break;
+          }
+        }
+      }
+      if (result[arr.length - 1] === undefined && arr.length === rules.length + 1)
+        result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
+      return result;
+    },
   };
   Options.Triggers.push({
     id: "SoumaRunLibrary",
