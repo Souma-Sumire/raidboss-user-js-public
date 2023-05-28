@@ -63,9 +63,25 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     throw "缺少参数";
   }
   function markTypeLegalityCheck(markTypeStr) {
-    return ["attack1", "attack2", "attack3", "attack4", "attack5", "bind1", "bind2", "bind3", "stop1", "stop2", "square", "circle", "cross", "triangle"].find(
-      (v) => v === markTypeStr,
-    );
+    return [
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "attack5",
+      "attack6",
+      "attack7",
+      "attack8",
+      "bind1",
+      "bind2",
+      "bind3",
+      "stop1",
+      "stop2",
+      "square",
+      "circle",
+      "cross",
+      "triangle",
+    ].find((v) => v === markTypeStr);
   }
   function getLegalityMarkType(markType, markNum, complementType) {
     if (!markTypeLegalityCheck(complementType)) throw "备用标记非法" + complementType;
@@ -189,6 +205,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack6", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack7", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack8", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
@@ -341,6 +360,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack6", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack7", LocalOnly: true }) },
+          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack8", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
@@ -441,13 +463,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       });
     },
     customFillArray: function (arr, rules) {
-      if (rules.length > arr.length) rules.length = arr.length;
-      if (arr.length !== rules.length && arr.length !== rules.length + 1) {
-        throw "customFillArray 接受的长度不一致" + arr.length + rules.length;
+      const _rules = rules.slice();
+      if (_rules.length > arr.length) _rules.length = arr.length;
+      if (arr.length !== _rules.length && arr.length !== _rules.length + 1) {
+        throw "customFillArray 接受的长度不一致" + arr.length + _rules.length;
       }
       const result = Array(arr.length);
-      for (let i = 0; i < rules.length; i++) {
-        for (const item of rules[i]) {
+      for (let i = 0; i < _rules.length; i++) {
+        for (const item of _rules[i]) {
           const t = arr.find((f) => f.rp === item && (i === 0 || !result.find((r) => r?.rp === item)));
           if (t) {
             result[i] = t;
@@ -455,10 +478,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
         }
       }
-      if (result[arr.length - 1] === undefined && arr.length === rules.length + 1)
+      if (result[arr.length - 1] === undefined && arr.length === _rules.length + 1)
         result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
       return result;
     },
+    Orientation4: Object.freeze([
+      ["MT", "ST", "D4", "D3", "D2", "D1", "H1", "H2"],
+      ["H2", "ST", "D4", "D3", "D2", "D1", "H1"],
+      ["D1", "D2", "D3", "D4", "ST", "H1"],
+      ["H1", "ST", "D2", "D3", "D4"],
+    ]),
   };
   Options.Triggers.push({
     id: "SoumaRunLibrary",
