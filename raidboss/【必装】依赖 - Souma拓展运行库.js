@@ -53,7 +53,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.28");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.30");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -171,11 +171,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   function mark(actorHexID = ifMissing(), markType = ifMissing(), localOnly = false) {
     if (prevent.forceLocalMark && localOnly === false) {
       localOnly = true;
-      console.log("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
+      console.debug("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
     }
     if (typeof actorHexID === "string") actorHexID = parseInt(actorHexID, 16);
     if (isNotInRaidboss) {
-      console.log(
+      console.debug(
         "邮差mark",
         actorHexID,
         markType,
@@ -191,7 +191,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function doTextCommand(text) {
     if (isNotInRaidboss) {
-      console.log("邮差command", text);
+      console.debug("邮差command", text);
     } else {
       callOverlayHandler({ call: "PostNamazu", c: "DoTextCommand", p: text });
     }
@@ -238,7 +238,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function doWaymarks(waymark = ifMissing()) {
     if (isNotInRaidboss) {
-      console.log("邮差doWaymarks", waymark);
+      console.debug("邮差doWaymarks", waymark);
     } else {
       callOverlayHandler({
         call: "PostNamazu",
@@ -248,7 +248,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     }
   }
   function doQueueActionsDebug(queue, notes, data) {
-    console.log(
+    console.debug(
       "debug queue",
       notes,
       JSON.stringify(
@@ -279,29 +279,29 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
         if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
         if (prevent.forceLocalMark && v.p.LocalOnly === false) {
-          console.log(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
+          console.debug(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
           v.p.LocalOnly = true;
         }
       }
       if (typeof v.p === "object") v.p = JSON.stringify(v.p);
     });
-    if (isNotInRaidboss) console.log("邮差queue", notes, JSON.stringify(queue, null, 1));
+    if (isNotInRaidboss) console.debug("邮差queue", notes, JSON.stringify(queue, null, 1));
     else callOverlayHandler({ call: "PostNamazu", c: "DoQueueActions", p: JSON.stringify(queue) });
   }
   function placeReset() {
-    if (isNotInRaidboss) console.log("邮差reset");
+    if (isNotInRaidboss) console.debug("邮差reset");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "reset" });
   }
   function placeSave() {
-    if (isNotInRaidboss) console.log("邮差save");
+    if (isNotInRaidboss) console.debug("邮差save");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "save" });
   }
   function placeLoad() {
-    if (isNotInRaidboss) console.log("邮差load");
+    if (isNotInRaidboss) console.debug("邮差load");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "load" });
   }
   function placeClear() {
-    if (isNotInRaidboss) console.log("邮差clear");
+    if (isNotInRaidboss) console.debug("邮差clear");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "clear" });
   }
   function calculationDistance(x1, y1, x2 = 100, y2 = 100) {
@@ -427,6 +427,51 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     }
     return newObj;
   }
+  function getDir(h) {
+    const p = h / Math.PI;
+    if (-1 <= p && p < -0.9) return "N";
+    else if (-0.9 <= p && p < -0.8) return "N";
+    else if (-0.8 <= p && p < -0.7) return "NW";
+    else if (-0.7 <= p && p < -0.6) return "NW";
+    else if (-0.6 <= p && p < -0.5) return "W";
+    else if (-0.5 <= p && p < -0.4) return "W";
+    else if (-0.4 <= p && p < -0.3) return "SW";
+    else if (-0.3 <= p && p < -0.2) return "SW";
+    else if (-0.2 <= p && p < -0.1) return "S";
+    else if (-0.1 <= p && p < 0) return "S";
+    else if (0 <= p && p < 0.1) return "S";
+    else if (0.1 <= p && p < 0.2) return "S";
+    else if (0.2 <= p && p < 0.3) return "SE";
+    else if (0.3 <= p && p < 0.4) return "SE";
+    else if (0.4 <= p && p < 0.5) return "E";
+    else if (0.5 <= p && p < 0.6) return "E";
+    else if (0.6 <= p && p < 0.7) return "NE";
+    else if (0.7 <= p && p < 0.8) return "NE";
+    else if (0.8 <= p && p < 0.9) return "N";
+    else if (0.9 <= p && p <= 1) return "N";
+    throw "getDir Error";
+  }
+  function getHalves(dir, halvesLeft) {
+    switch (dir) {
+      case "N":
+      case "S":
+        return halvesLeft ? ["l", "r"] : ["r", "l"];
+      case "NE":
+      case "SW":
+        return ["lt", "rb"];
+      case "W":
+      case "E":
+        return ["t", "b"];
+      case "NW":
+      case "SE":
+        return ["rt", "lb"];
+      default:
+        throw "getHalves Error";
+    }
+  }
+  function headingToHalves(h, halvesLeft = true) {
+    return getHalves(getDir(h), halvesLeft);
+  }
   //#endregion
   Util.souma = {
     getParty: () => soumaParty,
@@ -514,16 +559,20 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return Math.abs(sourceNum - targetNum) < tolerance;
     },
     deepClone,
-    getHeadingMap: function (h, halvesLeft = true) {
-      const diff = Math.abs(Math.PI / 2 - Math.abs(h));
-      if (0 <= diff && diff < Math.PI / 2 / 4) return halvesLeft ? ["t", "b"] : ["t", "b"];
-      else if (Math.PI / 2 / 4 <= diff && diff < Math.PI / 2 / 2) return ["t", "b"];
-      else if (Math.PI / 2 / 2 <= diff && diff < (Math.PI / 2 / 4) * 3) return ["l", "r"];
-      else if ((Math.PI / 2 / 4) * 3 <= diff && diff <= Math.PI / 2) return ["l", "r"];
-      else {
-        console.error("diff", diff);
-        return [undefined, undefined];
-      }
+    getDir,
+    getHalves,
+    headingToHalves,
+    outputs: {
+      dir: {
+        t: { en: "上" },
+        b: { en: "下" },
+        l: { en: "左" },
+        r: { en: "右" },
+        lt: { en: "左上" },
+        lb: { en: "左下" },
+        rt: { en: "右上" },
+        rb: { en: "右下" },
+      },
     },
   };
   Options.Triggers.push({
@@ -555,7 +604,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "Souma Runtime 倒计时",
         regex: /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:距离战斗开始还有|Battle commencing in |戦闘開始まで)(?<cd>\d+)[^（]+（/i,
         run: (_data, matches) => {
-          if (isNotInRaidboss) console.log("start countdown");
+          if (isNotInRaidboss) console.debug("start countdown");
           else
             doQueueActions(
               [
@@ -573,7 +622,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         regex:
           /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:.+取消了战斗开始倒计时。|Countdown canceled by .+\.|.+により、戦闘開始カウントがキャンセルされました。)$/i,
         run: () =>
-          isNotInRaidboss ? console.log("cancel countdown") : doQueueActions([{ c: "stop", p: "Souma Runtime Countdown Queue" }], "runtime cancel countdown"),
+          isNotInRaidboss ? console.debug("cancel countdown") : doQueueActions([{ c: "stop", p: "Souma Runtime Countdown Queue" }], "runtime cancel countdown"),
       },
     ],
   });
