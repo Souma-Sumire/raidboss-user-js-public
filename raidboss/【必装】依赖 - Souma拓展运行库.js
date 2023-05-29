@@ -415,6 +415,18 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     const resY = -res.y + 100;
     return { x: resX, y: resY };
   }
+  function deepClone(obj) {
+    if (typeof obj !== "object") return;
+    let newObj = obj instanceof Array ? [] : {};
+    for (let key in obj) {
+      if (typeof obj[key] === "object") {
+        newObj[key] = deepClone(obj[key]);
+      } else {
+        newObj[key] = obj[key];
+      }
+    }
+    return newObj;
+  }
   //#endregion
   Util.souma = {
     getParty: () => soumaParty,
@@ -483,11 +495,36 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return result;
     },
     Orientation4: Object.freeze([
-      ["MT", "ST", "D4", "D3", "D2", "D1", "H1", "H2"],
-      ["H2", "ST", "D4", "D3", "D2", "D1", "H1"],
-      ["D1", "D2", "D3", "D4", "ST", "H1"],
-      ["H1", "ST", "D2", "D3", "D4"],
+      ["MT", "ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 1
+      ["ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 2
+      ["H2", "H1", "D4", "D3", "D2", "D1"], // 3
+      ["D1", "D2", "D3", "D4", "H1"], //4
     ]),
+    Orientation8: Object.freeze([
+      ["D3", "MT", "D4", "H1", "H2", "D1", "ST", "D2"], // 1
+      ["MT", "D4", "H1", "H2", "ST", "D1", "D2"], // 2
+      ["D4", "H2", "H1", "D2", "ST", "D1"], // 3
+      ["H1", "H2", "D1", "ST", "D2"], // 4
+      ["H2", "D2", "ST", "D1"], // 5
+      ["D1", "ST", "D2"], // 6
+      ["ST", "D2"], // 7
+      ["D2"], // 8
+    ]),
+    tolerance: function (sourceNum, targetNum, tolerance) {
+      return Math.abs(sourceNum - targetNum) < tolerance;
+    },
+    deepClone,
+    getHeadingMap: function (h, halvesLeft = true) {
+      const diff = Math.abs(Math.PI / 2 - Math.abs(h));
+      if (0 <= diff && diff < Math.PI / 2 / 4) return halvesLeft ? ["t", "b"] : ["t", "b"];
+      else if (Math.PI / 2 / 4 <= diff && diff < Math.PI / 2 / 2) return ["t", "b"];
+      else if (Math.PI / 2 / 2 <= diff && diff < (Math.PI / 2 / 4) * 3) return ["l", "r"];
+      else if ((Math.PI / 2 / 4) * 3 <= diff && diff <= Math.PI / 2) return ["l", "r"];
+      else {
+        console.error("diff", diff);
+        return [undefined, undefined];
+      }
+    },
   };
   Options.Triggers.push({
     id: "SoumaRunLibrary",
@@ -502,7 +539,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
     ],
     initData: () => {
-      placeReset();
       return { soumaFL: Util.souma };
     },
     triggers: [
