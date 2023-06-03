@@ -514,16 +514,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     getLegalityMarkType,
     rotateCoord,
     getDistance,
-    sortMatchesBy: function (data, arr, rule) {
+    sortMatchesByRp: function (arr, rule) {
       return arr.sort((a, b) => {
-        return rule.indexOf(Util.souma.getRpByName(data, a.name)) - rule.indexOf(Util.souma.getRpByName(data, b.name));
+        return rule.indexOf(a.rp) - rule.indexOf(b.rp);
       });
     },
-    customFillArray: function (arr, rules) {
+    sortMatchesByFill: function (arr, rules) {
       const _rules = rules.slice();
       if (_rules.length > arr.length) _rules.length = arr.length;
       if (arr.length !== _rules.length && arr.length !== _rules.length + 1) {
-        throw "customFillArray 接受的长度不一致" + arr.length + _rules.length;
+        throw "matchesArrSortByRp 接受的长度不一致" + arr.length + _rules.length;
       }
       const result = Array(arr.length);
       for (let i = 0; i < _rules.length; i++) {
@@ -539,13 +539,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
       return result;
     },
-    Orientation4: Object.freeze([
+    orientation4: Object.freeze([
       ["MT", "ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 1
       ["ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 2
       ["H2", "H1", "D4", "D3", "D2", "D1"], // 3
       ["D1", "D2", "D3", "D4", "H1"], //4
     ]),
-    Orientation8: Object.freeze([
+    orientation8: Object.freeze([
       ["D3", "MT", "D4", "H1", "H2", "D1", "ST", "D2"], // 1
       ["MT", "D4", "H1", "H2", "ST", "D1", "D2"], // 2
       ["D4", "H2", "H1", "D2", "ST", "D1"], // 3
@@ -562,6 +562,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     getDir,
     getHalves,
     headingToHalves,
+    rule: {
+      thd: ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"],
+      meleeFirst: ["D1", "D2", "MT", "ST", "D3", "H1", "D4", "H2"],
+      rangeFirst: ["D3", "H2", "H1", "D4", "ST", "MT", "D2", "D1"],
+    },
     outputs: {
       dir: {
         t: { en: "上" },
