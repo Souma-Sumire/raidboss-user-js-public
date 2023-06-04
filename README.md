@@ -4,7 +4,7 @@
 
 1. 悬浮窗插件 新建悬浮窗（类型：数据统计）：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`
 
-1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) 1.3.2.5 及以上。（否则无法使用标点等功能）
+1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) 1.3.2.5 及以上。（就算你不用标点功能也要装。你可以不开对应功能，但是不能没有。）
 
 ## 自动下载
 
@@ -40,6 +40,7 @@
 - 不需要 MoreLog（CactbotSelf）插件。
 - 不保证兼容其他作者的同副本 JS 文件。
 - 悬浮窗的职能位置分配与小队列表的排序无关。
+- 建议卸载Triggernometry。
 
 ## 交流/反馈
 
