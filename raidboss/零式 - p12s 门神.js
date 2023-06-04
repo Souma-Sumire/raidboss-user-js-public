@@ -196,7 +196,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         alertText: (data, _, output) => {
           if (data.souma.phase === 2 && data.role === "dps") {
             if (data.souma.p1towerbuff === "guang") return "光 => 引导激光";
-            if (data.souma.p1towerbuff === "an") return "光 => 躲避 => 踩塔(左原地右场中)";
+            if (data.souma.p1towerbuff === "an") return "光 => 躲避 => 踩塔";
           }
           return output.text();
         },
@@ -212,7 +212,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         alertText: (data, _, output) => {
           if (data.souma.phase === 2 && data.role === "dps") {
             if (data.souma.p1towerbuff === "an") return "暗 => 引导激光";
-            if (data.souma.p1towerbuff === "guang") return "暗 => 躲避 => 踩塔(左原地右场中)";
+            if (data.souma.p1towerbuff === "guang") return "暗 => 躲避 => 踩塔";
           }
           return output.text();
         },
@@ -538,7 +538,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               // 死刑
               break;
             default:
-              console.error(id);
+              // console.error(id);
               break;
           }
         },

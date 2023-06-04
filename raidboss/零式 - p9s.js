@@ -87,7 +87,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: {},
         durationSeconds: 30,
         alertText: (data, matches, output) => {
-          console.warn(matches);
+          // console.warn(matches);
           if (data.souma.stage === 1) {
             const id = getHeadmarkerId(data, matches);
             // console.warn(id);
