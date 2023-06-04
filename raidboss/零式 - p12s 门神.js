@@ -120,6 +120,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "checkbox",
         default: false,
       },
+      {
+        id: "光暗塔标禁止",
+        name: { en: "光暗塔标禁止" },
+        type: "checkbox",
+        default: false,
+      },
     ],
     initData: () => {
       // console.warn("----------------------------------------");
@@ -238,6 +244,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         condition: (data) => data.souma.chaolianing && data.souma.chaolianPhase === 1,
         preRun: (data, matches) => {
           data.souma.chaolianbuff.push(matches);
+        },
+        run: (data, matches) => {
+          if (data.triggerSetConfig.光暗塔标禁止) {
+            if (matches.effectId === "DFB") mark(matches.targetId, "stop1");
+            if (matches.effectId === "DFC") mark(matches.targetId, "stop2");
+          }
         },
         // condition: Conditions.targetIsYou(),
         // suppressSeconds: 30,
@@ -646,11 +658,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             });
             if (other.length === 0) {
               const yuehuanBall = 球s.find((v) => v.bro.npcBaseId === "16178");
-              if (yuehuanBall) return output.text({ mark: yuehuanBall.closerMark, gimmick: "月环" });
+              if (yuehuanBall) return;
+              // return output.text({ mark: yuehuanBall.closerMark, gimmick: "月环" });
               const ererBall = 球s.find((v) => v.bro.npcBaseId === "16180");
-              if (ererBall) return output.text({ mark: ererBall.closerMark, gimmick: "二二" });
+              if (ererBall) return output.text({ mark: "", gimmick: "二二" });
+              // return output.text({ mark: ererBall.closerMark, gimmick: "二二" });
               const bafangBall = 球s.find((v) => v.bro.npcBaseId === "16179");
-              if (bafangBall) return output.text({ mark: bafangBall.closerMark, gimmick: "八方" });
+              if (bafangBall) return output.text({ mark: "", gimmick: "八方" });
+              // return output.text({ mark: bafangBall.closerMark, gimmick: "八方" });
             }
             for (const item of chaolian) nearestMark(item);
             for (const item of chaolian) getType(item);
@@ -727,7 +742,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 超级连锁理论IIA",
         type: "StartsUsing",
         netRegex: { id: "86FA", capture: false },
-        // infoText: "超链2A",
+        infoText: "半场二二=>月环=>找二二或八方",
+        tts: null,
         run: (data) => {
           data.souma.chaolianPhase = 2;
           data.souma.chaolianDelay = 0.5;
