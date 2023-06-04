@@ -218,7 +218,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: (data, _, output) => {
           const isMark = ["开", "本地"].includes(data.triggerSetConfig.热素1标点);
           const local = data.triggerSetConfig.热素1标点 === "本地";
-          const 优先级 = ["H2", "ST", "H1", "MT", "D1", "D2", "D3", "D4"];
+          const 优先级 = ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"];
           let res;
 
           if (data.souma2.重火.length === 4) {
