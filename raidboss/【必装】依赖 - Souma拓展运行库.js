@@ -1,3 +1,14 @@
+/*
+  用户：你好
+
+  如果你是好奇的普通用户，请不要改动任何内容，关闭本文件。
+
+  如果你是开发人员，请随意走动，小心地滑。
+
+  如果你是咸鱼倒卖哥，或者是总在背后骂我的那位上海天龙人，NMSL。
+
+*/
+
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   //#region
   let isInit = false;
@@ -53,7 +64,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.5.30");
+  console.log("souma拓展运行库已加载 2023.6.6");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -286,7 +297,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       if (typeof v.p === "object") v.p = JSON.stringify(v.p);
     });
     if (isNotInRaidboss) console.debug("邮差queue", notes, JSON.stringify(queue, null, 1));
-    else callOverlayHandler({ call: "PostNamazu", c: "DoQueueActions", p: JSON.stringify(queue) });
+    else {
+      callOverlayHandler({ call: "PostNamazu", c: "DoQueueActions", p: JSON.stringify(queue) });
+    }
   }
   function placeReset() {
     if (isNotInRaidboss) console.debug("邮差reset");
@@ -636,7 +649,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       if (soumaRuntimeJSData === null) setTimeout(() => createMyParty(e.party), 500);
       else createMyParty(e.party);
     });
-    addOverlayListener("ChangeZone", () => placeReset());
+    addOverlayListener("ChangeZone", () => placeReset);
     addOverlayListener("BroadcastMessage", handleBroadcastMessage);
   }
   function handleBroadcastMessage(msg) {
@@ -649,20 +662,23 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     if (isNotInRaidboss) defaultSort();
     else {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        if (!soumaRuntimeJSData) {
-          defaultSort();
-          doQueueActions([
-            { c: "qid", p: "update party rp" },
-            { c: "command", p: "/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime", d: 3000 },
-          ]);
-        } else {
-          soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
-          sendBroadcast("updateNewPartyRP Success");
-          doQueueActions([{ c: "stop", p: "update party rp" }]);
-          // doTextCommand("/e 成功<se.9>");
-        }
-      }, 1000);
+      if (soumaRuntimeJSData) {
+        soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
+        sendBroadcast("updateNewPartyRP Success");
+      } else {
+        timer = setTimeout(() => {
+          if (!soumaRuntimeJSData) {
+            defaultSort();
+            console.error("未在3秒内接受到soumaRuntimeJSData，采用默认排序。");
+            doQueueActions([{ c: "command", p: "/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime" }]);
+          } else {
+            soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
+            sendBroadcast("updateNewPartyRP Success");
+            // doQueueActions([{ c: "stop", p: "update party rp" }]);
+            // doTextCommand("/e 成功<se.9>");
+          }
+        }, 3000);
+      }
     }
   }
   function sendBroadcast(text) {
