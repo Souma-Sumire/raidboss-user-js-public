@@ -269,5 +269,36 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         run: (data) => (data.souma.delay.length = 0),
       },
     ],
+    timelineReplace: [
+      {
+        locale: "cn",
+        missingTranslations: true,
+        replaceSync: {
+          "Arcane Sphere": "[^:]+",
+          "Pand\\\\u00e6moniac Pillar": "[^:]+",
+          "Pand\\\\u00e6monium": "[^:]+",
+        },
+        replaceText: {
+          "Bury": "塌方",
+          "Circles of Pandaemonium": "万魔之环",
+          "Dividing Wings": "分离之翼",
+          "Entangling Web": "巨大网",
+          "Harrowing Hell": "魔殿震击",
+          "Jade Passage": "玉石之路",
+          "Pandaemoniac Meltdown": "万魔熔毁",
+          "Pandaemoniac Pillars": "万魔之柱",
+          "Pandaemoniac Ray": "万魔射线",
+          "Pandaemon's Holy": "万魔神圣",
+          "Parted Plumes": "分离落羽",
+          "Peal of Condemnation": "定罪冲击",
+          "Peal of Damnation": "诅咒炮弹",
+          "Silkspit": "喷吐网",
+          "Soul Grasp": "灵魂之握",
+          "Touchdown": "空降",
+          "Ultima": "究极",
+          "Wicked Step": "尖脚",
+        },
+      },
+    ],
   });
 }

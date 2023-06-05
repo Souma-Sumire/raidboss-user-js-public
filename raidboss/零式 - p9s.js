@@ -15,19 +15,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     if (data.souma.decOffset === undefined) data.souma.decOffset = parseInt(matches.id, 16) - firstMarker;
     return (parseInt(matches.id, 16) - data.souma.decOffset).toString(16).toUpperCase().padStart(4, "0");
   };
-  const {
-    getRpByName,
-    doTextCommand,
-    doQueueActions,
-    doQueueActionsDebug,
-    sortMatchesBy,
-    sortMatchesByFill,
-    getClearMarkQueue,
-    orientation4,
-    deepClone,
-    mark,
-  } = Util.souma;
-  // console.warn("p9s");
+  const { mark } = Util.souma;
   Options.Triggers.push({
     id: "SoumaAnabaseiosTheNinthCircleSavage",
     zoneId: ZoneId.AnabaseiosTheNinthCircleSavage,
@@ -63,13 +51,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         souma: {
           decOffset: undefined,
           stage: 1,
-          // element: undefined,
-          // markers: {
-          //   spider: [],
-          // },
-          // towers: [],
-          // towersMap: [],
-          // plumesStr: undefined,
         },
       };
     },
@@ -147,6 +128,59 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: "靠近+八方",
         run: (data) => (data.souma.stage = 2),
         // run: (data, matches) => doTextCommand(`/p (冰+雷) 靠近+散開`),
+      },
+    ],
+    timelineReplace: [
+      {
+        locale: "cn",
+        missingTranslations: true,
+        replaceSync: {
+          "Comet": "[^:]+",
+          "Kokytos(?!')": "[^:]+(?!')",
+          "Kokytos's Echo": "[^:]+",
+        },
+        replaceText: {
+          "Aero IV": "飙风",
+          "Archaic Demolish": "古代破碎拳",
+          "Archaic Rockbreaker": "古代地烈劲",
+          "Ascendant Fist": "穿升拳",
+          "Beastly Bile": "野兽咬",
+          "Beastly Fury": "野兽之怒",
+          "Blizzard III": "冰封",
+          "Burst": "飞散",
+          "Charybdis": "大漩涡",
+          "Chimeric Succession": "嵌合连击",
+          "Comet": "彗星",
+          "Disgorge": "灵魂逆转",
+          "Disintegration": "解体",
+          "Duality of Death": "灰飞烟灭",
+          "Dualspell": "双重咏唱",
+          "Ecliptic Meteor": "黄道陨石",
+          "Fire IV": "炽炎",
+          "Fire(?!( |m|s))": "火炎",
+          "Firemeld": "炎魔冲",
+          "Front Combination": "前方连转脚",
+          "Front Firestrikes": "前方炎连击",
+          "Gluttony's Augur": "暴食的预兆",
+          "Icemeld": "冰魔冲",
+          "Inside Roundhouse": "内转脚",
+          "Levinstrike Summoning": "召唤闪电",
+          "Outside Roundhouse": "外转脚",
+          "Pile Pyre": "堆火",
+          "Pyremeld": "重炎击",
+          "Ravening": "噬魂者",
+          "Rear Combination": "后方连转脚",
+          "Rear Firestrikes": "后方炎连击",
+          "Scrambled Succession": "连锁突击",
+          "Shock(?!wave)": "放电",
+          "Shockwave": "冲击波",
+          "Soul Surge": "灵魂涌动",
+          "Swinging Kick": "旋身击",
+          "Thunder III": "暴雷",
+          "Thunder(?!( |bolt))": "闪雷",
+          "Thunderbolt": "霹雳",
+          "Two Minds": "缠魂双击",
+        },
       },
     ],
   });
