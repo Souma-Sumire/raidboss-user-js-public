@@ -117,7 +117,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           c: "DoQueueActions",
           p: JSON.stringify([
             { c: "stop", p: "P6S Souma Public Queue Mark", d: 0 },
-            { c: "DoWaymarks", p: "load", d: 100 },
+            { c: "DoWaymarks", p: "load", d: 3000 },
           ]),
         });
       }

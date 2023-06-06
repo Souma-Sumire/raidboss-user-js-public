@@ -1,28 +1,44 @@
 Options.Triggers.push({
   zoneId: ZoneId.TheOmegaProtocolUltimate,
+  id: "souma_top_blacksmith_police",
+  config: [
+    { id: "铁匠警察", name: { en: "开启" }, type: "checkbox", default: true },
+    {
+      id: "铁匠聊天频道",
+      name: { en: "聊天频道" },
+      type: "select",
+      options: { en: { 小队: "p", 默语: "e" } },
+      default: "e",
+    },
+    { id: "名字缩写", name: { en: "名字使用缩写(国服无效)" }, type: "checkbox", default: true },
+    { id: "使用API", name: { en: "使用API获得中文技能名(国服请关闭API)" }, type: "checkbox", default: true },
+    {
+      id: "铁匠API",
+      name: { en: "API(国服请关闭API)" },
+      type: "select",
+      options: { en: { XIVAPI: "xivapi.com", cafemaker: "cafemaker.wakingsands.com" } },
+      default: "cafemaker.wakingsands.com",
+    },
+  ],
   triggers: [
     {
       id: "TOP Souma 铁匠警察",
       type: "Ability",
       regex: /^.{14} A\w+ 15:.{8}:(?<source>[^:]+):(?!0[78]:)(?<id>[^:]+):(?<ability>[^:]+):4.{7}:[^:]+:7\d*:0:/,
-      promise: async (_data, matches, output) => {
-        const name =
-          output.铁匠名字缩写() === "是" ? matches.source.replace(/^([A-Z])\w+ ([A-Z])\w+/, "$1.$2.") : matches.source;
-        const channel = output.频道();
+      condition: (data) => data.triggerSetConfig.铁匠警察,
+      promise: async (data, matches, output) => {
+        const name = data.triggerSetConfig.名字缩写 ? matches.source.replace(/^([A-Z])\w+ ([A-Z])\w+/, "$1.$2.") : matches.source;
+        const channel = data.triggerSetConfig.铁匠聊天频道;
         const ability = matches.ability;
-        if (output.使用API获得中文技能名但可能导致响应变慢() === "是") {
-          fetch(`https://${output.api()}/action/${parseInt(matches.id, 16)}?columns=Name`)
+        if (data.triggerSetConfig.使用API) {
+          fetch(`https://${data.triggerSetConfig.铁匠API}/action/${parseInt(matches.id, 16)}?columns=Name`)
             .then((v) => v.json())
-            .then((v) => doTextCommand(output.文本({ channel, name, ability: v.Name })))
-            .catch((_e) => doTextCommand(output.文本({ channel, name, ability })));
-        } else doTextCommand(output.文本({ channel, name, ability }));
+            .then((v) => doTextCommand("/ " + channel + output.text({ name, ability: v.Name })))
+            .catch((_e) => doTextCommand("/ " + channel + output.text({ name, ability })));
+        } else doTextCommand("/ " + channel + output.text({ name, ability }));
       },
       outputStrings: {
-        文本: { en: "/${channel} 恭喜${name}打铁成功！（${ability}）<se.5>" },
-        频道: { en: "p" },
-        铁匠名字缩写: { en: "是" },
-        使用API获得中文技能名但可能导致响应变慢: { en: "是" },
-        api: { en: "cafemaker.wakingsands.com" },
+        text: { en: "恭喜${name}打铁成功！（${ability}）<se.5>" },
       },
       infoText: "",
     },
