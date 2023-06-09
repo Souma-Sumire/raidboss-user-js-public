@@ -11,7 +11,6 @@
 
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   //#region
-  let isInit = false;
   const prevent = { forceLocalMark: false };
   const jobs = {
     0: { 简体: "冒险者", 繁体: "冒險者", 单字: "冒", 双字: "冒险", role: "none", LB: "none", job: "ADV" },
@@ -64,7 +63,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  console.log("souma拓展运行库已加载 2023.6.6");
+  console.log("souma拓展运行库已加载 2023.6.10");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -606,45 +605,27 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
     ],
     initData: () => {
-      return { soumaFL: Util.souma };
+      return { soumaFL: Util.souma, soumaRuntime: { isInit: false } };
     },
     triggers: [
       {
         id: "Souma Runtime 总设置（优先级高于副本内设置）",
-        netRegex: NetRegexes.startsUsing({ capture: false }),
-        condition: () => !isInit,
-        run: (data, _matches) => {
-          isInit = true;
+        type: "LimitBreak",
+        netRegex: {},
+        condition: (data) => !data.soumaRuntime.isInit,
+        run: (data) => {
+          console.debug("battle start");
+          placeSave();
           prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点;
+          data.soumaRuntime.isInit = true;
         },
-      },
-      {
-        id: "Souma Runtime 倒计时",
-        regex: /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:距离战斗开始还有|Battle commencing in |戦闘開始まで)(?<cd>\d+)[^（]+（/i,
-        run: (_data, matches) => {
-          if (isNotInRaidboss) console.debug("start countdown");
-          else
-            doQueueActions(
-              [
-                { c: "stop", p: "Souma Runtime Countdown Queue" },
-                { c: "qid", p: "Souma Runtime Countdown Queue" },
-                { c: "place", p: "reset" },
-                { c: "place", p: "save", d: Number(matches.cd) * 1000 },
-              ],
-              "runtime countdown",
-            );
-        },
-      },
-      {
-        id: "Souma Runtime 取消倒计时",
-        regex:
-          /^.{14} ChatLog 00:(?:00B9|0[12]39)::(?:.+取消了战斗开始倒计时。|Countdown canceled by .+\.|.+により、戦闘開始カウントがキャンセルされました。)$/i,
-        run: () =>
-          isNotInRaidboss ? console.debug("cancel countdown") : doQueueActions([{ c: "stop", p: "Souma Runtime Countdown Queue" }], "runtime cancel countdown"),
       },
     ],
   });
   if (!/config\.html/.test(location.href)) {
+    setTimeout(() => {
+      placeReset();
+    }, 1);
     addOverlayListener("PartyChanged", (e) => {
       if (soumaRuntimeJSData === null) setTimeout(() => createMyParty(e.party), 500);
       else createMyParty(e.party);

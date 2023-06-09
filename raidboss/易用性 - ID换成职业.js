@@ -31,14 +31,20 @@ const job2CN = new Map([
 ]);
 let isInit = false;
 let party;
-Options.PlayerNicks = new Proxy(Options.PlayerNicks, {
-  get: (target, prop) => {
-    if (prop === "toJSON") return target[prop];
-    const job = party.details.find((v) => v.name === prop)?.job;
-    const res = job2CN.get(job) ?? prop;
-    return party.details.some((v) => v.name !== prop && v.job === job) ? `${res}（${prop}）` : res;
-  },
-});
+setTimeout(() => {
+  Options.PlayerNicks = new Proxy(Options.PlayerNicks, {
+    get: (target, prop) => {
+      if (prop === "toJSON") return target[prop];
+      try {
+        const job = party?.details?.find((v) => v.name === prop)?.job;
+        const res = job2CN.get(job) ?? prop;
+        return party.details.some((v) => v.name !== prop && v.job === job) ? `${res}（${prop}）` : res;
+      } catch {
+        return prop;
+      }
+    },
+  });
+}, 1);
 Options.Triggers.push({
   id: "SoumaId2Job",
   zoneId: ZoneId.MatchAll,

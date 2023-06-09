@@ -3,8 +3,8 @@ const hotbar = {
   technical: [2, 2], // 技巧舞步放在热键栏的哪 默认第2热键栏的第2个栏位上
 };
 const lang = "cn"; // 你的客户端语言 中=cn 日=ja 英=en
-const countdownDancingStart = true; // 倒计时15.1秒小舞 true=开, false=关
-const countdownDancingEnd = false; // 倒计时0秒小舞 true=开, false=关
+const countdownDancingStart = true; // 倒计时15.1秒时小舞 true=开, false=关 由于JS计时器精度的问题不保证一定准确
+const countdownDancingEnd = false; // 倒计时0.25秒时小舞 true=开, false=关 由于JS计时器精度的问题不保证一定准确
 
 //从这里以下的所有东西一般人不需要动
 
