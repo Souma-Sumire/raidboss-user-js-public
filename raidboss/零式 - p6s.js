@@ -1,4 +1,4 @@
-// 说明：必须同时加载"souma拓展运行库.js" 
+// 说明：必须同时加载"souma拓展运行库.js"
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   const startsUsingStrings = {
     // "7860": { en: "AoE" }, //半神冥暗
@@ -73,31 +73,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     }
   }
   const isRaidEmulator = location.href.includes("raidemulator.html");
-  function mark(actorID, markType, localOnly) {
-    if (isRaidEmulator) {
-      console.log(actorID, markType);
-    } else {
-      callOverlayHandler({
-        call: "PostNamazu",
-        c: "mark",
-        p: JSON.stringify({ ActorID: parseInt(actorID, 16), MarkType: markType, localOnly: localOnly }),
-      });
-    }
-  }
-  function doTextCommand(text) {
-    if (isRaidEmulator) console.log(text);
-    else callOverlayHandler({ call: "PostNamazu", c: "DoTextCommand", p: text });
-  }
-  function clearMark() {
-    doTextCommand("/mk off <1>");
-    doTextCommand("/mk off <2>");
-    doTextCommand("/mk off <3>");
-    doTextCommand("/mk off <4>");
-    doTextCommand("/mk off <5>");
-    doTextCommand("/mk off <6>");
-    doTextCommand("/mk off <7>");
-    doTextCommand("/mk off <8>");
-  }
+  const { mark } = Util.souma;
   Options.Triggers.push({
     zoneId: ZoneId.AbyssosTheSixthCircleSavage,
     id: "SoumaAbyssosTheSixthCircleSavage",
