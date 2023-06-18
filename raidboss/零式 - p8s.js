@@ -110,7 +110,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           c: "DoQueueActions",
           p: JSON.stringify([
             { c: "stop", p: "P8S Souma Public Queue Mark", d: 0 },
-            { c: "DoWaymarks", p: "load", d: 0 },
+            { c: "DoWaymarks", p: "load", d: 3000 },
           ]),
         });
       }
@@ -450,8 +450,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         run: (data) => {
           if (data.soumaSettings.小蛇场地标点) {
             data.soumaFL.doQueueActions([
-              { c: "DoWaymarks", p: "save", d: 0 },
-              { c: "DoWaymarks", p: "clear", d: 500 },
+              // { c: "DoWaymarks", p: "save", d: 0 },
+              { c: "DoWaymarks", p: "clear" },
             ]);
           }
         },
@@ -670,7 +670,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: NetRegexes.gainsEffect({ effectId: "D54" }),
         preRun: (data, matches) => {
           data.souma本体紫色.push(matches.target);
-          data.soumaFL.doQueueActions([{ c: "DoWaymarks", p: "save", d: 0 }]);
+          // data.soumaFL.doQueueActions([{ c: "DoWaymarks", p: "save", d: 0 }]);
         },
       },
       {
@@ -963,13 +963,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         tts: null,
       },
-      {
-        id: "P8S Souma 支配者的一击保存标点",
-        type: "StartsUsing",
-        netRegex: { id: "79D9" },
-        suppressSeconds: 999,
-        preRun: (data) => data.soumaFL.placeSave(),
-      },
+      // {
+      //   id: "P8S Souma 支配者的一击保存标点",
+      //   type: "StartsUsing",
+      //   netRegex: { id: "79D9" },
+      //   suppressSeconds: 999,
+      //   preRun: (data) => data.soumaFL.placeSave(),
+      // },
       {
         id: "P8S Souma Dominion",
         type: "StartsUsing",
