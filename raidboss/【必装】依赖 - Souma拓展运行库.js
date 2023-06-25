@@ -69,8 +69,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   if (!isNotInRaidboss) sendBroadcast("requestData");
   let soumaParty = [];
   function ifMissing() {
-    console.trace("缺少参数");
-    throw "缺少参数";
+    console.trace("missing");
+    console.error("缺少参数，详情见trace");
+    // throw "缺少参数";
   }
   function markTypeLegalityCheck(markTypeStr) {
     return [
@@ -599,7 +600,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     config: [
       {
         id: "souma拓展运行库强制本地标点",
-        name: { en: "强制使用本地标点" },
+        name: { en: "强制使用本地标点（优先级高于副本设置）" },
         type: "checkbox",
         default: false,
       },
@@ -611,8 +612,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "Souma Runtime 总设置（优先级高于副本内设置）",
         type: "LimitBreak",
-        netRegex: {},
-        condition: (data) => !data.soumaRuntime.isInit,
+        netRegex: { bars: "3" },
+        condition: (data, matches) => !data.soumaRuntime.isInit && parseInt(matches.valueHex, 16) >= 200,
         run: (data) => {
           console.debug("battle start");
           placeSave();
