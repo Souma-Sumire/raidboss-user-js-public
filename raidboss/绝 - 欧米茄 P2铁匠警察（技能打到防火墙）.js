@@ -12,7 +12,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         default: "e",
       },
       { id: "名字缩写", name: { en: "名字使用缩写(国服无效)" }, type: "checkbox", default: true },
-      { id: "使用API", name: { en: "使用API获得中文技能名(国服请关闭)" }, type: "checkbox", default: true },
+      { id: "使用API", name: { en: "使用API获得中文技能名(国服请关闭)" }, type: "checkbox", default: false },
       {
         id: "铁匠API",
         name: { en: "API(国服请关闭API)" },
