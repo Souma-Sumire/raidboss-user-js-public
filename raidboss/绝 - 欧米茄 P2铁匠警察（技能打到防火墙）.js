@@ -25,7 +25,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "TOP Souma 铁匠警察",
         type: "Ability",
-        regex: /^.{14} A\w+ 15:.{8}:(?<source>[^:]+):(?!(?:0[78]|7C03):)(?<id>[^:]+):(?<ability>[^:]+):4.{7}:[^:]+:\d*:0:/,
+        regex: /^.{14} A\w+ 15:.{8}:(?<source>[^:]+):(?!0[78]:)(?<id>[^:]+):(?<ability>[^:]+):4.{7}:[^:]+:(?:7\d*:0:1B:|[^:]+:0:11B:(?:[^:]{2})?7\d{5}:0:)/,
         condition: (data) => data.triggerSetConfig.铁匠警察,
         promise: async (data, matches, output) => {
           const name = data.triggerSetConfig.名字缩写 ? matches.source.replace(/^([A-Z])\w+ ([A-Z])\w+/, "$1.$2.") : matches.source;
