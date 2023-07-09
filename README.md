@@ -4,13 +4,13 @@
 
 1. 悬浮窗插件 新建悬浮窗（类型：数据统计）：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`
 
-1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) 1.3.2.5 及以上。（就算你不用标点功能也要装。你可以不开对应功能，但是不能没有。）
+1. [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases) （就算你不用标点功能也要装。你可以不开对应功能，但是不能没有。）
 
 ## 下载
 
 ### 插件自动
 
-- 使用 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest) ，加载到ACT中使用，一键同时解决下载、安装、更新。
+- 使用 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest) ，加载到ACT中使用。
   
 ### 传统手动
 
@@ -24,8 +24,9 @@
 ## 天国篇使用事项
 
 1. 首周自用分享，不会有太多自定义选项，也不会所有机制都报，能用就行。
-2. 主库频繁更新，我不会帮你禁用，届时请自己去禁用掉主库更新的英文触发器。
-3. 1风火是nl式。
+2. 不更新，能用就用，用不了自己改一改，不保姆。
+3. 不会帮你禁用主库触发器，若有冲突，自行选择禁用。
+4. 1风火是nl式原版，纯优先级。
 
 ## 悬浮窗的作用
 
@@ -40,7 +41,8 @@
 
 ## 修改配置、开关功能
 
-![image](https://user-images.githubusercontent.com/33572696/236646515-46844cf6-0179-4fae-a471-1a37f078b1da.png)
+![image](https://github.com/Souma-Sumire/raidboss-user-js-public/assets/33572696/267c0cb7-233c-4c54-87ce-b9d0f49fd5d2)
+
 
 ## 注意事项
 
