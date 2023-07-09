@@ -10,7 +10,7 @@
 */
 
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
-  //#region
+  // #region
   const prevent = { forceLocalMark: false };
   const jobs = {
     0: { 简体: "冒险者", 繁体: "冒險者", 单字: "冒", 双字: "冒险", role: "none", LB: "none", job: "ADV" },
@@ -429,8 +429,28 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return { x: resX, y: resY };
   }
   function deepClone(obj) {
-    if (typeof obj !== "object") return;
-    let newObj = obj instanceof Array ? [] : {};
+    if (typeof obj !== "object") return obj;
+    if (obj instanceof Map) {
+      let newMap = new Map();
+      obj.forEach((value, key) => {
+        newMap.set(key, deepClone(value));
+      });
+      return newMap;
+    }
+    if (obj instanceof Set) {
+      let newSet = new Set();
+      obj.forEach((value) => {
+        newSet.add(deepClone(value));
+      });
+      return newSet;
+    }
+    if (obj instanceof Date) {
+      return new Date(obj.getTime());
+    }
+    if (obj instanceof RegExp) {
+      return new RegExp(obj.source, obj.flags);
+    }
+    let newObj = Object.create(Object.getPrototypeOf(obj));
     for (let key in obj) {
       if (typeof obj[key] === "object") {
         newObj[key] = deepClone(obj[key]);
@@ -440,6 +460,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     }
     return newObj;
   }
+
   function getDir(h) {
     const p = h / Math.PI;
     if (-1 <= p && p < -0.9) return "N";
@@ -485,9 +506,60 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   function headingToHalves(h, halvesLeft = true) {
     return getHalves(getDir(h), halvesLeft);
   }
+  function getParty() {
+    return soumaParty;
+  }
+  function sortMatchesByRp(arr, rule) {
+    return arr.sort((a, b) => {
+      return rule.indexOf(a.rp) - rule.indexOf(b.rp);
+    });
+  }
+  function sortMatchesByFill(arr, rules) {
+    const _rules = rules.slice();
+    if (_rules.length > arr.length) _rules.length = arr.length;
+    if (arr.length !== _rules.length && arr.length !== _rules.length + 1) {
+      throw "matchesArrSortByRp 接受的长度不一致" + arr.length + _rules.length;
+    }
+    const result = Array(arr.length);
+    for (let i = 0; i < _rules.length; i++) {
+      for (const item of _rules[i]) {
+        const t = arr.find((f) => f.rp === item && (i === 0 || !result.find((r) => r?.rp === item)));
+        if (t) {
+          result[i] = t;
+          break;
+        }
+      }
+    }
+    if (result[arr.length - 1] === undefined && arr.length === _rules.length + 1) result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
+    return result;
+  }
+  function tolerance(sourceNum, targetNum, tolerance) {
+    return Math.abs(sourceNum - targetNum) < tolerance;
+  }
+  const orientation4 = [
+    ["MT", "ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 1
+    ["ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 2
+    ["H2", "H1", "D4", "D3", "D2", "D1"], // 3
+    ["D1", "D2", "D3", "D4", "H1"], //4
+  ];
+  const orientation8 = [
+    ["D3", "MT", "D4", "H1", "H2", "D1", "ST", "D2"], // 1
+    ["MT", "D4", "H1", "H2", "ST", "D1", "D2"], // 2
+    ["D4", "H2", "H1", "D2", "ST", "D1"], // 3
+    ["H1", "H2", "D1", "ST", "D2"], // 4
+    ["H2", "D2", "ST", "D1"], // 5
+    ["D1", "ST", "D2"], // 6
+    ["ST", "D2"], // 7
+    ["D2"], // 8
+  ];
+  const rule = {
+    thd: ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"],
+    meleeFirst: ["D1", "D2", "MT", "ST", "D3", "H1", "D4", "H2"],
+    rangeFirst: ["D3", "H2", "H1", "D4", "ST", "MT", "D2", "D1"],
+  };
   //#endregion
-  Util.souma = {
-    getParty: () => soumaParty,
+  const souma = {
+    getParty,
     getRpByName,
     getRpByHexId,
     getNameByRp,
@@ -527,72 +599,17 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     getLegalityMarkType,
     rotateCoord,
     getDistance,
-    sortMatchesByRp: function (arr, rule) {
-      return arr.sort((a, b) => {
-        return rule.indexOf(a.rp) - rule.indexOf(b.rp);
-      });
-    },
-    sortMatchesByFill: function (arr, rules) {
-      const _rules = rules.slice();
-      if (_rules.length > arr.length) _rules.length = arr.length;
-      if (arr.length !== _rules.length && arr.length !== _rules.length + 1) {
-        throw "matchesArrSortByRp 接受的长度不一致" + arr.length + _rules.length;
-      }
-      const result = Array(arr.length);
-      for (let i = 0; i < _rules.length; i++) {
-        for (const item of _rules[i]) {
-          const t = arr.find((f) => f.rp === item && (i === 0 || !result.find((r) => r?.rp === item)));
-          if (t) {
-            result[i] = t;
-            break;
-          }
-        }
-      }
-      if (result[arr.length - 1] === undefined && arr.length === _rules.length + 1)
-        result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
-      return result;
-    },
-    orientation4: Object.freeze([
-      ["MT", "ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 1
-      ["ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 2
-      ["H2", "H1", "D4", "D3", "D2", "D1"], // 3
-      ["D1", "D2", "D3", "D4", "H1"], //4
-    ]),
-    orientation8: Object.freeze([
-      ["D3", "MT", "D4", "H1", "H2", "D1", "ST", "D2"], // 1
-      ["MT", "D4", "H1", "H2", "ST", "D1", "D2"], // 2
-      ["D4", "H2", "H1", "D2", "ST", "D1"], // 3
-      ["H1", "H2", "D1", "ST", "D2"], // 4
-      ["H2", "D2", "ST", "D1"], // 5
-      ["D1", "ST", "D2"], // 6
-      ["ST", "D2"], // 7
-      ["D2"], // 8
-    ]),
-    tolerance: function (sourceNum, targetNum, tolerance) {
-      return Math.abs(sourceNum - targetNum) < tolerance;
-    },
+    sortMatchesByRp,
+    sortMatchesByFill,
+    orientation4,
+    orientation8,
+    tolerance,
     deepClone,
     getDir,
     getHalves,
     headingToHalves,
-    rule: {
-      thd: ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"],
-      meleeFirst: ["D1", "D2", "MT", "ST", "D3", "H1", "D4", "H2"],
-      rangeFirst: ["D3", "H2", "H1", "D4", "ST", "MT", "D2", "D1"],
-    },
-    outputs: {
-      dir: {
-        t: { en: "上" },
-        b: { en: "下" },
-        l: { en: "左" },
-        r: { en: "右" },
-        lt: { en: "左上" },
-        lb: { en: "左下" },
-        rt: { en: "右上" },
-        rb: { en: "右下" },
-      },
-    },
   };
+  Util.souma = souma;
   Options.Triggers.push({
     id: "SoumaRunLibrary",
     zoneId: ZoneId.MatchAll,
@@ -606,7 +623,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
     ],
     initData: () => {
-      return { soumaFL: Util.souma, soumaRuntime: { isInit: false } };
+      return { soumaFL: souma, soumaRuntime: { isInit: false } };
     },
     triggers: [
       {
