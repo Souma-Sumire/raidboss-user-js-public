@@ -450,7 +450,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     if (obj instanceof RegExp) {
       return new RegExp(obj.source, obj.flags);
     }
-    let newObj = Object.create(Object.getPrototypeOf(obj));
+    let newObj = Array.isArray(obj) ? [] : {};
     for (let key in obj) {
       if (typeof obj[key] === "object") {
         newObj[key] = deepClone(obj[key]);
