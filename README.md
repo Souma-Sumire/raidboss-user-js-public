@@ -18,12 +18,19 @@
 - p8s：菓子
 - 绝龙诗：莫古力全套。P2陨石默认整组换（可改），P5横排辉夜姬式（只有横排，没做鸡排）。
 - 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
-  
+
+## 一键禁用Cactbot的默认触发器
+
+cactbot在0.29.22版本（国服暂未跟进）新增了Zone Trigger Defaults的特性，使得我们能够为特定区域打开/关闭触发器而不必为每个单独的触发器执行此操作。
+
+只需如图所示即可一键禁用所有子触发器，非常好用。再也不用他更新一个禁用一个了。
+
+![image](https://github.com/Souma-Sumire/raidboss-user-js-public/assets/33572696/f5cdf066-800a-43d9-b826-7ff57cec63b8)
+
 ### 天国篇
 
 - 首周自用分享，不会有太多自定义选项，也不会所有机制都报，能用就行。
 - 不更新，能用就用，用不了自己改一改，不保姆。
-- 不会帮你禁用主库触发器，若有冲突，自行选择禁用。
 - 1风火是nl式原版，纯优先级，没有考虑头顶的火。
 
 ## 注意事项
