@@ -32,6 +32,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           data.hunger_police_text = check(effects, Number(data.triggerSetConfig.hunger_police_time));
         },
         infoText: (data) => data.hunger_police_text,
+        run: (data) => delete data.hunger_police_text,
         soundVolume: 0,
       },
     ],
