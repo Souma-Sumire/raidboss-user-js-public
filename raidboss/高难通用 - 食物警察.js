@@ -27,10 +27,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           (matches.echo && data.triggerSetConfig.hunger_police_echo),
         promise: async (data) => {
           const ids = data.party.partyIds_.length ? data.party.partyIds_.map((v) => parseInt(v, 16)) : undefined;
-          const combatants = (await callOverlayHandler({ call: "getCombatants" })).combatants.filter((v) => {
-            return ids ? ids.includes(v.ID) : v.Name === data.me;
-          });
-          const effects = combatants.map((v) => ({ Name: data.ShortName(v.Name), Effects: v.Effects?.filter((e) => e.BuffID === 48)?.[0] }));
+          const combatants = (await callOverlayHandler({ call: "getCombatants" })).combatants.filter((v) => (ids ? ids.includes(v.ID) : v.Name === data.me));
+          const effects = combatants.map((v) => ({ Name: data.ShortName(v.Name), Effects: v.Effects?.find((e) => e.BuffID === 48) }));
           data.hunger_police_text = check(effects, Number(data.triggerSetConfig.hunger_police_time));
         },
         infoText: (data) => data.hunger_police_text,
