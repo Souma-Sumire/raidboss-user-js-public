@@ -12,7 +12,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         }
       })
       .filter(Boolean);
-    result.map((v) => doTextCommand(`/${channel.trim()} ${v} ${add}`));
+    result.map((v) => {
+      doTextCommand(`/${channel.trim()} ${v}`);
+    });
+    doTextCommand(result.length ? `/${channel.trim()} ${add}` : `/e ${triggerSetConfig.hunger_police_all_full}`);
     return result.join(",");
   };
 
@@ -34,8 +37,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         comment: { cn: '如果用"/e food p"，则可以发到小队频道（小心使用）' },
       },
       { id: "hunger_police_time", name: { en: "报警阈值（分钟）" }, type: "string", default: "20" },
-      { id: "hunger_police_hasFood", name: { en: "文本：还有" }, type: "string", default: "${name}食物即将消失（${time}分钟）" },
+      { id: "hunger_police_hasFood", name: { en: "文本：还有" }, type: "string", default: "${name}食物仅剩${time分钟）" },
       { id: "hunger_police_noFood", name: { en: "文本：没吃" }, type: "string", default: "${name}没吃食物" },
+      { id: "hunger_police_all_full", name: { en: "文本：都吃饱了" }, type: "string", default: "都吃饱了" },
       { id: "hunger_police_add", name: { en: "报警音" }, type: "string", default: "<se.1>" },
     ],
     triggers: [
@@ -54,6 +58,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           data.hunger_police_text = check(effects, data.triggerSetConfig, matches.p);
         },
         infoText: (data) => data.hunger_police_text,
+        tts: null,
         run: (data) => delete data.hunger_police_text,
         soundVolume: 0,
       },
