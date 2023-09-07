@@ -1,13 +1,4 @@
-/*
-  用户：你好
-
-  如果你是好奇的普通用户，请不要改动任何内容，关闭本文件。
-
-  如果你是开发人员，请随意走动，小心地滑。
-
-  如果你是咸鱼倒卖哥，或者是总在背后骂我的那位上海天龙人，NMSL。
-
-*/
+// 大部分的函数都是被废弃的，但是由于一些历史原因没有删。
 
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   // #region
@@ -15,23 +6,23 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   const jobs = {
     0: { 简体: "冒险者", 繁体: "冒險者", 单字: "冒", 双字: "冒险", role: "none", LB: "none", job: "ADV" },
     1: { 简体: "剑术师", 繁体: "劍術師", 单字: "剑", 双字: "剑术", role: "tank", LB: "tank", job: "GLA" },
-    2: { 简体: "格斗家", 繁体: "格鬥家", 单字: "格", 双字: "格斗", role: "dps", LB: "melee", job: "PGL" },
+    2: { 简体: "格斗家", 繁体: "格鬥家", 单字: "斗", 双字: "格斗", role: "dps", LB: "melee", job: "PGL" },
     3: { 简体: "斧术师", 繁体: "斧術師", 单字: "斧", 双字: "斧术", role: "tank", LB: "tank", job: "MRD" },
     4: { 简体: "枪术师", 繁体: "槍術師", 单字: "枪", 双字: "枪术", role: "dps", LB: "melee", job: "LNC" },
     5: { 简体: "弓箭手", 繁体: "弓箭手", 单字: "弓", 双字: "弓箭", role: "dps", LB: "ranged", job: "ARC" },
     6: { 简体: "幻术师", 繁体: "幻術師", 单字: "幻", 双字: "幻术", role: "healer", LB: "healer", job: "CNJ" },
     7: { 简体: "咒术师", 繁体: "咒術師", 单字: "咒", 双字: "咒术", role: "dps", LB: "caster", job: "THM" },
-    8: { 简体: "刻木匠", 繁体: "刻木匠", 单字: "木", 双字: "刻木", role: "crafter", LB: "melee", job: "CRP" },
+    8: { 简体: "刻木匠", 繁体: "刻木匠", 单字: "刻", 双字: "刻木", role: "crafter", LB: "melee", job: "CRP" },
     9: { 简体: "锻铁匠", 繁体: "鍛鐵匠", 单字: "锻", 双字: "锻铁", role: "crafter", LB: "melee", job: "BSM" },
-    10: { 简体: "铸甲匠", 繁体: "鑄甲匠", 单字: "甲", 双字: "铸甲", role: "crafter", LB: "melee", job: "ARM" },
+    10: { 简体: "铸甲匠", 繁体: "鑄甲匠", 单字: "铸", 双字: "铸甲", role: "crafter", LB: "melee", job: "ARM" },
     11: { 简体: "雕金匠", 繁体: "雕金匠", 单字: "雕", 双字: "雕金", role: "crafter", LB: "melee", job: "GSM" },
     12: { 简体: "制革匠", 繁体: "製革匠", 单字: "革", 双字: "制革", role: "crafter", LB: "melee", job: "LTW" },
     13: { 简体: "裁衣匠", 繁体: "裁衣匠", 单字: "裁", 双字: "裁衣", role: "crafter", LB: "melee", job: "WVR" },
     14: { 简体: "炼金术士", 繁体: "煉金術士", 单字: "炼", 双字: "炼金", role: "crafter", LB: "melee", job: "ALC" },
     15: { 简体: "烹调师", 繁体: "烹調師", 单字: "烹", 双字: "烹调", role: "crafter", LB: "melee", job: "CUL" },
-    16: { 简体: "采矿工", 繁体: "采礦工", 单字: "矿", 双字: "采矿", role: "gatherer", LB: "melee", job: "MIN" },
+    16: { 简体: "采矿工", 繁体: "采礦工", 单字: "采", 双字: "采矿", role: "gatherer", LB: "melee", job: "MIN" },
     17: { 简体: "园艺工", 繁体: "園藝工", 单字: "园", 双字: "园艺", role: "gatherer", LB: "melee", job: "BTN" },
-    18: { 简体: "捕鱼人", 繁体: "捕魚人", 单字: "鱼", 双字: "捕鱼", role: "gatherer", LB: "melee", job: "FSH" },
+    18: { 简体: "捕鱼人", 繁体: "捕魚人", 单字: "捕", 双字: "捕鱼", role: "gatherer", LB: "melee", job: "FSH" },
     19: { 简体: "骑士", 繁体: "騎士", 单字: "骑", 双字: "骑士", role: "tank", LB: "tank", job: "PLD" },
     20: { 简体: "武僧", 繁体: "武僧", 单字: "僧", 双字: "武僧", role: "dps", LB: "melee", job: "MNK" },
     21: { 简体: "战士", 繁体: "戰士", 单字: "战", 双字: "战士", role: "tank", LB: "tank", job: "WAR" },
@@ -52,7 +43,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     36: { 简体: "青魔法师", 繁体: "青魔法師", 单字: "青", 双字: "青魔", role: "dps", LB: "caster", job: "BLU" },
     37: { 简体: "绝枪战士", 繁体: "絕槍戰士", 单字: "绝", 双字: "绝枪", role: "tank", LB: "tank", job: "GNB" },
     38: { 简体: "舞者", 繁体: "舞者", 单字: "舞", 双字: "舞者", role: "dps", LB: "ranged", job: "DNC" },
-    39: { 简体: "钐镰客", 繁体: "釤鐮客", 单字: "钐", 双字: "钐镰", role: "dps", LB: "melee", job: "RPR" },
+    39: { 简体: "钐镰客", 繁体: "釤鐮客", 单字: "镰", 双字: "钐镰", role: "dps", LB: "melee", job: "RPR" },
     40: { 简体: "贤者", 繁体: "賢者", 单字: "贤", 双字: "贤者", role: "healer", LB: "healer", job: "SGE" },
   };
 
@@ -63,7 +54,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   };
   const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  console.log("souma拓展运行库已加载 2023.6.10");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.9.18");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -632,7 +623,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: { bars: "3" },
         condition: (data, matches) => !data.soumaRuntime.isInit && parseInt(matches.valueHex, 16) >= 200,
         run: (data) => {
-          console.debug("battle start");
           placeSave();
           prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点;
           data.soumaRuntime.isInit = true;
@@ -641,14 +631,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     ],
   });
   if (!/config\.html/.test(location.href)) {
-    setTimeout(() => {
-      placeReset();
-    }, 1);
     addOverlayListener("PartyChanged", (e) => {
       if (soumaRuntimeJSData === null) setTimeout(() => createMyParty(e.party), 500);
       else createMyParty(e.party);
     });
-    addOverlayListener("ChangeZone", () => placeReset);
+    addOverlayListener("ChangeZone", placeReset);
     addOverlayListener("BroadcastMessage", handleBroadcastMessage);
   }
   function handleBroadcastMessage(msg) {

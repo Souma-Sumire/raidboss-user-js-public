@@ -1,144 +1,219 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
-  const firstMarker = parseInt("0221", 16);
   const headmarkers = {
-    m1: "009C",
-    m2: "009D",
-    m3: "009E",
-    m4: "009F",
-    m5: "00A0",
-    m6: "00A1",
-    m7: "00A2",
-    m8: "00A3",
-    lan: "0197",
+    dualityOfDeath: "01D4",
+    limitCut1: "004F",
+    limitCut2: "0050",
+    limitCut3: "0051",
+    limitCut4: "0052",
+    limitCut5: "0053",
+    limitCut6: "0054",
+    limitCut7: "0055",
+    limitCut8: "0056",
+    defamation: "014A",
+    cometMarker: "01B3",
   };
+  const limitCutMarkers = [
+    headmarkers.limitCut1,
+    headmarkers.limitCut2,
+    headmarkers.limitCut3,
+    headmarkers.limitCut4,
+    headmarkers.limitCut5,
+    headmarkers.limitCut6,
+    headmarkers.limitCut7,
+    headmarkers.limitCut8,
+  ];
+  const limitCutNumberMap = {
+    "004F": 1,
+    "0050": 2,
+    "0051": 3,
+    "0052": 4,
+    "0053": 5,
+    "0054": 6,
+    "0055": 7,
+    "0056": 8,
+  };
+  const firstHeadmarker = parseInt(headmarkers.dualityOfDeath, 16);
   const getHeadmarkerId = (data, matches) => {
-    if (data.souma.decOffset === undefined) data.souma.decOffset = parseInt(matches.id, 16) - firstMarker;
-    return (parseInt(matches.id, 16) - data.souma.decOffset).toString(16).toUpperCase().padStart(4, "0");
+    if (data.decOffset === undefined) data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+    return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, "0");
   };
-  const { mark } = Util.souma;
+  const rockbreakpos = [
+    { num: 1, x: "100.0", y: "83.0" }, //A
+    { num: 2, x: "112.0208", y: "87.9792" }, //2
+    { num: 3, x: "117.0", y: "100.0" }, //B
+    { num: 4, x: "112.0208", y: "112.0208" }, //3
+    { num: 5, x: "100.0", y: "117.0" }, //C
+    { num: 6, x: "87.9792", y: "112.0208" }, //4
+    { num: 7, x: "83.0", y: "100.0" }, //D
+    { num: 8, x: "87.9792", y: "87.9792" }, //1
+    { num: 9, x: "103.0615", y: "92.609" }, //A2
+    { num: 10, x: "107.391", y: "103.0615" }, //B3
+    { num: 11, x: "96.9385", y: "107.391" }, //C4
+    { num: 12, x: "92.609", y: "96.9385" }, //D1
+  ];
+  const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
+  const { getLBByName } = Util.souma;
   Options.Triggers.push({
     id: "SoumaAnabaseiosTheNinthCircleSavage",
     zoneId: ZoneId.AnabaseiosTheNinthCircleSavage,
-    config: [
-      {
-        id: "麻将6824标点1234",
-        name: { en: "麻将6824标点1234" },
-        type: "select",
-        options: { en: { "开(正常模式)": "开", "关": "关", "开(本地标点)": "本地" } },
-        default: "关",
-      },
-    ],
     initData: () => {
-      if (!location.href.includes("raidemulator.html")) {
-        callOverlayHandler({
-          call: "PostNamazu",
-          c: "DoQueueActions",
-          p: JSON.stringify([
-            { c: "stop", p: "P9S Souma Public Queue .*" },
-            // { c: "DoWaymarks", p: "load", d: 3000 },
-            { c: "DoTextCommand", p: "/mk off <1>", d: 3000 },
-            { c: "DoTextCommand", p: "/mk off <2>" },
-            { c: "DoTextCommand", p: "/mk off <3>" },
-            { c: "DoTextCommand", p: "/mk off <4>" },
-            { c: "DoTextCommand", p: "/mk off <5>" },
-            { c: "DoTextCommand", p: "/mk off <6>" },
-            { c: "DoTextCommand", p: "/mk off <7>" },
-            { c: "DoTextCommand", p: "/mk off <8>" },
-          ]),
-        });
-      }
       return {
         souma: {
           decOffset: undefined,
           stage: 1,
+          rockbreaker: [],
+          rockbreakerCounter: 0,
+          archaicRockbreakerCounter: 0,
+          combination: undefined,
+          roundhouse: undefined,
         },
       };
     },
     triggers: [
+      { id: "P9S Front Inside Combination", disabled: true },
+      { id: "P9S Front Outside Combination", disabled: true },
+      { id: "P9S Rear Inside Roundhouse", disabled: true },
+      { id: "P9S Rear Outside Roundhouse", disabled: true },
+      { id: "P9S Roundhouse Followup", disabled: true },
       {
-        id: "P9S Souma Headmarker Tracker",
-        type: "HeadMarker",
-        netRegex: {},
-        condition: (data) => data.souma.decOffset === undefined,
-        run: (data, matches) => getHeadmarkerId(data, matches),
-      },
-      {
-        id: "P9S Souma HeadMarker 麻将1",
-        type: "HeadMarker",
-        netRegex: {},
-        durationSeconds: 30,
-        alertText: (data, matches, output) => {
-          // console.warn(matches);
-          if (data.souma.stage === 1) {
-            const id = getHeadmarkerId(data, matches);
-            // console.warn(id);
-            let res;
-            const isMark = ["开", "本地"].includes(data.triggerSetConfig.麻将6824标点1234);
-            const local = data.triggerSetConfig.麻将6824标点1234 === "本地";
-            switch (id) {
-              case headmarkers.m2:
-                res = "2麻 1火3塔";
-                if (isMark) mark(parseInt(matches.targetId, 16), "attack3", local);
-                break;
-              case headmarkers.m4:
-                res = "4麻 3火4塔";
-                if (isMark) mark(parseInt(matches.targetId, 16), "attack4", local);
-                break;
-              case headmarkers.m6:
-                res = "6麻 1塔3火";
-                if (isMark) mark(parseInt(matches.targetId, 16), "attack1", local);
-                break;
-              case headmarkers.m8:
-                res = "8麻 2塔4火";
-                if (isMark) mark(parseInt(matches.targetId, 16), "attack2", local);
-                break;
-              case headmarkers.lan:
-                // mark(parseInt(matches.targetId, 16), "stop1", local);
-                res = "篮球 找BOSS";
-                break;
-            }
-            if (matches.target === data.me) return res;
+        id: "P9S Souma 连转脚前后",
+        comment: { cn: "BOSS面向A" },
+        type: "StartsUsing",
+        netRegex: { id: ["8167", "8168", "8169", "816A", "815F"], capture: true },
+        preRun: (data, matches) => {
+          if (matches.id === "815F") data.souma.archaicRockbreakerCounter++;
+        },
+        durationSeconds: (data) => (data.souma.archaicRockbreakerCounter === 1 ? 12 : 5),
+        delaySeconds: (data, matches) => (matches.id === "815F" && data.souma.archaicRockbreakerCounter === 2 ? 8 : 0),
+        promise: async (data, matches) => {
+          if (matches.id === "815F" && data.souma.archaicRockbreakerCounter === 2) {
+            data.souma.combatants = (await callOverlayHandler({ call: "getCombatants" })).combatants.find((v) => v.Name === data.me);
           }
+        },
+        alertText: (data, matches, output) => {
+          if (data.souma.archaicRockbreakerCounter === 1 && data.souma.rockbreakerSafe1) {
+            // 第一次古代地裂劲
+            // "8167": "远+后",
+            // "8168": "近+后",
+            // "8169": "远+前",
+            // "816A": "近+前",
+            const behindSafe = ["8167", "8168"].includes(matches.id); // 后
+            const outerSafe = ["8167", "8169"].includes(matches.id); // 远
+            const farOrNear = behindSafe ? (v) => v.y > 100 : (v) => v.y < 100;
+            const insideOrOutside = outerSafe ? (v) => v.num <= 8 : (v) => v.num >= 9;
+            const safe4 = data.souma.rockbreakerSafe1;
+            const safe2 = safe4.filter(farOrNear);
+            const safe = safe2.find(insideOrOutside);
+            let next;
+            if (outerSafe) {
+              // 钢铁 => 月环
+              const danger = rockbreakpos.filter((r) => !safe4.find((s) => s.num === r.num));
+              const innerDanger = danger.filter((v) => v.num >= 9);
+              const nextInner = innerDanger.find(farOrNear);
+              next = nextInner.num;
+            } else {
+              // 月环 => 钢铁
+              next = behindSafe ? "5" : "1"; // 实际上任意就近正点均可 高手近战可去左右打身位，这里只报AC
+            }
+            return output.text({ step1: output[safe.num](), step2: output[next]() });
+          } else if (data.souma.archaicRockbreakerCounter === 2 && data.souma.rockbreakerSafe2) {
+            // 第二次古代地裂劲 取最近
+            const myPos = { x: data.souma.combatants.PosX, y: data.souma.combatants.PosY };
+            const closestPoint = data.souma.rockbreakerSafe2.reduce((prev, curr) => {
+              const prevDist = calculateDistance(myPos.x, myPos.y, prev.x, prev.y);
+              const currDist = calculateDistance(myPos.x, myPos.y, curr.x, curr.y);
+              return prevDist < currDist ? prev : curr;
+            });
+            // console.log(structuredClone(closestPoint), structuredClone(data.souma.rockbreakerSafe2), data.me, myPos);
+            return output.text2({ text: output[closestPoint.num]() });
+          }
+        },
+        outputStrings: {
+          text: { en: "${step1} => ${step2}" },
+          text2: { en: "${text} => 就近躲避" },
+          1: { en: "上+远离" },
+          2: { en: "右上+远离" },
+          3: { en: "右+远离" },
+          4: { en: "右下+远离" },
+          5: { en: "下+远离" },
+          6: { en: "左下+远离" },
+          7: { en: "左+远离" },
+          8: { en: "左上+远离" },
+          9: { en: "靠近+上偏右" },
+          10: { en: "靠近+右偏下" },
+          11: { en: "靠近+下偏左" },
+          12: { en: "靠近+左偏上" },
         },
       },
       {
-        id: "P9S Souma 前方踢脚",
-        type: "StartsUsing",
-        netRegex: { id: ["8167", "8168"], capture: false },
-        infoText: "后后后",
+        id: "P9S Souma 古代地裂劲",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "Heading", value: "0.0000" }],
+          change: "Change",
+          capture: true,
+        },
+        preRun: (data, matches) => {
+          if (rockbreakpos.find((r) => Math.abs(matches.pairPosX - r.x) <= 0.2 && Math.abs(matches.pairPosY - r.y) <= 0.2)) {
+            data.souma.rockbreaker.push(matches);
+          }
+          if (data.souma.rockbreaker.length === 8) {
+            data.souma.rockbreakerCounter++;
+            const arr = data.souma.rockbreaker.map((v) => ({ x: v.pairPosX, y: v.pairPosY }));
+            const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
+            if (safe.length !== 4) throw `第${data.souma.rockbreakerCounter}轮安全点找到不是4个`;
+            if (data.souma.rockbreakerCounter === 1) {
+              data.souma.rockbreakerSafe1 = safe;
+            } else if (data.souma.rockbreakerCounter === 2) {
+              data.souma.rockbreakerSafe2 = safe;
+            }
+          }
+        },
+        delaySeconds: 1,
+        run: (data) => {
+          data.souma.rockbreaker.length = 0;
+        },
       },
       {
-        id: "P9S Souma 后方踢脚",
+        id: "P9S Souma 二麻",
         type: "StartsUsing",
-        netRegex: { id: ["8169", "816A"], capture: false },
-        infoText: "前前前",
+        netRegex: { id: "81BB", capture: false },
+        infoText: (data, _matches, output) => (["tank", "melee"].includes(getLBByName(data, data.me)) ? output.melee() : output.caster()),
+        outputStrings: {
+          melee: { en: "靠近BOSS" },
+          caster: { en: "远离BOSS" },
+        },
       },
       {
-        id: "P9S Souma 双击1",
-        type: "StartsUsing",
-        netRegex: { id: "8184", capture: false },
-        infoText: "双分摊",
-        run: (data) => (data.souma.stage = 2),
-        // run: (data, matches) => doTextCommand(`/p (冰+火) 遠離+分組`),
-      },
-      {
-        id: "P9S Souma 双击2",
-        type: "StartsUsing",
-        netRegex: { id: "8185", capture: false },
-        infoText: "靠近+八方",
-        run: (data) => (data.souma.stage = 2),
-        // run: (data, matches) => doTextCommand(`/p (冰+雷) 靠近+散開`),
+        id: "P9S Chimeric Limit Cut Player Number",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          return data.seenChimericSuccession && data.me === matches.target && limitCutMarkers.includes(getHeadmarkerId(data, matches));
+        },
+        preRun: (data, matches) => {
+          const correctedMatch = getHeadmarkerId(data, matches);
+          data.limitCutNumber = limitCutNumberMap[correctedMatch];
+        },
+        durationSeconds: 20,
+        infoText: (data, _matches, output) => {
+          const expectedLimitCutNumbers = [1, 2, 3, 4];
+          if (data.limitCutNumber === undefined || !expectedLimitCutNumbers.includes(data.limitCutNumber)) return;
+          return output["number" + data.limitCutNumber]();
+        },
+        outputStrings: {
+          number1: { en: "1麻 引导 => 回北" },
+          number2: { en: "2麻 引导 => 回北" },
+          number3: { en: "3麻 北侧待机 => 与1交换" },
+          number4: { en: "4麻 北侧待机 => 与2交换" },
+        },
       },
     ],
     timelineReplace: [
       {
         locale: "cn",
         missingTranslations: true,
-        replaceSync: {
-          "Comet": "[^:]+",
-          "Kokytos(?!')": "[^:]+(?!')",
-          "Kokytos's Echo": "[^:]+",
-        },
         replaceText: {
           "Aero IV": "飙风",
           "Archaic Demolish": "古代破碎拳",
@@ -184,4 +259,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
     ],
   });
+  Options.PerTriggerOptions = {
+    // 让1麻念全部提示文字而不是仅仅是序号
+    "P9S Limit Cut 1 Player Number": {
+      TTSText: function (data, matches, output) {
+        if (data.me !== matches.target || data.limitCutNumber === undefined) return;
+        return output[data.limitCutNumber]();
+      },
+    },
+  };
 }

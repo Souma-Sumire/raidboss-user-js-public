@@ -1,49 +1,70 @@
 # raidboss-user-js-public
 
-## HOW TO USE
+本套 JS 文件是在官方的基础上针对国服特色环境改造，使其更加符合国服宝宝体制。
 
-1. 确保 Cactbot Raidboss 悬浮窗正常工作。
-1. 添加悬浮窗用于职业分配：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`
-1. 加载正确版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
-1. 加载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest) ，用于下载本项目的文件。不出意外的话路径会自动识别，你只需要勾选需要的文件然后点[下载/更新]按钮，随后刷新Raidboss悬浮窗即可成功加载。
-1. 进入副本后，检查职业分配悬浮窗，正确设置**每个人**的职业位置。
+## 如何使用
 
-## 修改配置、开关功能
+### 前置依赖
 
-![image](https://github.com/Souma-Sumire/raidboss-user-js-public/assets/33572696/267c0cb7-233c-4c54-87ce-b9d0f49fd5d2)
+1. Cactbot Raidboss 悬浮窗正常工作。
+1. 职业分配悬浮窗：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`，进入副本后正确设置**每个人**的职业位置。
+1. （可选）加载正确版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)，用于执行标点等操作（如果你开了）。
 
-## 攻略适配
+### 下载文件
 
-- p6s：千星
-- p8s：菓子
-- 绝龙诗：莫古力全套。P2陨石默认整组换（可改），P5横排辉夜姬式（只有横排，没做鸡排）。
-- 绝欧米茄： [https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+#### 使用下载器（推荐）
 
-## 一键禁用Cactbot的默认触发器
+1. 加载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest)
+1. 勾选需要的文件然后点 [下载/更新] 按钮，程序会自动识别 user 文件夹并帮你下载最新的文件。
+1. 刷新 Raidboss 悬浮窗即可成功加载
 
-cactbot在0.29.22版本（国服暂未跟进）新增了Zone Trigger Defaults的特性，使得我们能够为特定区域打开/关闭触发器而不必为每个单独的触发器执行此操作。
+#### 手动下载
 
-只需如图所示即可一键禁用所有子触发器，非常好用。再也不用他更新一个禁用一个了。
+1. 手动点右上角下载
+1. 手动把对应文件放入你的 user 文件夹
+1. 刷新 Raidboss 悬浮窗即可成功加载
 
-![image](https://github.com/Souma-Sumire/raidboss-user-js-public/assets/33572696/f5cdf066-800a-43d9-b826-7ff57cec63b8)
+## 副本
 
-### 天国篇
+### 荒天篇
 
-- 首周自用分享，不会有太多自定义选项，也不会所有机制都报，能用就行。
-- 不更新，能用就用，用不了自己改一改，不保姆。
-- 1风火是nl式原版，纯优先级，没有考虑头顶的火。
+本次零式无任何标点功能。
+
+- P9S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1JM4y147Zc/)>)（game8）
+- P10S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1Ek4y1M7jt/)>)（game8）
+- P11S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1jk4y1V764/)>)（game8）
+- P12S：game8
+
+### 旧零式
+
+- P1S：通用
+- P2S：无
+- P3S：无
+- P4S：被窝攻略
+- P5S：无
+- P6S：千星
+- P7S：四风标点
+- P8S：菓子（青瓜）
+
+### 绝
+
+- 神兵：三连桶标点
+- 龙诗：莫古力
+- 欧米茄： 我自己的打法/莫古力/其他打法也可调整自定义选项实现，详情见 [腾讯文档](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
 
 ## 注意事项
 
-- **不要禁用触发器，如果你不需要他的提示文本，将对应输出改为空格即可。**
-- 不要在打本的中途重启或开启 ACT。
+- 在进入副本之前开启 ACT。
 - 小队内不可以存在重名玩家。
-- 不需要 MoreLog（CactbotSelf）插件。
 - 不保证兼容其他作者的同副本 JS 文件。
-- 悬浮窗的职能位置分配与小队列表的排序无关。
-- 建议卸载Triggernometry。
+- 排序与小队列表的显示顺序无关。
+- JS 与 Triggernometry 或 MoreLog 插件无关。（MoreLog 又名 CactbotSelf，但他与 Cactbot 官方没有关系，这种起名方式让普通用户十分头晕）
 
-## 交流/反馈
+## 修改配置、开关功能
 
-- 1 群：~~868116069~~（已满，别加了）
+Cactbot Config 面板
+![Cactbot Config](https://github.com/Souma-Sumire/raidboss-user-js-public/assets/33572696/267c0cb7-233c-4c54-87ce-b9d0f49fd5d2)
+
+## 反馈
+
 - 2 群：231937107
