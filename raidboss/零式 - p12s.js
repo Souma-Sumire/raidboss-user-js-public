@@ -236,6 +236,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         default: false,
       },
       { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "风火优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
+      {
+        id: "pantheismPriority",
+        comment: { en: '用"/"斜线分割' },
+        name: {
+          en: "本体踩塔优先级从左到右",
+        },
+        type: "string",
+        default: "MT/ST/H1/H2/D1/D2/D3/D4",
+      },
     ],
     initData: () => {
       return {
@@ -2756,7 +2765,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         suppressSeconds: 30,
         delaySeconds: 0.5,
         alertText: (data) => {
-          const 优先级 = ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"];
+          const 优先级 = (data.triggerSetConfig.pantheismPriority ?? "MT/ST/H1/H2/D1/D2/D3/D4").toUpperCase().split(/[\/\\,\.\>\<\|\:]/);
           const 消失因子 = data.souma.unstableFactor.filter(() => true).sort((a, b) => 优先级.indexOf(a.rp) - 优先级.indexOf(b.rp));
           const [闲1, 闲2] = data.party.partyNames_
             .filter((v) => !消失因子.find((n) => n.target === v))
