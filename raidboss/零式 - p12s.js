@@ -91,19 +91,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   const superchainNpcBaseIds = Object.values(superchainNpcBaseIdMap);
   const whiteFlameDelayOutputStrings = {
     delay1: {
-      en: "上前！",
+      en: "引导激光！",
     },
     delay2: {
-      en: "等1只小怪",
+      en: "等1会",
     },
     delay3: {
-      en: "等2只小怪",
+      en: "等2会",
     },
     delay4: {
-      en: "等3只小怪",
+      en: "等3会",
     },
     delay5: {
-      en: "等4只小怪",
+      en: "等4会",
     },
   };
   const conceptPairMap = {
@@ -234,6 +234,20 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         type: "checkbox",
         default: false,
+      },
+      {
+        id: "theHandOfParas",
+        name: {
+          en: "立方体后的激光诱导站位",
+        },
+        type: "select",
+        options: {
+          en: {
+            先K后X: "KX",
+            全程X: "XX",
+          },
+        },
+        default: "KX",
       },
       { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "风火优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
       {
@@ -1268,15 +1282,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: {},
         condition: Conditions.targetIsYou(),
         durationSeconds: 20,
-        alertText: (data, matches, output) => {
+        response: (data, matches, output) => {
           const id = getHeadmarkerId(data, matches);
           if (!limitCutIds.includes(id)) return;
           const num = limitCutMap[id];
           if (num === undefined) return;
           data.souma.limitCutNumber = num;
-          return output[num.toString()]();
+          return {
+            alertText: output[num.toString()](),
+            tts: output.tts({ num: num }),
+          };
         },
         outputStrings: {
+          tts: { en: "${num}麻" },
           1: { en: "1麻：下 => 分摊 => 转 => 3喷" },
           2: { en: "2麻：上偏右 => 分摊 => 转 => 4喷" },
           3: { en: "3麻：下 => 分摊 => 转 => 3喷" },
@@ -1354,10 +1372,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         response: (data, _matches, output) => {
           output.responseOutputStrings = {
             baitLaser: {
-              en: "${delay}引导激光",
+              en: "${delay}",
             },
             firstWhiteFlame: {
-              en: "(五七${delay})",
+              en: "(五七)",
             },
             ...whiteFlameDelayOutputStrings,
           };
@@ -1369,9 +1387,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             5: output.delay5(),
           };
           const delayStr = delayMap[data.souma.lcWhiteFlameDelay?.[0] ?? 1];
-          const infoText = output.firstWhiteFlame({ delay: delayStr });
+          const infoText = output.firstWhiteFlame();
           if (data.souma.limitCutNumber === 5 || data.souma.limitCutNumber === 7) {
-            return { alertText: output.baitLaser({ delay: delayStr }) };
+            return { alarmText: output.baitLaser({ delay: delayStr }) };
           }
           return { infoText: infoText, tts: null };
         },
@@ -1389,16 +1407,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         response: (data, _matches, output) => {
           output.responseOutputStrings = {
             baitLaser: {
-              en: "${delay}引导激光",
+              en: "${delay}",
             },
             secondWhiteFlame: {
-              en: "(六八${delay})",
+              en: "(六八)",
             },
             thirdWhiteFlame: {
-              en: "(一三${delay})",
+              en: "(一三)",
             },
             fourthWhiteFlame: {
-              en: "(二四${delay})",
+              en: "(二四)",
             },
             ...whiteFlameDelayOutputStrings,
           };
@@ -1413,21 +1431,22 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           const baitLaser = output.baitLaser({ delay: delayStr });
           if (data.souma.whiteFlameCounter === 1) {
             const infoText = output.secondWhiteFlame({ delay: delayStr });
-            if (data.souma.limitCutNumber === 6 || data.souma.limitCutNumber === 8) return { alertText: baitLaser, infoText: infoText };
-            return { infoText: infoText };
+            if (data.souma.limitCutNumber === 6 || data.souma.limitCutNumber === 8) return { alarmText: baitLaser, infoText: infoText };
+            return { infoText: infoText, tts: null };
           }
           if (data.souma.whiteFlameCounter === 2) {
             const infoText = output.thirdWhiteFlame({ delay: delayStr });
-            if (data.souma.limitCutNumber === 1 || data.souma.limitCutNumber === 3) return { alertText: baitLaser, infoText: infoText };
-            return { infoText: infoText };
+            if (data.souma.limitCutNumber === 1 || data.souma.limitCutNumber === 3) return { alarmText: baitLaser, infoText: infoText };
+            return { infoText: infoText, tts: null };
           }
           if (data.souma.whiteFlameCounter === 3) {
             const infoText = output.fourthWhiteFlame({ delay: delayStr });
-            if (data.souma.limitCutNumber === 2 || data.souma.limitCutNumber === 4) return { alertText: baitLaser, infoText: infoText };
-            return { infoText: infoText };
+            if (data.souma.limitCutNumber === 2 || data.souma.limitCutNumber === 4) return { alarmText: baitLaser, infoText: infoText };
+            return { infoText: infoText, tts: null };
           }
         },
       },
+
       {
         id: "P12S Superchain Theory Collect",
         type: "AddedCombatant",
@@ -1676,7 +1695,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           combined: {
-            en: "${dir}（躲避直线）稍后${mechanic}",
+            en: "${dir} 躲直线 => ${mechanic}",
           },
           east: Outputs.east,
           west: Outputs.west,
@@ -1729,10 +1748,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             en: "两人分摊",
           },
           inside: {
-            en: "进内侧 (躲激光)",
+            en: "进内侧",
           },
           outside: {
-            en: "回外侧 (躲激光)",
+            en: "回外侧",
           },
           avoid: {
             en: "躲激光",
@@ -1935,7 +1954,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         response: (data, matches, output) => {
           output.responseOutputStrings = {
             classic1: {
-              en: "${column}, ${row} ${intercept}",
+              en: "${column}, ${row} ${intercept} => ${safeZone}",
+            },
+            alphaSafe: {
+              en: "一会去上边",
+            },
+            betaSafe: {
+              en: "一会去下边",
             },
             classic2initial: {
               en: "先去 ${column}, ${row} + ${intercept}",
@@ -2099,6 +2124,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               column: output[columnOutput](),
               row: output[rowOutput](),
               intercept: output[myInterceptOutput](),
+              safeZone: output[data.souma.conceptDebuff + "Safe"](),
             });
             return { alertText: outputStr };
           }
@@ -2140,21 +2166,31 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (data.souma.conceptDebuff === undefined) return output.default();
           data.souma.conceptResult =
             data.souma.conceptDebuff === "alpha"
-              ? output["alpha" + "Col" + (data.souma.classical1InitialColumn + 1)]()
-              : output["beta" + "Col" + (data.souma.classical1InitialColumn + 1)]();
-          return output.text({ action: data.souma.conceptResult });
+              ? output["alpha" + "Col" + (data.souma.classical1InitialColumn + 1) + data.triggerSetConfig.theHandOfParas]()
+              : output["beta" + "Col" + (data.souma.classical1InitialColumn + 1) + data.triggerSetConfig.theHandOfParas]();
+          return output.text({ debuff: output[data.souma.conceptDebuff](), action: data.souma.conceptResult });
         },
         run: (data) => delete data.souma.conceptDebuff,
         outputStrings: {
-          text: { en: "远离方块 => 引导射线 ${action}" },
-          alphaCol1: { en: "(向上左)" },
-          alphaCol2: { en: "(向上右)" },
-          alphaCol3: { en: "(向上左)" },
-          alphaCol4: { en: "(向上右)" },
-          betaCol1: { en: "(向下左)" },
-          betaCol2: { en: "(向下右)" },
-          betaCol3: { en: "(向下左)" },
-          betaCol4: { en: "(向下右)" },
+          text: { en: "${debuff}空地 => 引导射线 ${action}" },
+          alpha: { en: "上边" },
+          beta: { en: "下边" },
+          alphaCol1KX: { en: "(左上)" },
+          alphaCol2KX: { en: "(正上)" },
+          alphaCol3KX: { en: "(正上)" },
+          alphaCol4KX: { en: "(右上)" },
+          betaCol1KX: { en: "(左下)" },
+          betaCol2KX: { en: "(正下)" },
+          betaCol3KX: { en: "(正下)" },
+          betaCol4KX: { en: "(右下)" },
+          alphaCol1XX: { en: "(左上)" },
+          alphaCol2XX: { en: "(右上)" },
+          alphaCol3XX: { en: "(左上)" },
+          alphaCol4XX: { en: "(右上)" },
+          betaCol1XX: { en: "(左下)" },
+          betaCol2XX: { en: "(右下)" },
+          betaCol3XX: { en: "(左下)" },
+          betaCol4XX: { en: "(右下)" },
           default: { en: "引导射线" },
         },
       },
@@ -2187,14 +2223,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           text: { en: "引导射线 ${action} => 远离方块" },
-          alphaCol1: { en: "(向上左)" },
-          alphaCol2: { en: "(向上右)" },
-          alphaCol3: { en: "(向上左)" },
-          alphaCol4: { en: "(向上右)" },
-          betaCol1: { en: "(向下左)" },
-          betaCol2: { en: "(向下右)" },
-          betaCol3: { en: "(向下左)" },
-          betaCol4: { en: "(向下右)" },
+          alphaCol1: { en: "(左上)" },
+          alphaCol2: { en: "(右上)" },
+          alphaCol3: { en: "(左上)" },
+          alphaCol4: { en: "(右上)" },
+          betaCol1: { en: "(左下)" },
+          betaCol2: { en: "(右下)" },
+          betaCol3: { en: "(左下)" },
+          betaCol4: { en: "(右下)" },
           default: {
             en: "引导射线",
           },
@@ -2285,7 +2321,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             safeDirs = safeDirs.filter((dir) => dir !== cloneDir && dir !== pairedDir);
           });
           if (safeDirs.length !== 2) return;
-          const [dir1, dir2] = safeDirs.sort();
+          const sortArr = ["W", "NW", "N", "NE", "SW", "S", "SE", "E"].map((v) => "dir" + v);
+          const [dir1, dir2] = safeDirs.sort((a, b) => sortArr.indexOf(a) - sortArr.indexOf(b));
           if (dir1 === undefined || dir2 === undefined) return;
           return output.combined({ dir1: output[dir1](), dir2: output[dir2]() });
         },
@@ -2410,9 +2447,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: { id: "831A", capture: false },
         response: (data, _match, output) => {
           output.responseOutputStrings = {
-            tankBusterCleavesOnYou: Outputs.tankBusterCleavesOnYou,
-            tankBusterCleaves: Outputs.tankBusterCleaves,
-            avoidTankCleaves: Outputs.avoidTankCleaves,
+            tankBusterCleavesOnYou: { en: "坦克死刑 避开人群半场" },
+            tankBusterCleaves: { en: "坦克死刑" },
+            avoidTankCleaves: { en: "躲避坦克半场" },
           };
           if (data.soumapalladionGrapsTarget === data.me) return { alertText: output.tankBusterCleavesOnYou() };
           if (data.role === "tank" || data.role === "healer" || data.job === "BLU") return { alertText: output.tankBusterCleaves() };
@@ -2443,7 +2480,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             beacon_tank: { en: "预备火 站第三横线偏左" },
             beacon_healer: { en: "预备火 站第三横线偏左" },
             beacon_dps: { en: "预备火 站第三横线偏右" },
-            noBeacon: { en: "CD中间等待" },
+            noBeacon: { en: "CD中间" },
           };
           if (data.souma.caloric1First.length !== 2) return;
           const index = data.souma.caloric1First.indexOf(data.me);
@@ -2487,7 +2524,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           none: {
-            en: "与火分摊",
+            en: "找火分摊",
           },
           wind: {
             en: "风点名散开",
@@ -2504,12 +2541,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         suppressSeconds: 1,
         response: (data, _matches, output) => {
           output.responseOutputStrings = {
-            fire1: { en: "火1 左上A点偏上" },
-            fire2: { en: "火2 右上B点偏上" },
-            fire3: { en: "火3 右C点" },
-            fire4: { en: "火4 左D点" },
-            wind3: { en: "风3 右下C点" },
-            wind4: { en: "风4 左下D点" },
+            fire1: { en: "左上A点偏上（火1）" },
+            fire2: { en: "右上B点偏上（火2）" },
+            fire3: { en: "右C点（火3）" },
+            fire4: { en: "左D点（火4）" },
+            wind3: { en: "右下C点（风3）" },
+            wind4: { en: "左下D点（风4）" },
             windBeacon: { en: "平移" },
           };
           const sortArr = (data.triggerSetConfig.windFirePriority ?? "MT/ST/H1/H2/D1/D2/D3/D4").toUpperCase().split(/[\/\\,\.\>\<\|\:]/);
@@ -2764,7 +2801,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         durationSeconds: 12,
         suppressSeconds: 30,
         delaySeconds: 0.5,
-        alertText: (data) => {
+        alertText: (data, _matches, output) => {
           const 优先级 = (data.triggerSetConfig.pantheismPriority ?? "MT/ST/H1/H2/D1/D2/D3/D4").toUpperCase().split(/[\/\\,\.\>\<\|\:]/);
           const 消失因子 = data.souma.unstableFactor.filter(() => true).sort((a, b) => 优先级.indexOf(a.rp) - 优先级.indexOf(b.rp));
           const [闲1, 闲2] = data.party.partyNames_
@@ -2787,34 +2824,52 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             .map((v) => v.target);
           switch (data.me) {
             case 单1:
-              data.souma.pantheismLastText = "踩南塔";
-              return "单1：踩左半场1塔";
+              data.souma.pantheismLastText = output.南塔();
+              return output.单1();
             case 单2:
-              data.souma.pantheismLastText = "踩南塔";
-              return "单2：踩右半场1塔";
+              data.souma.pantheismLastText = output.南塔();
+              return output.单2();
             case 黑1:
-              data.souma.pantheismLastText = "踩白";
-              return "短黑：踩白1塔";
+              data.souma.pantheismLastText = output.白塔();
+              data.souma.pantheismUndetermined = { color: "白", round: 1 };
+              return output.短黑();
             case 白1:
-              data.souma.pantheismLastText = "踩黑";
-              return "短白：踩黑1塔";
+              data.souma.pantheismLastText = output.黑塔();
+              data.souma.pantheismUndetermined = { color: "黑", round: 1 };
+              return output.短白();
             case 黑2:
-              data.souma.pantheismLastText = "踩白";
-              return "长黑：白半场等待 => 踩第二轮南塔";
+              data.souma.pantheismLastText = output.白塔();
+              data.souma.pantheismUndetermined = { color: "白", round: 2 };
+              return output.长黑();
             case 白2:
-              data.souma.pantheismLastText = "踩黑";
-              return "长白：黑半场等待 => 踩第二轮南塔";
+              data.souma.pantheismLastText = output.黑塔();
+              data.souma.pantheismUndetermined = { color: "黑", round: 2 };
+              return output.长白();
             case 闲1:
-              data.souma.pantheismLastText = "踩北塔";
+              data.souma.pantheismLastText = output.北塔();
               data.souma.pantheismIsIdle = true;
-              return "闲1：左半场等待 => 踩北塔";
+              return output.闲1();
             case 闲2:
               data.souma.pantheismIsIdle = true;
-              data.souma.pantheismLastText = "踩北塔";
-              return "闲2：右半场等待 => 踩北塔";
+              data.souma.pantheismLastText = output.北塔();
+              return output.闲2();
             default:
               return;
           }
+        },
+        outputStrings: {
+          南塔: { en: "踩南塔" },
+          北塔: { en: "踩北塔" },
+          黑塔: { en: "踩黑" },
+          白塔: { en: "踩白" },
+          单1: { en: "单1：踩左半场1塔" },
+          单2: { en: "单2：踩右半场1塔" },
+          短黑: { en: "短黑：踩白1塔" },
+          短白: { en: "短白：踩黑1塔" },
+          长黑: { en: "长黑：白半场等待 => 踩第二轮南塔" },
+          长白: { en: "长白：黑半场等待 => 踩第二轮南塔" },
+          闲1: { en: "闲1：左半场等待 => 踩第二轮北塔" },
+          闲2: { en: "闲2：右半场等待 => 踩第二轮北塔" },
         },
       },
       {
@@ -2842,6 +2897,23 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         outputStrings: {
           idle: { en: "截线" },
           text: { en: "去南边" },
+        },
+      },
+      {
+        id: "P12S Souma 不确定的黑白塔",
+        type: "StartsUsing",
+        netRegex: { id: "8343", capture: true },
+        suppressSeconds: 999,
+        infoText: (data, matches, output) => {
+          if (data.souma.pantheismUndetermined === undefined) return;
+          const tower = (parseFloat(matches.x) < 100 ? { 白: "left", 黑: "right" } : { 白: "right", 黑: "left" })[data.souma.pantheismUndetermined.color];
+          return output[tower + data.souma.pantheismUndetermined.round]();
+        },
+        outputStrings: {
+          left1: { en: "左1" },
+          left2: { en: "左等待 " },
+          right1: { en: "右1" },
+          right2: { en: "右等待" },
         },
       },
     ],
