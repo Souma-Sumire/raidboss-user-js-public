@@ -2347,7 +2347,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             en: "拉断连线",
           },
           uav2: {
-            en: "拉断连线 + ${geocentrism}",
+            en: "拉断连线 => ${geocentrism} + 躲小怪激光",
           },
           unknown: Outputs.unknown,
         },
@@ -2563,14 +2563,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             fireOnMe: {
               en: "去中间（火点名） ",
             },
-            fireOn: {
-              en: "火点 ${player}",
-            },
+            fireOn: { en: "火点 ${player}" },
+            fireSwitch: { en: "和 ${player} 换位" },
           };
           if (data.souma.decOffset === undefined) return;
           const id = getHeadmarkerId(data, matches);
           if (id !== headmarkers.caloric2InitialFire) return;
           if (data.me === matches.target) return { alarmText: output.fireOnMe() };
+          if (getRpByName(data, data.me) === "MT") {
+            return { alertText: output.fireSwitch({ player: `${data.ShortName(matches.target)}(${getRpByName(data, matches.target)})` }) };
+          }
           return { infoText: output.fireOn({ player: data.ShortName(matches.target) }) };
         },
       },
