@@ -1,11 +1,3 @@
-// 说明：必须同时加载"souma拓展运行库.js" 并阅读其内部的说明正确配置小队位置。（直接下最新的，有多新就用多新的）
-// 说明：几乎所有功能都依赖鲶鱼精邮差，版本号为1.3.2.4及以上。别用你那上古版本了。https://github.com/Natsukage/PostNamazu/releases
-// 使用 Cactbot Config 面板修改配置，而不要修改源码。
-// 启用：true、1、是、开
-// 禁用：false、0、否、关
-// 不可以与其他人的同副本JS文件混用，这是毋庸置疑的。
-// 一些缺陷：如果你开本地标点最好全开，要么就全正常小队标，如果本地与正常参杂的话，我不敢保证自动清理标记功能正常工作，可能需要你每次点完名手动清理头顶标。这是服务器的一些判定的原因导致的，无法完美解决。
-
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   const defaultSettings = {
     隆起数字标记开关: { en: "关" },
@@ -229,11 +221,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: { id: "794C", capture: false },
         response: Responses.getOut(),
         run: (data) => {
-          data.soumaFL.clearMark(
-            data.soumaSettings.小蛇处理顺序仅本地标点 &&
-              data.soumaSettings.大蛇大圈仅本地标点 &&
-              data.soumaSettings.大蛇分摊仅本地标点,
-          );
+          data.soumaFL.clearMark(data.soumaSettings.小蛇处理顺序仅本地标点 && data.soumaSettings.大蛇大圈仅本地标点 && data.soumaSettings.大蛇分摊仅本地标点);
         },
       },
       {
@@ -284,8 +272,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             let snakeMap = [];
             snake.map((v) => {
               if (Math.abs(parseInt(v.x) - 110.6) <= 5 && Math.abs(parseInt(v.y) - 110.6) <= 5) snakeMap.push("3");
-              else if (Math.abs(parseInt(v.x) - 89.39) <= 5 && Math.abs(parseInt(v.y) - 110.61) <= 5)
-                snakeMap.push("4");
+              else if (Math.abs(parseInt(v.x) - 89.39) <= 5 && Math.abs(parseInt(v.y) - 110.61) <= 5) snakeMap.push("4");
               else if (Math.abs(parseInt(v.x) - 89.39) <= 5 && Math.abs(parseInt(v.y) - 89.39) <= 5) snakeMap.push("1");
               else if (Math.abs(parseInt(v.x) - 110.6) <= 5 && Math.abs(parseInt(v.y) - 89.39) <= 5) snakeMap.push("2");
               else if (Math.abs(parseInt(v.x) - 100) <= 5 && Math.abs(parseInt(v.y) - 85) <= 5) snakeMap.push("A");
@@ -450,8 +437,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         run: (data) => {
           if (data.soumaSettings.小蛇场地标点) {
             data.soumaFL.doQueueActions([
-              // { c: "DoWaymarks", p: "save", d: 0 },
-              { c: "DoWaymarks", p: "clear" },
+              { c: "DoWaymarks", p: "save", d: 0 },
+              { c: "DoWaymarks", p: "clear", d: 500 },
             ]);
           }
         },
@@ -507,8 +494,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: NetRegexes.gainsEffect({ effectId: ["CFF"] }),
         delaySeconds: 39,
         condition: (data) => data.soumaSettings.大蛇分摊标记开关 || data.soumaSettings.大蛇大圈标记开关,
-        run: (data) =>
-          data.soumaFL.clearMark(data.soumaSettings.大蛇分摊仅本地标点 && data.soumaSettings.大蛇大圈仅本地标点),
+        run: (data) => data.soumaFL.clearMark(data.soumaSettings.大蛇分摊仅本地标点 && data.soumaSettings.大蛇大圈仅本地标点),
       },
       {
         id: "P8S Snake 2 Illusory Creation",
@@ -670,7 +656,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: NetRegexes.gainsEffect({ effectId: "D54" }),
         preRun: (data, matches) => {
           data.souma本体紫色.push(matches.target);
-          // data.soumaFL.doQueueActions([{ c: "DoWaymarks", p: "save", d: 0 }]);
+          data.soumaFL.doQueueActions([{ c: "DoWaymarks", p: "save", d: 0 }]);
         },
       },
       {
@@ -695,9 +681,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
                     ...data.soumaSettings.扫码特制究极缝合式冰火动脑人优先级.split("/"),
                     ...data.soumaSettings.扫码特制究极缝合式冰火动脑人补位优先级与站位无关.split("/"),
                   ];
-            const resArr = data.souma本体紫色
-              .map((v) => data.soumaFL.getRpByName(data, v))
-              .sort((a, b) => jobSort.indexOf(a) - jobSort.indexOf(b));
+            const resArr = data.souma本体紫色.map((v) => data.soumaFL.getRpByName(data, v)).sort((a, b) => jobSort.indexOf(a) - jobSort.indexOf(b));
             return output.text({ rp1: resArr[0], rp2: resArr[1] });
           }
         },
@@ -715,10 +699,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: (data, _matches, output) => {
           const purpleRole = data.party.nameToRole_[data.souma本体紫色[0]] === "dps" ? "dps" : "tn";
           const povRole = data.role === "dps" ? "dps" : "tn";
-          const sortArr =
-            purpleRole === "dps"
-              ? data.soumaSettings.冰火优先级DPS.split("/")
-              : data.soumaSettings.冰火优先级TN.split("/");
+          const sortArr = purpleRole === "dps" ? data.soumaSettings.冰火优先级DPS.split("/") : data.soumaSettings.冰火优先级TN.split("/");
           const purplesRP = data.souma本体紫色.map((v) => data.soumaFL.getRpByName(data, v));
           const surplusRP = sortArr.filter((v) => !purplesRP.includes(v));
           const purplesNames = surplusRP.map((v) => data.soumaFL.getNameByRp(data, v));
@@ -779,14 +760,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         suppressSeconds: 1,
         response: (data, _matches, output) => {
           const needHelps = data.soumaSettings.扫码特制究极缝合式冰火动脑人补位优先级与站位无关.split("/");
-          const purples = data.souma本体紫色
-            .map((v) => data.soumaFL.getRpByName(data, v))
-            .sort((a, b) => needHelps.indexOf(a) - needHelps.indexOf(b));
+          const purples = data.souma本体紫色.map((v) => data.soumaFL.getRpByName(data, v)).sort((a, b) => needHelps.indexOf(a) - needHelps.indexOf(b));
           const povRP = data.soumaFL.getRpByName(data, data.me);
           const brains = data.soumaSettings.扫码特制究极缝合式冰火动脑人优先级.split("/");
-          const purplesHelps = purples
-            .filter((v) => !brains.includes(v))
-            .sort((a, b) => needHelps.indexOf(a) - needHelps.indexOf(b));
+          const purplesHelps = purples.filter((v) => !brains.includes(v)).sort((a, b) => needHelps.indexOf(a) - needHelps.indexOf(b));
           if (purples.includes(povRP)) return { infoText: output.purple() };
           else if (needHelps.includes(povRP)) return { infoText: output[povRP]() };
           else {
@@ -888,8 +865,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           let m = data.soumaFL.getpartyNamesGroupAllDps(data).includes(matches.target) ? "attack" : "bind";
           m = m + data.souma灰烬;
           if (m === "bind4") m = "attack5";
-          if (data.soumaSettings.灰烬标点开关)
-            data.soumaFL.mark(matches.targetId, m, data.soumaSettings.灰烬标点仅本地标点);
+          if (data.soumaSettings.灰烬标点开关) data.soumaFL.mark(matches.targetId, m, data.soumaSettings.灰烬标点仅本地标点);
           if (m === "attack5") {
             let queue = [{ c: "qid", p: "P8S Souma Public Queue Mark", d: 12000 }];
             if (data.soumaSettings.灰烬标点仅本地标点) {
@@ -963,13 +939,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         tts: null,
       },
-      // {
-      //   id: "P8S Souma 支配者的一击保存标点",
-      //   type: "StartsUsing",
-      //   netRegex: { id: "79D9" },
-      //   suppressSeconds: 999,
-      //   preRun: (data) => data.soumaFL.placeSave(),
-      // },
+      {
+        id: "P8S Souma 支配者的一击保存标点",
+        type: "StartsUsing",
+        netRegex: { id: "79D9" },
+        suppressSeconds: 999,
+        preRun: (data) => data.soumaFL.placeSave(),
+      },
       {
         id: "P8S Souma Dominion",
         type: "StartsUsing",
@@ -996,12 +972,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             const 第1轮塔 = data.party.partyNames_.filter((v) => !data.souma狂暴.includes(v));
             const 第2轮塔 = data.souma狂暴;
             const sortArr = data.soumaSettings.支配者的一击排队优先级.split("/");
-            const 第1轮塔RPSorted = 第1轮塔
-              .map((v) => data.soumaFL.getRpByName(data, v))
-              .sort((a, b) => sortArr.indexOf(a) - sortArr.indexOf(b));
-            const 第2轮塔RPSorted = 第2轮塔
-              .map((v) => data.soumaFL.getRpByName(data, v))
-              .sort((a, b) => sortArr.indexOf(a) - sortArr.indexOf(b));
+            const 第1轮塔RPSorted = 第1轮塔.map((v) => data.soumaFL.getRpByName(data, v)).sort((a, b) => sortArr.indexOf(a) - sortArr.indexOf(b));
+            const 第2轮塔RPSorted = 第2轮塔.map((v) => data.soumaFL.getRpByName(data, v)).sort((a, b) => sortArr.indexOf(a) - sortArr.indexOf(b));
             const 第1轮塔IDs = 第1轮塔RPSorted.map((v) => data.soumaFL.getHexIdByRp(data, v));
             const 第2轮塔IDs = 第2轮塔RPSorted.map((v) => data.soumaFL.getHexIdByRp(data, v));
             const local = data.soumaSettings.支配者的一击仅本地标点;
@@ -1094,8 +1066,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         suppressSeconds: 1,
         durationSeconds: 40,
         response: (data, _matches, output) => {
-          for (const p of data.party.partyNames_)
-            if (data.soumaConcept[p] === undefined && data.soumaSplicer[p] === undefined) data.soumaNoBuffNames.push(p);
+          for (const p of data.party.partyNames_) if (data.soumaConcept[p] === undefined && data.soumaSplicer[p] === undefined) data.soumaNoBuffNames.push(p);
           const concept = data.soumaConcept[data.me];
           const splicer = data.soumaSplicer[data.me];
           const singleConceptMap = {
@@ -1211,9 +1182,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (tower1 === undefined) return;
           const myConcept = data.soumaConcept[data.me];
           if (data.soumaArcaneChannelCount === 0 && data.soumaSettings.一运塔发宏) {
-            data.soumaFL.doTextCommand(
-              `/${data.soumaSettings.一运塔发宏的频道.toLowerCase()} ${output[tower1 + "Macro"]()}`,
-            );
+            data.soumaFL.doTextCommand(`/${data.soumaSettings.一运塔发宏的频道.toLowerCase()} ${output[tower1 + "Macro"]()}`);
           }
           if (myConcept !== "alpha" && myConcept !== "beta" && myConcept !== "gamma") {
             if (data.soumaArcaneChannelCount !== 3) {
@@ -1253,8 +1222,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
                   letter: output[otherConcept](),
                 }),
               };
-            if (name2 === undefined)
-              return { alertText: output.colorTowerMergePlayer({ color: color, player: name1 }) };
+            if (name2 === undefined) return { alertText: output.colorTowerMergePlayer({ color: color, player: name1 }) };
             return {
               alertText: output.colorTowerMergePlayers({
                 color: color,
@@ -1268,9 +1236,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (myConcept === doubled) {
             const [concept1, concept2] = [...perfectedConcepts].filter((x) => x !== myConcept);
             if (concept1 === undefined || concept2 === undefined) throw new UnreachableCode();
-            const [name1, name2] = [...conceptToPlayers[concept1], ...conceptToPlayers[concept2]].map((x) =>
-              data.ShortName(x),
-            );
+            const [name1, name2] = [...conceptToPlayers[concept1], ...conceptToPlayers[concept2]].map((x) => data.ShortName(x));
             if (name1 === undefined || name2 === undefined)
               return {
                 alertText: output.towerMergeLetters({
