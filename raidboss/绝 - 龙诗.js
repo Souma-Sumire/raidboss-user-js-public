@@ -159,13 +159,13 @@ Options.Triggers.push({
     },
   ],
   triggers: [
-    {
-      id: "刷新页面",
-      netRegex: NetRegexes.echo({ line: "reload", capture: false }),
-      run: () => {
-        location.reload();
-      },
-    },
+    // {
+    //   id: "刷新页面",
+    //   netRegex: NetRegexes.echo({ line: "reload", capture: false }),
+    //   run: () => {
+    //     location.reload();
+    //   },
+    // },
     {
       id: "DSR Phase Tracker",
       netRegex: NetRegexes.startsUsing({
