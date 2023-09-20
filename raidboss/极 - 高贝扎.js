@@ -27,6 +27,8 @@ Options.Triggers.push({
       terrastormCombatantDirs: [],
       shadow: [],
       headMarkers: [],
+      combatantData: [],
+      galaText: { n1: "", n2: "", n3: "", n4: "" },
     };
   },
   triggers: [
@@ -54,7 +56,7 @@ Options.Triggers.push({
       netRegex: { id: "01D9" },
       condition: Conditions.targetIsYou(),
       preRun: (data, matches) => data.headMarkers.push(matches.target),
-      infoText: (_data, _matches, output) => output.text(),
+      alarmText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
           en: "Flare on you -> Away from Group",
@@ -70,10 +72,13 @@ Options.Triggers.push({
       id: "GolbezEx HeadMarker Unmarked",
       type: "HeadMarker",
       netRegex: { id: ["01D9", "01DA"], capture: false },
-      condition: (data) => !data.headMarkers.includes(data.me),
       delaySeconds: 0.5,
       suppressSeconds: 1,
-      infoText: (_data, _matches, output) => output.unmarked(),
+      infoText: (data, _matches, output) => {
+        if (!data.headMarkers.includes(data.me)) {
+          return output.unmarked();
+        }
+      },
       run: (data) => (data.headMarkers.length = 0),
       outputStrings: {
         unmarked: {
@@ -97,65 +102,105 @@ Options.Triggers.push({
       type: "Ability",
       netRegex: { id: ["8452", "844F", "8450", "8451"], capture: false },
       condition: (data) => data.shadow.length === 4,
-      delaySeconds: 2.157 + 0.5,
-      durationSeconds: 15,
-      promise: async (data, _matches, output) => {
-        const galeSpheres = (
-          await callOverlayHandler({
-            call: "getCombatants",
-          })
-        ).combatants.filter((v) => v.BNpcID === 16217 && v.BNpcNameID === 12368);
+      delaySeconds: 3,
+      durationSeconds: 14,
+      promise: async (data) => {
+        data.combatantData = [];
+        data.combatantData = (await callOverlayHandler({ call: "getCombatants" })).combatants;
+      },
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          text: { en: "${n1} => ${n2} => ${n3} => ${n4}" },
+          col1: { en: "leftmost", cn: "最左" },
+          row1: { en: "upmost", cn: "最上" },
+          col3: { en: "midCol", cn: "中间列" },
+          row3: { en: "midLine", cn: "中间行" },
+          col5: { en: "rightmost", cn: "最右" },
+          row5: { en: "downmost", cn: "最下" },
+        };
+        const galeSpheres = data.combatantData.filter((v) => v.BNpcID === 16217 && v.BNpcNameID === 12368);
         const spheres = galeSpheres.map((v) => {
           return {
-            col: galePos.indexOf(v.PosX),
-            row: galePos.indexOf(v.PosY),
+            col: galePos.findIndex((g) => Math.abs(v.PosX) - g < 0.5),
+            row: galePos.findIndex((g) => Math.abs(v.PosY) - g < 0.5),
           };
         });
         const top = spheres.filter((v) => v.row === 0).map((v) => ({ ...v, dir: "N" }));
         const floor = spheres.filter((v) => v.row === 7).map((v) => ({ ...v, dir: "S" }));
         const left = spheres.filter((v) => v.col === 0).map((v) => ({ ...v, dir: "W" }));
         const right = spheres.filter((v) => v.col === 7).map((v) => ({ ...v, dir: "E" }));
-        if (top.length < 4 || left.length < 4 || floor.length < 4 || right.length < 4) throw new UnreachableCode();
+        if (top.length < 4 || left.length < 4 || floor.length < 4 || right.length < 4) {
+          console.warn(galeSpheres, spheres);
+          console.error(top, floor, left, right);
+          throw new UnreachableCode();
+        }
         const topSafe = galeSafePos.find((p) => !top.find((f) => f.col === p));
         const floorSafe = galeSafePos.find((p) => !floor.find((f) => f.col === p));
         const leftSafe = galeSafePos.find((p) => !left.find((f) => f.row === p));
         const rightSafe = galeSafePos.find((p) => !right.find((f) => f.row === p));
-        if (!(topSafe && floorSafe && leftSafe && rightSafe)) throw new UnreachableCode();
-        data.galaSpheresSafe = {
+        if (!(topSafe && floorSafe && leftSafe && rightSafe)) {
+          console.error(topSafe, floorSafe, leftSafe, rightSafe);
+          throw new UnreachableCode();
+        }
+        const galaSpheresSafe = {
           N: output["col" + topSafe.toString()](),
           S: output["col" + floorSafe.toString()](),
           W: output["row" + leftSafe.toString()](),
           E: output["row" + rightSafe.toString()](),
         };
-      },
-      infoText: (data, _matches, output) => {
-        return output.text({
-          n1: data.galaSpheresSafe[data.shadow[0]],
-          n2: data.galaSpheresSafe[data.shadow[1]],
-          n3: data.galaSpheresSafe[data.shadow[2]],
-          n4: data.galaSpheresSafe[data.shadow[3]],
-        });
+        data.galaText = {
+          n1: galaSpheresSafe[data.shadow[0]],
+          n2: galaSpheresSafe[data.shadow[1]],
+          n3: galaSpheresSafe[data.shadow[2]],
+          n4: galaSpheresSafe[data.shadow[3]],
+        };
+        return {
+          infoText: output.text({
+            n1: data.galaText.n1,
+            n2: data.galaText.n2,
+            n3: data.galaText.n3,
+            n4: data.galaText.n4,
+          }),
+          tts: data.galaText.n1,
+        };
       },
       run: (data) => {
-        data.galaSpheresSafe = undefined;
         data.shadow.length = 0;
       },
-      outputStrings: {
-        text: { en: "${n1} → ${n2} → ${n3} → ${n4}" },
-        col1: { en: "leftmost", cn: "最左" },
-        row1: { en: "upmost", cn: "最上" },
-        col3: { en: "midCol", cn: "中间列" },
-        row3: { en: "midLine", cn: "中间行" },
-        col5: { en: "rightmost", cn: "最右" },
-        row5: { en: "downmost", cn: "最下" },
-      },
+    },
+    {
+      id: "GolbezEx Golbez's Shadow 2",
+      type: "Ability",
+      netRegex: { id: ["8452", "844F", "8450", "8451"], capture: false },
+      condition: (data) => data.shadow.length === 4,
+      delaySeconds: 3 + 3.5,
+      infoText: (data) => data.galaText.n2,
+      outputStrings: { text: { en: "" } },
+    },
+    {
+      id: "GolbezEx Golbez's Shadow 3",
+      type: "Ability",
+      netRegex: { id: ["8452", "844F", "8450", "8451"], capture: false },
+      condition: (data) => data.shadow.length === 4,
+      delaySeconds: 3 + 3.5 * 2,
+      infoText: (data) => data.galaText.n3,
+      outputStrings: { text: { en: "" } },
+    },
+    {
+      id: "GolbezEx Golbez's Shadow 4",
+      type: "Ability",
+      netRegex: { id: ["8452", "844F", "8450", "8451"], capture: false },
+      condition: (data) => data.shadow.length === 4,
+      delaySeconds: 3 + 3.5 * 3,
+      infoText: (data) => data.galaText.n4,
+      outputStrings: { text: { en: "" } },
     },
     {
       id: "GolbezEx Azdaja's Shadow Out",
       type: "StartsUsing",
       netRegex: { id: "8478", source: "Golbez", capture: false },
+      durationSeconds: 8,
       infoText: (_data, _matches, output) => output.text(),
-      tts: null,
       run: (data) => (data.stored = "out"),
       outputStrings: {
         text: {
@@ -163,7 +208,7 @@ Options.Triggers.push({
           de: "Sammeln: Raus",
           fr: "Stocker : Extérieur",
           ja: "ストック: 外へ",
-          cn: "暂存: 远离",
+          cn: "暂存: 钢铁",
           ko: "저장: 밖으로",
         },
       },
@@ -172,8 +217,8 @@ Options.Triggers.push({
       id: "GolbezEx Azdaja's Shadow In",
       type: "StartsUsing",
       netRegex: { id: "8479", source: "Golbez", capture: false },
+      durationSeconds: 8,
       infoText: (_data, _matches, output) => output.text(),
-      tts: null,
       run: (data) => (data.stored = "in"),
       outputStrings: {
         text: {
@@ -181,7 +226,7 @@ Options.Triggers.push({
           de: "Sammeln: Rein",
           fr: "Stocker : Intérieur",
           ja: "ストック: 中へ",
-          cn: "暂存: 靠近",
+          cn: "暂存: 月环",
           ko: "저장: 안으로",
         },
       },
