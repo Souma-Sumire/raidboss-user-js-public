@@ -41,12 +41,12 @@ Options.Triggers.push({
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
-          en: "Knockback on YOU => Point Tether Away",
-          de: "Rückstoß auf DIR => Zeige Verbindung weg",
-          fr: "Poussée sur VOUS => Orientez le lien à l'extérieur",
-          ja: "自分にノックバック => 線伸ばし",
-          cn: "击退点名 => 向外引导",
-          ko: "넉백징 대상자 => 선을 바깥쪽으로",
+          en: "Knockback on YOU: Get Middle => Point Tether Away",
+          de: "Rückstoß auf DIR: Geh in die Mitte => Zeige Verbindung weg",
+          fr: "Poussée sur VOUS: Allez au milieu => Orientez le lien à l'extérieur",
+          ja: "自分にノックバック: 真ん中 => 線伸ばし",
+          cn: "击退点名：去场中 => 最后引导黑龙冲",
+          ko: "넉백징 대상자: 중앙으로 => 선을 바깥쪽으로",
         },
       },
     },
@@ -59,12 +59,12 @@ Options.Triggers.push({
       alarmText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
-          en: "Flare on you -> Away from Group",
-          de: "Flare auf dir -> Weg von der Gruppe",
-          fr: "Brasier sur vous -> Éloignez-vous du groupe",
-          ja: "自分にフレア -> 外へ",
-          cn: "核爆点名 -> 远离人群",
-          ko: "플레어 대상자 -> 다른 사람들과 떨어지기",
+          en: "Flare on you: Away from Group",
+          de: "Flare auf dir: Weg von der Gruppe",
+          fr: "Brasier sur vous: Éloignez-vous du groupe",
+          ja: "自分にフレア: 外へ",
+          cn: "核爆点名：向空地击退",
+          ko: "플레어 대상자: 다른 사람들과 떨어지기",
         },
       },
     },
@@ -82,12 +82,12 @@ Options.Triggers.push({
       run: (data) => (data.headMarkers.length = 0),
       outputStrings: {
         unmarked: {
-          en: "Unmarked -> Get Towers",
-          de: "Unmarkiert -> Türme nehmen",
-          fr: "Aucun marqueur -> Allez dans les tours",
-          ja: "無職 -> 塔を踏む",
-          cn: "无点名 -> 踩塔",
-          ko: "무징 -> 기둥 들어가기",
+          en: "Unmarked: Get Towers",
+          de: "Unmarkiert: Türme nehmen",
+          fr: "Aucun marqueur: Allez dans les tours",
+          ja: "無職: 塔を踏む",
+          cn: "无点名： 向塔击退",
+          ko: "무징: 기둥 들어가기",
         },
       },
     },
@@ -96,9 +96,17 @@ Options.Triggers.push({
       type: "Ability",
       netRegex: { id: ["8452", "844F", "8450", "8451"] },
       preRun: (data, matches) => data.shadow.push(shadowDir[matches.id]),
+      durationSeconds: 1,
+      infoText: (_data, matches, output) => output[shadowDir[matches.id]](),
+      outputStrings: {
+        N: { en: "上" },
+        E: { en: "右" },
+        W: { en: "左" },
+        S: { en: "下" },
+      },
     },
     {
-      id: "GolbezEx Golbez's Shadow",
+      id: "GolbezEx Golbez's Shadow 1",
       type: "Ability",
       netRegex: { id: ["8452", "844F", "8450", "8451"], capture: false },
       condition: (data) => data.shadow.length === 4,
@@ -130,8 +138,7 @@ Options.Triggers.push({
         const left = spheres.filter((v) => v.col === 0).map((v) => ({ ...v, dir: "W" }));
         const right = spheres.filter((v) => v.col === 7).map((v) => ({ ...v, dir: "E" }));
         if (top.length < 4 || left.length < 4 || floor.length < 4 || right.length < 4) {
-          console.warn(galeSpheres, spheres);
-          console.error(top, floor, left, right);
+          // console.error(top, floor, left, right);
           throw new UnreachableCode();
         }
         const topSafe = galeSafePos.find((p) => !top.find((f) => f.col === p));
@@ -139,7 +146,7 @@ Options.Triggers.push({
         const leftSafe = galeSafePos.find((p) => !left.find((f) => f.row === p));
         const rightSafe = galeSafePos.find((p) => !right.find((f) => f.row === p));
         if (!(topSafe && floorSafe && leftSafe && rightSafe)) {
-          console.error(topSafe, floorSafe, leftSafe, rightSafe);
+          // console.error(topSafe, floorSafe, leftSafe, rightSafe);
           throw new UnreachableCode();
         }
         const galaSpheresSafe = {
@@ -175,7 +182,6 @@ Options.Triggers.push({
       condition: (data) => data.shadow.length === 4,
       delaySeconds: 3 + 3.5,
       infoText: (data) => data.galaText.n2,
-      outputStrings: { text: { en: "" } },
     },
     {
       id: "GolbezEx Golbez's Shadow 3",
@@ -184,7 +190,6 @@ Options.Triggers.push({
       condition: (data) => data.shadow.length === 4,
       delaySeconds: 3 + 3.5 * 2,
       infoText: (data) => data.galaText.n3,
-      outputStrings: { text: { en: "" } },
     },
     {
       id: "GolbezEx Golbez's Shadow 4",
@@ -193,7 +198,6 @@ Options.Triggers.push({
       condition: (data) => data.shadow.length === 4,
       delaySeconds: 3 + 3.5 * 3,
       infoText: (data) => data.galaText.n4,
-      outputStrings: { text: { en: "" } },
     },
     {
       id: "GolbezEx Azdaja's Shadow Out",
