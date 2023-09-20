@@ -173,6 +173,7 @@ Options.Triggers.push({
       type: "StartsUsing",
       netRegex: { id: "8479", source: "Golbez", capture: false },
       infoText: (_data, _matches, output) => output.text(),
+      tts: null,
       run: (data) => (data.stored = "in"),
       outputStrings: {
         text: {
