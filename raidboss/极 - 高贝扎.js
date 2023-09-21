@@ -338,8 +338,8 @@ Options.Triggers.push({
     {
       id: "GolbezEx Lingering Spark Move",
       type: "StartsUsing",
-      netRegex: { id: "846A", source: "Golbez", capture: false },
-      suppressSeconds: 3,
+      netRegex: { id: "8468", source: "Golbez", capture: false },
+      delaySeconds: 3,
       response: Responses.moveAway(),
     },
     {
