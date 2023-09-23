@@ -138,7 +138,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           text: { en: "八方分散 => 二二分摊" },
-          长光: { en: "原地 + 八方分散 => 90度 + 二二分摊" },
+          长光: { en: "原地 + 八方分散 => 45度 + 二二分摊" },
           长暗: { en: "45度 + 八方分散 => 原地 + 二二分摊" },
           短光: { en: "90度 + 八方分散 => 场外 + 二二分摊" },
           短暗: { en: "135度 + 八方分散 => 场外 + 二二分摊" },
