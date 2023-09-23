@@ -34,10 +34,10 @@
 
 本次零式无任何标点功能。
 
-- P9S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1JM4y147Zc/)>)（game8）
-- P10S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1Ek4y1M7jt/)>)（game8）
-- P11S：[苏帕酱噗](<(https://www.bilibili.com/video/BV1jk4y1V764/)>)（game8）
-- P12S：game8
+- P9S：game8
+- P10S game8
+- P11S：默认game8、可选uptime调停
+- P12S：门神默认菓子君、可选game8，本体game8。
 
 ### 旧零式
 
