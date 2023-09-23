@@ -172,40 +172,54 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "engravement1DropTower",
         name: {
-          en: "第一次拉线踩塔顺时针（找终点）的职能",
+          en: "范式1拉线规则",
         },
         type: "select",
         options: {
           en: {
-            "坦克/治疗": "tank/healer",
-            "输出": "dps",
+            "game8相反 (找终点+TN顺时针)": "tank/healer",
+            "game8 (找终点+dps顺时针)": "dps",
+            "菓子君 (找起点+TN顺时针+对面的终点)": "guozi",
           },
         },
-        default: "dps",
+        default: "guozi",
       },
       {
         id: "engravement3TowerTHSort",
         comment: { en: '用"/"斜线分割' },
         name: {
-          en: "第三次拉线踩塔（碎地板）TN组的优先级规则（从上至下）",
+          en: "范式3 TN组的优先级规则",
         },
         type: "string",
         default: "MT/ST/H1/H2",
       },
       {
-        id: "engravement3TowerDPS",
-        comment: { en: "按位置是指靠中间（直拉）的踩原地,靠场外（斜拉）的踩场中（费劲做完了才发现game8是优先级真服了）" },
+        id: "engravement3TowerTHSort2",
         name: {
-          en: "第三次拉线踩塔（碎地板）DPS组的踩塔规则",
+          en: "范式3 TN组踩塔的分组规则",
         },
         type: "select",
         options: {
           en: {
-            按位置: "heading",
-            按D1234优先级高的去中间: "priority",
+            "game8 (从上到下)": "上下",
+            "菓子君 (从左到右)": "左右",
           },
         },
-        default: "priority",
+        default: "左右",
+      },
+      {
+        id: "engravement3TowerDPS",
+        name: {
+          en: "范式3 DPS组的踩塔规则",
+        },
+        type: "select",
+        options: {
+          en: {
+            "菓子君 (直线踩中间斜线踩原地)": "heading",
+            "game8 (按D1234优先级高的去中间)": "priority",
+          },
+        },
+        default: "heading",
       },
       {
         id: "classicalConceptsPairOrder",
@@ -226,11 +240,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
       {
         id: "classicalConcepts2ActualNoFlip",
-        comment: {
-          en: "只报自己图案的最终位置，没有位置变换。",
-        },
         name: {
-          en: "经典概念2: 实际位置 (没有位置变换)",
+          en: "经典概念2: 只报自己图案的最终位置，没有位置变换",
         },
         type: "checkbox",
         default: false,
@@ -270,6 +281,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           glaukopisSecondHitSame: false,
           engravementCounter: 0,
           engravement1BeamsPosMap: new Map(),
+          engravement1SourcePos: new Map(),
           engravement1TetherIds: [],
           engravement1TetherPlayers: {},
           engravement1LightBeamsPos: [],
@@ -724,20 +736,28 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             const color = tempColor === "light" ? "dark" : "light";
             if (x < 80 && y < 100) {
               data.souma.engravement1BeamsPosMap.set("NE", color);
+              data.souma.engravement1SourcePos.set("D2", color);
             } else if (x < 100 && y < 80) {
               data.souma.engravement1BeamsPosMap.set("SW", color);
+              data.souma.engravement1SourcePos.set("A1", color);
             } else if (x > 100 && y < 80) {
               data.souma.engravement1BeamsPosMap.set("SE", color);
+              data.souma.engravement1SourcePos.set("A2", color);
             } else if (x > 120 && y < 100) {
               data.souma.engravement1BeamsPosMap.set("NW", color);
+              data.souma.engravement1SourcePos.set("B1", color);
             } else if (x > 120 && y > 100) {
               data.souma.engravement1BeamsPosMap.set("SW", color);
+              data.souma.engravement1SourcePos.set("B2", color);
             } else if (x > 100 && y > 120) {
               data.souma.engravement1BeamsPosMap.set("NE", color);
+              data.souma.engravement1SourcePos.set("C1", color);
             } else if (x < 100 && y > 120) {
               data.souma.engravement1BeamsPosMap.set("NW", color);
+              data.souma.engravement1SourcePos.set("C2", color);
             } else if (x < 80 && y > 100) {
               data.souma.engravement1BeamsPosMap.set("SE", color);
+              data.souma.engravement1SourcePos.set("D1", color);
             }
           }
           if (data.me === matches.target) {
@@ -750,6 +770,23 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
                 data.souma.engravement1DarkBeamsPos.push(key);
               }
             });
+            if (data.triggerSetConfig.engravement1DropTower === "guozi") {
+              const arr = data.role === "dps" ? ["D2", "D1", "C2", "C1", "B2", "B1", "A2", "A1"] : ["A1", "A2", "B1", "B2", "C1", "C2", "D1", "D2"];
+              const shadows = Array.from(data.souma.engravement1SourcePos).sort((a, b) => arr.indexOf(a[0]) - arr.indexOf(b[0]));
+              const color = matches.effectId === engravementIdMap.lightTower ? "light" : "dark";
+              const target = shadows.find((v) => v[1] === color)[0];
+              const goal = {
+                D2: "NE",
+                A1: "SW",
+                A2: "SE",
+                B1: "NW",
+                B2: "SW",
+                C1: "NE",
+                C2: "NW",
+                D1: "SE",
+              };
+              return output[goal[target]]();
+            }
             const arr = data.triggerSetConfig.engravement1DropTower === "tank/healer" ? ["NE", "SE", "SW", "NW"] : ["NW", "SW", "SE", "NE"];
             const rule = {
               tank: arr,
@@ -1002,8 +1039,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         condition: (data, matches) => data.souma.engravementCounter === 3 && data.me === matches.target,
         delaySeconds: 0.3,
         alertText: (data, _matches, output) => {
-          let towerColor = output.unknown();
-          if (data.souma.engravement3TowerType !== undefined) towerColor = data.souma.engravement3TowerType === "lightTower" ? output.light() : output.dark();
+          let color = output.unknown();
+          if (data.souma.engravement3TowerType !== undefined) color = data.souma.engravement3TowerType === "lightTower" ? output.light() : output.dark();
           const partner = data.souma.engravement3TowerPlayers.find((name) => name !== data.me);
           const rp = {
             me: getRpByName(data, data.me),
@@ -1014,13 +1051,21 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             me: rule.findIndex((v) => v === rp.me),
             partner: rule.findIndex((v) => v === rp.partner),
           };
-          const num = index.me < index.partner ? "二" : "三";
-          if (num === "二") data.souma.en3b = ["insideNW", "insideNE"];
-          else if (num === "三") data.souma.en3b = ["insideSW", "insideSE"];
-          return output.towerOnYou({ num, color: towerColor, partner: data.ShortName(partner) });
+          if (data.triggerSetConfig.engravement3TowerTHSort2 === "上下") {
+            const num = index.me < index.partner ? "二" : "三";
+            if (num === "二") data.souma.en3b = ["insideNW", "insideNE"];
+            else data.souma.en3b = ["insideSW", "insideSE"];
+            return output.towerOnYouGame8({ num, color });
+          } else {
+            const dir = index.me < index.partner ? "左" : "右";
+            if (dir === "左") data.souma.en3b = ["insideNW", "insideSW"];
+            else data.souma.en3b = ["insideNE", "insideSE"];
+            return output.towerOnYouGuozi({ dir, color });
+          }
         },
         outputStrings: {
-          towerOnYou: {
+          towerOnYouGuozi: { en: "${dir}侧${color}塔" },
+          towerOnYouGame8: {
             en: "第${num}排${color}塔",
           },
           light: {
@@ -1130,7 +1175,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (myEffect === soakTiltType) {
             let dir;
             if (data.triggerSetConfig.engravement3TowerDPS === "heading") {
-              dir = data.souma.engravement3GroupInfo.left.name === data.me ? "back" : "enter";
+              dir = data.souma.engravement3GroupInfo.left.name === data.me ? "enter" : "back";
             } else if (data.triggerSetConfig.engravement3TowerDPS === "priority") {
               const rule = ["D1", "D2", "D3", "D4"];
               const arr = Object.entries(data.souma.engravement3GroupInfo).sort((a, b) => {
