@@ -3,7 +3,22 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   Options.Triggers.push({
     id: "SoumaAnabaseiosTheEleventhCircleSavage",
     zoneId: ZoneId.AnabaseiosTheEleventhCircleSavage,
-    config: [],
+    config: [
+      {
+        id: "darkAndLight",
+        name: {
+          en: "光与暗的调停打法",
+        },
+        type: "select",
+        options: {
+          en: {
+            game8: "game8",
+            美服uptime: "uptime",
+          },
+        },
+        default: "game8",
+      },
+    ],
     initData: () => {
       return {
         souma: {
@@ -73,8 +88,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             // 人死了
             return;
           }
-          const result = output[`${myLength}${myColor}${myRole}`]({ buddy: myBuddy });
-          return result;
+          if (data.triggerSetConfig.darkAndLight === "uptime") {
+            if (data.role === "dps") {
+              data.souma.uptime = output[`uptimeDps搭档${myLength}${data.party.nameToRole_[data.souma.lightDarkBuddy[data.me]]}`]();
+            } else {
+              data.souma.uptime = output[`uptime${myLength}${data.role}`]();
+            }
+            return data.souma.uptime;
+          }
+          return output[`${myLength}${myColor}${myRole}`]({ buddy: myBuddy });
         },
         outputStrings: {
           短光TH: { en: "左（西）侧 短光 与${buddy}" },
@@ -85,6 +107,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           长暗TH: { en: "右（东）侧 长暗 与${buddy}" },
           短光dps: { en: "右（东）侧 短光 与${buddy}" },
           长光dps: { en: "右（东）侧 长光 与${buddy}" },
+          uptime长tank: { en: "上A点" },
+          uptime短tank: { en: "左D点" },
+          uptime长healer: { en: "下C点" },
+          uptime短healer: { en: "右B点" },
+          uptimeDps搭档长tank: { en: "左下3点" },
+          uptimeDps搭档短tank: { en: "左上4点" },
+          uptimeDps搭档长healer: { en: "右上1点" },
+          uptimeDps搭档短healer: { en: "右下2点" },
         },
       },
       {
@@ -94,7 +124,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         durationSeconds: 6,
         alertText: (data, _matches, output) => {
           if (!data.souma.lightDarkDebuff[data.me]) return output.text();
-          else {
+          if (data.triggerSetConfig.darkAndLight === "uptime") {
+            return output["uptime" + data.souma.lightDarkTether[data.me] + (data.role === "dps" ? "dps" : "tn")]({
+              pos: data.souma.uptime,
+              text: output.text(),
+            });
+          } else {
             const myColor = data.souma.lightDarkDebuff[data.me];
             const myLength = data.souma.lightDarkTether[data.me];
             const result = output[`${myLength}${myColor}`]();
@@ -102,6 +137,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
         },
         outputStrings: {
+          uptime长dps: { en: "${pos} + ${text}（45度）" },
+          uptime长tn: { en: "${pos} + ${text}（90度）" },
+          uptime短dps: { en: "${pos} + ${text}（反45度）" },
+          uptime短tn: { en: "${pos} + ${text}（向外）" },
           text: { en: "八方分散 => 四四分摊" },
           长光: { en: "原地 + 八方分散 => 四四分摊" },
           长暗: { en: "45度 + 八方分散 => 四四分摊" },
@@ -129,7 +168,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         durationSeconds: 6,
         alertText: (data, _matches, output) => {
           if (!data.souma.lightDarkDebuff[data.me]) return output.text();
-          else {
+          if (data.triggerSetConfig.darkAndLight === "uptime") {
+            return output["uptime" + data.souma.lightDarkTether[data.me] + (data.role === "dps" ? "dps" : "tn")]({
+              pos: data.souma.uptime,
+              text: output.text(),
+            });
+          } else {
             const myColor = data.souma.lightDarkDebuff[data.me];
             const myLength = data.souma.lightDarkTether[data.me];
             const result = output[`${myLength}${myColor}`]();
@@ -137,6 +181,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
         },
         outputStrings: {
+          uptime长dps: { en: "${pos} + ${text}（原地）" },
+          uptime长tank: { en: "${pos} + ${text}（45度）" },
+          uptime长healer: { en: "${pos} + ${text}（45度）" },
+          uptime短dps: { en: "${pos} + ${text}（45度）" },
+          uptime短tank: { en: "${pos} + ${text}（90度）" },
+          uptime短healer: { en: "${pos} + ${text}（90度）" },
           text: { en: "八方分散 => 二二分摊" },
           长光: { en: "原地 + 八方分散 => 45度 + 二二分摊" },
           长暗: { en: "45度 + 八方分散 => 原地 + 二二分摊" },
@@ -290,6 +340,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         durationSeconds: 9,
         alertText: (data, _matches, output) => {
           if (!data.souma.lightDarkDebuff[data.me]) return output.text();
+          if (data.triggerSetConfig.darkAndLight === "uptime") {
+            return output.text();
+          }
           return output[data.souma.lightDarkTether[data.me]]();
         },
         run: (data) => (data.souma.divisiveColor = "dark"),
@@ -300,10 +353,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
       {
-        id: "P11S Souma Emissary\'s Will",
+        id: "P11S Souma Emissary's Will",
         type: "StartsUsing",
         netRegex: { id: "8202", capture: false },
-        run: (data, matches) => {
+        run: (data) => {
           data.souma.lightDarkDebuff = {};
           data.souma.lightDarkTether = {};
           data.souma.lightDarkBuddy = {};
@@ -337,7 +390,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "P11S Dismissal Overruling Dark",
         type: "StartsUsing",
-        netRegex: { id: "8785",  capture: false },
+        netRegex: { id: "8785", capture: false },
         durationSeconds: 6,
         alertText: (_data, _matches, output) => output.text(),
         outputStrings: {
