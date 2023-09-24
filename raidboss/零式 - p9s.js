@@ -1,4 +1,5 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
+  // 因牵扯到变量作用域入侵，所以是在主库的基础上进行修改/新增的，大部分非原创。
   const headmarkers = {
     dualityOfDeath: "01D4",
     limitCut1: "004F",
@@ -32,11 +33,30 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     "0055": 7,
     "0056": 8,
   };
+  const limitCutPlayerActive = [
+    // These ordered nested arrays contain the limit cut headmarkers for [ dash order, tower soak order ]
+    [2, 6],
+    [4, 8],
+    [6, 2],
+    [8, 4],
+  ];
+
+  // Time between headmarker and defamation for Chimeric Succession.
+  const chimericLimitCutTime = {
+    1: 10,
+    2: 13,
+    3: 16,
+    4: 19,
+  };
   const firstHeadmarker = parseInt(headmarkers.dualityOfDeath, 16);
   const getHeadmarkerId = (data, matches) => {
-    if (data.decOffset === undefined) data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
-    return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, "0");
+    if (data.souma.decOffset === undefined) data.souma.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+    return (parseInt(matches.id, 16) - data.souma.decOffset).toString(16).toUpperCase().padStart(4, "0");
   };
+
+  const centerX = 100;
+  const centerY = 100;
+
   const rockbreakpos = [
     { num: 1, x: "100.0", y: "83.0" }, //A
     { num: 2, x: "112.0208", y: "87.9792" }, //2
@@ -60,12 +80,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return {
         souma: {
           decOffset: undefined,
-          stage: 1,
           rockbreaker: [],
           rockbreakerCounter: 0,
           archaicRockbreakerCounter: 0,
-          combination: undefined,
-          roundhouse: undefined,
+          dualityBuster: [],
+          levinOrbs: {},
+          limitCutDash: 0,
+          limitCut1Count: 0,
+          defamationCount: 0,
         },
       };
     },
@@ -176,6 +198,238 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
       {
+        id: "P9S Chimeric Succession",
+        type: "StartsUsing",
+        netRegex: { id: "81BB", capture: false },
+        run: (data) => (data.souma.seenChimericSuccession = true),
+      },
+      {
+        id: "P9S Limit Cut Levin Orb Collect",
+        type: "AddedCombatant",
+        netRegex: { name: "Ball of Levin", level: "5A" },
+        run: (data, matches) => {
+          const orb8Dir = Directions.addedCombatantPosTo8Dir(matches, centerX, centerY);
+          data.souma.levinOrbs[matches.id] = { dir: orb8Dir };
+        },
+      },
+      {
+        id: "P9S Limit Cut Levin Orb Order Collect",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          return limitCutMarkers.includes(getHeadmarkerId(data, matches)) && Object.keys(data.souma.levinOrbs).includes(matches.targetId);
+        },
+        run: (data, matches) => {
+          const correctedMatch = getHeadmarkerId(data, matches);
+          const orbLimitCutNumber = limitCutNumberMap[correctedMatch];
+
+          // Levin orbs should always receive a odd-numbered limit cut headmarker
+          const expectedOrbLimitCutNumbers = [1, 3, 5, 7];
+          if (orbLimitCutNumber === undefined || !expectedOrbLimitCutNumbers.includes(orbLimitCutNumber)) {
+            console.error("Invalid limit cut headmarker on orb");
+            return;
+          }
+
+          const orbData = data.souma.levinOrbs[matches.targetId] ?? {};
+          if (typeof orbData.dir === "undefined") {
+            console.error("Limit cut headmarker on unknown orb");
+            return;
+          }
+          orbData.order = orbLimitCutNumber;
+          data.souma.levinOrbs[matches.targetId] = orbData;
+        },
+      },
+      {
+        id: "P9S Limit Cut Levin Orb Start and Rotation",
+        type: "StartsUsing",
+        netRegex: { id: "817D", capture: false },
+        delaySeconds: 1.5,
+        infoText: (data, _matches, output) => {
+          let firstOrb8Dir;
+          let secondOrb8Dir;
+          for (const combatant in data.souma.levinOrbs) {
+            switch (data.souma.levinOrbs[combatant]?.order) {
+              case 1:
+                firstOrb8Dir = data.souma.levinOrbs[combatant]?.dir;
+                break;
+              case 3:
+                secondOrb8Dir = data.souma.levinOrbs[combatant]?.dir;
+                break;
+            }
+          }
+          if (firstOrb8Dir === undefined || secondOrb8Dir === undefined) return;
+          const firstOrb8DirStr = Directions.outputFrom8DirNum(firstOrb8Dir);
+          if (firstOrb8DirStr === undefined) return;
+          const firstOrbDir = output[firstOrb8DirStr]();
+
+          const rotationDir = (secondOrb8Dir - firstOrb8Dir + 8) % 8 === 2 ? output.clockwise() : output.counterclock();
+
+          if (firstOrbDir !== undefined && rotationDir !== undefined) return output.text({ dir: firstOrbDir, rotation: rotationDir });
+          return;
+        },
+        outputStrings: {
+          text: {
+            en: "${dir} => ${rotation}",
+          },
+          clockwise: Outputs.clockwise,
+          counterclock: Outputs.counterclockwise,
+          ...Directions.outputStrings8Dir,
+        },
+      },
+      {
+        id: "P9S Limit Cut 1 Player Number",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          return !data.souma.seenChimericSuccession && limitCutMarkers.includes(getHeadmarkerId(data, matches));
+        },
+        preRun: (data, matches) => {
+          data.souma.limitCut1Count++;
+          if (data.me === matches.target) {
+            const correctedMatch = getHeadmarkerId(data, matches);
+            data.souma.limitCutNumber = limitCutNumberMap[correctedMatch];
+          }
+        },
+        durationSeconds: 30,
+        infoText: (data, matches, output) => {
+          if (data.me !== matches.target) return;
+          const expectedLimitCutNumbers = [2, 4, 6, 8];
+          if (data.souma.limitCutNumber === undefined || !expectedLimitCutNumbers.includes(data.souma.limitCutNumber)) return;
+          return output[data.souma.limitCutNumber]();
+        },
+        outputStrings: {
+          2: {
+            en: "2麻 1火3塔",
+          },
+          4: {
+            en: "4麻 2火4塔",
+          },
+          6: {
+            en: "6麻 1塔3火",
+          },
+          8: {
+            en: "8麻 2塔4火",
+          },
+          tts: {
+            en: "${num}",
+          },
+        },
+      },
+      {
+        id: "P9S Limit Cut 1 Early Defamation",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          return data.souma.limitCut1Count === 4 && !data.souma.seenChimericSuccession && limitCutMarkers.includes(getHeadmarkerId(data, matches));
+        },
+        infoText: (data, _matches, output) => {
+          if (data.souma.limitCutNumber !== undefined) return;
+          return output.defamationLater();
+        },
+        outputStrings: {
+          defamationLater: {
+            en: "蓝球组",
+          },
+        },
+      },
+      {
+        id: "P9S Chimeric Limit Cut Defamation",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          return (
+            data.souma.seenChimericSuccession &&
+            data.me === matches.target &&
+            data.souma.limitCutNumber !== undefined &&
+            limitCutMarkers.includes(getHeadmarkerId(data, matches))
+          );
+        },
+        delaySeconds: (data) => {
+          if (data.souma.limitCutNumber === undefined) return 0;
+          const time = chimericLimitCutTime[data.souma.limitCutNumber];
+          if (time === undefined) return 0;
+          // 6 seconds ahead of time
+          return time - 6;
+        },
+        alarmText: (_data, _matches, output) => output.defamation(),
+        outputStrings: {
+          defamation: {
+            en: "蓝球点名",
+          },
+        },
+      },
+      {
+        id: "P9S Limit Cut First Dash/Tower Combo",
+        type: "Ability",
+        netRegex: { id: "817D", capture: false },
+        condition: (data) => data.souma.limitCutDash === 0,
+        alertText: (data, _matches, output) => {
+          const activePlayers = limitCutPlayerActive[data.souma.limitCutDash];
+          if (activePlayers === undefined) return;
+          const [dashPlayer, soakPlayer] = activePlayers;
+          if (dashPlayer === undefined || soakPlayer === undefined) return;
+          if (data.souma.limitCutNumber === dashPlayer) return output.dash();
+          else if (data.souma.limitCutNumber === soakPlayer) return output.soak();
+          return;
+        },
+        outputStrings: {
+          dash: {
+            en: "放火",
+          },
+          soak: {
+            en: "踩塔",
+          },
+        },
+      },
+      {
+        id: "P9S Limit Cut Combo Tracker",
+        type: "Ability",
+        netRegex: { id: "8180", capture: false },
+        run: (data) => data.souma.limitCutDash++,
+      },
+      {
+        id: "P9S Limit Cut Later Dash/Tower Combo",
+        type: "Ability",
+        netRegex: { id: "8180", capture: false },
+        condition: (data) => data.souma.limitCutDash > 0 && data.souma.limitCutDash < 4,
+        delaySeconds: (data) => {
+          return limitCutPlayerActive[data.souma.limitCutDash]?.[1] === data.souma.limitCutNumber ? 1 : 0;
+        },
+        alertText: (data, _matches, output) => {
+          const [dashPlayer, soakPlayer] = limitCutPlayerActive[data.souma.limitCutDash] ?? [];
+          if (dashPlayer === undefined || soakPlayer === undefined) return;
+          if (data.souma.limitCutNumber === dashPlayer) return output.dash();
+          else if (data.souma.limitCutNumber === soakPlayer) return output.soak();
+          return;
+        },
+        outputStrings: {
+          dash: {
+            en: "引导火",
+          },
+          soak: {
+            en: "踩塔",
+          },
+        },
+      },
+      {
+        id: "P9S Limit Cut 1 Defamation",
+        type: "HeadMarker",
+        netRegex: {},
+        condition: (data, matches) => {
+          if (getHeadmarkerId(data, matches) === headmarkers.defamation) {
+            data.souma.defamationCount++;
+            return data.me === matches.target;
+          }
+          return false;
+        },
+        alarmText: (data, _matches, output) => output.defamation({ num: data.souma.defamationCount }),
+        outputStrings: {
+          defamation: {
+            en: "蓝球点名(#${num})",
+          },
+        },
+      },
+      {
         id: "P9S Souma 二麻",
         type: "StartsUsing",
         netRegex: { id: "81BB", capture: false },
@@ -190,82 +444,41 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "HeadMarker",
         netRegex: {},
         condition: (data, matches) => {
-          return data.seenChimericSuccession && data.me === matches.target && limitCutMarkers.includes(getHeadmarkerId(data, matches));
+          return data.souma.seenChimericSuccession && data.me === matches.target && limitCutMarkers.includes(getHeadmarkerId(data, matches));
         },
         preRun: (data, matches) => {
           const correctedMatch = getHeadmarkerId(data, matches);
-          data.limitCutNumber = limitCutNumberMap[correctedMatch];
+          data.souma.limitCutNumber = limitCutNumberMap[correctedMatch];
         },
         durationSeconds: 20,
         infoText: (data, _matches, output) => {
           const expectedLimitCutNumbers = [1, 2, 3, 4];
-          if (data.limitCutNumber === undefined || !expectedLimitCutNumbers.includes(data.limitCutNumber)) return;
-          return output["number" + data.limitCutNumber]();
+          if (data.souma.limitCutNumber === undefined || !expectedLimitCutNumbers.includes(data.souma.limitCutNumber)) return;
+          return output["number" + data.souma.limitCutNumber]();
         },
         outputStrings: {
           number1: { en: "1麻 引导 => 回北" },
           number2: { en: "2麻 引导 => 回北" },
-          number3: { en: "3麻 北侧待机 => 与1交换" },
-          number4: { en: "4麻 北侧待机 => 与2交换" },
+          number3: { en: "3麻 等待 => 与1交换" },
+          number4: { en: "4麻 等待 => 与2交换" },
         },
       },
     ],
     timelineReplace: [
       {
+        locale: "ja",
+        missingTranslations: true,
+        replaceSync: {
+          "Ball of Levin": "雷球",
+        },
+      },
+      {
         locale: "cn",
         missingTranslations: true,
-        replaceText: {
-          "Aero IV": "飙风",
-          "Archaic Demolish": "古代破碎拳",
-          "Archaic Rockbreaker": "古代地烈劲",
-          "Ascendant Fist": "穿升拳",
-          "Beastly Bile": "野兽咬",
-          "Beastly Fury": "野兽之怒",
-          "Blizzard III": "冰封",
-          "Burst": "飞散",
-          "Charybdis": "大漩涡",
-          "Chimeric Succession": "嵌合连击",
-          "Comet": "彗星",
-          "Disgorge": "灵魂逆转",
-          "Disintegration": "解体",
-          "Duality of Death": "灰飞烟灭",
-          "Dualspell": "双重咏唱",
-          "Ecliptic Meteor": "黄道陨石",
-          "Fire IV": "炽炎",
-          "Fire(?!( |m|s))": "火炎",
-          "Firemeld": "炎魔冲",
-          "Front Combination": "前方连转脚",
-          "Front Firestrikes": "前方炎连击",
-          "Gluttony's Augur": "暴食的预兆",
-          "Icemeld": "冰魔冲",
-          "Inside Roundhouse": "内转脚",
-          "Levinstrike Summoning": "召唤闪电",
-          "Outside Roundhouse": "外转脚",
-          "Pile Pyre": "堆火",
-          "Pyremeld": "重炎击",
-          "Ravening": "噬魂者",
-          "Rear Combination": "后方连转脚",
-          "Rear Firestrikes": "后方炎连击",
-          "Scrambled Succession": "连锁突击",
-          "Shock(?!wave)": "放电",
-          "Shockwave": "冲击波",
-          "Soul Surge": "灵魂涌动",
-          "Swinging Kick": "旋身击",
-          "Thunder III": "暴雷",
-          "Thunder(?!( |bolt))": "闪雷",
-          "Thunderbolt": "霹雳",
-          "Two Minds": "缠魂双击",
+        replaceSync: {
+          "Ball of Levin": "雷球",
         },
       },
     ],
   });
-  Options.PerTriggerOptions = {
-    // 让1麻念全部提示文字而不是仅仅是序号
-    "P9S Limit Cut 1 Player Number": {
-      TTSText: function (data, matches, output) {
-        if (data.me !== matches.target || data.limitCutNumber === undefined) return;
-        return output[data.limitCutNumber]();
-      },
-    },
-  };
 }

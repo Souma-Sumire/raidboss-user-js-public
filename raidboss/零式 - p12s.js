@@ -2962,72 +2962,72 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
     ],
-    timelineReplace: [
-      {
-        locale: "cn",
-        missingTranslations: true,
-        replaceText: {
-          "Apodialogos": "远翼对话", // アポ・ディアロゴス
-          "Astral Advance": "星极顺行", // アストラルアドバンス
-          "Astral Advent": "星极降临", // アストラルアドベント
-          "Astral Glow": "星极之光", // アストラルグロウ
-          "Astral Impact": "星击", // 星撃
-          "Caloric Theory": "热质说", // カロリックセオリー
-          "Crush Helm": "星天爆击打", // 星天爆撃打
-          "Demi Parhelion": "半幻日", // デミパルヘリオン
-          "(?<!(Apo|Peri))Dialogos": "对话", // ディアロゴス
-          "Divine Excoriation": "神罚", // 神罰
-          "Dynamic Atmosphere": "冲风", // 衝風
-          "Ekpyrosis": "世界燃烧", // エクピロシス
-          "Engravement of Souls": "魂之刻印", // 魂の刻印
-          "Entropic Excess": "焦热波", // 焦熱波
-          "Factor In": "因子还原", // 因子還元
-          "Gaiaochos": "大地之主", // ガイアオコス
-          "Geocentrism": "地心说", // ジオセントリズム
-          "Glaukopis": "明眸", // グラウコピス
-          "Ignorabimus": "不可知论", // イグノラビムス
-          "Implode": "自毁", // 自壊
-          "Missing Link": "苦痛之链", // 苦痛の鎖
-          "On the Soul": "论灵魂", // オン・ザ・ソウル
-          "Palladian Grasp": "帕拉斯之手", // パラスの手
-          "Palladian Ray": "帕拉斯射线", // パラスレイ
-          "Palladion": "圣像骑士", // パラディオン
-          "Pangenesis": "泛生论", // パンゲネシス
-          "Panta Rhei": "万物流变", // パンタレイ
-          "Paradeigma": "范式", // パラデイグマ
-          "Parthenos": "帕尔忒农", // パルテノン
-          "Peridialogos": "近翼对话", // ペリ・ディアロゴス
-          "Polarized Ray": "极性射线", // ポラリティレイ
-          "Pyre Pulse": "重热波", // 重熱波
-          "Ray of Light": "光波", // 光波
-          "Sample": "暴食", // 貪食
-          "Searing Radiance": "光辉", // レイディアンス
-          "Shadowsear": "灵极幻影", // シャドーシアー
-          "Shock": "放电", // 放電
-          "Summon Darkness": "黑暗召唤", // サモンダークネス
-          "Superchain Burst": "超链爆发", // スーパーチェイン・バースト
-          "Superchain Coil": "超链之环", // スーパーチェイン・サークル
-          "Superchain Theory I(?!I)": "超链理论I", // スーパーチェイン・セオリーI
-          "Superchain Theory IIA": "超链理论IIA", // スーパーチェイン・セオリーIIA
-          "Superchain Theory IIB": "超链理论IIB", // スーパーチェイン・セオリーIIB
-          "The Classical Concepts": "理念元素", // イデア・エレメンタル
-          "Theos's Cross": "神·十字", // テオス・クロス
-          "Theos's Holy": "神·圣光", // テオス・ホーリー
-          "Theos's Saltire": "神·斜十字", // テオス・サルタイアー
-          "Theos's Ultima": "神·究极", // テオス・アルテマ
-          "Trinity of Souls": "三位一体之魂", // トリニティ・ソウル
-          "(?<! )Ultima(?! (B|R))": "究极", // アルテマ
-          "Ultima Blade": "究极之刃", // アルテマブレイド
-          "Ultima Blow": "究极一击", // アルテマブロウ
-          "Ultima Ray": "究极射线", // アルテマレイ
-          "Umbral Advance": "灵极顺行", // アンブラルアドバンス
-          "Umbral Advent": "灵极降临", // アンブラルアドベント
-          "Umbral Glow": "灵极之光", // アンブラルグロウ
-          "Umbral Impact": "灵击", // 霊撃
-          "Unnatural Enchainment": "灵魂束缚", // 魂の鎖
-          "White Flame": "白火", // 白火
-        },
-      },
-    ],
+    // timelineReplace: [
+    //   {
+    //     locale: "cn",
+    //     missingTranslations: true,
+    //     replaceText: {
+    //       "Apodialogos": "远翼对话", // アポ・ディアロゴス
+    //       "Astral Advance": "星极顺行", // アストラルアドバンス
+    //       "Astral Advent": "星极降临", // アストラルアドベント
+    //       "Astral Glow": "星极之光", // アストラルグロウ
+    //       "Astral Impact": "星击", // 星撃
+    //       "Caloric Theory": "热质说", // カロリックセオリー
+    //       "Crush Helm": "星天爆击打", // 星天爆撃打
+    //       "Demi Parhelion": "半幻日", // デミパルヘリオン
+    //       "(?<!(Apo|Peri))Dialogos": "对话", // ディアロゴス
+    //       "Divine Excoriation": "神罚", // 神罰
+    //       "Dynamic Atmosphere": "冲风", // 衝風
+    //       "Ekpyrosis": "世界燃烧", // エクピロシス
+    //       "Engravement of Souls": "魂之刻印", // 魂の刻印
+    //       "Entropic Excess": "焦热波", // 焦熱波
+    //       "Factor In": "因子还原", // 因子還元
+    //       "Gaiaochos": "大地之主", // ガイアオコス
+    //       "Geocentrism": "地心说", // ジオセントリズム
+    //       "Glaukopis": "明眸", // グラウコピス
+    //       "Ignorabimus": "不可知论", // イグノラビムス
+    //       "Implode": "自毁", // 自壊
+    //       "Missing Link": "苦痛之链", // 苦痛の鎖
+    //       "On the Soul": "论灵魂", // オン・ザ・ソウル
+    //       "Palladian Grasp": "帕拉斯之手", // パラスの手
+    //       "Palladian Ray": "帕拉斯射线", // パラスレイ
+    //       "Palladion": "圣像骑士", // パラディオン
+    //       "Pangenesis": "泛生论", // パンゲネシス
+    //       "Panta Rhei": "万物流变", // パンタレイ
+    //       "Paradeigma": "范式", // パラデイグマ
+    //       "Parthenos": "帕尔忒农", // パルテノン
+    //       "Peridialogos": "近翼对话", // ペリ・ディアロゴス
+    //       "Polarized Ray": "极性射线", // ポラリティレイ
+    //       "Pyre Pulse": "重热波", // 重熱波
+    //       "Ray of Light": "光波", // 光波
+    //       "Sample": "暴食", // 貪食
+    //       "Searing Radiance": "光辉", // レイディアンス
+    //       "Shadowsear": "灵极幻影", // シャドーシアー
+    //       "Shock": "放电", // 放電
+    //       "Summon Darkness": "黑暗召唤", // サモンダークネス
+    //       "Superchain Burst": "超链爆发", // スーパーチェイン・バースト
+    //       "Superchain Coil": "超链之环", // スーパーチェイン・サークル
+    //       "Superchain Theory I(?!I)": "超链理论I", // スーパーチェイン・セオリーI
+    //       "Superchain Theory IIA": "超链理论IIA", // スーパーチェイン・セオリーIIA
+    //       "Superchain Theory IIB": "超链理论IIB", // スーパーチェイン・セオリーIIB
+    //       "The Classical Concepts": "理念元素", // イデア・エレメンタル
+    //       "Theos's Cross": "神·十字", // テオス・クロス
+    //       "Theos's Holy": "神·圣光", // テオス・ホーリー
+    //       "Theos's Saltire": "神·斜十字", // テオス・サルタイアー
+    //       "Theos's Ultima": "神·究极", // テオス・アルテマ
+    //       "Trinity of Souls": "三位一体之魂", // トリニティ・ソウル
+    //       "(?<! )Ultima(?! (B|R))": "究极", // アルテマ
+    //       "Ultima Blade": "究极之刃", // アルテマブレイド
+    //       "Ultima Blow": "究极一击", // アルテマブロウ
+    //       "Ultima Ray": "究极射线", // アルテマレイ
+    //       "Umbral Advance": "灵极顺行", // アンブラルアドバンス
+    //       "Umbral Advent": "灵极降临", // アンブラルアドベント
+    //       "Umbral Glow": "灵极之光", // アンブラルグロウ
+    //       "Umbral Impact": "灵击", // 霊撃
+    //       "Unnatural Enchainment": "灵魂束缚", // 魂の鎖
+    //       "White Flame": "白火", // 白火
+    //     },
+    //   },
+    // ],
   });
 }
