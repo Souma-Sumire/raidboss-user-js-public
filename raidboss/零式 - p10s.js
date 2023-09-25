@@ -173,7 +173,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
         },
         outputStrings: {
-          canCleanse: { en: "驱散自己" },
+          cleanse: { en: "驱散自己" },
           canNotCleanse: { en: "喊救命！" },
           help: { en: "驱散${name}" },
         },
