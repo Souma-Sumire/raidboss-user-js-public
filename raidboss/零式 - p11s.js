@@ -6,6 +6,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     config: [
       {
         id: "darkAndLight",
+        comment: {
+          cn:`调停uptime BV1zw41127Ri`
+        },
         name: {
           en: "光与暗的调停打法",
         },
@@ -137,15 +140,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
         },
         outputStrings: {
-          uptime长dps: { en: "${pos} + ${text}（45度）" },
-          uptime长tn: { en: "${pos} + ${text}（90度）" },
-          uptime短dps: { en: "${pos} + ${text}（反45度）" },
+          uptime长dps: { en: "${pos} + ${text}（45°）" },
+          uptime长tn: { en: "${pos} + ${text}（90°）" },
+          uptime短dps: { en: "${pos} + ${text}（-45°）" },
           uptime短tn: { en: "${pos} + ${text}（向外）" },
           text: { en: "八方分散 => 四四分摊" },
           长光: { en: "原地 + 八方分散 => 四四分摊" },
-          长暗: { en: "45度 + 八方分散 => 四四分摊" },
-          短光: { en: "90度 + 八方分散 => 四四分摊" },
-          短暗: { en: "135度 + 八方分散 => 四四分摊" },
+          长暗: { en: "45° + 八方分散 => 四四分摊" },
+          短光: { en: "90° + 八方分散 => 四四分摊" },
+          短暗: { en: "135° + 八方分散 => 四四分摊" },
         },
       },
       {
@@ -182,14 +185,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           uptime长dps: { en: "${pos} + ${text}（原地）" },
-          uptime长tn: { en: "${pos} + ${text}（45度）" },
-          uptime短dps: { en: "${pos} + ${text}（45度）" },
-          uptime短tn: { en: "${pos} + ${text}（90度）" },
+          uptime长tn: { en: "${pos} + ${text}（45°）" },
+          uptime短dps: { en: "${pos} + ${text}（45°）" },
+          uptime短tn: { en: "${pos} + ${text}（90°）" },
           text: { en: "八方分散 => 二二分摊" },
-          长光: { en: "原地 + 八方分散 => 45度 + 二二分摊" },
-          长暗: { en: "45度 + 八方分散 => 原地 + 二二分摊" },
-          短光: { en: "90度 + 八方分散 => 场外 + 二二分摊" },
-          短暗: { en: "135度 + 八方分散 => 场外 + 二二分摊" },
+          长光: { en: "原地 + 八方分散 => 45° + 二二分摊" },
+          长暗: { en: "45° + 八方分散 => 原地 + 二二分摊" },
+          短光: { en: "90° + 八方分散 => 场外 + 二二分摊" },
+          短暗: { en: "135° + 八方分散 => 场外 + 二二分摊" },
         },
       },
       {
