@@ -1,6 +1,6 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   // 因牵扯到变量作用域入侵，所以是在主库的基础上进行修改/新增的，大部分非原创。
-  const { getRpByName } = Util.souma;
+  const { getRpByName, getNameByRp } = Util.souma;
   const centerX = 100;
   const centerY = 100;
   const distSqr = (a, b) => {
@@ -262,6 +262,21 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
       { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "热质论1优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
       {
+        id: "windFireSolution",
+        comment: { cn: "papan解法请见BV1XK4y1F7S3" },
+        name: {
+          en: "热质论1打法",
+        },
+        type: "select",
+        options: {
+          en: {
+            "game8（NL改）": "game8",
+            "papan": "papan",
+          },
+        },
+        default: "game8",
+      },
+      {
         id: "pangenesisRule",
         comment: {
           cn: `固定式<a href='https://nga.178.com/read.php?tid=36875899' target="_blank">NGA原帖</a><a href='https://souma.diemoe.net/resources/img/pangenesis.png' target="_blank">我画的图</a>`,
@@ -333,6 +348,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           dark: [],
           pantheism: false,
           pantheismCount: 1,
+          calorics: [],
         },
       };
     },
@@ -2539,19 +2555,47 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         delaySeconds: 1,
         response: (data, _matches, output) => {
           output.responseOutputStrings = {
-            beacon_tank: { en: "预备火 站第三横线偏左" },
-            beacon_healer: { en: "预备火 站第三横线偏左" },
+            beacon_tn: { en: "预备火 站第三横线偏左" },
             beacon_dps: { en: "预备火 站第三横线偏右" },
             noBeacon: { en: "CD中间" },
+            papan_tn: { en: "预备火 去D" },
+            papan_dps: { en: "预备火 去B" },
+            papan_partner_tn: { en: "搭档是火 去C" },
+            papan_partner_dps: { en: "搭档是火 去A" },
+            papan_noBeacon: { en: "无点名 去中间" },
           };
           if (data.souma.caloric1First.length !== 2) return;
-          const index = data.souma.caloric1First.indexOf(data.me);
-          if (index < 0) {
-            return { infoText: output.noBeacon() };
+          if (data.triggerSetConfig.windFireSolution === "game8") {
+            const index = data.souma.caloric1First.indexOf(data.me);
+            if (index < 0) return { infoText: output.noBeacon() };
+            return { alertText: output["beacon" + "_" + (data.role === "dps" ? "dps" : "tn")]() };
           }
-          return {
-            alertText: output["beacon" + "_" + data.role](),
-          };
+          if (data.triggerSetConfig.windFireSolution === "papan") {
+            const index = data.souma.caloric1First.indexOf(data.me);
+            const myRp = getRpByName(data, data.me);
+            const partnerMap = {
+              MT: "ST",
+              ST: "MT",
+              H1: "H2",
+              H2: "H1",
+              D1: "D2",
+              D2: "D1",
+              D3: "D4",
+              D4: "D3",
+            };
+            const calorics = data.souma.caloric1First.map((v) => {
+              const caloricRp = getRpByName(data, v);
+              return [caloricRp, partnerMap[caloricRp]];
+            });
+            data.souma.calorics = calorics;
+            if (index < 0) {
+              if (calorics.find((v) => v[0] === partnerMap[myRp])) {
+                return { infoText: output["papan_partner_" + (data.role === "dps" ? "dps" : "tn")]() };
+              }
+              return { infoText: output.papan_noBeacon() };
+            }
+            return { alertText: output["papan" + "_" + (data.role === "dps" ? "dps" : "tn")]() };
+          }
         },
       },
       {
@@ -2586,7 +2630,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           none: {
-            en: "找火分摊",
+            en: "无点名 找火",
           },
           wind: {
             en: "风点名散开",
@@ -2610,34 +2654,69 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             wind3: { en: "右下C点（风3）" },
             wind4: { en: "左下D点（风4）" },
             windBeacon: { en: "平移" },
+            papan_nothing: { en: "不动" },
+            papan_go: { en: "去${go}" },
+            papan_A: { en: "上A" },
+            papan_B: { en: "右B" },
+            papan_C: { en: "下C" },
+            papan_D: { en: "左D" },
           };
           const sortArr = (data.triggerSetConfig.windFirePriority ?? "MT/ST/H1/H2/D1/D2/D3/D4").toUpperCase().split(/[\/\\,\.\>\<\|\:]/);
           const myBuff = data.souma.caloric1Buff[data.me];
           data.souma.caloric1Mine = myBuff;
           if (myBuff === undefined) return;
+          const myRp = getRpByName(data, data.me);
+          const outer = data.souma.calorics.flat(Infinity);
+          const group = {
+            MT: ["MT", "H1", "D1", "D3"],
+            ST: ["ST", "H2", "D2", "D4"],
+          };
+          const myGroup = group.MT.includes(myRp) ? 'MT' : 'ST';
+          const AC = outer.filter((v) => !data.souma.caloric1First.map((v) => getRpByName(data, v)).includes(v));
+          const A = AC.find((v) => group.MT.includes(v));
+          const C = AC.find((v) => group.ST.includes(v));
+          const map = {
+            A: data.souma.caloric1Buff[getNameByRp(data, A)],
+            B: "wind",
+            C: data.souma.caloric1Buff[getNameByRp(data, C)],
+            D: "wind",
+          };
+          const go = {
+            MT:Object.entries(map).toReversed().find((v) => v[1] !== myBuff)[0],
+            ST:Object.entries(map).find((v) => v[1] !== myBuff)[0],
+          }
+
           if (myBuff === "fire") {
             const myTeam = [];
             for (const [name, stat] of Object.entries(data.souma.caloric1Buff)) {
               if (stat === myBuff) myTeam.push(name);
             }
-            // 4人火
             const fullTeam = myTeam.sort((a, b) => sortArr.indexOf(getRpByName(data, a)) - sortArr.indexOf(getRpByName(data, b)));
-            const myFire = fullTeam.indexOf(data.me) + 1;
-            return {
-              alertText: output
-                ["fire" + myFire]
-                // {
-                // team: myTeam
-                //   .filter((v) => v !== data.me)
-                //   .map(data.ShortName)
-                //   .join(", "),
-                // }
-                (),
-            };
+            if (data.triggerSetConfig.windFireSolution === "game8") {
+              // 4人火
+              const myFire = fullTeam.indexOf(data.me) + 1;
+              return { alertText: output["fire" + myFire]() };
+            }
+            if (data.triggerSetConfig.windFireSolution === "papan") {
+              // 火
+              if (outer.includes(myRp)) {
+                // 已经在上一步去过外面了
+                return { infoText: output.papan_nothing() };
+              }
+              // 在中间等待的火
+              return { infoText: output.papan_go({ go: output[`papan_${go[myGroup]}`]() }) };
+            }
           }
+
           if (data.souma.caloric1First.includes(data.me)) {
-            // 预备风 直接返回
-            return { infoText: output.windBeacon() };
+            // 预备点名（本次获得风）
+            if (data.triggerSetConfig.windFireSolution === "game8") {
+              return { infoText: output.windBeacon() };
+            }
+            if (data.triggerSetConfig.windFireSolution === "papan") {
+              // 不动
+              return { infoText: output.papan_nothing() };
+            }
           }
           const myTeam = [];
           for (const [name, stat] of Object.entries(data.souma.caloric1Buff)) {
@@ -2645,17 +2724,18 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
           const fullTeam = myTeam.sort((a, b) => sortArr.indexOf(getRpByName(data, a)) - sortArr.indexOf(getRpByName(data, b)));
           const myWind = fullTeam.indexOf(data.me) + 1 + 2;
-          return {
-            alertText: output
-              ["wind" + myWind]
-              // {
-              // team: myTeam
-              //   .filter((v) => v !== data.me)
-              //   .map(data.ShortName)
-              //   .join(", "),
-              // }
-              (),
-          };
+          if (data.triggerSetConfig.windFireSolution === "game8") {
+            return { alertText: output["wind" + myWind]() };
+          }
+          if (data.triggerSetConfig.windFireSolution === "papan") {
+            // 风点名
+            if (outer.includes(myRp)) {
+              // 已经在上一步去过外面了
+              return { infoText: output.papan_nothing() };
+            }
+            // 在中间等待的风
+            return { infoText: output.papan_go({ go: output[`papan_${go[myGroup]}`]() }) };
+          }
         },
         run: (data) => {
           data.souma.caloric1First = [];
