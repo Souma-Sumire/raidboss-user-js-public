@@ -260,12 +260,29 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         default: "KX",
       },
-      { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "风火优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
+      { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "热质论1优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
+      {
+        id: "pangenesisRule",
+        comment: {
+          cn: `固定式<a href='https://nga.178.com/read.php?tid=36875899' target="_blank">NGA原帖</a><a href='https://souma.diemoe.net/resources/img/pangenesis.png' target="_blank">我画的图</a>`,
+        },
+        name: {
+          en: "黑白塔打法",
+        },
+        type: "select",
+        options: {
+          en: {
+            game8: "game8",
+            纯固定式: "fixed",
+          },
+        },
+        default: "game8",
+      },
       {
         id: "pantheismPriority",
         comment: { en: '用"/"斜线分割' },
         name: {
-          en: "本体踩塔优先级从左到右",
+          en: "黑白塔优先级从左到右",
         },
         type: "string",
         default: "MT/ST/H1/H2/D1/D2/D3/D4",
@@ -2763,7 +2780,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 本体星极偏向灵(白) in 泛神论",
         type: "GainsEffect",
         netRegex: { effectId: "DF8", capture: true },
-        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3,
+        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig === "game8",
         infoText: (_data, _matches, output) => output.text(),
         run: (data, _matches, output) => {
           data.souma.pantheismLastText = output.text();
@@ -2777,7 +2794,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 本体星极偏向灵(黑) in 泛神论",
         type: "GainsEffect",
         netRegex: { effectId: "DF9", capture: true },
-        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3,
+        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig === "game8",
         infoText: (_data, _matches, output) => output.text(),
         run: (data, _matches, output) => {
           data.souma.pantheismLastText = output.text();
@@ -2843,7 +2860,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 本体 消失因子结算",
         type: "GainsEffect",
         netRegex: { effectId: "E09", capture: true },
-        durationSeconds: 12,
+        durationSeconds: (data) => (data.triggerSetConfig.pangenesisRule === "game8" ? 12 : 25),
         suppressSeconds: 30,
         delaySeconds: 0.5,
         alertText: (data, _matches, output) => {
@@ -2867,39 +2884,64 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             })
             .sort((a, b) => a.white.duration - b.white.duration)
             .map((v) => v.target);
-          switch (data.me) {
-            case 单1:
-              data.souma.pantheismLastText = output.南塔();
-              return output.单1();
-            case 单2:
-              data.souma.pantheismLastText = output.南塔();
-              return output.单2();
-            case 黑1:
-              data.souma.pantheismLastText = output.白塔();
-              data.souma.pantheismUndetermined = { color: "白", round: 1 };
-              return output.短黑();
-            case 白1:
-              data.souma.pantheismLastText = output.黑塔();
-              data.souma.pantheismUndetermined = { color: "黑", round: 1 };
-              return output.短白();
-            case 黑2:
-              data.souma.pantheismLastText = output.白塔();
-              data.souma.pantheismUndetermined = { color: "白", round: 2 };
-              return output.长黑();
-            case 白2:
-              data.souma.pantheismLastText = output.黑塔();
-              data.souma.pantheismUndetermined = { color: "黑", round: 2 };
-              return output.长白();
-            case 闲1:
-              data.souma.pantheismLastText = output.北塔();
-              data.souma.pantheismIsIdle = true;
-              return output.闲1();
-            case 闲2:
-              data.souma.pantheismIsIdle = true;
-              data.souma.pantheismLastText = output.北塔();
-              return output.闲2();
-            default:
-              return;
+          if (data.triggerSetConfig.pangenesisRule === "game8") {
+            switch (data.me) {
+              case 单1:
+                data.souma.pantheismLastText = output.南塔();
+                return output.单1();
+              case 单2:
+                data.souma.pantheismLastText = output.南塔();
+                return output.单2();
+              case 黑1:
+                data.souma.pantheismLastText = output.白塔();
+                data.souma.pantheismUndetermined = { color: "白", round: 1 };
+                return output.短黑();
+              case 白1:
+                data.souma.pantheismLastText = output.黑塔();
+                data.souma.pantheismUndetermined = { color: "黑", round: 1 };
+                return output.短白();
+              case 黑2:
+                data.souma.pantheismLastText = output.白塔();
+                data.souma.pantheismUndetermined = { color: "白", round: 2 };
+                return output.长黑();
+              case 白2:
+                data.souma.pantheismLastText = output.黑塔();
+                data.souma.pantheismUndetermined = { color: "黑", round: 2 };
+                return output.长白();
+              case 闲1:
+                data.souma.pantheismLastText = output.北塔();
+                data.souma.pantheismIsIdle = true;
+                return output.闲1();
+              case 闲2:
+                data.souma.pantheismIsIdle = true;
+                data.souma.pantheismLastText = output.北塔();
+                return output.闲2();
+              default:
+                return;
+            }
+          } else if (data.triggerSetConfig.pangenesisRule === "fixed") {
+            switch (data.me) {
+              case 单1:
+                return output.固定单1();
+              case 单2:
+                return output.固定单2();
+              case 黑1:
+                return output.固定短黑();
+              case 白1:
+                return output.固定短白();
+              case 黑2:
+                return output.固定长黑();
+              case 白2:
+                return output.固定长白();
+              case 闲1:
+                data.souma.pantheismIsIdle = true;
+                return output.固定闲1();
+              case 闲2:
+                data.souma.pantheismIsIdle = true;
+                return output.固定闲2();
+              default:
+                return;
+            }
           }
         },
         outputStrings: {
@@ -2907,14 +2949,22 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           北塔: { en: "踩北塔" },
           黑塔: { en: "踩黑" },
           白塔: { en: "踩白" },
+          闲1: { en: "闲1：左半场等待 => 踩第二轮北塔" },
+          闲2: { en: "闲2：右半场等待 => 踩第二轮北塔" },
           单1: { en: "单1：踩左半场1塔" },
           单2: { en: "单2：踩右半场1塔" },
           短黑: { en: "短黑：踩白1塔" },
           短白: { en: "短白：踩黑1塔" },
           长黑: { en: "长黑：白半场等待 => 踩第二轮南塔" },
           长白: { en: "长白：黑半场等待 => 踩第二轮南塔" },
-          闲1: { en: "闲1：左半场等待 => 踩第二轮北塔" },
-          闲2: { en: "闲2：右半场等待 => 踩第二轮北塔" },
+          固定闲1: { en: "闲1：左1塔外 => 2下 => 3上 => 接线" },
+          固定闲2: { en: "闲2：右1塔外 => 2下 => 3上 => 接线" },
+          固定单1: { en: "单1：左1塔内下边 => 2上 => 3下" },
+          固定单2: { en: "单2：右1塔内下边 => 2上 => 3下" },
+          固定短黑: { en: "短黑：白1塔内上边 => 2上 => 3下" },
+          固定短白: { en: "短白：黑1塔内上边 => 2上 => 3下" },
+          固定长黑: { en: "长黑：白半场等待 => 2下 => 3上" },
+          固定长白: { en: "长白：黑半场等待 => 2下 => 3上" },
         },
       },
       {
