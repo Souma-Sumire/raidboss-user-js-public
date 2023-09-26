@@ -80,9 +80,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return {
         souma: {
           decOffset: undefined,
-          rockbreaker: [],
-          rockbreakerCounter: 0,
-          archaicRockbreakerCounter: 0,
+          rockCounter: 0,
+          rocks: [],
           dualityBuster: [],
           levinOrbs: {},
           limitCutDash: 0,
@@ -103,17 +102,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "StartsUsing",
         netRegex: { id: ["8167", "8168", "8169", "816A", "815F"], capture: true },
         preRun: (data, matches) => {
-          if (matches.id === "815F") data.souma.archaicRockbreakerCounter++;
+          if (matches.id === "815F") {
+            data.souma.rockCounter++;
+          }
         },
-        durationSeconds: (data) => (data.souma.archaicRockbreakerCounter === 1 ? 12 : 5),
-        delaySeconds: (data, matches) => (matches.id === "815F" && data.souma.archaicRockbreakerCounter === 2 ? 8 : 0),
+        durationSeconds: (data) => (data.souma.rockCounter === 1 ? 12 : 5),
+        delaySeconds: (data, matches) => (matches.id === "815F" && data.souma.rockCounter === 2 ? 8 : 0),
         promise: async (data, matches) => {
-          if (matches.id === "815F" && data.souma.archaicRockbreakerCounter === 2) {
+          if (matches.id === "815F" && data.souma.rockCounter === 2) {
             data.souma.combatants = (await callOverlayHandler({ call: "getCombatants" })).combatants.find((v) => v.Name === data.me);
           }
         },
         alertText: (data, matches, output) => {
-          if (data.souma.archaicRockbreakerCounter === 1 && data.souma.rockbreakerSafe1) {
+          if (data.souma.rockCounter === 1 && data.souma.rockSafe1) {
             // 第一次古代地裂劲
             // "8167": "远+后",
             // "8168": "近+后",
@@ -123,7 +124,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             const outerSafe = ["8167", "8169"].includes(matches.id); // 远
             const farOrNear = behindSafe ? (v) => v.y > 100 : (v) => v.y < 100;
             const insideOrOutside = outerSafe ? (v) => v.num <= 8 : (v) => v.num >= 9;
-            const safe4 = data.souma.rockbreakerSafe1;
+            const safe4 = data.souma.rockSafe1;
             const safe2 = safe4.filter(farOrNear);
             const safe = safe2.find(insideOrOutside);
             let next;
@@ -138,15 +139,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               next = behindSafe ? "5" : "1"; // 实际上任意就近正点均可 高手近战可去左右打身位，这里只报AC
             }
             return output.text({ step1: output[safe.num](), step2: output[next]() });
-          } else if (data.souma.archaicRockbreakerCounter === 2 && data.souma.rockbreakerSafe2) {
+          } else if (data.souma.rockCounter === 2 && data.souma.rockSafe2) {
             // 第二次古代地裂劲 取最近
             const myPos = { x: data.souma.combatants.PosX, y: data.souma.combatants.PosY };
-            const closestPoint = data.souma.rockbreakerSafe2.reduce((prev, curr) => {
+            const closestPoint = data.souma.rockSafe2.reduce((prev, curr) => {
               const prevDist = calculateDistance(myPos.x, myPos.y, prev.x, prev.y);
               const currDist = calculateDistance(myPos.x, myPos.y, curr.x, curr.y);
               return prevDist < currDist ? prev : curr;
             });
-            // console.log(structuredClone(closestPoint), structuredClone(data.souma.rockbreakerSafe2), data.me, myPos);
+            // console.log(structuredClone(closestPoint), structuredClone(data.souma.rockSafe2), data.me, myPos);
             return output.text2({ text: output[closestPoint.num]() });
           }
         },
@@ -172,29 +173,44 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "CombatantMemory",
         netRegex: {
           id: "40[0-9A-F]{6}",
-          pair: [{ key: "Heading", value: "0.0000" }],
+          pair: [{ key: "CastBuffID", value: "33121" }],
           change: "Change",
           capture: true,
         },
         preRun: (data, matches) => {
-          if (rockbreakpos.find((r) => Math.abs(matches.pairPosX - r.x) <= 0.2 && Math.abs(matches.pairPosY - r.y) <= 0.2)) {
-            data.souma.rockbreaker.push(matches);
-          }
-          if (data.souma.rockbreaker.length === 8) {
-            data.souma.rockbreakerCounter++;
-            const arr = data.souma.rockbreaker.map((v) => ({ x: v.pairPosX, y: v.pairPosY }));
+          data.souma.rocks.push(matches);
+        },
+        promise: async (data) => {
+          if (data.souma.rocks.length === 8) {
+            const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rocks.map((v) => parseInt(v.id, 16)) })).combatants;
+            const arr = combatants.map((v) => ({ x: v.PosX, y: v.PosY }));
             const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
-            if (safe.length !== 4) throw `第${data.souma.rockbreakerCounter}轮安全点找到不是4个`;
-            if (data.souma.rockbreakerCounter === 1) {
-              data.souma.rockbreakerSafe1 = safe;
-            } else if (data.souma.rockbreakerCounter === 2) {
-              data.souma.rockbreakerSafe2 = safe;
+            if (safe.length !== 4) {
+              console.warn(combatants);
+              console.warn(data.souma.rocks);
+              console.error(safe);
+              throw new Error(`第${data.souma.rockCounter}轮安全点找到不是4个`);
+            }
+            if (data.souma.rockCounter === 1) {
+              data.souma.rockSafe1 = safe;
+            } else if (data.souma.rockCounter === 2) {
+              data.souma.rockSafe2 = safe;
             }
           }
         },
-        delaySeconds: 1,
+      },
+      {
+        id: "P9S Souma 古代地裂劲 Delete",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "CastBuffID", value: "33121" }],
+          change: "Change",
+          capture: false,
+        },
+        delaySeconds: 1.5,
         run: (data) => {
-          data.souma.rockbreaker.length = 0;
+          data.souma.rocks = [];
         },
       },
       {

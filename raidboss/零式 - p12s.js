@@ -94,16 +94,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       en: "引导激光！",
     },
     delay2: {
-      en: "等1会",
+      en: "引导激光（等1个小怪）",
     },
     delay3: {
-      en: "等2会",
+      en: "引导激光（等2个小怪）",
     },
     delay4: {
-      en: "等3会",
+      en: "引导激光（等3个小怪）",
     },
     delay5: {
-      en: "等4会",
+      en: "引导激光（等4个小怪）",
     },
   };
   const conceptPairMap = {
@@ -1150,10 +1150,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
                 group.push({ name: target, x, y, rp: getRpByName(data, target) });
               }
             }
-            group.sort((a, b) => {
-              return group[0].x < 100 ? a.y - b.y : b.y - a.y;
-            });
-            data.souma.engravement3GroupInfo = { left: group[0], right: group[1] };
+            data.souma.engravement3GroupInfo = group;
           }
         },
         infoText: (data, _, output) => {
@@ -1163,16 +1160,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           // 125,103 左半场 靠下
           if (data.souma._engravement3Exported) return;
           if (data.souma.engravement3TetherIds.length === 4 && data.souma.engravement3TetherPlayers[data.me] && data.souma.engravement3GroupInfo) {
-            const info =
-              data.souma.engravement3GroupInfo.left.name === data.me
-                ? data.souma.engravement3GroupInfo.left
-                : data.souma.engravement3GroupInfo.right.name === data.me
-                ? data.souma.engravement3GroupInfo.right
-                : undefined;
+            const info = data.souma.engravement3GroupInfo.find((v) => v.name === data.me);
             if (info) {
               const pos = data.souma.engravement3SafeTiles.find((v) => v.endsWith(info.x < 100 ? "E" : "W"));
               const upOrDown = +info.y < 100 ? "down" : "up";
-              const result = output[pos + upOrDown]();
+              const key = pos + upOrDown;
+              const result = output[key]();
+              data.souma.engravement3DpsOrthoclinal = ["insideNEup", "insideNWup", "insideSEdown", "insideSWdown"].includes(key) ? "back" : "enter";
               data.souma._engravement3Exported = true;
               return result;
             }
@@ -1208,13 +1202,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (myEffect === soakTiltType) {
             let dir;
             if (data.triggerSetConfig.engravement3TowerDPS === "heading") {
-              dir = data.souma.engravement3GroupInfo.left.name === data.me ? "enter" : "back";
+              dir = data.souma.engravement3DpsOrthoclinal;
             } else if (data.triggerSetConfig.engravement3TowerDPS === "priority") {
               const rule = ["D1", "D2", "D3", "D4"];
-              const arr = Object.entries(data.souma.engravement3GroupInfo).sort((a, b) => {
-                return rule.indexOf(a[1].rp) - rule.indexOf(b[1].rp);
+              const arr = data.souma.engravement3GroupInfo.sort((a, b) => {
+                return rule.indexOf(a.rp) - rule.indexOf(b.rp);
               });
-              dir = arr[0][1].name === data.me ? "enter" : "back";
+              dir = arr[0].name === data.me ? "enter" : "back";
             }
             const text = output.tower({ way: output[dir]() });
             data.souma.engravement3TowerText = text;
@@ -1510,17 +1504,17 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           if (data.souma.whiteFlameCounter === 1) {
             const infoText = output.secondWhiteFlame({ delay: delayStr });
             if (data.souma.limitCutNumber === 6 || data.souma.limitCutNumber === 8) return { alarmText: baitLaser, infoText: infoText };
-            return { infoText: infoText, tts: null };
+            return { infoText: infoText };
           }
           if (data.souma.whiteFlameCounter === 2) {
             const infoText = output.thirdWhiteFlame({ delay: delayStr });
             if (data.souma.limitCutNumber === 1 || data.souma.limitCutNumber === 3) return { alarmText: baitLaser, infoText: infoText };
-            return { infoText: infoText, tts: null };
+            return { infoText: infoText };
           }
           if (data.souma.whiteFlameCounter === 3) {
             const infoText = output.fourthWhiteFlame({ delay: delayStr });
             if (data.souma.limitCutNumber === 2 || data.souma.limitCutNumber === 4) return { alarmText: baitLaser, infoText: infoText };
-            return { infoText: infoText, tts: null };
+            return { infoText: infoText };
           }
         },
       },
@@ -2666,34 +2660,38 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           data.souma.caloric1Mine = myBuff;
           if (myBuff === undefined) return;
           const myRp = getRpByName(data, data.me);
-          const outer = data.souma.calorics.flat(Infinity);
           const group = {
             MT: ["MT", "H1", "D1", "D3"],
             ST: ["ST", "H2", "D2", "D4"],
           };
-          const myGroup = group.MT.includes(myRp) ? 'MT' : 'ST';
-          const AC = outer.filter((v) => !data.souma.caloric1First.map((v) => getRpByName(data, v)).includes(v));
-          const A = AC.find((v) => group.MT.includes(v));
-          const C = AC.find((v) => group.ST.includes(v));
-          const map = {
-            A: data.souma.caloric1Buff[getNameByRp(data, A)],
-            B: "wind",
-            C: data.souma.caloric1Buff[getNameByRp(data, C)],
-            D: "wind",
-          };
-          const go = {
-            MT:Object.entries(map).toReversed().find((v) => v[1] !== myBuff)[0],
-            ST:Object.entries(map).find((v) => v[1] !== myBuff)[0],
+          let outer, myGroup, AC, A, C, map, go;
+          if (data.triggerSetConfig.windFireSolution === "papan") {
+            outer = data.souma.calorics.flat(Infinity);
+            myGroup = group.MT.includes(myRp) ? "MT" : "ST";
+            AC = outer.filter((v) => !data.souma.caloric1First.map((v) => getRpByName(data, v)).includes(v));
+            A = AC.find((v) => group.MT.includes(v));
+            C = AC.find((v) => group.ST.includes(v));
+            map = {
+              A: A ? data.souma.caloric1Buff[getNameByRp(data, A)] : "wind",
+              B: "wind",
+              C: C ? data.souma.caloric1Buff[getNameByRp(data, C)] : "wind",
+              D: "wind",
+            };
+            go = {
+              MT: Object.entries(map)
+                .toReversed()
+                .find((v) => v[1] !== myBuff)[0],
+              ST: Object.entries(map).find((v) => v[1] !== myBuff)[0],
+            };
           }
-
           if (myBuff === "fire") {
             const myTeam = [];
             for (const [name, stat] of Object.entries(data.souma.caloric1Buff)) {
               if (stat === myBuff) myTeam.push(name);
             }
-            const fullTeam = myTeam.sort((a, b) => sortArr.indexOf(getRpByName(data, a)) - sortArr.indexOf(getRpByName(data, b)));
             if (data.triggerSetConfig.windFireSolution === "game8") {
               // 4人火
+              const fullTeam = myTeam.sort((a, b) => sortArr.indexOf(getRpByName(data, a)) - sortArr.indexOf(getRpByName(data, b)));
               const myFire = fullTeam.indexOf(data.me) + 1;
               return { alertText: output["fire" + myFire]() };
             }
@@ -2860,7 +2858,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 本体星极偏向灵(白) in 泛神论",
         type: "GainsEffect",
         netRegex: { effectId: "DF8", capture: true },
-        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig === "game8",
+        condition: (data, matches) =>
+          data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig.pangenesisRule === "game8",
         infoText: (_data, _matches, output) => output.text(),
         run: (data, _matches, output) => {
           data.souma.pantheismLastText = output.text();
@@ -2874,7 +2873,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "P12S Souma 本体星极偏向灵(黑) in 泛神论",
         type: "GainsEffect",
         netRegex: { effectId: "DF9", capture: true },
-        condition: (data, matches) => data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig === "game8",
+        condition: (data, matches) =>
+          data.souma.pantheism && matches.target === data.me && data.souma.pantheismCount < 3 && data.triggerSetConfig.pangenesisRule === "game8",
         infoText: (_data, _matches, output) => output.text(),
         run: (data, _matches, output) => {
           data.souma.pantheismLastText = output.text();
@@ -3029,22 +3029,22 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           北塔: { en: "踩北塔" },
           黑塔: { en: "踩黑" },
           白塔: { en: "踩白" },
-          闲1: { en: "闲1：左半场等待 => 踩第二轮北塔" },
-          闲2: { en: "闲2：右半场等待 => 踩第二轮北塔" },
-          单1: { en: "单1：踩左半场1塔" },
-          单2: { en: "单2：踩右半场1塔" },
+          闲1: { en: "闲1：左半场等待 => 第2个北塔" },
+          闲2: { en: "闲2：右半场等待 => 第2个北塔" },
+          单1: { en: "单1：踩左1塔" },
+          单2: { en: "单2：踩右1塔" },
           短黑: { en: "短黑：踩白1塔" },
           短白: { en: "短白：踩黑1塔" },
-          长黑: { en: "长黑：白半场等待 => 踩第二轮南塔" },
-          长白: { en: "长白：黑半场等待 => 踩第二轮南塔" },
-          固定闲1: { en: "闲1：左1塔外 => 2下 => 3上 => 接线" },
-          固定闲2: { en: "闲2：右1塔外 => 2下 => 3上 => 接线" },
-          固定单1: { en: "单1：左1塔内下边 => 2上 => 3下" },
-          固定单2: { en: "单2：右1塔内下边 => 2上 => 3下" },
-          固定短黑: { en: "短黑：白1塔内上边 => 2上 => 3下" },
-          固定短白: { en: "短白：黑1塔内上边 => 2上 => 3下" },
-          固定长黑: { en: "长黑：白半场等待 => 2下 => 3上" },
-          固定长白: { en: "长白：黑半场等待 => 2下 => 3上" },
+          长黑: { en: "长黑：白半场等待 => 第2个下(白)塔" },
+          长白: { en: "长白：黑半场等待 => 第2个下(黑)塔" },
+          固定闲1: { en: "闲1：左1塔外 => 下 => 上 => 接线" },
+          固定闲2: { en: "闲2：右1塔外 => 下 => 上 => 接线" },
+          固定单1: { en: "单1：左1塔内下边 => 上 => 下" },
+          固定单2: { en: "单2：右1塔内下边 => 上 => 下" },
+          固定短黑: { en: "短黑：白1塔内上边 => 上 => 下" },
+          固定短白: { en: "短白：黑1塔内上边 => 上 => 下" },
+          固定长黑: { en: "长黑：白半场等待 => 下 => 上" },
+          固定长白: { en: "长白：黑半场等待 => 下 => 上" },
         },
       },
       {
@@ -3092,72 +3092,5 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
     ],
-    // timelineReplace: [
-    //   {
-    //     locale: "cn",
-    //     missingTranslations: true,
-    //     replaceText: {
-    //       "Apodialogos": "远翼对话", // アポ・ディアロゴス
-    //       "Astral Advance": "星极顺行", // アストラルアドバンス
-    //       "Astral Advent": "星极降临", // アストラルアドベント
-    //       "Astral Glow": "星极之光", // アストラルグロウ
-    //       "Astral Impact": "星击", // 星撃
-    //       "Caloric Theory": "热质说", // カロリックセオリー
-    //       "Crush Helm": "星天爆击打", // 星天爆撃打
-    //       "Demi Parhelion": "半幻日", // デミパルヘリオン
-    //       "(?<!(Apo|Peri))Dialogos": "对话", // ディアロゴス
-    //       "Divine Excoriation": "神罚", // 神罰
-    //       "Dynamic Atmosphere": "冲风", // 衝風
-    //       "Ekpyrosis": "世界燃烧", // エクピロシス
-    //       "Engravement of Souls": "魂之刻印", // 魂の刻印
-    //       "Entropic Excess": "焦热波", // 焦熱波
-    //       "Factor In": "因子还原", // 因子還元
-    //       "Gaiaochos": "大地之主", // ガイアオコス
-    //       "Geocentrism": "地心说", // ジオセントリズム
-    //       "Glaukopis": "明眸", // グラウコピス
-    //       "Ignorabimus": "不可知论", // イグノラビムス
-    //       "Implode": "自毁", // 自壊
-    //       "Missing Link": "苦痛之链", // 苦痛の鎖
-    //       "On the Soul": "论灵魂", // オン・ザ・ソウル
-    //       "Palladian Grasp": "帕拉斯之手", // パラスの手
-    //       "Palladian Ray": "帕拉斯射线", // パラスレイ
-    //       "Palladion": "圣像骑士", // パラディオン
-    //       "Pangenesis": "泛生论", // パンゲネシス
-    //       "Panta Rhei": "万物流变", // パンタレイ
-    //       "Paradeigma": "范式", // パラデイグマ
-    //       "Parthenos": "帕尔忒农", // パルテノン
-    //       "Peridialogos": "近翼对话", // ペリ・ディアロゴス
-    //       "Polarized Ray": "极性射线", // ポラリティレイ
-    //       "Pyre Pulse": "重热波", // 重熱波
-    //       "Ray of Light": "光波", // 光波
-    //       "Sample": "暴食", // 貪食
-    //       "Searing Radiance": "光辉", // レイディアンス
-    //       "Shadowsear": "灵极幻影", // シャドーシアー
-    //       "Shock": "放电", // 放電
-    //       "Summon Darkness": "黑暗召唤", // サモンダークネス
-    //       "Superchain Burst": "超链爆发", // スーパーチェイン・バースト
-    //       "Superchain Coil": "超链之环", // スーパーチェイン・サークル
-    //       "Superchain Theory I(?!I)": "超链理论I", // スーパーチェイン・セオリーI
-    //       "Superchain Theory IIA": "超链理论IIA", // スーパーチェイン・セオリーIIA
-    //       "Superchain Theory IIB": "超链理论IIB", // スーパーチェイン・セオリーIIB
-    //       "The Classical Concepts": "理念元素", // イデア・エレメンタル
-    //       "Theos's Cross": "神·十字", // テオス・クロス
-    //       "Theos's Holy": "神·圣光", // テオス・ホーリー
-    //       "Theos's Saltire": "神·斜十字", // テオス・サルタイアー
-    //       "Theos's Ultima": "神·究极", // テオス・アルテマ
-    //       "Trinity of Souls": "三位一体之魂", // トリニティ・ソウル
-    //       "(?<! )Ultima(?! (B|R))": "究极", // アルテマ
-    //       "Ultima Blade": "究极之刃", // アルテマブレイド
-    //       "Ultima Blow": "究极一击", // アルテマブロウ
-    //       "Ultima Ray": "究极射线", // アルテマレイ
-    //       "Umbral Advance": "灵极顺行", // アンブラルアドバンス
-    //       "Umbral Advent": "灵极降临", // アンブラルアドベント
-    //       "Umbral Glow": "灵极之光", // アンブラルグロウ
-    //       "Umbral Impact": "灵击", // 霊撃
-    //       "Unnatural Enchainment": "灵魂束缚", // 魂の鎖
-    //       "White Flame": "白火", // 白火
-    //     },
-    //   },
-    // ],
   });
 }
