@@ -151,6 +151,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             // console.log(structuredClone(closestPoint), structuredClone(data.souma.rockSafe2), data.me, myPos);
             return output.text2({ text: output[closestPoint.num]() });
           }
+          // 报错的情况，至少报个正常的
+          if (matches.id === "8167") return "背后+远离";
+          if (matches.id === "8168") return "靠近+背后";
+          if (matches.id === "8169") return "面前+远离";
+          if (matches.id === "816A") return "靠近+面前";
         },
         outputStrings: {
           text: { en: "${step1} => ${step2}" },
