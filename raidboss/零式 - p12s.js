@@ -263,7 +263,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       { id: "windFirePriority", comment: { cn: "A起顺，职能用'/'分割。" }, name: { en: "热质论1优先级" }, type: "string", default: "MT/ST/H1/H2/D1/D2/D3/D4" },
       {
         id: "windFireSolution",
-        comment: { cn: "papan解法请见BV1XK4y1F7S3" },
+        comment: { cn: "papan解法请见BV1XK4y1F7S3，papan式未经过实际测试，有问题请反馈（带上你的ACT日志）。" },
         name: {
           en: "热质论1打法",
         },
@@ -271,7 +271,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         options: {
           en: {
             "game8（NL改）": "game8",
-            "papan": "papan",
+            "papan（未实际测试）": "papan",
           },
         },
         default: "game8",
