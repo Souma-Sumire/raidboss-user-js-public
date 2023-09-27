@@ -72,7 +72,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     { num: 12, x: "92.609", y: "96.9385" }, //D1
   ];
   const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
-  const { getLBByName } = Util.souma;
+  const { getLBByName, deepClone } = Util.souma;
   Options.Triggers.push({
     id: "SoumaAnabaseiosTheNinthCircleSavage",
     zoneId: ZoneId.AnabaseiosTheNinthCircleSavage,
@@ -81,13 +81,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         souma: {
           decOffset: undefined,
           rockCounter: 0,
-          rocks: [],
           dualityBuster: [],
           levinOrbs: {},
           limitCutDash: 0,
           limitCut1Count: 0,
           defamationCount: 0,
-          rock2Arr: [],
+          rockArr: [],
         },
       };
     },
@@ -98,68 +97,72 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       { id: "P9S Rear Outside Roundhouse", disabled: true },
       { id: "P9S Roundhouse Followup", disabled: true },
       {
-        id: "P9S Souma 连转脚前后",
-        comment: { cn: "假设BOSS面向A。不确定100%能报，有待更多测试。" },
-        type: "StartsUsing",
-        netRegex: { id: ["8167", "8168", "8169", "816A", "815F"], capture: true },
-        preRun: (data, matches) => {
-          if (matches.id === "815F") {
-            data.souma.rockCounter++;
-          }
+        id: "P9S Souma 古代地裂劲 你是猪1",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "CastBuffID", value: "33121" }],
+          change: "Change",
+          capture: true,
         },
-        durationSeconds: (data) => (data.souma.rockCounter === 1 ? 12 : 5),
-        delaySeconds: (data, matches) => (matches.id === "815F" && data.souma.rockCounter === 2 ? 8 : 0),
-        promise: async (data, matches) => {
-          if (matches.id === "815F" && data.souma.rockCounter === 2) {
-            data.souma.combatants = (await callOverlayHandler({ call: "getCombatants" })).combatants.find((v) => v.Name === data.me);
-          }
+        preRun: (data, matches) => data.souma.rockArr.push(matches.id),
+        delaySeconds: 5,
+        run: (data) => {
+          data.souma.rockArr.length = 0;
         },
-        alertText: (data, matches, output) => {
-          if (data.souma.rockCounter === 1 && data.souma.rockSafe1) {
-            // 第一次古代地裂劲
-            // "8167": "远+后",
-            // "8168": "近+后",
-            // "8169": "远+前",
-            // "816A": "近+前",
-            const behindSafe = ["8167", "8168"].includes(matches.id); // 后
-            const outerSafe = ["8167", "8169"].includes(matches.id); // 远
-            const farOrNear = behindSafe ? (v) => v.y > 100 : (v) => v.y < 100;
-            const insideOrOutside = outerSafe ? (v) => v.num <= 8 : (v) => v.num >= 9;
-            const safe4 = data.souma.rockSafe1;
-            const safe2 = safe4.filter(farOrNear);
-            const safe = safe2.find(insideOrOutside);
-            let next;
-            if (outerSafe) {
-              // 钢铁 => 月环
-              const danger = rockbreakpos.filter((r) => !safe4.find((s) => s.num === r.num));
-              const innerDanger = danger.filter((v) => v.num >= 9);
-              const nextInner = innerDanger.find(farOrNear);
-              next = nextInner.num;
-            } else {
-              // 月环 => 钢铁
-              next = behindSafe ? "5" : "1"; // 实际上任意就近正点均可 高手近战可去左右打身位，这里只报AC
+      },
+      {
+        id: "P9S Souma 古代地裂劲 你是猪2",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "CastBuffID", value: "33121" }],
+          change: "Change",
+          capture: false,
+        },
+        delaySeconds: 0.5,
+        suppressSeconds: 30,
+        promise: async (data, _matches, output) => {
+          data.souma.rockCounter++;
+          if (data.souma.rockArr.length === 8) {
+            const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rockArr.map((v) => parseInt(v, 16)) })).combatants;
+            console.debug(data.souma.rockCounter, combatants);
+            const arr = combatants.map(({ ID: id, PosX: x, PosY: y }) => ({ id, x, y }));
+            const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
+            if (safe.length !== 4) {
+              console.error(safe);
             }
-            return output.text({ step1: output[safe.num](), step2: output[next]() });
-          } else if (data.souma.rockCounter === 2 && data.souma.rockSafe2) {
-            // 第二次古代地裂劲 取最近
-            const myPos = { x: data.souma.combatants.PosX, y: data.souma.combatants.PosY };
-            const closestPoint = data.souma.rockSafe2.reduce((prev, curr) => {
-              const prevDist = calculateDistance(myPos.x, myPos.y, prev.x, prev.y);
-              const currDist = calculateDistance(myPos.x, myPos.y, curr.x, curr.y);
-              return prevDist < currDist ? prev : curr;
-            });
-            // console.log(structuredClone(closestPoint), structuredClone(data.souma.rockSafe2), data.me, myPos);
-            return output.text2({ text: output[closestPoint.num]() });
+            if (data.souma.rockCounter === 1) {
+              data.souma.rockSafe1 = deepClone(safe);
+            }
+            if (data.souma.rockCounter === 2) {
+              const c = (await callOverlayHandler({ call: "getCombatants", names: [data.me] })).combatants;
+              const myPos = { x: c[0].PosX, y: c[0].PosY };
+              const x = Math.min(100, myPos.x) + Math.abs(myPos.x - 100) * 0.8;
+              const y = Math.min(100, myPos.y) + Math.abs(myPos.y - 100) * 0.8;
+              const step1 = safe.reduce((prev, curr) => {
+                const prevDist = calculateDistance(x, y, prev.x, prev.y);
+                const currDist = calculateDistance(x, y, curr.x, curr.y);
+                return prevDist < currDist ? prev : curr;
+              });
+              const danger = rockbreakpos.filter((v) => !safe.find((s) => s.num === v.num));
+              const step2 = danger.reduce((prev, curr) => {
+                const prevDist = calculateDistance(x, y, prev.x, prev.y);
+                const currDist = calculateDistance(x, y, curr.x, curr.y);
+                return prevDist < currDist ? prev : curr;
+              });
+              data.souma.rockInfoText = output.text({ step1: output[step1.num](), step2: output[step2.num]() });
+            }
+          } else {
+            console.error("怎么事？", deepClone(data.souma.rockArr));
           }
-          // 报错的情况，至少报个正常的
-          if (matches.id === "8167") return "背后+远离";
-          if (matches.id === "8168") return "靠近+背后";
-          if (matches.id === "8169") return "面前+远离";
-          if (matches.id === "816A") return "靠近+面前";
+        },
+        infoText: (data) => data.souma.rockInfoText,
+        run: (data) => {
+          delete data.souma.rockInfoText;
         },
         outputStrings: {
           text: { en: "${step1} => ${step2}" },
-          text2: { en: "${text} => 就近躲避" },
           1: { en: "上+远离" },
           2: { en: "右上+远离" },
           3: { en: "右+远离" },
@@ -175,81 +178,48 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
       {
-        id: "P9S Souma 古代地裂劲 无语",
-        type: "CombatantMemory",
-        netRegex: {
-          id: "40[0-9A-F]{6}",
-          pair: [{ key: "Heading", value: "0.0000" }],
-          change: "Change",
-          capture: true,
-        },
-        condition: (_data, matches) => {
-          return !!rockbreakpos.find((r) => Math.abs(matches.pairPosX - r.x) <= 0.2 && Math.abs(matches.pairPosY - r.y) <= 0.2);
-        },
-        preRun: (data, matches) => {
-          data.souma.rocks.push(matches);
-        },
-      },
-      {
-        id: "P9S Souma 古代地裂劲 鬼屎",
-        type: "CombatantMemory",
-        netRegex: {
-          id: "40[0-9A-F]{6}",
-          pair: [{ key: "Heading", value: "0.0000" }],
-          change: "Change",
-          capture: true,
-        },
-        delaySeconds: 0.5,
-        suppressSeconds: 1,
-        promise: async (data) => {
-          if (data.souma.rockCounter === 1 && data.souma.rocks.length > 4) {
-            const arr = data.souma.rocks.map((v) => ({ x: v.pairPosX, y: v.pairPosY }));
-            const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
-            if (safe.length !== 4) {
-              console.error(arr);
-              throw new Error(`第1轮安全点找到不是4个`);
-            }
-            data.souma.rockSafe1 = safe;
+        id: "P9S Souma 第一次前后脚",
+        comment: { cn: "假设BOSS面向A。不确定100%能报，有待更多测试。" },
+        type: "StartsUsing",
+        netRegex: { id: ["8167", "8168", "8169", "816A"], capture: true },
+        suppressSeconds: 9999,
+        infoText: (data, matches, output) => {
+          const behindSafe = ["8167", "8168"].includes(matches.id); // 后
+          const outerSafe = ["8167", "8169"].includes(matches.id); // 远
+          const farOrNear = behindSafe ? (v) => v.y > 100 : (v) => v.y < 100;
+          const insideOrOutside = outerSafe ? (v) => v.num <= 8 : (v) => v.num >= 9;
+          const safe = data.souma.rockSafe1.filter(farOrNear).find(insideOrOutside);
+          if (!safe) {
+            console.error(deepClone(data.souma.rockSafe1));
           }
-        },
-      },
-      {
-        id: "P9S Souma 古代地裂劲 捏马",
-        type: "CombatantMemory",
-        netRegex: {
-          id: "40[0-9A-F]{6}",
-          pair: [{ key: "CastBuffID", value: "33121" }],
-          change: "Change",
-          capture: true,
-        },
-        condition: (data) => data.souma.rockCounter === 2,
-        preRun: (data, matches) => data.souma.rock2Arr.push(matches.id),
-        delaySeconds: 0.5,
-        promise: async (data) => {
-          if (data.souma.rock2Arr.length === 8) {
-            const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rock2Arr.map((v) => parseInt(v, 16)) })).combatants;
-            const arr = combatants.map((v) => ({ x: v.PosX, y: v.PosY }));
-            const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
-            if (safe.length !== 4) {
-              console.error(combatants);
-              throw new Error(`第2轮安全点找到不是4个`);
-            }
-            data.souma.rockSafe2 = safe;
+          let next;
+          if (outerSafe) {
+            // 钢铁 => 月环
+            const danger = rockbreakpos.filter((r) => !data.souma.rockSafe1.find((s) => s.num === r.num));
+            const innerDanger = danger.filter((v) => v.num >= 9);
+            const nextInner = innerDanger.find(farOrNear);
+            next = nextInner.num;
+          } else {
+            // 月环 => 钢铁
+            next = behindSafe ? "5" : "1"; // 实际上任意就近正点均可 高手近战可去左右打身位，这里只报AC
           }
+          return output.text({ step1: output[safe.num](), step2: output[next]() });
         },
-      },
-      {
-        id: "P9S Souma 古代地裂劲 Delete",
-        type: "CombatantMemory",
-        netRegex: {
-          id: "40[0-9A-F]{6}",
-          pair: [{ key: "CastBuffID", value: "33121" }],
-          change: "Change",
-          capture: false,
-        },
-        delaySeconds: 2,
-        run: (data) => {
-          data.souma.rocks = [];
+        run: (data) => (data.souma.rockSafe1.length = 0),
+        outputStrings: {
+          text: { en: "${step1} => ${step2}" },
+          1: { en: "上+远离" },
+          2: { en: "右上+远离" },
+          3: { en: "右+远离" },
+          4: { en: "右下+远离" },
+          5: { en: "下+远离" },
+          6: { en: "左下+远离" },
+          7: { en: "左+远离" },
+          8: { en: "左上+远离" },
+          9: { en: "靠近+上偏右" },
+          10: { en: "靠近+右偏下" },
+          11: { en: "靠近+下偏左" },
+          12: { en: "靠近+左偏上" },
         },
       },
       {
@@ -459,7 +429,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         outputStrings: {
           dash: {
-            en: "引导火",
+            en: "放火",
           },
           soak: {
             en: "踩塔",
