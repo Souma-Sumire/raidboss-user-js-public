@@ -3011,12 +3011,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               case 单2:
                 return output.固定单2();
               case 黑1:
+                data.souma.pantheismUndetermined = { color: "白", round: 1 };
                 return output.固定短黑();
               case 白1:
+                data.souma.pantheismUndetermined = { color: "黑", round: 1 };
                 return output.固定短白();
               case 黑2:
+                data.souma.pantheismUndetermined = { color: "白", round: 2 };
                 return output.固定长黑();
               case 白2:
+                data.souma.pantheismUndetermined = { color: "黑", round: 2 };
                 return output.固定长白();
               case 闲1:
                 data.souma.pantheismIsIdle = true;
@@ -3042,12 +3046,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           短白: { en: "短白：踩黑1塔" },
           长黑: { en: "长黑：白半场等待 => 第2个下(白)塔" },
           长白: { en: "长白：黑半场等待 => 第2个下(黑)塔" },
-          固定闲1: { en: "闲1：左1塔外 => 下 => 上 => 接线" },
-          固定闲2: { en: "闲2：右1塔外 => 下 => 上 => 接线" },
-          固定单1: { en: "单1：左1塔内下 => 上 => 下" },
-          固定单2: { en: "单2：右1塔内下 => 上 => 下" },
-          固定短黑: { en: "短黑：白1塔内上 => 上 => 下" },
-          固定短白: { en: "短白：黑1塔内上 => 上 => 下" },
+          固定闲1: { en: "闲1：左1塔外面 => 下 => 上 => 接线" },
+          固定闲2: { en: "闲2：右1塔外面 => 下 => 上 => 接线" },
+          固定单1: { en: "单1：左1塔靠下 => 上 => 下" },
+          固定单2: { en: "单2：右1塔靠下 => 上 => 下" },
+          固定短黑: { en: "短黑：白1塔靠上 => 上 => 下" },
+          固定短白: { en: "短白：黑1塔靠上 => 上 => 下" },
           固定长黑: { en: "长黑：白半场等待 => 下 => 上" },
           固定长白: { en: "长白：黑半场等待 => 下 => 上" },
         },
