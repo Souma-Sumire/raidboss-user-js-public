@@ -87,6 +87,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           limitCutDash: 0,
           limitCut1Count: 0,
           defamationCount: 0,
+          rock2Arr: [],
         },
       };
     },
@@ -169,7 +170,46 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
       },
       {
-        id: "P9S Souma 古代地裂劲",
+        id: "P9S Souma 古代地裂劲 无语",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "Heading", value: "0.0000" }],
+          change: "Change",
+          capture: true,
+        },
+        condition: (_data, matches) => {
+          return !!rockbreakpos.find((r) => Math.abs(matches.pairPosX - r.x) <= 0.2 && Math.abs(matches.pairPosY - r.y) <= 0.2);
+        },
+        preRun: (data, matches) => {
+          data.souma.rocks.push(matches);
+        },
+      },
+      {
+        id: "P9S Souma 古代地裂劲 鬼屎",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "Heading", value: "0.0000" }],
+          change: "Change",
+          capture: true,
+        },
+        delaySeconds: 0.5,
+        suppressSeconds: 1,
+        promise: async (data) => {
+          if (data.souma.rockCounter === 1 && data.souma.rocks.length > 4) {
+            const arr = data.souma.rocks.map((v) => ({ x: v.pairPosX, y: v.pairPosY }));
+            const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
+            if (safe.length !== 4) {
+              console.error(arr);
+              throw new Error(`第1轮安全点找到不是4个`);
+            }
+            data.souma.rockSafe1 = safe;
+          }
+        },
+      },
+      {
+        id: "P9S Souma 古代地裂劲 捏马",
         type: "CombatantMemory",
         netRegex: {
           id: "40[0-9A-F]{6}",
@@ -177,25 +217,19 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           change: "Change",
           capture: true,
         },
-        preRun: (data, matches) => {
-          data.souma.rocks.push(matches);
-        },
+        condition: (data) => data.souma.rockCounter === 2,
+        preRun: (data, matches) => data.souma.rock2Arr.push(matches.id),
+        delaySeconds: 0.5,
         promise: async (data) => {
-          if (data.souma.rocks.length === 8) {
-            const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rocks.map((v) => parseInt(v.id, 16)) })).combatants;
+          if (data.souma.rock2Arr.length === 8) {
+            const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rock2Arr.map((v) => parseInt(v, 16)) })).combatants;
             const arr = combatants.map((v) => ({ x: v.PosX, y: v.PosY }));
             const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
             if (safe.length !== 4) {
-              console.warn(combatants);
-              console.warn(data.souma.rocks);
-              console.error(safe);
-              throw new Error(`第${data.souma.rockCounter}轮安全点找到不是4个`);
+              console.error(combatants);
+              throw new Error(`第2轮安全点找到不是4个`);
             }
-            if (data.souma.rockCounter === 1) {
-              data.souma.rockSafe1 = safe;
-            } else if (data.souma.rockCounter === 2) {
-              data.souma.rockSafe2 = safe;
-            }
+            data.souma.rockSafe2 = safe;
           }
         },
       },
@@ -208,7 +242,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           change: "Change",
           capture: false,
         },
-        delaySeconds: 1.5,
+        delaySeconds: 2,
         run: (data) => {
           data.souma.rocks = [];
         },
