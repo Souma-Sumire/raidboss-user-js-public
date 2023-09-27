@@ -172,7 +172,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "engravement1DropTower",
         name: {
-          en: "范式1拉线规则",
+          en: "范式2拉线规则",
         },
         type: "select",
         options: {
@@ -2244,7 +2244,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         },
         run: (data) => delete data.souma.conceptDebuff,
         outputStrings: {
-          text: { en: "${debuff}空地 => 引导射线 ${action}" },
+          text: { en: "先 ${debuff}空地 => ${action} 引导射线" },
           alpha: { en: "上边" },
           beta: { en: "下边" },
           alphaCol1KX: { en: "(左上)" },
@@ -2287,6 +2287,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         condition: (data, matches) => data.me === matches.target && data.souma.phase === "classical2",
         alertText: (data, _matches, output) => {
           if (data.souma.conceptDebuff === undefined) return output.default();
+          if (data.souma.phase === "classical2" && !data.triggerSetConfig.classicalConcepts2ActualNoFlip) {
+            data.souma.classical2InitialColumn = 3 - data.souma.classical2InitialColumn;
+          }
           data.souma.conceptResult =
             data.souma.conceptDebuff === "alpha"
               ? output["alpha" + "Col" + (data.souma.classical2InitialColumn + 1)]()
@@ -2294,15 +2297,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           return output.text({ action: data.souma.conceptResult });
         },
         outputStrings: {
-          text: { en: "引导射线 ${action} => 远离方块" },
-          alphaCol1: { en: "(左上)" },
-          alphaCol2: { en: "(右上)" },
-          alphaCol3: { en: "(左上)" },
-          alphaCol4: { en: "(右上)" },
-          betaCol1: { en: "(左下)" },
-          betaCol2: { en: "(右下)" },
-          betaCol3: { en: "(左下)" },
-          betaCol4: { en: "(右下)" },
+          text: { en: "先 ${action} 引导射线 => 远离方块" },
+          alphaCol1: { en: "左上" },
+          alphaCol2: { en: "右上" },
+          alphaCol3: { en: "左上" },
+          alphaCol4: { en: "右上" },
+          betaCol1: { en: "左下" },
+          betaCol2: { en: "右下" },
+          betaCol3: { en: "左下" },
+          betaCol4: { en: "右下" },
           default: {
             en: "引导射线",
           },
@@ -3041,10 +3044,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           长白: { en: "长白：黑半场等待 => 第2个下(黑)塔" },
           固定闲1: { en: "闲1：左1塔外 => 下 => 上 => 接线" },
           固定闲2: { en: "闲2：右1塔外 => 下 => 上 => 接线" },
-          固定单1: { en: "单1：左1塔内下边 => 上 => 下" },
-          固定单2: { en: "单2：右1塔内下边 => 上 => 下" },
-          固定短黑: { en: "短黑：白1塔内上边 => 上 => 下" },
-          固定短白: { en: "短白：黑1塔内上边 => 上 => 下" },
+          固定单1: { en: "单1：左1塔内下 => 上 => 下" },
+          固定单2: { en: "单2：右1塔内下 => 上 => 下" },
+          固定短黑: { en: "短黑：白1塔内上 => 上 => 下" },
+          固定短白: { en: "短白：黑1塔内上 => 上 => 下" },
           固定长黑: { en: "长黑：白半场等待 => 下 => 上" },
           固定长白: { en: "长白：黑半场等待 => 下 => 上" },
         },
