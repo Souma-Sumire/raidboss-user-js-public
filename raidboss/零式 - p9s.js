@@ -140,12 +140,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               const myPos = { x: c[0].PosX, y: c[0].PosY };
               const x = Math.min(100, myPos.x) + Math.abs(myPos.x - 100) * 0.8;
               const y = Math.min(100, myPos.y) + Math.abs(myPos.y - 100) * 0.8;
-              const step1 = safe.reduce((prev, curr) => {
+              const safe2 = safe.filter(v => v.num >= 9);
+              const step1 = safe2.reduce((prev, curr) => {
                 const prevDist = calculateDistance(x, y, prev.x, prev.y);
                 const currDist = calculateDistance(x, y, curr.x, curr.y);
                 return prevDist < currDist ? prev : curr;
               });
-              const danger = rockbreakpos.filter((v) => !safe.find((s) => s.num === v.num));
+              const danger = rockbreakpos.filter((v) => !safe2.find((s) => s.num === v.num));
               const step2 = danger.reduce((prev, curr) => {
                 const prevDist = calculateDistance(x, y, prev.x, prev.y);
                 const currDist = calculateDistance(x, y, curr.x, curr.y);
