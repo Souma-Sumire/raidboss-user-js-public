@@ -2669,8 +2669,10 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             outer = data.souma.calorics.flat(Infinity);
             myGroup = group.MT.includes(myRp) ? "MT" : "ST";
             AC = outer.filter((v) => !data.souma.caloric1First.map((v) => getRpByName(data, v)).includes(v));
-            A = AC.find((v) => group.MT.includes(v));
-            C = AC.find((v) => group.ST.includes(v));
+            const mtg = AC.find((v) => group.MT.includes(v));
+            const stg = AC.find((v) => group.ST.includes(v));
+            A = stg || mtg;
+            C = mtg || stg;
             map = {
               A: A ? data.souma.caloric1Buff[getNameByRp(data, A)] : "wind",
               B: "wind",
