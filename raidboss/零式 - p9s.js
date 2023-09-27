@@ -98,7 +98,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       { id: "P9S Roundhouse Followup", disabled: true },
       {
         id: "P9S Souma 连转脚前后",
-        comment: { cn: "BOSS面向A" },
+        comment: { cn: "假设BOSS面向A。不确定100%能报，有待更多测试。" },
         type: "StartsUsing",
         netRegex: { id: ["8167", "8168", "8169", "816A", "815F"], capture: true },
         preRun: (data, matches) => {
