@@ -121,6 +121,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           capture: false,
         },
         delaySeconds: 0.5,
+        durationSeconds: 15,
         suppressSeconds: 30,
         promise: async (data, _matches, output) => {
           data.souma.rockCounter++;
@@ -140,7 +141,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               const myPos = { x: c[0].PosX, y: c[0].PosY };
               const x = Math.min(100, myPos.x) + Math.abs(myPos.x - 100) * 0.8;
               const y = Math.min(100, myPos.y) + Math.abs(myPos.y - 100) * 0.8;
-              const safe2 = safe.filter(v => v.num >= 9);
+              const safe2 = safe.filter((v) => v.num >= 9);
               const step1 = safe2.reduce((prev, curr) => {
                 const prevDist = calculateDistance(x, y, prev.x, prev.y);
                 const currDist = calculateDistance(x, y, curr.x, curr.y);
@@ -158,7 +159,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             console.error("怎么事？", deepClone(data.souma.rockArr));
           }
         },
-        infoText: (data) => data.souma.rockInfoText,
+        alertText: (data) => data.souma.rockInfoText,
         run: (data) => {
           delete data.souma.rockInfoText;
         },
@@ -184,7 +185,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "StartsUsing",
         netRegex: { id: ["8167", "8168", "8169", "816A"], capture: true },
         suppressSeconds: 9999,
-        infoText: (data, matches, output) => {
+        durationSeconds: 15,
+        alertText: (data, matches, output) => {
           const behindSafe = ["8167", "8168"].includes(matches.id); // 后
           const outerSafe = ["8167", "8169"].includes(matches.id); // 远
           const farOrNear = behindSafe ? (v) => v.y > 100 : (v) => v.y < 100;
