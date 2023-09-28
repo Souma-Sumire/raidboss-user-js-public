@@ -97,6 +97,20 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       { id: "P9S Rear Outside Roundhouse", disabled: true },
       { id: "P9S Roundhouse Followup", disabled: true },
       {
+        id: "P9S Souma 古代地裂劲 你是猪0",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "CastBuffID", value: "33121" }],
+          change: "Change",
+          capture: false,
+        },
+        suppressSeconds: 15,
+        preRun: (data) => {
+          data.souma.rockCounter++;
+        },
+      },
+      {
         id: "P9S Souma 古代地裂劲 你是猪1",
         type: "CombatantMemory",
         netRegex: {
@@ -106,25 +120,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           capture: true,
         },
         preRun: (data, matches) => data.souma.rockArr.push(matches.id),
-        delaySeconds: 5,
-        run: (data) => {
-          data.souma.rockArr.length = 0;
-        },
-      },
-      {
-        id: "P9S Souma 古代地裂劲 你是猪2",
-        type: "CombatantMemory",
-        netRegex: {
-          id: "40[0-9A-F]{6}",
-          pair: [{ key: "CastBuffID", value: "33121" }],
-          change: "Change",
-          capture: false,
-        },
-        delaySeconds: 0.5,
         durationSeconds: 15,
-        suppressSeconds: 30,
         promise: async (data, _matches, output) => {
-          data.souma.rockCounter++;
           if (data.souma.rockArr.length === 8) {
             const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rockArr.map((v) => parseInt(v, 16)) })).combatants;
             console.debug(data.souma.rockCounter, combatants);
@@ -155,14 +152,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               });
               data.souma.rockInfoText = output.text({ step1: output[step1.num](), step2: output[step2.num]() });
             }
-          } else {
-            console.error("怎么事？", deepClone(data.souma.rockArr));
           }
         },
         alertText: (data) => data.souma.rockInfoText,
-        run: (data) => {
-          delete data.souma.rockInfoText;
-        },
         outputStrings: {
           text: { en: "${step1} => ${step2}" },
           1: { en: "上+远离" },
@@ -177,6 +169,21 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           10: { en: "靠近+右偏下" },
           11: { en: "靠近+下偏左" },
           12: { en: "靠近+左偏上" },
+        },
+      },
+      {
+        id: "P9S Souma 古代地裂劲 你是猪2",
+        type: "CombatantMemory",
+        netRegex: {
+          id: "40[0-9A-F]{6}",
+          pair: [{ key: "CastBuffID", value: "33121" }],
+          change: "Change",
+          capture: false,
+        },
+        delaySeconds: 5,
+        run: (data) => {
+          data.souma.rockArr.length = 0;
+          delete data.souma.rockInfoText;
         },
       },
       {
