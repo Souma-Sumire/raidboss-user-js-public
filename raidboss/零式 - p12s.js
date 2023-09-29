@@ -2899,7 +2899,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: (data) => {
           data.souma.pantheismCount++;
           if (data.souma.pantheismReported) return;
-          return data.souma.pantheismLastText;
+          if (data.souma.pantheismCount < 4) return data.souma.pantheismLastText;
         },
         run: (data) => (data.souma.pantheismReported = false),
       },
