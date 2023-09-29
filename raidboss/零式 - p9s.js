@@ -72,7 +72,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     { num: 12, x: "92.609", y: "96.9385" }, //D1
   ];
   const calculateDistance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
-  const { getLBByName, deepClone } = Util.souma;
+  const { getLBByName } = Util.souma;
   Options.Triggers.push({
     id: "SoumaAnabaseiosTheNinthCircleSavage",
     zoneId: ZoneId.AnabaseiosTheNinthCircleSavage,
@@ -124,14 +124,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         promise: async (data, _matches, output) => {
           if (data.souma.rockArr.length === 8) {
             const combatants = (await callOverlayHandler({ call: "getCombatants", ids: data.souma.rockArr.map((v) => parseInt(v, 16)) })).combatants;
-            console.debug(data.souma.rockCounter, combatants);
+            // console.debug(data.souma.rockCounter, combatants);
             const arr = combatants.map(({ ID: id, PosX: x, PosY: y }) => ({ id, x, y }));
             const safe = rockbreakpos.filter((r) => !arr.some((a) => Math.abs(a.x - r.x) <= 0.2 && Math.abs(a.y - r.y) <= 0.2));
             if (safe.length !== 4) {
-              console.error(safe);
+              console.error("131", safe);
             }
             if (data.souma.rockCounter === 1) {
-              data.souma.rockSafe1 = deepClone(safe);
+              data.souma.rockSafe1 = safe;
             }
             if (data.souma.rockCounter === 2) {
               const c = (await callOverlayHandler({ call: "getCombatants", names: [data.me] })).combatants;
@@ -193,6 +193,26 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         netRegex: { id: ["8167", "8168", "8169", "816A"], capture: true },
         suppressSeconds: 9999,
         durationSeconds: 15,
+        promise: (data) => {
+          return new Promise((resolve, reject) => {
+            if (data.souma.rockSafe1 !== undefined) {
+              resolve(data.souma.rockSafe1);
+              return;
+            }
+
+            const timer1 = setTimeout(() => {
+              reject("timeout");
+            }, 5000);
+
+            const checkInterval = setInterval(() => {
+              if (data.souma.rockSafe1 !== undefined) {
+                clearTimeout(timer1);
+                clearInterval(checkInterval);
+                resolve(data.souma.rockSafe1);
+              }
+            }, 250);
+          });
+        },
         alertText: (data, matches, output) => {
           const behindSafe = ["8167", "8168"].includes(matches.id); // 后
           const outerSafe = ["8167", "8169"].includes(matches.id); // 远
@@ -200,12 +220,15 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           const insideOrOutside = outerSafe ? (v) => v.num <= 8 : (v) => v.num >= 9;
           const safe = data.souma.rockSafe1.filter(farOrNear).find(insideOrOutside);
           if (!safe) {
-            console.error(deepClone(data.souma.rockSafe1));
+            console.error("223", data.souma.rockSafe1);
           }
           let next;
           if (outerSafe) {
             // 钢铁 => 月环
             const danger = rockbreakpos.filter((r) => !data.souma.rockSafe1.find((s) => s.num === r.num));
+            if (!danger) {
+              console.error("230", danger);
+            }
             const innerDanger = danger.filter((v) => v.num >= 9);
             const nextInner = innerDanger.find(farOrNear);
             next = nextInner.num;
