@@ -515,8 +515,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           return output["number" + data.souma.limitCutNumber]();
         },
         outputStrings: {
-          number1: { en: "1麻 引导 => 回北" },
-          number2: { en: "2麻 引导 => 回北" },
+          number1: { en: "1麻 引导 => 回去" },
+          number2: { en: "2麻 引导 => 回去" },
           number3: { en: "3麻 等待 => 与1交换" },
           number4: { en: "4麻 等待 => 与2交换" },
         },
