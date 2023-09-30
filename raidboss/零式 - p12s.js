@@ -2411,7 +2411,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "P12S Ultima Ray 2",
         type: "StartsUsing",
-        netRegex: { id: "8330", source: "Hemitheos" },
+        netRegex: { id: "8330",  },
         condition: (data) => data.souma.phase === "gaiaochos2",
         infoText: (_data, matches, output) => {
           const uavCenterX = 100;
