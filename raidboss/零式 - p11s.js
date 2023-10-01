@@ -7,7 +7,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "darkAndLight",
         comment: {
-          cn:`调停uptime BV1zw41127Ri`
+          en: `调停uptime BV1zw41127Ri`,
         },
         name: {
           en: "光与暗的调停打法",
@@ -204,7 +204,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: (_data, _matches, output) => output.text(),
         outputStrings: {
           text: {
-            cn: "二二分摊",
+            en: "二二分摊",
           },
         },
       },
@@ -434,6 +434,78 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         outputStrings: {
           text: {
             en: "内侧 + 二二分摊",
+          },
+        },
+      },
+      {
+        id: "P11S Arcane Revelation Light Portals",
+        type: "StartsUsing",
+        netRegex: { id: "820D", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "去暗门前",
+          },
+        },
+      },
+      {
+        id: "P11S Arcane Revelation Dark Portals",
+        type: "StartsUsing",
+        netRegex: { id: "820E", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "去光门前",
+          },
+        },
+      },
+      {
+        id: "P11S Arcane Revelation Light Orbs",
+        type: "StartsUsing",
+        netRegex: { id: "820F", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "暗球侧安全",
+          },
+        },
+      },
+      {
+        id: "P11S Arcane Revelation Dark Orbs",
+        type: "StartsUsing",
+        netRegex: { id: "8210", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "光球侧安全",
+          },
+        },
+      },
+      {
+        id: "P11S Twofold Revelation Light",
+        type: "StartsUsing",
+        netRegex: { id: "8211", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "去暗球 + 暗门",
+          },
+        },
+      },
+      {
+        id: "P11S Twofold Revelation Dark",
+        type: "StartsUsing",
+        netRegex: { id: "8212", capture: false },
+        durationSeconds: 12,
+        alertText: (_data, _matches, output) => output.text(),
+        outputStrings: {
+          text: {
+            en: "去光球 + 光门",
           },
         },
       },
