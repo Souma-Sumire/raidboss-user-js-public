@@ -2411,7 +2411,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       {
         id: "P12S Ultima Ray 2",
         type: "StartsUsing",
-        netRegex: { id: "8330",  },
+        netRegex: { id: "8330" },
         condition: (data) => data.souma.phase === "gaiaochos2",
         infoText: (_data, matches, output) => {
           const uavCenterX = 100;
@@ -2468,7 +2468,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
             en: "拉断连线",
           },
           uav2: {
-            en: "拉断连线 => ${geocentrism} + 躲小怪激光",
+            en: "拉断连线 => ${geocentrism}",
           },
           unknown: Outputs.unknown,
         },
@@ -3085,14 +3085,20 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       },
       {
         id: "P12S Souma 不确定的黑白塔",
+        comment: { en: "不保证一定正确" },
         type: "StartsUsing",
         netRegex: { id: "8343", capture: true },
         suppressSeconds: 999,
-        infoText: (data, matches, output) => {
+        promise: async (data, matches, output) => {
           if (data.souma.pantheismUndetermined === undefined) return;
-          const tower = (parseFloat(matches.x) < 100 ? { 白: "left", 黑: "right" } : { 白: "right", 黑: "left" })[data.souma.pantheismUndetermined.color];
-          return output[tower + data.souma.pantheismUndetermined.round]();
+          const combatants = (await callOverlayHandler({ call: "getCombatants", ids: [parseInt(matches.sourceId, 16)] })).combatants;
+          const tower = (parseFloat(combatants[0].PosX) < 100 ? { 白: "left", 黑: "right" } : { 白: "right", 黑: "left" })[
+            data.souma.pantheismUndetermined.color
+          ];
+          data.souma.hbtInfoText = output[tower + data.souma.pantheismUndetermined.round]();
         },
+        infoText: (data) => data.souma.hbtInfoText,
+        run: (data) => delete data.souma.hbtInfoText,
         outputStrings: {
           left1: { en: "左1" },
           left2: { en: "左等待 " },
