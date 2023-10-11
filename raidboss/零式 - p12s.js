@@ -2755,12 +2755,12 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
               en: "去中间（火点名） ",
             },
             fireOn: { en: "火点 ${player}" },
-            fireSwitch: { en: "和 ${player} 换位" },
+            fireSwitch: { en: "与 ${player} 换位" },
           };
           if (data.souma.decOffset === undefined) return;
           const id = getHeadmarkerId(data, matches);
           if (id !== headmarkers.caloric2InitialFire) return;
-          if (data.me === matches.target) return { alarmText: output.fireOnMe() };
+          if (data.me === matches.target) return { alarmText: output.fireOnMe(), tts: null };
           if (getRpByName(data, data.me) === "MT") {
             return { alertText: output.fireSwitch({ player: `${data.ShortName(matches.target)}(${getRpByName(data, matches.target)})` }) };
           }
@@ -2775,6 +2775,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         infoText: (data, matches, output) => {
           const id = getHeadmarkerId(data, matches);
           if (id !== headmarkers.caloric2Wind) return;
+          if (getRpByName(data, data.me) === "MT") {
+            return undefined;
+          }
           return output.text();
         },
         outputStrings: {
