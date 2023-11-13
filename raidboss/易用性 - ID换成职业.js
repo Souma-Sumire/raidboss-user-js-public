@@ -33,7 +33,7 @@ const allJobEnums = Object.keys(jobEnumTojobName).map((v) => Number(v).toString(
 let _data;
 Options.PlayerNicks = new Proxy(Options.PlayerNicks, {
   get: (target, prop) => {
-    if (typeof prop === "symbol" || prop === "toJSON") {
+    if (typeof prop === "symbol" || prop === "toJSON" || _data === undefined) {
       return target[prop];
     }
     const job = target[prop] === undefined && prop === _data?.me ? Util.jobToJobEnum(_data?.job) : _data?.party?.details?.find((v) => v.name === prop)?.job;
