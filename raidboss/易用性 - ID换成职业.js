@@ -56,7 +56,7 @@ Options.Triggers.push({
       run: (data, matches, _output) => {
         const target = data.party.details.find((v) => v.name === matches.name);
         if (target) {
-          target.job = Number(matches.job);
+          target.job = parseInt(matches.job, 16);
         }
       },
     },
