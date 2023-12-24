@@ -3,58 +3,15 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
   // #region
   const prevent = { forceLocalMark: false };
-  const jobs = {
-    0: { 简体: "冒险者", 繁体: "冒險者", 单字: "冒", 双字: "冒险", role: "none", LB: "none", job: "ADV" },
-    1: { 简体: "剑术师", 繁体: "劍術師", 单字: "剑", 双字: "剑术", role: "tank", LB: "tank", job: "GLA" },
-    2: { 简体: "格斗家", 繁体: "格鬥家", 单字: "斗", 双字: "格斗", role: "dps", LB: "melee", job: "PGL" },
-    3: { 简体: "斧术师", 繁体: "斧術師", 单字: "斧", 双字: "斧术", role: "tank", LB: "tank", job: "MRD" },
-    4: { 简体: "枪术师", 繁体: "槍術師", 单字: "枪", 双字: "枪术", role: "dps", LB: "melee", job: "LNC" },
-    5: { 简体: "弓箭手", 繁体: "弓箭手", 单字: "弓", 双字: "弓箭", role: "dps", LB: "ranged", job: "ARC" },
-    6: { 简体: "幻术师", 繁体: "幻術師", 单字: "幻", 双字: "幻术", role: "healer", LB: "healer", job: "CNJ" },
-    7: { 简体: "咒术师", 繁体: "咒術師", 单字: "咒", 双字: "咒术", role: "dps", LB: "caster", job: "THM" },
-    8: { 简体: "刻木匠", 繁体: "刻木匠", 单字: "刻", 双字: "刻木", role: "crafter", LB: "melee", job: "CRP" },
-    9: { 简体: "锻铁匠", 繁体: "鍛鐵匠", 单字: "锻", 双字: "锻铁", role: "crafter", LB: "melee", job: "BSM" },
-    10: { 简体: "铸甲匠", 繁体: "鑄甲匠", 单字: "铸", 双字: "铸甲", role: "crafter", LB: "melee", job: "ARM" },
-    11: { 简体: "雕金匠", 繁体: "雕金匠", 单字: "雕", 双字: "雕金", role: "crafter", LB: "melee", job: "GSM" },
-    12: { 简体: "制革匠", 繁体: "製革匠", 单字: "革", 双字: "制革", role: "crafter", LB: "melee", job: "LTW" },
-    13: { 简体: "裁衣匠", 繁体: "裁衣匠", 单字: "裁", 双字: "裁衣", role: "crafter", LB: "melee", job: "WVR" },
-    14: { 简体: "炼金术士", 繁体: "煉金術士", 单字: "炼", 双字: "炼金", role: "crafter", LB: "melee", job: "ALC" },
-    15: { 简体: "烹调师", 繁体: "烹調師", 单字: "烹", 双字: "烹调", role: "crafter", LB: "melee", job: "CUL" },
-    16: { 简体: "采矿工", 繁体: "采礦工", 单字: "采", 双字: "采矿", role: "gatherer", LB: "melee", job: "MIN" },
-    17: { 简体: "园艺工", 繁体: "園藝工", 单字: "园", 双字: "园艺", role: "gatherer", LB: "melee", job: "BTN" },
-    18: { 简体: "捕鱼人", 繁体: "捕魚人", 单字: "捕", 双字: "捕鱼", role: "gatherer", LB: "melee", job: "FSH" },
-    19: { 简体: "骑士", 繁体: "騎士", 单字: "骑", 双字: "骑士", role: "tank", LB: "tank", job: "PLD" },
-    20: { 简体: "武僧", 繁体: "武僧", 单字: "僧", 双字: "武僧", role: "dps", LB: "melee", job: "MNK" },
-    21: { 简体: "战士", 繁体: "戰士", 单字: "战", 双字: "战士", role: "tank", LB: "tank", job: "WAR" },
-    22: { 简体: "龙骑士", 繁体: "龍騎士", 单字: "龙", 双字: "龙骑", role: "dps", LB: "melee", job: "DRG" },
-    23: { 简体: "吟游诗人", 繁体: "吟遊詩人", 单字: "诗", 双字: "诗人", role: "dps", LB: "ranged", job: "BRD" },
-    24: { 简体: "白魔法师", 繁体: "白魔法師", 单字: "白", 双字: "白魔", role: "healer", LB: "healer", job: "WHM" },
-    25: { 简体: "黑魔法师", 繁体: "黑魔法師", 单字: "黑", 双字: "黑魔", role: "dps", LB: "caster", job: "BLM" },
-    26: { 简体: "秘术师", 繁体: "秘術師", 单字: "秘", 双字: "秘术", role: "dps", LB: "caster", job: "ACN" },
-    27: { 简体: "召唤师", 繁体: "召喚師", 单字: "召", 双字: "召唤", role: "dps", LB: "caster", job: "SMN" },
-    28: { 简体: "学者", 繁体: "學者", 单字: "学", 双字: "学者", role: "healer", LB: "healer", job: "SCH" },
-    29: { 简体: "双剑师", 繁体: "雙劍師", 单字: "双", 双字: "双剑", role: "dps", LB: "melee", job: "ROG" },
-    30: { 简体: "忍者", 繁体: "忍者", 单字: "忍", 双字: "忍者", role: "dps", LB: "melee", job: "NIN" },
-    31: { 简体: "机工士", 繁体: "機工士", 单字: "机", 双字: "机工", role: "dps", LB: "ranged", job: "MCH" },
-    32: { 简体: "暗黑骑士", 繁体: "暗黑騎士", 单字: "暗", 双字: "暗骑", role: "tank", LB: "tank", job: "DRK" },
-    33: { 简体: "占星术士", 繁体: "占星術士", 单字: "占", 双字: "占星", role: "healer", LB: "healer", job: "AST" },
-    34: { 简体: "武士", 繁体: "武士", 单字: "武", 双字: "武士", role: "dps", LB: "melee", job: "SAM" },
-    35: { 简体: "赤魔法师", 繁体: "赤魔法師", 单字: "赤", 双字: "赤魔", role: "dps", LB: "caster", job: "RDM" },
-    36: { 简体: "青魔法师", 繁体: "青魔法師", 单字: "青", 双字: "青魔", role: "dps", LB: "caster", job: "BLU" },
-    37: { 简体: "绝枪战士", 繁体: "絕槍戰士", 单字: "绝", 双字: "绝枪", role: "tank", LB: "tank", job: "GNB" },
-    38: { 简体: "舞者", 繁体: "舞者", 单字: "舞", 双字: "舞者", role: "dps", LB: "ranged", job: "DNC" },
-    39: { 简体: "钐镰客", 繁体: "釤鐮客", 单字: "镰", 双字: "钐镰", role: "dps", LB: "melee", job: "RPR" },
-    40: { 简体: "贤者", 繁体: "賢者", 单字: "贤", 双字: "贤者", role: "healer", LB: "healer", job: "SGE" },
-  };
-
   const sleep = (ms) => new Promise((_resolve, reject) => setTimeout(reject, ms));
   const waitFor = async function waitFor(f) {
     while (!f()) await sleep(200);
     return f();
   };
-  const waitForData = async (data, attrName, overtime = 7000) => Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
+  const waitForData = async (data, attrName, overtime = 7000) =>
+    Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.9.18");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.12.24");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -115,54 +72,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   function getHexIdByName(data = ifMissing(), name = ifMissing()) {
     return data.party.details.find((v) => v.name === name).id;
   }
-  function getJobNameByRP(data = ifMissing(), rp = ifMissing(), type = "简体") {
-    return jobs?.[data.party.details.find((v) => v.name === getNameByRp(data, rp))?.job]?.[type];
-  }
-  function getJobNameByHexId(data = ifMissing(), hexId = ifMissing(), type = "简体") {
-    return jobs?.[data.party.details.find((v) => v.name === getNameByHexId(data, hexId))?.job]?.[type];
-  }
-  function getJobNameByName(data = ifMissing(), name = ifMissing(), type = "简体") {
-    return jobs?.[data.party.details.find((v) => v.name === name)?.job]?.[type];
-  }
-  function getRoleByName(data = ifMissing(), name = ifMissing()) {
-    return jobs?.[data.party.details.find((v) => v.name === name)?.job]?.role;
-  }
-  function getLBByName(data = ifMissing(), name = ifMissing()) {
-    return jobs?.[data.party.details.find((v) => v.name === name)?.job]?.LB;
-  }
   function getHexIdByRp(data = ifMissing(), rp = ifMissing()) {
     return data.party.partyIds_[data.party.partyNames_.indexOf(getNameByRp(data, rp))];
-  }
-  function getpartyNamesGroupH1(data = ifMissing()) {
-    return [getNameByRp(data, "MT"), getNameByRp(data, "H1"), getNameByRp(data, "D1"), getNameByRp(data, "D3")];
-  }
-  function getpartyNamesGroupH2(data = ifMissing()) {
-    return [getNameByRp(data, "ST"), getNameByRp(data, "H2"), getNameByRp(data, "D2"), getNameByRp(data, "D4")];
-  }
-  function getpartyNamesGroupTank(data = ifMissing()) {
-    return [getNameByRp(data, "MT"), getNameByRp(data, "ST")];
-  }
-  function getpartyNamesGroupHealer(data = ifMissing()) {
-    return [getNameByRp(data, "H1"), getNameByRp(data, "H2")];
-  }
-  function getpartyNamesGroupAllDps(data = ifMissing()) {
-    return [getNameByRp(data, "D1"), getNameByRp(data, "D2"), getNameByRp(data, "D3"), getNameByRp(data, "D4")];
-  }
-  function getpartyNamesGroupMeleeDps(data = ifMissing()) {
-    return [getNameByRp(data, "D1"), getNameByRp(data, "D2")];
-  }
-  function getpartyNamesGroupRangedDps(data = ifMissing()) {
-    return [getNameByRp(data, "D3"), getNameByRp(data, "D4")];
-  }
-  function sortPartyHexIdsByRpRule(data = ifMissing(), partyHexIdsArr = ifMissing(), rpRuleArr = ifMissing()) {
-    return partyHexIdsArr.sort((a, b) => {
-      return rpRuleArr.indexOf(getRpByHexId(data, a)) - rpRuleArr.indexOf(getRpByHexId(data, b));
-    });
-  }
-  function sortPartyNamsByRpRule(data = ifMissing(), partyNamesArr = ifMissing(), rpRuleArr = ifMissing()) {
-    return partyNamesArr.sort((a, b) => {
-      return rpRuleArr.indexOf(getRpByName(data, a)) - rpRuleArr.indexOf(getRpByName(data, b));
-    });
   }
   function loop() {
     let i = 0;
@@ -180,7 +91,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       console.debug(
         "邮差mark",
         actorHexID,
-        markType,
+        markType
         // getRpByHexId({ party: soumaData.cactbotParty }, actorHexID.toString(16).toUpperCase()),
       );
     } else {
@@ -220,7 +131,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "cross", LocalOnly: true }) },
           { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "triangle", LocalOnly: true }) },
         ],
-        "clearMark localOnly:true",
+        "clearMark localOnly:true"
       );
     } else {
       doQueueActions(
@@ -234,7 +145,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           { c: "DoTextCommand", p: "/mk off <7>" },
           { c: "DoTextCommand", p: "/mk off <8>" },
         ],
-        "clearMark localOnly:false",
+        "clearMark localOnly:false"
       );
     }
   }
@@ -269,8 +180,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           return v;
         }),
         null,
-        1,
-      ),
+        1
+      )
     );
   }
   function doQueueActions(queue, notes) {
@@ -281,7 +192,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
         if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
         if (prevent.forceLocalMark && v.p.LocalOnly === false) {
-          console.debug(`邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`, v.p.ActorID.toString(16).toUpperCase(), v.p.MarkType);
+          console.debug(
+            `邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`,
+            v.p.ActorID.toString(16).toUpperCase(),
+            v.p.MarkType
+          );
           v.p.LocalOnly = true;
         }
       }
@@ -323,12 +238,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       tar.myRP = tarRP;
       doTextCommand(`/e 已设置${tarName}为${tarRP}`);
     }
-  }
-  function rpSortByNames(data = ifMissing(), names = ifMissing(), sortRp = ifMissing()) {
-    return names.sort((a, b) => sortRp.indexOf(getRpByName(data, a)) - sortRp.indexOf(data.soumaFL.getRpByName(data, b)));
-  }
-  function rpSortByHexIds(data = ifMissing(), hexIds = ifMissing(), sortRp = ifMissing()) {
-    return hexIds.sort((a, b) => sortRp.indexOf(getRpByHexId(data, a)) - sortRp.indexOf(data.soumaFL.getRpByHexId(data, b)));
   }
   function handleSettings(value) {
     switch (value.toLowerCase()) {
@@ -451,124 +360,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     }
     return newObj;
   }
-
-  function getDir(h) {
-    const p = h / Math.PI;
-    if (-1 <= p && p < -0.9) return "N";
-    else if (-0.9 <= p && p < -0.8) return "N";
-    else if (-0.8 <= p && p < -0.7) return "NW";
-    else if (-0.7 <= p && p < -0.6) return "NW";
-    else if (-0.6 <= p && p < -0.5) return "W";
-    else if (-0.5 <= p && p < -0.4) return "W";
-    else if (-0.4 <= p && p < -0.3) return "SW";
-    else if (-0.3 <= p && p < -0.2) return "SW";
-    else if (-0.2 <= p && p < -0.1) return "S";
-    else if (-0.1 <= p && p < 0) return "S";
-    else if (0 <= p && p < 0.1) return "S";
-    else if (0.1 <= p && p < 0.2) return "S";
-    else if (0.2 <= p && p < 0.3) return "SE";
-    else if (0.3 <= p && p < 0.4) return "SE";
-    else if (0.4 <= p && p < 0.5) return "E";
-    else if (0.5 <= p && p < 0.6) return "E";
-    else if (0.6 <= p && p < 0.7) return "NE";
-    else if (0.7 <= p && p < 0.8) return "NE";
-    else if (0.8 <= p && p < 0.9) return "N";
-    else if (0.9 <= p && p <= 1) return "N";
-    throw "getDir Error";
-  }
-  function getHalves(dir, halvesLeft) {
-    switch (dir) {
-      case "N":
-      case "S":
-        return halvesLeft ? ["l", "r"] : ["r", "l"];
-      case "NE":
-      case "SW":
-        return ["lt", "rb"];
-      case "W":
-      case "E":
-        return ["t", "b"];
-      case "NW":
-      case "SE":
-        return ["rt", "lb"];
-      default:
-        throw "getHalves Error";
-    }
-  }
-  function headingToHalves(h, halvesLeft = true) {
-    return getHalves(getDir(h), halvesLeft);
-  }
-  function getParty() {
-    return soumaParty;
-  }
-  function sortMatchesByRp(arr, rule) {
-    return arr.sort((a, b) => {
-      return rule.indexOf(a.rp) - rule.indexOf(b.rp);
-    });
-  }
-  function sortMatchesByFill(arr, rules) {
-    const _rules = rules.slice();
-    if (_rules.length > arr.length) _rules.length = arr.length;
-    if (arr.length !== _rules.length && arr.length !== _rules.length + 1) {
-      throw "matchesArrSortByRp 接受的长度不一致" + arr.length + _rules.length;
-    }
-    const result = Array(arr.length);
-    for (let i = 0; i < _rules.length; i++) {
-      for (const item of _rules[i]) {
-        const t = arr.find((f) => f.rp === item && (i === 0 || !result.find((r) => r?.rp === item)));
-        if (t) {
-          result[i] = t;
-          break;
-        }
-      }
-    }
-    if (result[arr.length - 1] === undefined && arr.length === _rules.length + 1) result[arr.length - 1] = arr.find((f) => !result.find((r) => r?.rp === f.rp));
-    return result;
-  }
-  function tolerance(sourceNum, targetNum, tolerance) {
-    return Math.abs(sourceNum - targetNum) < tolerance;
-  }
-  const orientation4 = [
-    ["MT", "ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 1
-    ["ST", "D1", "D2", "D3", "D4", "H1", "D2"], // 2
-    ["H2", "H1", "D4", "D3", "D2", "D1"], // 3
-    ["D1", "D2", "D3", "D4", "H1"], //4
-  ];
-  const orientation8 = [
-    ["D3", "MT", "D4", "H1", "H2", "D1", "ST", "D2"], // 1
-    ["MT", "D4", "H1", "H2", "ST", "D1", "D2"], // 2
-    ["D4", "H2", "H1", "D2", "ST", "D1"], // 3
-    ["H1", "H2", "D1", "ST", "D2"], // 4
-    ["H2", "D2", "ST", "D1"], // 5
-    ["D1", "ST", "D2"], // 6
-    ["ST", "D2"], // 7
-    ["D2"], // 8
-  ];
-  const rule = {
-    thd: ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"],
-    meleeFirst: ["D1", "D2", "MT", "ST", "D3", "H1", "D4", "H2"],
-    rangeFirst: ["D3", "H2", "H1", "D4", "ST", "MT", "D2", "D1"],
-  };
   //#endregion
   const souma = {
-    getParty,
     getRpByName,
     getRpByHexId,
     getNameByRp,
     getNameByHexId,
     getHexIdByRp,
     getHexIdByName,
-    getJobNameByRP,
-    getJobNameByHexId,
-    getJobNameByName,
-    getRoleByName,
-    getLBByName,
-    getpartyNamesGroupH1,
-    getpartyNamesGroupH2,
-    getpartyNamesGroupTank,
-    getpartyNamesGroupHealer,
-    getpartyNamesGroupAllDps,
-    getpartyNamesGroupMeleeDps,
-    getpartyNamesGroupRangedDps,
     loop,
     sleep,
     waitFor,
@@ -584,21 +383,11 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     placeClear,
     calculationDistance,
     handleSettings,
-    rpSortByNames,
-    rpSortByHexIds,
     getClearMarkQueue,
     getLegalityMarkType,
     rotateCoord,
     getDistance,
-    sortMatchesByRp,
-    sortMatchesByFill,
-    orientation4,
-    orientation8,
-    tolerance,
     deepClone,
-    getDir,
-    getHalves,
-    headingToHalves,
   };
   Util.souma = souma;
   Options.Triggers.push({
