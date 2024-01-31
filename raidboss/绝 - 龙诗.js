@@ -1,4 +1,4 @@
-//说明：必须同时加载"souma拓展运行库.js" 
+//说明：必须同时加载"souma拓展运行库.js"
 //所有用户配置都暴露在Cactbot Config面板中，若非确定且必要，请勿修改源码。
 const headmarkers = {
   hyperdimensionalSlash: "00EA",
@@ -25,14 +25,6 @@ const direction = {
   NE: "右上",
   SE: "右下",
   SW: "左下",
-};
-const includesRoleGroup = {
-  TH: (p) => ["MT", "ST", "H1", "H2"].includes(p),
-  DPS: (p) => ["D1", "D2", "D3", "D4"].includes(p),
-  T: (p) => ["MT", "ST"].includes(p),
-  H: (p) => ["H1", "H2"].includes(p),
-  M: (p) => ["MT", "ST", "D1", "D2"].includes(p),
-  R: (p) => ["H1", "H2", "D3", "D4"].includes(p),
 };
 const justShowTextSort = ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"];
 const getHeadmarkerId = (data, matches, firstDecimalMarker) => {
@@ -155,17 +147,10 @@ Options.Triggers.push({
       beforeSeconds: 5,
       condition: (data) => data.soumaPhase === "nidhogg",
       infoText: (_data, _matches, output) => output.text(),
-      outputStrings: { text: { en: "AOE + dot" } },
+      outputStrings: { text: { en: "AOE + 流血" } },
     },
   ],
   triggers: [
-    // {
-    //   id: "刷新页面",
-    //   netRegex: NetRegexes.echo({ line: "reload", capture: false }),
-    //   run: () => {
-    //     location.reload();
-    //   },
-    // },
     {
       id: "DSR Phase Tracker",
       netRegex: NetRegexes.startsUsing({
@@ -272,29 +257,54 @@ Options.Triggers.push({
     },
     {
       id: "DSR Playstation Fire Chains",
+      comment: {
+        cn: "此trigger只针对P1",
+      },
       netRegex: NetRegexes.headMarker({}),
       condition: (data, matches) => data.soumaPhase === "doorboss" && data.me === matches.target,
       alertText: (data, matches, output) => {
         const id = getHeadmarkerId(data, matches);
         if (id === headmarkers.firechainCircle) return output.circle();
-        else if (id === headmarkers.firechainTriangle) return output.triangle();
-        else if (id === headmarkers.firechainSquare) return output.square();
-        else if (id === headmarkers.firechainX) return output.cross();
+        else if (id === headmarkers.firechainX) {
+          if (data.role === "tank") {
+            return output.cross_tank();
+          }
+          if (data.role === "healer") {
+            return output.cross_healer();
+          }
+          console.error("cross is impossible", data.role);
+          return output.cross();
+        } else if (id === headmarkers.firechainTriangle) {
+          if (data.role === "healer") {
+            return output.triangle_healer();
+          }
+          if (data.role === "dps") {
+            return output.triangle_dps();
+          }
+          console.error("cross is impossible", data.role);
+          return output.triangle();
+        } else if (id === headmarkers.firechainSquare) {
+          if (data.role === "tank") {
+            return output.square_tank();
+          }
+          if (data.role === "dps") {
+            return output.square_dps();
+          }
+          console.error("cross is impossible", data.role);
+          return output.square();
+        }
       },
       outputStrings: {
-        作者注: { en: "此trigger只针对P1" },
-        circle: {
-          en: "圆圈（左右）",
-        },
-        triangle: {
-          en: "三角（左上右下）",
-        },
-        square: {
-          en: "正方（左下右上）",
-        },
-        cross: {
-          en: "叉叉（上下）",
-        },
+        circle: { en: "圆圈（左右）" },
+        cross_tank: { en: "叉叉（上）" },
+        cross_healer: { en: "叉叉（下）" },
+        cross: { en: "叉叉（上/下）" }, // impossible
+        triangle_healer: { en: "三角（左上）" },
+        triangle_dps: { en: "三角（右下）" },
+        triangle: { en: "三角（左上/右下）" }, // impossible
+        square_tank: { en: "正方（右上）" },
+        square_dps: { en: "正方（左下）" },
+        square: { en: "正方（左下/右上）" }, // impossible
       },
     },
     {
@@ -569,7 +579,7 @@ Options.Triggers.push({
       preRun: (data, matches) => data.soumaP2SkywardTriple.push(data.soumaFL.getRpByName(data, matches.target)),
       response: (data, _matches, output) => {
         if (data.soumaP2SkywardTriple.length === 3) {
-          if (includesRoleGroup.T(data.soumaFL.getRpByName(data, data.me))) return;
+          if (["MT", "ST"].includes(data.soumaFL.getRpByName(data, data.me))) return;
           const list = universalSortMarking(data.soumaP2SkywardTriple, output.优先级().split("/"));
           if (list.includes(data.soumaFL.getRpByName(data, data.me))) {
             return {
@@ -750,7 +760,7 @@ Options.Triggers.push({
           data.soumaP2MeteorMarkers.length = 0;
           const playerD = data.soumaFL.getRpByName(data, data.me);
           const twoMeteors = marks.sort(
-            (a, b) => justShowTextSort.findIndex((v) => v === a) - justShowTextSort.findIndex((v) => v === b),
+            (a, b) => justShowTextSort.findIndex((v) => v === a) - justShowTextSort.findIndex((v) => v === b)
           );
           const twoMeteorsWays = twoMeteors.map((v) => getWays(v.rp));
           const iNeedSwitch =
@@ -1755,8 +1765,8 @@ Options.Triggers.push({
               output.本地标点() === "true" ||
               output.本地标点() === "1" ||
               output.本地标点() === "是";
-            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[0]), data.soumaData.targetMakers.禁止1, local);
-            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[1]), data.soumaData.targetMakers.禁止2, local);
+            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[0]), "stop1", local);
+            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[1]), "stop2", local);
           }
           if (!arr.includes(pov)) return null;
           return output.text({
@@ -2313,9 +2323,16 @@ Options.Triggers.push({
       id: "DSR Spreading/Entangled Flame",
       netRegex: NetRegexes.gainsEffect({ effectId: ["AC6", "AC7"] }),
       preRun: (data, matches) => {
-        if (matches.effectId === "AC6") data.soumaP6SpreadingFlame.push({ name: matches.target, id: matches.targetId });
+        if (matches.effectId === "AC6")
+          data.soumaP6SpreadingFlame.push({
+            name: matches.target,
+            id: matches.targetId,
+          });
         else if (matches.effectId === "AC7")
-          data.soumaP6EntangledFlame.push({ name: matches.target, id: matches.targetId });
+          data.soumaP6EntangledFlame.push({
+            name: matches.target,
+            id: matches.targetId,
+          });
       },
       response: (data, _matches, output) => {
         if (data.soumaP6SpreadingFlame.length < 4) return;
@@ -2333,14 +2350,14 @@ Options.Triggers.push({
             output.本地标点() === "true" ||
             output.本地标点() === "1" ||
             output.本地标点() === "是";
-          data.soumaFL.mark(black[0], data.soumaData.targetMakers.攻击1, local);
-          data.soumaFL.mark(black[1], data.soumaData.targetMakers.攻击2, local);
-          data.soumaFL.mark(black[2], data.soumaData.targetMakers.攻击3, local);
-          data.soumaFL.mark(black[3], data.soumaData.targetMakers.攻击4, local);
-          data.soumaFL.mark(nobuff[0], data.soumaData.targetMakers.禁止1, local);
-          data.soumaFL.mark(nobuff[1], data.soumaData.targetMakers.禁止2, local);
-          data.soumaFL.mark(white[0], data.soumaData.targetMakers.止步1, local);
-          data.soumaFL.mark(white[1], data.soumaData.targetMakers.止步2, local);
+          data.soumaFL.mark(black[0], "attack1", local);
+          data.soumaFL.mark(black[1], "attack2", local);
+          data.soumaFL.mark(black[2], "attack3", local);
+          data.soumaFL.mark(black[3], "attack4", local);
+          data.soumaFL.mark(nobuff[0], "stop1", local);
+          data.soumaFL.mark(nobuff[1], "stop2", local);
+          data.soumaFL.mark(white[0], "bind1", local);
+          data.soumaFL.mark(white[1], "bind2", local);
           function sort(a, b) {
             if (arr.includes(a)) return 1;
             else if (arr.includes(b)) return -1;
@@ -2475,7 +2492,11 @@ Options.Triggers.push({
         arr = [...arr, ...arr];
         let tar;
         if (data.soumaP6Poison === 3) {
-          tar = data.soumaP6PoisonArr[0];
+          if (output.打法() === "全D") {
+            tar = data.soumaP6PoisonArr[0];
+          } else {
+            tar = ["D1", "D2"].find((v) => data.soumaP6PoisonArr[3] !== v);
+          }
         } else {
           tar = arr[data.soumaP6Poison];
           if (tar === ori) tar = arr.find((v) => !data.soumaP6PoisonArr.includes(v));
@@ -2487,8 +2508,8 @@ Options.Triggers.push({
             output.本地标点() === "true" ||
             output.本地标点() === "1" ||
             output.本地标点() === "是";
-          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, ori), data.soumaData.targetMakers.圆圈, local);
-          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, tar), data.soumaData.targetMakers.三角, local);
+          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, ori), "circle", local);
+          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, tar), "triangle", local);
         }
         return {
           alarmText: output.text({
