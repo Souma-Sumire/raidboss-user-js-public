@@ -10,7 +10,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     "312": { name: "战斗连祷", duration: 15000 },
     "776": { name: "巨龙右眼", duration: 20000 },
     "5AE": { name: "巨龙左眼", duration: 20000 },
-    "49E": { name: "义结金兰：攻击", duration: 15000 },
+    "49E": { name: "义结金兰：斗气", duration: 15000 },
     "4A1": { name: "义结金兰：攻击", duration: 15000 },
     "A8F": { name: "灼热之光", duration: 30000 },
     "511": { name: "鼓励", duration: 20000 },
