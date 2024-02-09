@@ -3,7 +3,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     /(raidemulator|config)\.html/.test(location.href)
       ? console.log("邮差command", text)
       : callOverlayHandler({ call: "PostNamazu", c: "DoTextCommand", p: text });
-  const RAIDBUFF = {
+  const RAIDBUFFS = {
     "8D": { name: "战斗之声", duration: 15000 },
     "AA2": { name: "光明神的最终乐章", duration: 15000 },
     "A27": { name: "神秘环", duration: 20000 },
@@ -32,8 +32,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     },
     initData: () => {
       return {
-        combatantData: [],
-        raidbuffs: {},
+        findTheSbCombatantData: [],
+        findTheSbRaidbuffs: {},
       };
     },
     triggers: [
@@ -41,14 +41,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "Who Is Sb Gains",
         type: "GainsEffect",
         netRegex: {
-          effectId: Object.keys(RAIDBUFF),
+          effectId: Object.keys(RAIDBUFFS),
           capture: true,
         },
         condition: (_data, matches) => matches.targetId.startsWith("1"),
         run: (data, matches) => {
-          const r = RAIDBUFF[matches.effectId];
+          const r = RAIDBUFFS[matches.effectId];
           const time = new Date(matches.timestamp).getTime();
-          (data.raidbuffs[matches.targetId] ??= {})[matches.effectId] = {
+          (data.findTheSbRaidbuffs[matches.targetId] ??= {})[matches.effectId] = {
             obtainingTime: time,
             expirationTime: time + r.duration,
             source: matches.source,
@@ -59,14 +59,14 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         id: "Who Is Sb Loses",
         type: "LosesEffect",
         netRegex: {
-          effectId: Object.keys(RAIDBUFF),
+          effectId: Object.keys(RAIDBUFFS),
           capture: true,
         },
         condition: (data, matches) => {
           if (!matches.targetId.startsWith("1")) {
             return false;
           }
-          const buff = data.raidbuffs[matches.targetId]?.[matches.effectId];
+          const buff = data.findTheSbRaidbuffs[matches.targetId]?.[matches.effectId];
           if (!buff) {
             // 理应不可能进入这里
             console.error("buff not found:", matches.effectId, matches.targetId);
@@ -74,16 +74,16 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
           const expirationTime = buff.expirationTime - buff.obtainingTime;
           const losesTime = new Date(matches.timestamp).getTime() - buff.obtainingTime;
-          // 为了下面的promise判断能进入，这里故意不删除过期buff，虽然会有一些内存占用，但团灭之后就重置了，胡萝卜鸡。
-          // Reflect.deleteProperty(data.raidbuffs[matches.targetId!]!, matches.effectId);
+          // 故意不删除过期buff，属性留着下面还有用，虽然会有一些内存占用，但团灭之后就重置了，胡萝卜鸡。
+          // Reflect.deleteProperty(data.findTheSbRaidbuffs[matches.targetId!]!, matches.effectId);
           if (losesTime < expirationTime * 0.7) {
             return true;
           }
           return false;
         },
         promise: async (data, matches) => {
-          data.combatantData = [];
-          data.combatantData = (
+          data.findTheSbCombatantData = [];
+          data.findTheSbCombatantData = (
             await callOverlayHandler({
               call: "getCombatants",
               ids: [parseInt(matches.targetId, 16)],
@@ -91,8 +91,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           ).combatants;
         },
         run: (data, matches) => {
-          const targetData = data.combatantData[0];
-          const buff = data.raidbuffs[matches.targetId]?.[matches.effectId];
+          const targetData = data.findTheSbCombatantData[0];
+          const buff = data.findTheSbRaidbuffs[matches.targetId]?.[matches.effectId];
           if (!buff) {
             // 理应不可能进入这里
             console.error(`${matches.effectId} not found in raidbuffs`, buff);
@@ -105,7 +105,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
           }
           // 排除死人
           if (targetData.CurrentHP > 0) {
-            const { name: buffName } = RAIDBUFF[matches.effectId];
+            const { name: buffName } = RAIDBUFFS[matches.effectId];
             const losesTime = new Date(matches.timestamp).getTime() - buff.obtainingTime;
             const text = `${matches.target}的${buffName}仅存在了${(losesTime / 1000).toFixed(1)}秒就消失了。`;
             // console.log(text);
