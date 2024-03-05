@@ -1,0 +1,11 @@
+.healer,
+.tank,
+.dps {
+  display: none;
+}
+.dps.mnk {
+  display: block;
+}
+.dps.mnk #bars {
+  display: none;
+}
