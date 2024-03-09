@@ -18,7 +18,7 @@
 
 适合连不上 Github 的宝宝们使用。
 
-1. 下载 [Souma下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest)，并在ACT中加载。
+1. 下载 [Souma 下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases/latest)，并在 ACT 中加载。
 1. 勾选所需文件，然后点击 [下载/更新] 按钮。程序会自动检测您的 user 文件夹，并为您下载最新的文件。
 1. 刷新 Raidboss 悬浮窗，即可成功加载。
 
@@ -33,7 +33,7 @@
 适合熟练控制计算机的大宝宝们。
 
 1. 手动点击右上角下载或克隆本仓库。
-1. 将相应文件放入您的 Cactbot User 文件夹。
+1. 将相应文件放入您的 Cactbot User 文件夹。例如 `D:\ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\零式 - p9s.js`
 1. 刷新 Raidboss 悬浮窗，即可成功加载。
 
 优点：本地文件完全受您掌控。
@@ -62,8 +62,8 @@
 - P8S：菓子（青瓜）（标点需要邮差）
 - P9S：game8
 - P10S：game8
-- P11S：game8、可选美服uptime调停
-- P12S：菓子、game8，可选NGA固定黑白塔，美服1风火
+- P11S：game8、可选美服 uptime 调停
+- P12S：菓子、game8，可选 NGA 固定黑白塔，美服 1 风火
 
 ### 绝境战
 
