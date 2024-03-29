@@ -28,11 +28,19 @@ const direction = {
 };
 const justShowTextSort = ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"];
 const getHeadmarkerId = (data, matches, firstDecimalMarker) => {
-  if (!data.soumaDecOffset && firstDecimalMarker) data.soumaDecOffset = parseInt(matches.id, 16) - firstDecimalMarker;
-  return (parseInt(matches.id, 16) - data.soumaDecOffset).toString(16).toUpperCase().padStart(4, "0");
+  if (!data.soumaDecOffset && firstDecimalMarker)
+    data.soumaDecOffset = Number.parseInt(matches.id, 16) - firstDecimalMarker;
+  return (Number.parseInt(matches.id, 16) - data.soumaDecOffset)
+    .toString(16)
+    .toUpperCase()
+    .padStart(4, "0");
 };
-const firstMarker = (phase) => (phase === "doorboss" ? headmarkers.hyperdimensionalSlash : headmarkers.skywardTriple);
-const handleDistributeName = (data, name) => (data.me === name ? `${name}(你)` : name);
+const firstMarker = (phase) =>
+  phase === "doorboss"
+    ? headmarkers.hyperdimensionalSlash
+    : headmarkers.skywardTriple;
+const handleDistributeName = (data, name) =>
+  data.me === name ? `${name}(你)` : name;
 const matchedPositionTo8Dir = (x, y) => {
   return Math.round(5 - (4 * Math.atan2(x - 100, y - 100)) / Math.PI) % 8;
 };
@@ -40,7 +48,9 @@ const matchedPositionTo4Dir = (x, y) => {
   return Math.round(2 - (2 * Math.atan2(x - 100, y - 100)) / Math.PI) % 4;
 };
 const myMatchedPositionToDir = (x, y, dir) => {
-  return Math.round(dir / 2 - ((Math.atan2(x - 100, y - 100) / Math.PI) * dir) / 2);
+  return Math.round(
+    dir / 2 - ((Math.atan2(x - 100, y - 100) / Math.PI) * dir) / 2
+  );
 };
 const positionTo8Direction = [
   direction.N,
@@ -52,14 +62,21 @@ const positionTo8Direction = [
   direction.W,
   direction.NW,
 ];
-const matchedPositionToNEWS = (min, middle, max, deviation = 3, x, y) => {
-  if (Math.abs(x - middle) < deviation && Math.abs(y - min) < deviation) return direction.N;
-  if (Math.abs(x - max) < deviation && Math.abs(y - middle) < deviation) return direction.E;
-  if (Math.abs(x - min) < deviation && Math.abs(y - middle) < deviation) return direction.W;
-  if (Math.abs(x - middle) < deviation && Math.abs(y - max) < deviation) return direction.S;
+const matchedPositionToNEWS = (min, middle, max, deviation, x, y) => {
+  if (Math.abs(x - middle) < deviation && Math.abs(y - min) < deviation)
+    return direction.N;
+  if (Math.abs(x - max) < deviation && Math.abs(y - middle) < deviation)
+    return direction.E;
+  if (Math.abs(x - min) < deviation && Math.abs(y - middle) < deviation)
+    return direction.W;
+  if (Math.abs(x - middle) < deviation && Math.abs(y - max) < deviation)
+    return direction.S;
 };
 const universalSortMarking = (arr, sortRule = []) => {
-  return arr.sort((a, b) => sortRule.findIndex((v) => v === a) - sortRule.findIndex((v) => v === b));
+  return arr.sort(
+    (a, b) =>
+      sortRule.findIndex((v) => v === a) - sortRule.findIndex((v) => v === b)
+  );
 };
 Options.Triggers.push({
   zoneId: ZoneId.DragonsongsRepriseUltimate,
@@ -188,7 +205,10 @@ Options.Triggers.push({
       netRegex: NetRegexes.headMarker({}),
       condition: (data) => undefined === data.soumaDecOffset,
       run: (data, matches) => {
-        const firstHeadmarker = parseInt(firstMarker(data.soumaPhase), 16);
+        const firstHeadmarker = Number.parseInt(
+          firstMarker(data.soumaPhase),
+          16
+        );
         getHeadmarkerId(data, matches, firstHeadmarker);
       },
     },
@@ -196,11 +216,18 @@ Options.Triggers.push({
       id: "DSR Hyperdimensional Slash Headmarker",
       netRegex: NetRegexes.headMarker({}),
       condition: (data, matches) =>
-        data.soumaPhase === "doorboss" && getHeadmarkerId(data, matches) === headmarkers.hyperdimensionalSlash,
-      preRun: (data, matches) => data.soumaP1DoorbossLaser.push(data.soumaFL.getRpByName(data, matches.target)),
+        data.soumaPhase === "doorboss" &&
+        getHeadmarkerId(data, matches) === headmarkers.hyperdimensionalSlash,
+      preRun: (data, matches) =>
+        data.soumaP1DoorbossLaser.push(
+          data.soumaFL.getRpByName(data, matches.target)
+        ),
       alertText: (data, _matches, output) => {
         if (data.soumaP1DoorbossLaser.length >= 4) {
-          data.soumaP1DoorbossLaser = universalSortMarking(data.soumaP1DoorbossLaser, output.优先级().split("/"));
+          data.soumaP1DoorbossLaser = universalSortMarking(
+            data.soumaP1DoorbossLaser,
+            output.优先级().split("/")
+          );
           return output.text({
             n1: handleDistributeName(data, data.soumaP1DoorbossLaser[0]),
             n2: handleDistributeName(data, data.soumaP1DoorbossLaser[1]),
@@ -211,7 +238,9 @@ Options.Triggers.push({
       },
       tts: (data, _matches, output) => {
         if (data.soumaP1DoorbossLaser.length >= 4) {
-          const index = data.soumaP1DoorbossLaser.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me));
+          const index = data.soumaP1DoorbossLaser.findIndex(
+            (v) => v === data.soumaFL.getRpByName(data, data.me)
+          );
           return index >= 0 ? output.tts({ num: index + 1 }) : output.notYou();
         }
         return null;
@@ -219,7 +248,8 @@ Options.Triggers.push({
       sound: "",
       soundVolume: 0,
       run: (data) => {
-        if (data.soumaP1DoorbossLaser.length >= 4) data.soumaP1DoorbossLaser.length = 0;
+        if (data.soumaP1DoorbossLaser.length >= 4)
+          data.soumaP1DoorbossLaser.length = 0;
       },
       outputStrings: {
         text: {
@@ -241,11 +271,15 @@ Options.Triggers.push({
       netRegex: NetRegexes.startsUsing({ id: "62D0", capture: false }),
       alertText: (data, _matches, output) => {
         output.text({
-          name: handleDistributeName(data, output.优先级()?.split("/")?.[data.soumaP1HoliestHallowing]),
+          name: handleDistributeName(
+            data,
+            output.优先级()?.split("/")?.[data.soumaP1HoliestHallowing]
+          ),
         });
       },
       tts: (data, _matches, output) =>
-        output.优先级()?.split("/")?.[data.soumaP1HoliestHallowing] === data.soumaFL.getRpByName(data, data.me)
+        output.优先级()?.split("/")?.[data.soumaP1HoliestHallowing] ===
+        data.soumaFL.getRpByName(data, data.me)
           ? output.text({ name: "" })
           : null,
       soundVolume: 0,
@@ -261,11 +295,12 @@ Options.Triggers.push({
         cn: "此trigger只针对P1",
       },
       netRegex: NetRegexes.headMarker({}),
-      condition: (data, matches) => data.soumaPhase === "doorboss" && data.me === matches.target,
+      condition: (data, matches) =>
+        data.soumaPhase === "doorboss" && data.me === matches.target,
       alertText: (data, matches, output) => {
         const id = getHeadmarkerId(data, matches);
         if (id === headmarkers.firechainCircle) return output.circle();
-        else if (id === headmarkers.firechainX) {
+        if (id === headmarkers.firechainX) {
           if (data.role === "tank") {
             return output.cross_tank();
           }
@@ -274,7 +309,8 @@ Options.Triggers.push({
           }
           console.error("cross is impossible", data.role);
           return output.cross();
-        } else if (id === headmarkers.firechainTriangle) {
+        }
+        if (id === headmarkers.firechainTriangle) {
           if (data.role === "healer") {
             return output.triangle_healer();
           }
@@ -283,7 +319,8 @@ Options.Triggers.push({
           }
           console.error("cross is impossible", data.role);
           return output.triangle();
-        } else if (id === headmarkers.firechainSquare) {
+        }
+        if (id === headmarkers.firechainSquare) {
           if (data.role === "tank") {
             return output.square_tank();
           }
@@ -316,7 +353,9 @@ Options.Triggers.push({
           : data.role === "tank"
           ? output.inAndTetherTank()
           : output.inAndTetherNotTank(),
-      run: (data) => (data.soumaP1SeenEmptyDimension = true),
+      run: (data) => {
+        data.soumaP1SeenEmptyDimension = true;
+      },
       outputStrings: {
         inAndTetherNotTank: {
           en: "月环 + 背后",
@@ -345,7 +384,8 @@ Options.Triggers.push({
     {
       id: "DSR Adelphel KB Direction",
       netRegex: NetRegexes.startsUsing({ id: "62D4" }),
-      alertText: (_data, matches) => matchedPositionToNEWS(78, 100, 122, 2, matches.x, matches.y) ?? null,
+      alertText: (_data, matches) =>
+        matchedPositionToNEWS(78, 100, 122, 2, matches.x, matches.y) ?? null,
     },
     {
       id: "DSR P1光芒剑",
@@ -355,7 +395,7 @@ Options.Triggers.push({
         data.soumaP1ShiningBlade = (
           await callOverlayHandler({
             call: "getCombatants",
-            ids: [parseInt(matches.sourceId, 16)],
+            ids: [Number.parseInt(matches.sourceId, 16)],
           })
         ).combatants?.[0];
       },
@@ -366,9 +406,9 @@ Options.Triggers.push({
         const pos = matchedPositionToNEWS(78, 100, 122, 2, x, y);
         const way = (() => {
           if (0.5 <= h && h < 1) return direction.NE;
-          else if (-1 <= h && h < -0.5) return direction.NW;
-          else if (0 <= h && h < 0.5) return direction.SE;
-          else if (-0.5 <= h && h < 0) return direction.SW;
+          if (-1 <= h && h < -0.5) return direction.NW;
+          if (0 <= h && h < 0.5) return direction.SE;
+          if (-0.5 <= h && h < 0) return direction.SW;
         })();
         if (
           (pos === direction.N && way === direction.SW) ||
@@ -377,7 +417,7 @@ Options.Triggers.push({
           (pos === direction.W && way === direction.SE)
         )
           return output.left();
-        else if (
+        if (
           (pos === direction.N && way === direction.SE) ||
           (pos === direction.E && way === direction.SW) ||
           (pos === direction.S && way === direction.NW) ||
@@ -395,7 +435,9 @@ Options.Triggers.push({
       netRegex: NetRegexes.startsUsing({ id: "62E2", capture: false }),
       infoText: (data, _matches, output) => {
         const p = output.第1组().split("/");
-        switch (p.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))) {
+        switch (
+          p.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
+        ) {
           case -1:
             return output.notYou({ tar1: p[0], tar2: p[1] });
           case 0:
@@ -421,7 +463,9 @@ Options.Triggers.push({
         const p = output.第234组().split("/");
         const i = (data.soumaP15BrightwingCounter - 1) * 2;
         const group = p.slice(i, i + 2);
-        switch (group.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))) {
+        switch (
+          group.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
+        ) {
           case -1:
             return {
               infoText: output.notYou({ tar1: group[0], tar2: group[1] }),
@@ -498,12 +542,19 @@ Options.Triggers.push({
           },
         ];
         for (const knight of data.soumaP2SpiralThrust) {
-          const k = [parseInt(knight.PosX), parseInt(knight.PosY)];
+          const k = [
+            Number.parseInt(knight.PosX),
+            Number.parseInt(knight.PosY),
+          ];
           for (const p of pos)
-            if (p.safePos[0].toString() === k.toString() || p.safePos[1].toString() === k.toString()) p.isSafe = false;
+            if (
+              p.safePos[0].toString() === k.toString() ||
+              p.safePos[1].toString() === k.toString()
+            )
+              p.isSafe = false;
         }
         const safe = pos.find((v) => v.isSafe === true).marker;
-        data.soumaFL.doTextCommand("/e " + safe);
+        // data.soumaFL.doTextCommand(`/e ${safe}`);
         return output.safe({ safe: safe });
       },
       outputStrings: {
@@ -575,20 +626,36 @@ Options.Triggers.push({
       netRegex: NetRegexes.headMarker({}),
       durationSeconds: 14,
       condition: (data, matches) =>
-        data.soumaPhase === "thordan" && getHeadmarkerId(data, matches) === headmarkers.skywardTriple,
-      preRun: (data, matches) => data.soumaP2SkywardTriple.push(data.soumaFL.getRpByName(data, matches.target)),
+        data.soumaPhase === "thordan" &&
+        getHeadmarkerId(data, matches) === headmarkers.skywardTriple,
+      preRun: (data, matches) =>
+        data.soumaP2SkywardTriple.push(
+          data.soumaFL.getRpByName(data, matches.target)
+        ),
       response: (data, _matches, output) => {
         if (data.soumaP2SkywardTriple.length === 3) {
-          if (["MT", "ST"].includes(data.soumaFL.getRpByName(data, data.me))) return;
-          const list = universalSortMarking(data.soumaP2SkywardTriple, output.优先级().split("/"));
+          if (["MT", "ST"].includes(data.soumaFL.getRpByName(data, data.me)))
+            return;
+          const list = universalSortMarking(
+            data.soumaP2SkywardTriple,
+            output.优先级().split("/")
+          );
           if (list.includes(data.soumaFL.getRpByName(data, data.me))) {
             return {
               alertText: output.meteor({
-                text: list.map((v) => handleDistributeName(data, v)).join(" / "),
+                text: list
+                  .map((v) => handleDistributeName(data, v))
+                  .join(" / "),
               }),
               tts:
                 output.打法() === "优先级"
-                  ? output[`meteor${list.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me)) + 1}TTS`]
+                  ? output[
+                      `meteor${
+                        list.findIndex(
+                          (v) => v === data.soumaFL.getRpByName(data, data.me)
+                        ) + 1
+                      }TTS`
+                    ]
                   : output.meteorNoPriorityTTS(),
             };
           }
@@ -602,7 +669,13 @@ Options.Triggers.push({
             }),
             tts:
               output.打法() === "优先级"
-                ? output[`noMarker${none.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me)) + 1}TTS`]
+                ? output[
+                    `noMarker${
+                      none.findIndex(
+                        (v) => v === data.soumaFL.getRpByName(data, data.me)
+                      ) + 1
+                    }TTS`
+                  ]
                 : output.noMarkerNoPriorityTTS(),
             sound: "",
             soundVolume: 0,
@@ -631,7 +704,8 @@ Options.Triggers.push({
         noMarkerNoPriorityTTS: { en: "去骑神预站位" },
       },
       run: (data) => {
-        if (data.soumaP2SkywardTriple.length === 4) data.soumaP2SkywardTriple.length = 0;
+        if (data.soumaP2SkywardTriple.length === 4)
+          data.soumaP2SkywardTriple.length = 0;
       },
     },
     {
@@ -643,54 +717,72 @@ Options.Triggers.push({
           getHeadmarkerId(data, matches) === headmarkers.sword2),
       preRun: (data, matches) => {
         const id = getHeadmarkerId(data, matches);
-        if (id === headmarkers.sword1) data.soumaP2SwordList.One = data.soumaFL.getRpByName(data, matches.target);
-        else if (id === headmarkers.sword2) data.soumaP2SwordList.Two = data.soumaFL.getRpByName(data, matches.target);
+        if (id === headmarkers.sword1)
+          data.soumaP2SwordList.One = data.soumaFL.getRpByName(
+            data,
+            matches.target
+          );
+        else if (id === headmarkers.sword2)
+          data.soumaP2SwordList.Two = data.soumaFL.getRpByName(
+            data,
+            matches.target
+          );
       },
       response: (data, _matches, output) => {
-        if (data.soumaP2SwordList.One !== null && data.soumaP2SwordList.Two !== null) {
-          const closerRPArr = output.closerGroup().split("/");
-          const farAwayRPArr = output.farAwayGroup().split("/");
-          const closerSRP = output.closerGroupSwitch();
-          const farAwaySRP = output.farAwayGroupSwitch();
+        if (
+          data.soumaP2SwordList.One !== null &&
+          data.soumaP2SwordList.Two !== null
+        ) {
+          const mt_groups_rps = output.closerGroup().split("/");
+          const st_groups_rps = output.farAwayGroup().split("/");
+          const mt_switcher = output.closerGroupSwitch();
+          const st_switcher = output.farAwayGroupSwitch();
           const pov = data.soumaFL.getRpByName(data, data.me);
-          const sword = universalSortMarking([data.soumaP2SwordList.One, data.soumaP2SwordList.Two], justShowTextSort);
-          let groupInfo;
-          if (closerRPArr.includes(sword[0]) && closerRPArr.includes(sword[1]))
-            groupInfo = output.sameGroup({ who: output.farAwayGroupSwitch() });
-          else if (farAwayRPArr.includes(sword[0]) && farAwayRPArr.includes(sword[1]))
-            groupInfo = output.sameGroup({ who: output.closerGroupSwitch() });
-          else groupInfo = output.notSameGroup();
-          data.soumaFL.doTextCommand("/e " + groupInfo);
-          if (pov === data.soumaP2SwordList.One)
-            return {
-              alarmText: output.farAway(),
-              infoText: groupInfo,
-            };
-          if (pov === data.soumaP2SwordList.Two)
-            return {
-              alarmText: output.closer(),
-              infoText: groupInfo,
-            };
-          if (pov === closerSRP && farAwayRPArr.reduce((p, c) => (c === sword[0] || c === sword[1] ? p + 1 : p), 0))
-            return {
-              alertText: output.closerSwitch(),
-              infoText: groupInfo,
-            };
-          if (pov === farAwaySRP && closerRPArr.reduce((p, c) => (c === sword[0] || c === sword[1] ? p + 1 : p), 0))
-            return {
-              alertText: output.farAwaySwitch(),
-              infoText: groupInfo,
-            };
-          if (closerRPArr.includes(pov))
-            return {
-              alertText: output.closer(),
-              infoText: groupInfo,
-            };
-          if (farAwayRPArr.includes(pov))
-            return {
-              alertText: output.farAway(),
-              infoText: groupInfo,
-            };
+          const { One: sword1, Two: sword2 } = data.soumaP2SwordList;
+          const swords = [sword1, sword2];
+          const mt_group_sword = mt_groups_rps.reduce(
+            (t, v) => (swords.includes(v) ? t + 1 : t),
+            0
+          );
+          const st_group_sword = st_groups_rps.reduce(
+            (t, v) => (swords.includes(v) ? t + 1 : t),
+            0
+          );
+          // const group_info =
+          //   mt_group_sword === 2
+          //     ? `${st_switcher}换`
+          //     : st_group_sword === 2
+          //     ? `${mt_switcher}换`
+          //     : "都不换";
+          // console.warn(swords, group_info);
+
+          if (pov === sword1) {
+            if (mt_groups_rps.includes(pov)) {
+              return { infoText: output.sword1() };
+            }
+            return { alarmText: output.sword1() };
+          }
+          if (pov === sword2) {
+            if (st_groups_rps.includes(pov)) {
+              return { infoText: output.sword2() };
+            }
+            return { alarmText: output.sword2() };
+          }
+
+          if (mt_group_sword === 2 && pov === st_switcher) {
+            return { alertText: output.farAwaySwitch() };
+          }
+          if (st_group_sword === 2 && pov === mt_switcher) {
+            return { alertText: output.closerSwitch() };
+          }
+
+          if (mt_groups_rps.includes(pov)) {
+            return { infoText: output.closer() };
+          }
+          if (st_groups_rps.includes(pov)) {
+            return { infoText: output.farAway() };
+          }
+          console.error("unknown", swords);
         }
       },
       outputStrings: {
@@ -698,12 +790,12 @@ Options.Triggers.push({
         farAwayGroup: { en: ["ST", "H2", "D2", "D4"].join("/") },
         closerGroupSwitch: { en: "D1" },
         farAwayGroupSwitch: { en: "D2" },
-        closer: { en: "靠近靠近" },
-        farAway: { en: "远离远离" },
-        closerSwitch: { en: "（换位）远离远离" },
-        farAwaySwitch: { en: "（换位）靠近靠近" },
-        sameGroup: { en: "${who}换" },
-        notSameGroup: { en: "不换" },
+        sword1: { en: "（1刀）远离" },
+        sword2: { en: "（2刀）靠近" },
+        closer: { en: "靠近" },
+        farAway: { en: "远离" },
+        closerSwitch: { en: "（换位！）远离" },
+        farAwaySwitch: { en: "（换位！）靠近" },
       },
     },
     {
@@ -718,19 +810,32 @@ Options.Triggers.push({
       delaySeconds: 7,
       durationSeconds: 10,
       promise: async (data, _matches, output) => {
-        let combatantDataJanlenoux = await callOverlayHandler({
+        const combatantDataJanlenoux = await callOverlayHandler({
           call: "getCombatants",
-          names: ["Ser Janlenoux", "Janlenoux", "sire Janlenoux", "聖騎士ジャンルヌ", "圣骑士让勒努", "성기사 장르누"],
+          names: [
+            "Ser Janlenoux",
+            "Janlenoux",
+            "sire Janlenoux",
+            "聖騎士ジャンルヌ",
+            "圣骑士让勒努",
+            "성기사 장르누",
+          ],
         });
         if (combatantDataJanlenoux === null) return;
         if (combatantDataJanlenoux.combatants.length < 1) return;
-        const combatantJanlenoux = combatantDataJanlenoux.combatants.sort((a, b) => (a.ID ?? 0) - (b.ID ?? 0)).shift();
+        const combatantJanlenoux = combatantDataJanlenoux.combatants
+          .sort((a, b) => (a.ID ?? 0) - (b.ID ?? 0))
+          .shift();
         if (!combatantJanlenoux) return;
-        if (combatantJanlenoux.PosX < 100) data.soumaP2SanctityWardDir = output.clockwise();
-        if (combatantJanlenoux.PosX > 100) data.soumaP2SanctityWardDir = output.counterclock();
+        if (combatantJanlenoux.PosX < 100)
+          data.soumaP2SanctityWardDir = output.clockwise();
+        if (combatantJanlenoux.PosX > 100)
+          data.soumaP2SanctityWardDir = output.counterclock();
       },
       infoText: (data, _matches) => data.soumaP2SanctityWardDir ?? null,
-      run: (data) => delete data.soumaP2SanctityWardDir,
+      run: (data) => {
+        data.soumaP2SanctityWardDir = null;
+      },
       outputStrings: {
         clockwise: {
           en: "顺时针（右）",
@@ -744,7 +849,8 @@ Options.Triggers.push({
       id: "DSR Sanctity of the Ward Meteor Role",
       netRegex: NetRegexes.headMarker({}),
       condition: (data, matches) =>
-        data.soumaPhase === "thordan" && getHeadmarkerId(data, matches) === headmarkers.meteor,
+        data.soumaPhase === "thordan" &&
+        getHeadmarkerId(data, matches) === headmarkers.meteor,
       delaySeconds: 0.4,
       preRun: (data, matches) => {
         data.soumaP2MeteorMarkers.push({
@@ -760,85 +866,128 @@ Options.Triggers.push({
           data.soumaP2MeteorMarkers.length = 0;
           const playerD = data.soumaFL.getRpByName(data, data.me);
           const twoMeteors = marks.sort(
-            (a, b) => justShowTextSort.findIndex((v) => v === a) - justShowTextSort.findIndex((v) => v === b)
+            (a, b) =>
+              justShowTextSort.findIndex((v) => v === a) -
+              justShowTextSort.findIndex((v) => v === b)
           );
           const twoMeteorsWays = twoMeteors.map((v) => getWays(v.rp));
           const iNeedSwitch =
             output.换位规则() === "整组" ||
-            ["D1", "D2", "D3", "D4"].includes(twoMeteors[0].rp) === (data.role === "dps");
+            ["D1", "D2", "D3", "D4"].includes(twoMeteors[0].rp) ===
+              (data.role === "dps");
           const BDSwitch = output.BD换不换() !== "不换";
           const myWay = getWays(playerD);
           if (
-            (twoMeteorsWays[0] === direction.N && twoMeteorsWays[1] === direction.S) ||
-            (twoMeteorsWays[1] === direction.N && twoMeteorsWays[0] === direction.S)
+            (twoMeteorsWays[0] === direction.N &&
+              twoMeteorsWays[1] === direction.S) ||
+            (twoMeteorsWays[1] === direction.N &&
+              twoMeteorsWays[0] === direction.S)
           ) {
             return output.safe();
-          } else if (
-            (twoMeteorsWays[0] === direction.W && twoMeteorsWays[1] === direction.E) ||
-            (twoMeteorsWays[1] === direction.W && twoMeteorsWays[0] === direction.E)
+          }
+          if (
+            (twoMeteorsWays[0] === direction.W &&
+              twoMeteorsWays[1] === direction.E) ||
+            (twoMeteorsWays[1] === direction.W &&
+              twoMeteorsWays[0] === direction.E)
           ) {
             if (BDSwitch) {
               switch (myWay) {
                 case direction.N:
-                  return iNeedSwitch ? output.switch({ dir: direction.W }) : output.safe();
+                  return iNeedSwitch
+                    ? output.switch({ dir: direction.W })
+                    : output.safe();
                 case direction.E:
-                  return iNeedSwitch ? output.switch({ dir: direction.S }) : output.safe();
+                  return iNeedSwitch
+                    ? output.switch({ dir: direction.S })
+                    : output.safe();
                 case direction.W:
-                  return iNeedSwitch ? output.switch({ dir: direction.N }) : output.safe();
+                  return iNeedSwitch
+                    ? output.switch({ dir: direction.N })
+                    : output.safe();
                 case direction.S:
-                  return iNeedSwitch ? output.switch({ dir: direction.E }) : output.safe();
+                  return iNeedSwitch
+                    ? output.switch({ dir: direction.E })
+                    : output.safe();
               }
-            } else {
-              return output.safe();
             }
-          } else if (
-            (twoMeteorsWays[0] === direction.N && twoMeteorsWays[1] === direction.E) ||
-            (twoMeteorsWays[1] === direction.N && twoMeteorsWays[0] === direction.E)
+            return output.safe();
+          }
+          if (
+            (twoMeteorsWays[0] === direction.N &&
+              twoMeteorsWays[1] === direction.E) ||
+            (twoMeteorsWays[1] === direction.N &&
+              twoMeteorsWays[0] === direction.E)
           ) {
             switch (myWay) {
               case direction.N:
               case direction.W:
                 return output.safe();
               case direction.E:
-                return iNeedSwitch ? output.switch({ dir: direction.S }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.S })
+                  : output.safe();
               case direction.S:
-                return iNeedSwitch ? output.switch({ dir: direction.E }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.E })
+                  : output.safe();
             }
-          } else if (
-            (twoMeteorsWays[0] === direction.N && twoMeteorsWays[1] === direction.W) ||
-            (twoMeteorsWays[1] === direction.N && twoMeteorsWays[0] === direction.W)
+          }
+          if (
+            (twoMeteorsWays[0] === direction.N &&
+              twoMeteorsWays[1] === direction.W) ||
+            (twoMeteorsWays[1] === direction.N &&
+              twoMeteorsWays[0] === direction.W)
           ) {
             switch (myWay) {
               case direction.N:
               case direction.E:
                 return output.safe();
               case direction.W:
-                return iNeedSwitch ? output.switch({ dir: direction.S }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.S })
+                  : output.safe();
               case direction.S:
-                return iNeedSwitch ? output.switch({ dir: direction.W }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.W })
+                  : output.safe();
             }
-          } else if (
-            (twoMeteorsWays[0] === direction.S && twoMeteorsWays[1] === direction.E) ||
-            (twoMeteorsWays[1] === direction.S && twoMeteorsWays[0] === direction.E)
+          }
+          if (
+            (twoMeteorsWays[0] === direction.S &&
+              twoMeteorsWays[1] === direction.E) ||
+            (twoMeteorsWays[1] === direction.S &&
+              twoMeteorsWays[0] === direction.E)
           ) {
             switch (myWay) {
               case direction.N:
-                return iNeedSwitch ? output.switch({ dir: direction.E }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.E })
+                  : output.safe();
               case direction.E:
-                return iNeedSwitch ? output.switch({ dir: direction.N }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.N })
+                  : output.safe();
               case direction.S:
               case direction.W:
                 return output.safe();
             }
-          } else if (
-            (twoMeteorsWays[0] === direction.S && twoMeteorsWays[1] === direction.W) ||
-            (twoMeteorsWays[1] === direction.S && twoMeteorsWays[0] === direction.W)
+          }
+          if (
+            (twoMeteorsWays[0] === direction.S &&
+              twoMeteorsWays[1] === direction.W) ||
+            (twoMeteorsWays[1] === direction.S &&
+              twoMeteorsWays[0] === direction.W)
           ) {
             switch (myWay) {
               case direction.N:
-                return iNeedSwitch ? output.switch({ dir: direction.W }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.W })
+                  : output.safe();
               case direction.W:
-                return iNeedSwitch ? output.switch({ dir: direction.N }) : output.safe();
+                return iNeedSwitch
+                  ? output.switch({ dir: direction.N })
+                  : output.safe();
               case direction.E:
               case direction.S:
                 return output.safe();
@@ -905,11 +1054,12 @@ Options.Triggers.push({
       id: "DSR P3箭头点名倒数前",
       netRegex: NetRegexes.gainsEffect({ effectId: ["AC3", "AC4", "AC5"] }),
       condition: (data, matches) => matches.target === data.me,
-      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 3.5,
+      delaySeconds: (_data, matches) =>
+        Number.parseFloat(matches.duration) - 3.5,
       tts: (_data, matches, output) => {
         if (matches.effectId === "AC3") return output.circle();
-        else if (matches.effectId === "AC4") return output.up();
-        else if (matches.effectId === "AC5") return output.down();
+        if (matches.effectId === "AC4") return output.up();
+        if (matches.effectId === "AC5") return output.down();
       },
       outputStrings: {
         up: {
@@ -933,10 +1083,12 @@ Options.Triggers.push({
           if (matches.target === data.me) return output.num1();
         } else if (id === headmarkers.dot2) {
           data.soumaDiveFromGraceNum[matches.target] = 2;
-          if (matches.target === data.me) return output.stackNorthNum({ num: output.num2() });
+          if (matches.target === data.me)
+            return output.stackNorthNum({ num: output.num2() });
         } else if (id === headmarkers.dot3) {
           data.soumaDiveFromGraceNum[matches.target] = 3;
-          if (matches.target === data.me) return output.stackNorthNum({ num: output.num3() });
+          if (matches.target === data.me)
+            return output.stackNorthNum({ num: output.num3() });
         }
       },
       outputStrings: {
@@ -953,7 +1105,7 @@ Options.Triggers.push({
       netRegex: NetRegexes.gainsEffect({ effectId: ["AC3", "AC4", "AC5"] }),
       run: (data, matches) => {
         if (matches.effectId === "AC4" || matches.effectId === "AC5") {
-          const duration = parseFloat(matches.duration);
+          const duration = Number.parseFloat(matches.duration);
           if (duration < 15) data.soumaDiveFromGraceHasArrow[1] = true;
           else if (duration < 25) data.soumaDiveFromGraceHasArrow[2] = true;
           else data.soumaDiveFromGraceHasArrow[3] = true;
@@ -980,9 +1132,12 @@ Options.Triggers.push({
       alertText: (data, _matches, output) => {
         const num = data.soumaDiveFromGraceNum[data.me];
         if (!num) return;
-        if (data.soumaDiveFromGraceDir[data.me] === "up") return output.upArrow({ num: num });
-        else if (data.soumaDiveFromGraceDir[data.me] === "down") return output.downArrow({ num: num });
-        if (data.soumaDiveFromGraceHasArrow[num]) return output.circleWithArrows({ num: num });
+        if (data.soumaDiveFromGraceDir[data.me] === "up")
+          return output.upArrow({ num: num });
+        if (data.soumaDiveFromGraceDir[data.me] === "down")
+          return output.downArrow({ num: num });
+        if (data.soumaDiveFromGraceHasArrow[num])
+          return output.circleWithArrows({ num: num });
         return output.circleAllCircles({ num: num });
       },
       outputStrings: {
@@ -1021,7 +1176,8 @@ Options.Triggers.push({
           return output.baitStackInOut({ inout: inout });
         const firstStack = data.soumaEyeOfTheTyrantCounter === 0 && num !== 1;
         const secondStack = data.soumaEyeOfTheTyrantCounter === 1 && num !== 3;
-        if (firstStack || secondStack) return output.stackInOut({ inout: inout });
+        if (firstStack || secondStack)
+          return output.stackInOut({ inout: inout });
         if (!data.soumaDiveFromGraceHasArrow[num]) {
           return {
             1: output.circlesDive1({ inout: inout }),
@@ -1030,13 +1186,19 @@ Options.Triggers.push({
           }[num];
         }
         if (num === 1) {
-          if (data.soumaDiveFromGraceDir[data.me] === "circle") return output.southDive1({ inout: inout });
-          if (data.soumaDiveFromGraceDir[data.me] === "up") return output.upArrowDive1({ inout: inout });
-          if (data.soumaDiveFromGraceDir[data.me] === "down") return output.downArrowDive1({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "circle")
+            return output.southDive1({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "up")
+            return output.upArrowDive1({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "down")
+            return output.downArrowDive1({ inout: inout });
         } else if (num === 3) {
-          if (data.soumaDiveFromGraceDir[data.me] === "circle") return output.southDive3({ inout: inout });
-          if (data.soumaDiveFromGraceDir[data.me] === "up") return output.upArrowDive3({ inout: inout });
-          if (data.soumaDiveFromGraceDir[data.me] === "down") return output.downArrowDive3({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "circle")
+            return output.southDive3({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "up")
+            return output.upArrowDive3({ inout: inout });
+          if (data.soumaDiveFromGraceDir[data.me] === "down")
+            return output.downArrowDive3({ inout: inout });
         }
         return inout;
       },
@@ -1105,7 +1267,8 @@ Options.Triggers.push({
         }
         if (data.soumaEyeOfTheTyrantCounter === 1) {
           if (num === 2) {
-            if (!data.soumaDiveFromGraceHasArrow[num]) return { alertText: output.circlesDive2({ inout: inout }) };
+            if (!data.soumaDiveFromGraceHasArrow[num])
+              return { alertText: output.circlesDive2({ inout: inout }) };
             if (data.soumaDiveFromGraceDir[data.me] === "up")
               return { alertText: output.upArrowDive2({ inout: inout }) };
             if (data.soumaDiveFromGraceDir[data.me] === "down")
@@ -1114,7 +1277,11 @@ Options.Triggers.push({
             return { alertText: output.inOutAndBait({ inout: inout }) };
           }
         } else if (data.soumaEyeOfTheTyrantCounter === 2) {
-          if (num === 2 || (num === 1 && data.soumaDiveFromGracePreviousPosition[data.me] === "middle"))
+          if (
+            num === 2 ||
+            (num === 1 &&
+              data.soumaDiveFromGracePreviousPosition[data.me] === "middle")
+          )
             return { alertText: output.inOutAndBait({ inout: inout }) };
           if (num === 3) return { infoText: inout };
         }
@@ -1125,7 +1292,7 @@ Options.Triggers.push({
       id: "DSR Dive From Grace Dive Collect",
       netRegex: NetRegexes.ability({ id: ["670E", "670F", "6710"] }),
       run: (data, matches) => {
-        const posX = parseFloat(matches.targetX);
+        const posX = Number.parseFloat(matches.targetX);
         data.soumaDiveFromGracePositions[matches.target] = posX;
       },
     },
@@ -1136,18 +1303,25 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const num = data.soumaDiveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Tower 1 Reminder: missing number: ${JSON.stringify(data.soumaDiveFromGraceNum)}`);
+          console.error(
+            `DFG Tower 1 Reminder: missing number: ${JSON.stringify(
+              data.soumaDiveFromGraceNum
+            )}`
+          );
           return;
         }
         const inout = output[data.soumaDiveFromGraceLashGnashKey]();
         if (data.soumaEyeOfTheTyrantCounter === 1) {
           if (num === 3) {
             if (data.soumaDiveFromGraceDir[data.me] === "circle") {
-              if (data.soumaDiveFromGraceHasArrow[3]) return output.southTower1({ inout: inout });
+              if (data.soumaDiveFromGraceHasArrow[3])
+                return output.southTower1({ inout: inout });
               return output.circleTowers1({ inout: inout });
-            } else if (data.soumaDiveFromGraceDir[data.me] === "up") {
+            }
+            if (data.soumaDiveFromGraceDir[data.me] === "up") {
               return output.upArrowTower1({ inout: inout });
-            } else if (data.soumaDiveFromGraceDir[data.me] === "down") {
+            }
+            if (data.soumaDiveFromGraceDir[data.me] === "down") {
               return output.downArrowTower1({ inout: inout });
             }
             return output.unknownTower({ inout: inout });
@@ -1205,23 +1379,35 @@ Options.Triggers.push({
     },
     {
       id: "DSR Dive From Grace Post Dive",
-      netRegex: NetRegexes.ability({ id: ["670E", "670F", "6710"], capture: false }),
-      preRun: (data) => (data.soumaDiveFromGraceTowerCounter = (data.soumaDiveFromGraceTowerCounter ?? 0) + 1),
+      netRegex: NetRegexes.ability({
+        id: ["670E", "670F", "6710"],
+        capture: false,
+      }),
+      preRun: (data) => {
+        data.soumaDiveFromGraceTowerCounter =
+          (data.soumaDiveFromGraceTowerCounter ?? 0) + 1;
+      },
       delaySeconds: 0.2,
       suppressSeconds: 1,
       alertText: (data, _matches, output) => {
         const num = data.soumaDiveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Tower 1 and 2: missing number: ${JSON.stringify(data.soumaDiveFromGraceNum)}`);
+          console.error(
+            `DFG Tower 1 and 2: missing number: ${JSON.stringify(
+              data.soumaDiveFromGraceNum
+            )}`
+          );
           return;
         }
         const [nameA, nameB, nameC] = [
-          ...Object.keys(data.soumaDiveFromGracePositions).sort((keyA, keyB) => {
-            const posA = data.soumaDiveFromGracePositions[keyA];
-            const posB = data.soumaDiveFromGracePositions[keyB];
-            if (posA === undefined || posB === undefined) return 0;
-            return posA - posB;
-          }),
+          ...Object.keys(data.soumaDiveFromGracePositions).sort(
+            (keyA, keyB) => {
+              const posA = data.soumaDiveFromGracePositions[keyA];
+              const posB = data.soumaDiveFromGracePositions[keyB];
+              if (posA === undefined || posB === undefined) return 0;
+              return posA - posB;
+            }
+          ),
           output.unknown(),
           output.unknown(),
           output.unknown(),
@@ -1235,13 +1421,18 @@ Options.Triggers.push({
           data.soumaDiveFromGracePreviousPosition[nameB] = "east";
         }
         if (num === 1 && data.soumaDiveFromGraceTowerCounter === 2) {
-          if (data.soumaDiveFromGracePreviousPosition[data.me] === "west") return output.northwestTower2();
-          if (data.soumaDiveFromGracePreviousPosition[data.me] === "east") return output.northeastTower2();
-          if (data.soumaDiveFromGracePreviousPosition[data.me] === "middle") return;
+          if (data.soumaDiveFromGracePreviousPosition[data.me] === "west")
+            return output.northwestTower2();
+          if (data.soumaDiveFromGracePreviousPosition[data.me] === "east")
+            return output.northeastTower2();
+          if (data.soumaDiveFromGracePreviousPosition[data.me] === "middle")
+            return;
           return output.unknownTower();
         }
       },
-      run: (data) => (data.soumaDiveFromGracePositions = {}),
+      run: (data) => {
+        data.soumaDiveFromGracePositions = {};
+      },
       outputStrings: {
         unknown: Outputs.unknown,
         unknownTower: {
@@ -1263,7 +1454,11 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const num = data.soumaDiveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Dive Single Tower: missing number: ${JSON.stringify(data.soumaDiveFromGraceNum)}`);
+          console.error(
+            `DFG Dive Single Tower: missing number: ${JSON.stringify(
+              data.soumaDiveFromGraceNum
+            )}`
+          );
           return output.text();
         }
         if (data.soumaDiveFromGraceTowerCounter === 2) {
@@ -1272,7 +1467,9 @@ Options.Triggers.push({
         }
         return output.text();
       },
-      run: (data) => (data.soumaWaitingForGeirskogul = true),
+      run: (data) => {
+        data.soumaWaitingForGeirskogul = true;
+      },
       outputStrings: {
         text: {
           en: "引导",
@@ -1293,8 +1490,8 @@ Options.Triggers.push({
         return output.move();
       },
       run: (data) => {
-        delete data.soumaWaitingForGeirskogul;
-        delete data.soumaStackAfterGeirskogul;
+        data.soumaWaitingForGeirskogul = null;
+        data.soumaStackAfterGeirskogul = null;
       },
       outputStrings: {
         in: Outputs.in,
@@ -1316,10 +1513,10 @@ Options.Triggers.push({
         const towers = (
           await callOverlayHandler({
             call: "getCombatants",
-            ids: [parseInt(matches.sourceId, 16)],
+            ids: [Number.parseInt(matches.sourceId, 16)],
           })
         ).combatants?.[0];
-        const towerLen = parseInt(matches.id, 16) - 26390;
+        const towerLen = Number.parseInt(matches.id, 16) - 26390;
         if (!towers) return;
         const [x, y] = [towers.PosX, towers.PosY];
         let towerDir = -1;
@@ -1332,7 +1529,9 @@ Options.Triggers.push({
       response: (data, _matches, output) => {
         if (data.soumaP38PersonTower.length === 4) {
           const povRp = data.soumaFL.getRpByName(data, data.me);
-          const tower = data.soumaP38PersonTower.slice().sort((a, b) => a.dirNum - b.dirNum);
+          const tower = data.soumaP38PersonTower
+            .slice()
+            .sort((a, b) => a.dirNum - b.dirNum);
           data.soumaP38PersonTower.length = 0;
           const myStandingIndex = [
             output.左上换位(),
@@ -1373,10 +1572,13 @@ Options.Triggers.push({
             return {
               alertText: tower.map((v) => v.len).join(" "),
               tts: output.move({
-                dir: [direction.NW, direction.NE, direction.SE, direction.SW]?.[targetDirNum],
+                dir: [direction.NW, direction.NE, direction.SE, direction.SW]?.[
+                  targetDirNum
+                ],
               }),
             };
-          } else if (tower[myStandingIndex].len >= 2)
+          }
+          if (tower[myStandingIndex].len >= 2)
             return {
               alertText: tower.map((v) => v.len).join(" "),
               tts: output.stay(),
@@ -1404,7 +1606,7 @@ Options.Triggers.push({
         const kage = (
           await callOverlayHandler({
             call: "getCombatants",
-            ids: [parseInt(matches.sourceId, 16)],
+            ids: [Number.parseInt(matches.sourceId, 16)],
           })
         ).combatants?.[0];
         if (!kage) {
@@ -1413,9 +1615,12 @@ Options.Triggers.push({
         }
         const [x, y] = [kage.PosX, kage.PosY];
         if (x < 100 && y < 100) data.soumaP38TowersTetherRes = output.LT();
-        else if (x >= 100 && y < 100) data.soumaP38TowersTetherRes = output.RT();
-        else if (x >= 100 && y >= 100) data.soumaP38TowersTetherRes = output.RB();
-        else if (x < 100 && y >= 100) data.soumaP38TowersTetherRes = output.LB();
+        else if (x >= 100 && y < 100)
+          data.soumaP38TowersTetherRes = output.RT();
+        else if (x >= 100 && y >= 100)
+          data.soumaP38TowersTetherRes = output.RB();
+        else if (x < 100 && y >= 100)
+          data.soumaP38TowersTetherRes = output.LB();
       },
       alertText: (data) => data.soumaP38TowersTetherRes,
       outputStrings: {
@@ -1507,9 +1712,14 @@ Options.Triggers.push({
       netRegex: NetRegexes.ability({ id: "68C4" }),
       condition: (data) => data.soumaP4DiveFirstGroup.length < 2,
       preRun: (data, matches, output) => {
-        data.soumaP4DiveFirstGroup.push(data.soumaFL.getRpByName(data, matches.target));
+        data.soumaP4DiveFirstGroup.push(
+          data.soumaFL.getRpByName(data, matches.target)
+        );
         if (data.soumaP4DiveFirstGroup.length === 2) {
-          data.soumaP4DiveFirstGroup = universalSortMarking(data.soumaP4DiveFirstGroup, output.sort().split("/"));
+          data.soumaP4DiveFirstGroup = universalSortMarking(
+            data.soumaP4DiveFirstGroup,
+            output.sort().split("/")
+          );
         }
       },
       infoText: () => {},
@@ -1524,9 +1734,13 @@ Options.Triggers.push({
       response: (data, _matches, output) => {
         if (data.soumaDiveCounter === 4) return { infoText: output.over() };
         const group =
-          data.soumaDiveCounter < 3 ? output[`role${data.soumaDiveCounter}`]() : data.soumaP4DiveFirstGroup.join("/");
+          data.soumaDiveCounter < 3
+            ? output[`role${data.soumaDiveCounter}`]()
+            : data.soumaP4DiveFirstGroup.join("/");
         let tts;
-        const i = group.split("/").findIndex((v) => v === data.soumaFL.getRpByName(data, data.me));
+        const i = group
+          .split("/")
+          .findIndex((v) => v === data.soumaFL.getRpByName(data, data.me));
         if (i === -1) tts = data.soumaDiveCounter;
         if (i === 0) tts = output.forward();
         if (i === 1) tts = output.backward();
@@ -1569,7 +1783,8 @@ Options.Triggers.push({
     {
       id: "DSR Spear of the Fury Limit Break",
       netRegex: NetRegexes.startsUsing({ id: "62E2", capture: false }),
-      condition: (data) => data.role === "tank" && data.soumaPhase === "haurchefant",
+      condition: (data) =>
+        data.role === "tank" && data.soumaPhase === "haurchefant",
       delaySeconds: 10 - 2.8,
       alarmText: (_data, _matches, output) => output.text(),
       outputStrings: {
@@ -1604,7 +1819,7 @@ Options.Triggers.push({
       id: "DSR Skyblind",
       netRegex: NetRegexes.gainsEffect({ effectId: "A65" }), //苍穹刻印
       condition: Conditions.targetIsYou(),
-      delaySeconds: (_data, matches) => parseFloat(matches.duration),
+      delaySeconds: (_data, matches) => Number.parseFloat(matches.duration),
       response: Responses.moveAway(),
     },
     {
@@ -1616,7 +1831,7 @@ Options.Triggers.push({
     {
       id: "DSR Ascalon's Mercy Concealed",
       netRegex: NetRegexes.startsUsing({ id: ["63C8"] }),
-      delaySeconds: (_data, matches) => parseFloat(matches.castTime),
+      delaySeconds: (_data, matches) => Number.parseFloat(matches.castTime),
       response: Responses.moveAway(),
     },
     {
@@ -1640,7 +1855,11 @@ Options.Triggers.push({
             call: "getCombatants",
           })
         )?.combatants?.find((c) => c.BNpcID === 12646);
-        data.soumaP5NorthIndex = myMatchedPositionToDir(vedrfolnir?.PosX, vedrfolnir?.PosY, 8);
+        data.soumaP5NorthIndex = myMatchedPositionToDir(
+          vedrfolnir?.PosX,
+          vedrfolnir?.PosY,
+          8
+        );
       },
     },
     {
@@ -1648,7 +1867,8 @@ Options.Triggers.push({
       netRegex: NetRegexes.headMarker(),
       condition: Conditions.targetIsYou(),
       alarmText: (data, matches, output) => {
-        if (getHeadmarkerId(data, matches) === headmarkers.skywardSingle) return output.leapOnYou();
+        if (getHeadmarkerId(data, matches) === headmarkers.skywardSingle)
+          return output.leapOnYou();
       },
       outputStrings: {
         leapOnYou: {
@@ -1716,10 +1936,15 @@ Options.Triggers.push({
       },
       infoText: (data, _matches, output) => {
         if (!data.soumaP5Charibert) return;
-        const pos = myMatchedPositionToDir(data.soumaP5Charibert.PosX, data.soumaP5Charibert.PosY, 8);
+        const pos = myMatchedPositionToDir(
+          data.soumaP5Charibert.PosX,
+          data.soumaP5Charibert.PosY,
+          8
+        );
         const dir = output[`safe${pos}`]();
-        const way = pos - data.soumaP5NorthIndex === 0 ? output.north() : output.south();
-        data.soumaFL.doTextCommand("/e " + dir.toUpperCase().repeat(3));
+        const way =
+          pos - data.soumaP5NorthIndex === 0 ? output.north() : output.south();
+        // data.soumaFL.doTextCommand(`/e ${dir.toUpperCase().repeat(3)}`);
         return output.safe({ way: way, dir: dir });
       },
       sound: "",
@@ -1751,7 +1976,10 @@ Options.Triggers.push({
     {
       id: "DSR Wrath Thunderstruck",
       netRegex: NetRegexes.ability({ id: "6B8F" }),
-      preRun: (data, matches) => data.soumaP5ThunderStruck.push(data.soumaFL.getRpByName(data, matches.target)),
+      preRun: (data, matches) =>
+        data.soumaP5ThunderStruck.push(
+          data.soumaFL.getRpByName(data, matches.target)
+        ),
       durationSeconds: 14,
       alarmText: (data, _matches, output) => {
         if (data.soumaP5ThunderStruck.length === 2) {
@@ -1759,14 +1987,27 @@ Options.Triggers.push({
           data.soumaP5ThunderStruck.length = 0;
           const arr = universalSortMarking(_, output.优先级().split("/"));
           const pov = data.soumaFL.getRpByName(data, data.me);
-          if (output.标记() === "开" || output.标记() === "true" || output.标记() === "1" || output.标记() === "是") {
+          if (
+            output.标记() === "开" ||
+            output.标记() === "true" ||
+            output.标记() === "1" ||
+            output.标记() === "是"
+          ) {
             const local =
               output.本地标点() === "开" ||
               output.本地标点() === "true" ||
               output.本地标点() === "1" ||
               output.本地标点() === "是";
-            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[0]), "stop1", local);
-            data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, arr[1]), "stop2", local);
+            data.soumaFL.mark(
+              data.soumaFL.getHexIdByRp(data, arr[0]),
+              "stop1",
+              local
+            );
+            data.soumaFL.mark(
+              data.soumaFL.getHexIdByRp(data, arr[1]),
+              "stop2",
+              local
+            );
           }
           if (!arr.includes(pov)) return null;
           return output.text({
@@ -1840,17 +2081,19 @@ Options.Triggers.push({
           const myDoom = doom.findIndex((v) => v === pov);
           const myNotDoom = notDoom.findIndex((v) => v === pov);
           if (myDoom === 0) return output.doom1();
-          else if (myDoom === 1) return output.doom2();
-          else if (myDoom === 2) return output.doom3();
-          else if (myDoom === 3) return output.doom4();
-          else if (myNotDoom === 0) return output.notDoom1();
-          else if (myNotDoom === 1) return output.notDoom2();
-          else if (myNotDoom === 2) return output.notDoom3();
-          else if (myNotDoom === 3) return output.notDoom4();
+          if (myDoom === 1) return output.doom2();
+          if (myDoom === 2) return output.doom3();
+          if (myDoom === 3) return output.doom4();
+          if (myNotDoom === 0) return output.notDoom1();
+          if (myNotDoom === 1) return output.notDoom2();
+          if (myNotDoom === 2) return output.notDoom3();
+          if (myNotDoom === 3) return output.notDoom4();
         }
       },
       durationSeconds: 10,
-      run: (data, matches) => (data.soumaHasDoom[matches.target] = true),
+      run: (data, matches) => {
+        data.soumaHasDoom[matches.target] = true;
+      },
       outputStrings: {
         text: {
           en: "死宣点名",
@@ -1858,14 +2101,14 @@ Options.Triggers.push({
         优先级: {
           en: ["MT", "ST", "H1", "H2", "D1", "D2", "D3", "D4"].join("/"),
         },
-        doom1: { en: `上,死1去左内标点 => 快穿` },
-        doom2: { en: `上,死2去左上偏上 => 快穿` },
-        doom3: { en: `上,死3去右上偏上 => 快穿` },
-        doom4: { en: `上,死4去右内标点 => 快穿` },
-        notDoom1: { en: `下,光1去最左 => 慢穿` },
-        notDoom2: { en: `下,光2去左下偏下 => 慢穿` },
-        notDoom3: { en: `下,光3去右下偏下 => 慢穿` },
-        notDoom4: { en: `下,光4最右 => 慢穿` },
+        doom1: { en: "上,死1去左内标点 => 快穿" },
+        doom2: { en: "上,死2去左上偏上 => 快穿" },
+        doom3: { en: "上,死3去右上偏上 => 快穿" },
+        doom4: { en: "上,死4去右内标点 => 快穿" },
+        notDoom1: { en: "下,光1去最左 => 慢穿" },
+        notDoom2: { en: "下,光2去左下偏下 => 慢穿" },
+        notDoom3: { en: "下,光3去右下偏下 => 慢穿" },
+        notDoom4: { en: "下,光4最右 => 慢穿" },
         注: { en: "辉夜姬横向排队式" },
       },
     },
@@ -1878,13 +2121,16 @@ Options.Triggers.push({
         const id = getHeadmarkerId(data, matches);
         const soumaHasDoom = data.soumaHasDoom[data.me];
         if (soumaHasDoom) {
-          if (id === headmarkers.firechainCircle) return output.circleWithDoom();
-          else if (id === headmarkers.firechainTriangle) return output.triangleWithDoom();
-          else if (id === headmarkers.firechainSquare) return output.squareWithDoom();
+          if (id === headmarkers.firechainCircle)
+            return output.circleWithDoom();
+          if (id === headmarkers.firechainTriangle)
+            return output.triangleWithDoom();
+          if (id === headmarkers.firechainSquare)
+            return output.squareWithDoom();
         } else {
           if (id === headmarkers.firechainTriangle) return output.triangle();
-          else if (id === headmarkers.firechainSquare) return output.square();
-          else if (id === headmarkers.firechainX) return output.cross();
+          if (id === headmarkers.firechainSquare) return output.square();
+          if (id === headmarkers.firechainX) return output.cross();
         }
       },
       outputStrings: {
@@ -1923,7 +2169,9 @@ Options.Triggers.push({
         npcNameId: "3458",
         npcBaseId: "12612",
       }),
-      run: (data, matches) => (data.soumap6AddsPhaseNidhoggId = matches.id),
+      run: (data, matches) => {
+        data.soumap6AddsPhaseNidhoggId = matches.id;
+      },
     },
     {
       id: "DSR Adds Phase Hraesvelgr",
@@ -1931,14 +2179,18 @@ Options.Triggers.push({
         npcNameId: "4954",
         npcBaseId: "12613",
       }),
-      run: (data, matches) => (data.soumap6AddsPhaseHraesvelgrId = matches.id),
+      run: (data, matches) => {
+        data.soumap6AddsPhaseHraesvelgrId = matches.id;
+      },
     },
     {
       id: "DSR P6 冰火线计数",
       netRegex: NetRegexes.tether({ id: ["00C2", "00C3", "00C4"] }),
       suppressSeconds: 999,
       delaySeconds: 20,
-      run: (data) => (data.soumaP6IceFireConnectionCount = 2),
+      run: (data) => {
+        data.soumaP6IceFireConnectionCount = 2;
+      },
     },
     {
       id: "DSR P6 冰火线1",
@@ -1949,13 +2201,22 @@ Options.Triggers.push({
           rp: data.soumaFL.getRpByName(data, matches.source),
           tether: matches.id,
           source: {
-            hraesvelgr: ["赫拉斯瓦尔格", "Hraesvelgr", "フレースヴェルグ"].includes(matches.target),
-            nidhogg: ["尼德霍格", "Nidhogg", "ニーズヘッグ"].includes(matches.target),
+            hraesvelgr: [
+              "赫拉斯瓦尔格",
+              "Hraesvelgr",
+              "フレースヴェルグ",
+            ].includes(matches.target),
+            nidhogg: ["尼德霍格", "Nidhogg", "ニーズヘッグ"].includes(
+              matches.target
+            ),
           },
         });
       },
       response: (data, _matches, output) => {
-        if (data.soumaP6IceFireConnectionArr.length === 6 && data.soumaP6IceFireConnectionCount === 1) {
+        if (
+          data.soumaP6IceFireConnectionArr.length === 6 &&
+          data.soumaP6IceFireConnectionCount === 1
+        ) {
           const _ = data.soumaP6IceFireConnectionArr.slice();
           data.soumaP6IceFireConnectionArr.length = 0;
           const tethers = {};
@@ -1977,7 +2238,8 @@ Options.Triggers.push({
           };
           const pov = data.soumaFL.getRpByName(data, data.me);
           let res;
-          if (!hasSame.mid && !hasSame.left && !hasSame.right) res = { infoText: output.allDifferent() };
+          if (!hasSame.mid && !hasSame.left && !hasSame.right)
+            res = { infoText: output.allDifferent() };
           else if (hasSame.mid && hasSame.left && !hasSame.right)
             res = {
               infoText: output.hasDifferent({
@@ -2009,17 +2271,17 @@ Options.Triggers.push({
               tts: didIChange("左下", group.left[0], "右下", group.right[0]),
             };
           data.soumaP6IceFireConnectionCount = -1;
-          data.soumaFL.doTextCommand("/e " + res.infoText);
+          // data.soumaFL.doTextCommand(`/e ${res.infoText}`);
           if (data.role === "tank") return;
           return res;
           function didIChange(way1, role1, way2, role2) {
             if (role1 === pov) {
               return output.ttsChange({ way: way2 });
-            } else if (role2 === pov) {
-              return output.ttsChange({ way: way1 });
-            } else {
-              return output.ttsStay();
             }
+            if (role2 === pov) {
+              return output.ttsChange({ way: way1 });
+            }
+            return output.ttsStay();
           }
         }
       },
@@ -2049,8 +2311,10 @@ Options.Triggers.push({
     {
       id: "DSR P6 冰火线2",
       netRegex: NetRegexes.tether({ id: ["00C2", "00C3", "00C4"] }),
-      condition: (data, matches) => data.soumaP6IceFireConnectionCount === 2 && data.me === matches.source,
-      promise: (data) => data.soumaFL.waitForData(data, "soumaP6NidhoggGlowing"),
+      condition: (data, matches) =>
+        data.soumaP6IceFireConnectionCount === 2 && data.me === matches.source,
+      promise: (data) =>
+        data.soumaFL.waitForData(data, "soumaP6NidhoggGlowing"),
       suppressSeconds: 20,
       infoText: (data, matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
@@ -2063,13 +2327,22 @@ Options.Triggers.push({
             case "D4":
               return output[`四固定${pov}`]();
             case "D3":
-              return data.soumaP6NidhoggGlowing ? output.四固定D3Stay() : output.四固定D3Move();
+              return data.soumaP6NidhoggGlowing
+                ? output.四固定D3Stay()
+                : output.四固定D3Move();
             case "D1":
               // return matches.id === "00C2" ? output.D1Fire() : output.D1Ice();
-              if (["赫拉斯瓦尔格", "Hraesvelgr", "フレースヴェルグ"].includes(matches.target))
+              if (
+                ["赫拉斯瓦尔格", "Hraesvelgr", "フレースヴェルグ"].includes(
+                  matches.target
+                )
+              )
                 return output.四固定D1Ice();
-              else if (["尼德霍格", "Nidhogg", "ニーズヘッグ"].includes(matches.target)) return output.四固定D1Fire();
-              else console.error(matches);
+              if (
+                ["尼德霍格", "Nidhogg", "ニーズヘッグ"].includes(matches.target)
+              )
+                return output.四固定D1Fire();
+              console.error(matches);
           }
         } else if (output.打法() === "六固定") {
           return output[`六固定${pov}`]();
@@ -2099,7 +2372,9 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         data.soumaP6NidhoggGlowing = false;
         if (data.role === "tank")
-          return data.soumaFL.getRpByName(data, data.me) === output.邪龙T() ? output.you() : output.notYou();
+          return data.soumaFL.getRpByName(data, data.me) === output.邪龙T()
+            ? output.you()
+            : output.notYou();
       },
       outputStrings: {
         you: {
@@ -2119,7 +2394,9 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         data.soumaP6HraesvelgrGlowing = false;
         if (data.role === "tank")
-          return data.soumaFL.getRpByName(data, data.me) === output.圣龙T() ? output.you() : output.notYou();
+          return data.soumaFL.getRpByName(data, data.me) === output.圣龙T()
+            ? output.you()
+            : output.notYou();
       },
       outputStrings: {
         you: {
@@ -2146,12 +2423,16 @@ Options.Triggers.push({
     {
       id: "DSR Great Wyrmsbreath Nidhogg Glowing",
       netRegex: NetRegexes.startsUsing({ id: "6D33", capture: false }),
-      run: (data) => (data.soumaP6NidhoggGlowing = true),
+      run: (data) => {
+        data.soumaP6NidhoggGlowing = true;
+      },
     },
     {
       id: "DSR Great Wyrmsbreath Hraesvelgr Glowing",
       netRegex: NetRegexes.startsUsing({ id: "6D35", capture: false }),
-      run: (data) => (data.soumaP6HraesvelgrGlowing = true),
+      run: (data) => {
+        data.soumaP6HraesvelgrGlowing = true;
+      },
     },
     {
       id: "DSR Great Wyrmsbreath Both Glowing",
@@ -2163,7 +2444,8 @@ Options.Triggers.push({
       suppressSeconds: 1,
       response: (data, _matches, output) => {
         if (!(data.role === "tank")) return;
-        if (!data.soumaP6HraesvelgrGlowing || !data.soumaP6NidhoggGlowing) return;
+        if (!data.soumaP6HraesvelgrGlowing || !data.soumaP6NidhoggGlowing)
+          return;
         return { alertText: output.sharedBuster() };
       },
       outputStrings: {
@@ -2227,22 +2509,33 @@ Options.Triggers.push({
         data.soumaP6CombatantData = (
           await callOverlayHandler({
             call: "getCombatants",
-            ids: [parseInt(id, 16)],
+            ids: [Number.parseInt(id, 16)],
           })
         ).combatants;
-        if (data.soumaP6CombatantData.length === 0) console.error(`Hallowed: no Nidhoggs found`);
+        if (data.soumaP6CombatantData.length === 0)
+          console.error("Hallowed: no Nidhoggs found");
         else if (data.soumaP6CombatantData.length > 1)
-          console.error(`Hallowed: unexpected number of Nidhoggs: ${JSON.stringify(data.soumaP6CombatantData)}`);
+          console.error(
+            `Hallowed: unexpected number of Nidhoggs: ${JSON.stringify(
+              data.soumaP6CombatantData
+            )}`
+          );
       },
       alertText: (data, matches, output) => {
-        const wings = matches.id === "6D23" || matches.id === "6D24" ? output.left() : output.right();
+        const wings =
+          matches.id === "6D23" || matches.id === "6D24"
+            ? output.left()
+            : output.right();
         let head;
         const isHeadDown = matches.id === "6D23" || matches.id === "6D26";
-        if (isHeadDown) head = data.role === "tank" ? output.tanksNear() : output.partyFar();
-        else head = data.role === "tank" ? output.tanksFar() : output.partyNear();
+        if (isHeadDown)
+          head = data.role === "tank" ? output.tanksNear() : output.partyFar();
+        else
+          head = data.role === "tank" ? output.tanksFar() : output.partyNear();
         const [nidhogg] = data.soumaP6CombatantData;
         if (nidhogg !== undefined && data.soumaP6CombatantData.length === 1) {
-          const dive = nidhogg.PosX < 100 ? output.forward() : output.backward();
+          const dive =
+            nidhogg.PosX < 100 ? output.forward() : output.backward();
           return output.wingsDiveHead({
             wings: wings,
             dive: data.soumaP6HallowedWingsCount === 1 ? dive : "",
@@ -2283,7 +2576,8 @@ Options.Triggers.push({
     {
       id: "DSR P6火球获取",
       netRegex: NetRegexes.addedCombatantFull({ npcBaseId: "13238" }),
-      run: (data, matches) => data.soumaP6FireBall.push({ x: matches.x, y: matches.y }),
+      run: (data, matches) =>
+        data.soumaP6FireBall.push({ x: matches.x, y: matches.y }),
     },
     {
       id: "DSR P6火球判断",
@@ -2293,20 +2587,24 @@ Options.Triggers.push({
         const hraX = (
           await callOverlayHandler({
             call: "getCombatants",
-            ids: [parseInt(data.soumap6AddsPhaseHraesvelgrId, 16)],
+            ids: [Number.parseInt(data.soumap6AddsPhaseHraesvelgrId, 16)],
           })
         ).combatants[0]?.PosX;
         const arr = data.soumaP6FireBall.slice(-3);
         const ave = {
-          x: arr.reduce((p, c) => p + parseFloat(c.x), 0) / 3,
-          y: arr.reduce((p, c) => p + parseFloat(c.y), 0) / 3,
+          x: arr.reduce((p, c) => p + Number.parseFloat(c.x), 0) / 3,
+          y: arr.reduce((p, c) => p + Number.parseFloat(c.y), 0) / 3,
         };
         if (hraX < 96) {
           if (100 <= ave.y) data.soumaP6FireBallSafe = output.NE();
           else if (ave.y < 100) data.soumaP6FireBallSafe = output.SE();
         } else {
-          if ((ave.x < 100 && 100 <= ave.y) || (100 <= ave.x && 100 <= ave.y)) data.soumaP6FireBallSafe = output.NW();
-          else if ((ave.x < 100 && ave.y < 100) || (100 <= ave.x && ave.y < 100))
+          if ((ave.x < 100 && 100 <= ave.y) || (100 <= ave.x && 100 <= ave.y))
+            data.soumaP6FireBallSafe = output.NW();
+          else if (
+            (ave.x < 100 && ave.y < 100) ||
+            (100 <= ave.x && ave.y < 100)
+          )
             data.soumaP6FireBallSafe = output.SW();
         }
       },
@@ -2337,8 +2635,16 @@ Options.Triggers.push({
       response: (data, _matches, output) => {
         if (data.soumaP6SpreadingFlame.length < 4) return;
         if (data.soumaP6EntangledFlame.length < 2) return;
-        if (output.标记() === "开" || output.标记() === "true" || output.标记() === "1" || output.标记() === "是") {
-          const arr = [data.soumaP6PoisonSecondHolder, data.soumaP6PoisonSecondTarget];
+        if (
+          output.标记() === "开" ||
+          output.标记() === "true" ||
+          output.标记() === "1" ||
+          output.标记() === "是"
+        ) {
+          const arr = [
+            data.soumaP6PoisonSecondHolder,
+            data.soumaP6PoisonSecondTarget,
+          ];
           const black = data.soumaP6SpreadingFlame.map((v) => v.id).sort(sort);
           const white = data.soumaP6EntangledFlame.map((v) => v.id).sort(sort);
           const nobuff = data.party.partyIds_
@@ -2360,7 +2666,7 @@ Options.Triggers.push({
           data.soumaFL.mark(white[1], "bind2", local);
           function sort(a, b) {
             if (arr.includes(a)) return 1;
-            else if (arr.includes(b)) return -1;
+            if (arr.includes(b)) return -1;
             return 0;
           }
         }
@@ -2370,7 +2676,7 @@ Options.Triggers.push({
           return { alertText: output.stack(), tts: output.stackTTS() };
         return { alertText: output.nodebuff(), tts: output.nodebuffTTS() };
       },
-      durationSeconds: (_data, matches) => parseFloat(matches.duration),
+      durationSeconds: (_data, matches) => Number.parseFloat(matches.duration),
       outputStrings: {
         spread: {
           en: "黑",
@@ -2413,7 +2719,7 @@ Options.Triggers.push({
       id: "DSR Wyrmsbreath 2 Boiling and Freezing",
       netRegex: NetRegexes.gainsEffect({ effectId: ["B52", "B53"] }),
       condition: Conditions.targetIsYou(),
-      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 6,
+      delaySeconds: (_data, matches) => Number.parseFloat(matches.duration) - 6,
       infoText: (_data, matches, output) => {
         if (matches.effectId === "B52") return output.hraesvelgr();
         return output.nidhogg();
@@ -2431,7 +2737,7 @@ Options.Triggers.push({
       id: "DSR Wyrmsbreath 2 Pyretic",
       netRegex: NetRegexes.gainsEffect({ effectId: ["B52"] }),
       condition: Conditions.targetIsYou(),
-      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 4,
+      delaySeconds: (_data, matches) => Number.parseFloat(matches.duration) - 4,
       durationSeconds: 4,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
@@ -2462,15 +2768,21 @@ Options.Triggers.push({
           data.soumaP6PoisonSecondHolder = matches.targetId;
           const a = data.soumaP6PoisonArr.slice();
           a.push(data.soumaFL.getRpByName(data, matches.target));
-          let arr = output.打法() === "全D" ? output.全Darr().split("/") : output.DTTDDarr().split("/");
+          let arr =
+            output.打法() === "全D"
+              ? output.全Darr().split("/")
+              : output.DTTDDarr().split("/");
           arr = [...arr, ...arr];
           let tar = arr[data.soumaP6Poison];
-          if (data.soumaFL.getHexIdByRp(data, tar) === data.soumaP6PoisonSecondHolder)
+          if (
+            data.soumaFL.getHexIdByRp(data, tar) ===
+            data.soumaP6PoisonSecondHolder
+          )
             tar = arr.find((v) => !a.includes(v));
           data.soumaP6PoisonSecondTarget = data.soumaFL.getHexIdByRp(data, tar);
         }
       },
-      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 5,
+      delaySeconds: (_data, matches) => Number.parseFloat(matches.duration) - 5,
       response: (data, matches, output) => {
         data.soumaP6Poison++;
         if (data.soumaP6Poison >= 4) return null;
@@ -2499,17 +2811,31 @@ Options.Triggers.push({
           }
         } else {
           tar = arr[data.soumaP6Poison];
-          if (tar === ori) tar = arr.find((v) => !data.soumaP6PoisonArr.includes(v));
+          if (tar === ori)
+            tar = arr.find((v) => !data.soumaP6PoisonArr.includes(v));
         }
         const pos = [...p][data.soumaP6Poison];
-        if (output.标记() === "开" || output.标记() === "true" || output.标记() === "1" || output.标记() === "是") {
+        if (
+          output.标记() === "开" ||
+          output.标记() === "true" ||
+          output.标记() === "1" ||
+          output.标记() === "是"
+        ) {
           const local =
             output.本地标点() === "开" ||
             output.本地标点() === "true" ||
             output.本地标点() === "1" ||
             output.本地标点() === "是";
-          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, ori), "circle", local);
-          data.soumaFL.mark(data.soumaFL.getHexIdByRp(data, tar), "triangle", local);
+          data.soumaFL.mark(
+            data.soumaFL.getHexIdByRp(data, ori),
+            "circle",
+            local
+          );
+          data.soumaFL.mark(
+            data.soumaFL.getHexIdByRp(data, tar),
+            "triangle",
+            local
+          );
         }
         return {
           alarmText: output.text({
@@ -2560,7 +2886,7 @@ Options.Triggers.push({
       }),
       condition: (data, matches) => data.me === matches.target,
       alertText: (_data, matches, output) => {
-        if (parseFloat(matches.duration) > 10) return output.text();
+        if (Number.parseFloat(matches.duration) > 10) return output.text();
       },
       outputStrings: {
         text: {
@@ -2576,7 +2902,7 @@ Options.Triggers.push({
       }),
       condition: (data, matches) => data.me === matches.target,
       alertText: (_data, matches, output) => {
-        if (parseFloat(matches.duration) > 10) return output.text();
+        if (Number.parseFloat(matches.duration) > 10) return output.text();
       },
       outputStrings: {
         text: {
@@ -2672,9 +2998,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "D1" },
         you: { en: "去引导" },
@@ -2689,9 +3016,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "D2" },
         you: { en: "去引导" },
@@ -2706,9 +3034,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "D3" },
         you: { en: "去引导" },
@@ -2723,9 +3052,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "D4" },
         you: { en: "去引导" },
@@ -2740,9 +3070,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "H1" },
         you: { en: "去引导" },
@@ -2757,9 +3088,10 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const pov = data.soumaFL.getRpByName(data, data.me);
         if (pov === output.role()) return output.you();
-        else return output.text({ role: output.role() });
+        return output.text({ role: output.role() });
       },
-      soundVolume: (data, _matches, output) => (data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0),
+      soundVolume: (data, _matches, output) =>
+        data.soumaFL.getRpByName(data, data.me) === output.role() ? 1 : 0,
       outputStrings: {
         role: { en: "H2" },
         you: { en: "去引导" },
