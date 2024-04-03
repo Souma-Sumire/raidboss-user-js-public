@@ -8,7 +8,7 @@ if (
   };
   const doQueueActions = (queue, notes) => {
     if (inEmulator)
-      console.debug("邮差queue", notes, JSON.stringify(queue, null, 1));
+      console.debug("邮差queue", notes, JSON.stringify(queue, null, 2));
     else {
       callOverlayHandler({
         call: "PostNamazu",
@@ -122,11 +122,11 @@ if (
               doQueueActions(
                 arr.map((v, i) => ({
                   c: "mark",
-                  p: {
+                  p: JSON.stringify({
                     ActorID: Number.parseInt(v.id, 16),
                     MarkType: `attack${i + 1}`,
                     LocalOnly: local,
-                  },
+                  }),
                   d: local ? 0 : random(800, 3000),
                 })),
                 "souma_mandragora"
