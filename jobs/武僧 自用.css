@@ -1,0 +1,43 @@
+.healer,
+.tank,
+.dps {
+  display: none;
+}
+.dps.mnk {
+  display: block;
+}
+.dps.mnk .timer-bar,
+.dps.mnk #hp-bar,
+.dps.mnk #mnk-boxes,
+.right-side-icons {
+  display: none;
+}
+.dps.mnk #procs-container {
+  top: 40px;
+  left: 0px;
+}
+.dps.mnk #bars,
+.dps.mnk #pull-bar {
+  left: 5px;
+}
+#mnk-stacks-lunar > div.active {
+  background-color: #7a45d5;
+}
+#mnk-stacks-lunar > div,
+#mnk-stacks-solar > div {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0);
+}
+#mnk-stacks-beastchakra > div {
+  border: none;
+}
+#mnk-stacks-beastchakra {
+  flex: 2;
+}
+#mnk-stacks-beastchakra {
+  flex: 1;
+}
+.stacks {
+  width: 190px;
+  margin: 0 5px;
+}
