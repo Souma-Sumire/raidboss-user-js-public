@@ -2813,6 +2813,9 @@ Options.Triggers.push({
           tar = arr[data.soumaP6Poison];
           if (tar === ori)
             tar = arr.find((v) => !data.soumaP6PoisonArr.includes(v));
+          if (data.soumaP6Poison === 2 && tar === data.soumaP6PoisonArr[0]) {
+            tar = ['D1', 'D2'].find(v => v !== tar);
+          }
         }
         const pos = [...p][data.soumaP6Poison];
         if (
