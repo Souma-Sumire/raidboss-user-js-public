@@ -18,6 +18,7 @@
 ## 额外说明
 
 - [欧米茄文档](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+- 2024/6/2：删除js版一键舞步，请使用 [网页版](https://souma.diemoe.net/ff14-overlay-vue/#/okDncDance) 。
 
 ## Bug 反馈
 
