@@ -15,11 +15,13 @@
 
 例如 `D:\ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\零式 - p9s.js`
 
-## 额外说明
+## 其他说明
 
 - [欧米茄文档](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
 - 2024/6/2：删除js版一键舞步，请使用 [网页版](https://souma.diemoe.net/ff14-overlay-vue/#/okDncDance) 。
 
 ## Bug 反馈
 
-- 2 群：231937107
+- 我并非你的保姆，因此提出过于愚蠢的问题将被无视
+- 为了更好的解决你的问题，请先浏览：[提问的智慧](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md) / [如何有效地报告 Bug](https://www.chiark.greenend.org.uk/~sgtatham/bugs-cn.html)
+- 发起 Issues 或加入QQ群 `231937107` 寻求帮助
