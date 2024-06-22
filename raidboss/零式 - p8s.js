@@ -150,6 +150,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         sound: "",
         soundVolume: 0,
         run: (data, _matches, output) => {
+          data.soumaFL.doQueueActions([{ c: "DoWaymarks", p: "save", d: 0 }]);
           function handleSettings(value) {
             switch (value.toLowerCase()) {
               case "true":

@@ -1,9 +1,10 @@
-// 大部分的函数都是被废弃的，但是由于一些历史原因没有删。
-
-if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
+if (
+  new URLSearchParams(location.search).get("alerts") !== "0" &&
+  !/raidboss_timeline_only/.test(location.href)
+) {
   // #region
-  const prevent = { forceLocalMark: false };
-  const sleep = (ms) => new Promise((_resolve, reject) => setTimeout(reject, ms));
+  const sleep = (ms) =>
+    new Promise((_resolve, reject) => setTimeout(reject, ms));
   const waitFor = async function waitFor(f) {
     while (!f()) await sleep(200);
     return f();
@@ -11,7 +12,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   const waitForData = async (data, attrName, overtime = 7000) =>
     Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2023.12.24");
+  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2024.3.7");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -21,29 +22,31 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     console.error("缺少参数，详情见trace");
     // throw "缺少参数";
   }
+  const markTypes = [
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "attack5",
+    "attack6",
+    "attack7",
+    "attack8",
+    "bind1",
+    "bind2",
+    "bind3",
+    "stop1",
+    "stop2",
+    "square",
+    "circle",
+    "cross",
+    "triangle",
+  ];
   function markTypeLegalityCheck(markTypeStr) {
-    return [
-      "attack1",
-      "attack2",
-      "attack3",
-      "attack4",
-      "attack5",
-      "attack6",
-      "attack7",
-      "attack8",
-      "bind1",
-      "bind2",
-      "bind3",
-      "stop1",
-      "stop2",
-      "square",
-      "circle",
-      "cross",
-      "triangle",
-    ].find((v) => v === markTypeStr);
+    return markTypes.find((v) => v === markTypeStr);
   }
   function getLegalityMarkType(markType, markNum, complementType) {
-    if (!markTypeLegalityCheck(complementType)) throw "备用标记非法" + complementType;
+    if (!markTypeLegalityCheck(complementType))
+      throw "备用标记非法" + complementType;
     const result = markType + markNum;
     return markTypeLegalityCheck(result) ? result : complementType;
   }
@@ -73,7 +76,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return data.party.details.find((v) => v.name === name).id;
   }
   function getHexIdByRp(data = ifMissing(), rp = ifMissing()) {
-    return data.party.partyIds_[data.party.partyNames_.indexOf(getNameByRp(data, rp))];
+    return data.party.partyIds_[
+      data.party.partyNames_.indexOf(getNameByRp(data, rp))
+    ];
   }
   function loop() {
     let i = 0;
@@ -81,24 +86,27 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       return (i = (i % max) + 1);
     };
   }
-  function mark(actorHexID = ifMissing(), markType = ifMissing(), localOnly = false) {
-    if (prevent.forceLocalMark && localOnly === false) {
-      localOnly = true;
-      console.debug("邮差在mark动作中本应执行小队标点，但被用户设置改为本地标点");
-    }
+  function mark(
+    actorHexID = ifMissing(),
+    markType = ifMissing(),
+    localOnly = false
+  ) {
     if (typeof actorHexID === "string") actorHexID = parseInt(actorHexID, 16);
     if (isNotInRaidboss) {
       console.debug(
         "邮差mark",
         actorHexID,
         markType
-        // getRpByHexId({ party: soumaData.cactbotParty }, actorHexID.toString(16).toUpperCase()),
       );
     } else {
       callOverlayHandler({
         call: "PostNamazu",
         c: "mark",
-        p: JSON.stringify({ ActorID: actorHexID, MarkType: markType, LocalOnly: localOnly }),
+        p: JSON.stringify({
+          ActorID: actorHexID,
+          MarkType: markType,
+          LocalOnly: localOnly,
+        }),
       });
     }
   }
@@ -111,27 +119,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function clearMark(localOnly = false) {
     if (localOnly) {
-      doQueueActions(
-        [
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack1", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack6", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack7", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack8", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop1", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "square", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "circle", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "cross", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "triangle", LocalOnly: true }) },
-        ],
-        "clearMark localOnly:true"
+      doQueueActions(markTypes.map(v => ({ c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: v, LocalOnly: true }) })), "clearMark localOnly:true"
       );
     } else {
       doQueueActions(
@@ -168,7 +156,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         queue.map((v) => {
           if (v.c === "mark") {
             if (typeof v.p === "string") v.p = JSON.parse(v.p);
-            if (typeof v.p.ActorID === "string") v.p.ActorID = parseInt(v.p.ActorID, 16);
+            if (typeof v.p.ActorID === "string")
+              v.p.ActorID = parseInt(v.p.ActorID, 16);
             if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
             if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
             // const decId = v.p.ActorID;
@@ -185,32 +174,30 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     );
   }
   function doQueueActions(queue, notes) {
-    queue.forEach((v, i) => {
+    queue.forEach((v) => {
       if (v.c === "mark") {
         if (typeof v.p === "string") v.p = JSON.parse(v.p);
-        if (typeof v.p.ActorID === "string") v.p.ActorID = parseInt(v.p.ActorID, 16);
+        if (typeof v.p.ActorID === "string")
+          v.p.ActorID = parseInt(v.p.ActorID, 16);
         if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
         if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
-        if (prevent.forceLocalMark && v.p.LocalOnly === false) {
-          console.debug(
-            `邮差在queue第${i + 1}条动作中本应执行小队标点，但被用户设置改为本地标点`,
-            v.p.ActorID.toString(16).toUpperCase(),
-            v.p.MarkType
-          );
-          v.p.LocalOnly = true;
-        }
       }
       if (typeof v.p === "object") v.p = JSON.stringify(v.p);
     });
-    if (isNotInRaidboss) console.debug("邮差queue", notes, JSON.stringify(queue, null, 1));
+    if (isNotInRaidboss)
+      console.debug("邮差queue", notes, JSON.stringify(queue, null, 1));
     else {
-      callOverlayHandler({ call: "PostNamazu", c: "DoQueueActions", p: JSON.stringify(queue) });
+      callOverlayHandler({
+        call: "PostNamazu",
+        c: "DoQueueActions",
+        p: JSON.stringify(queue),
+      });
     }
   }
-  function placeReset() {
-    if (isNotInRaidboss) console.debug("邮差reset");
-    else callOverlayHandler({ call: "PostNamazu", c: "place", p: "reset" });
-  }
+  // function placeReset() {
+  //   if (isNotInRaidboss) console.debug("邮差reset");
+  //   else callOverlayHandler({ call: "PostNamazu", c: "place", p: "reset" });
+  // }
   function placeSave() {
     if (isNotInRaidboss) console.debug("邮差save");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "save" });
@@ -225,19 +212,6 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function calculationDistance(x1, y1, x2 = 100, y2 = 100) {
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-  }
-  function setRP(tarName, tarRP) {
-    const tar = soumaParty.find((v) => v.name === tarName);
-    const repeat = soumaParty.find((v) => v.myRP === tarRP);
-    if (!tar) doTextCommand(`/e 未找到${tarName} <se.11>`);
-    else {
-      if (repeat && repeat.name !== tar.name) {
-        repeat.myRP = tar.myRP;
-        doTextCommand(`/e 由于位置冲突,${repeat.name}自动改为${repeat.myRP}`);
-      }
-      tar.myRP = tarRP;
-      doTextCommand(`/e 已设置${tarName}为${tarRP}`);
-    }
   }
   function handleSettings(value) {
     switch (value.toLowerCase()) {
@@ -267,35 +241,17 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   }
   function getClearMarkQueue(localOnly = ifMissing(), delayMs = 0) {
     return localOnly
-      ? [
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack1", LocalOnly: true }), d: delayMs },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack3", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack4", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack5", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack6", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack7", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "attack8", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind1", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "bind3", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop1", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "stop2", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "square", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "circle", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "cross", LocalOnly: true }) },
-          { c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: "triangle", LocalOnly: true }) },
-        ]
+      ? markTypes.map((v, i) => ({ c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: v, LocalOnly: true, d: i === 0 ? delayMs : 0 }) }))
       : [
-          { c: "DoTextCommand", p: "/mk off <1>", d: delayMs },
-          { c: "DoTextCommand", p: "/mk off <2>" },
-          { c: "DoTextCommand", p: "/mk off <3>" },
-          { c: "DoTextCommand", p: "/mk off <4>" },
-          { c: "DoTextCommand", p: "/mk off <5>" },
-          { c: "DoTextCommand", p: "/mk off <6>" },
-          { c: "DoTextCommand", p: "/mk off <7>" },
-          { c: "DoTextCommand", p: "/mk off <8>" },
-        ];
+        { c: "DoTextCommand", p: "/mk off <1>", d: delayMs },
+        { c: "DoTextCommand", p: "/mk off <2>" },
+        { c: "DoTextCommand", p: "/mk off <3>" },
+        { c: "DoTextCommand", p: "/mk off <4>" },
+        { c: "DoTextCommand", p: "/mk off <5>" },
+        { c: "DoTextCommand", p: "/mk off <6>" },
+        { c: "DoTextCommand", p: "/mk off <7>" },
+        { c: "DoTextCommand", p: "/mk off <8>" },
+      ];
   }
   function getRotationAngle(x, y) {
     return (Math.atan2(x, y) * 180) / Math.PI;
@@ -307,21 +263,31 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
    * 旋转坐标（FF反转坐标专用）
    * @param {number} x 待处理X坐标
    * @param {number} y 待处理Y坐标
-   * @param {number} x2 基准点X坐标
-   * @param {number} y2 基准点Y坐标
+   * @param {number} centerX 基准点X坐标
+   * @param {number} centerY 基准点Y坐标
    * @param {boolean} reverseAngle 是否反转角度，如果用于处理玩家坐标用于坐标排序则应传入true，处理waymarks则应为false或默认。
    * @returns
    */
-  function rotateCoord(x = ifMissing(), y = ifMissing(), x2 = ifMissing(), y2 = ifMissing(), reverseAngle = false) {
+  function rotateCoord(
+    x = ifMissing(),
+    y = ifMissing(),
+    centerX = ifMissing(),
+    centerY = ifMissing(),
+    reverseAngle = false
+  ) {
     function rotateFFPoint(pointX, pointY, angle) {
-      const x = pointX * Math.cos((angle * Math.PI) / 180) + pointY * Math.sin((angle * Math.PI) / 180);
-      const y = -pointX * Math.sin((angle * Math.PI) / 180) + pointY * Math.cos((angle * Math.PI) / 180);
+      const x =
+        pointX * Math.cos((angle * Math.PI) / 180) +
+        pointY * Math.sin((angle * Math.PI) / 180);
+      const y =
+        -pointX * Math.sin((angle * Math.PI) / 180) +
+        pointY * Math.cos((angle * Math.PI) / 180);
       return { x: x, y: y };
     }
     const nx = x - 100;
     const ny = -y + 100;
-    const nx2 = x2 - 100;
-    const ny2 = -y2 + 100;
+    const nx2 = centerX - 100;
+    const ny2 = -centerY + 100;
     const angle = getRotationAngle(nx2, ny2);
     const res = rotateFFPoint(nx, ny, reverseAngle ? -angle : angle);
     const resX = res.x + 100;
@@ -329,36 +295,29 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     return { x: resX, y: resY };
   }
   function deepClone(obj) {
-    if (typeof obj !== "object") return obj;
-    if (obj instanceof Map) {
-      let newMap = new Map();
-      obj.forEach((value, key) => {
-        newMap.set(key, deepClone(value));
-      });
-      return newMap;
-    }
-    if (obj instanceof Set) {
-      let newSet = new Set();
-      obj.forEach((value) => {
-        newSet.add(deepClone(value));
-      });
-      return newSet;
-    }
-    if (obj instanceof Date) {
-      return new Date(obj.getTime());
-    }
-    if (obj instanceof RegExp) {
-      return new RegExp(obj.source, obj.flags);
-    }
-    let newObj = Array.isArray(obj) ? [] : {};
-    for (let key in obj) {
-      if (typeof obj[key] === "object") {
-        newObj[key] = deepClone(obj[key]);
+    const cache = new Map();
+    function _deepClone(value) {
+      if (typeof value !== "object" || value === null) return value;
+      if (cache.has(value)) return cache.get(value);
+      if (value instanceof Date) return new Date(value);
+      if (value instanceof RegExp) return new RegExp(value);
+      if (value instanceof Set) return new Set(_deepClone(Array.from(value)));
+      if (value instanceof Map)
+        return new Map(_deepClone(Array.from(value.entries())));
+      const result = Array.isArray(value) ? [] : {};
+      cache.set(value, result);
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          result[index] = _deepClone(item);
+        });
       } else {
-        newObj[key] = obj[key];
+        Object.keys(value).forEach((key) => {
+          result[key] = _deepClone(value[key]);
+        });
       }
+      return result;
     }
-    return newObj;
+    return _deepClone(obj);
   }
   //#endregion
   const souma = {
@@ -393,71 +352,69 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
   Options.Triggers.push({
     id: "SoumaRunLibrary",
     zoneId: ZoneId.MatchAll,
-    zoneLabel: { en: "通用 - 用户设置" },
-    config: [
-      {
-        id: "souma拓展运行库强制本地标点",
-        name: { en: "强制使用本地标点（优先级高于副本设置）" },
-        type: "checkbox",
-        default: false,
-      },
-    ],
     initData: () => {
-      return { soumaFL: souma, soumaRuntime: { isInit: false } };
+      return { soumaFL: souma, };
     },
-    triggers: [
-      {
-        id: "Souma Runtime 总设置（优先级高于副本内设置）",
-        type: "LimitBreak",
-        netRegex: { bars: "3" },
-        condition: (data, matches) => !data.soumaRuntime.isInit && parseInt(matches.valueHex, 16) >= 200,
-        run: (data) => {
-          placeSave();
-          prevent.forceLocalMark = data.triggerSetConfig.souma拓展运行库强制本地标点;
-          data.soumaRuntime.isInit = true;
-        },
-      },
-    ],
   });
   if (!/config\.html/.test(location.href)) {
     addOverlayListener("PartyChanged", (e) => {
-      if (soumaRuntimeJSData === null) setTimeout(() => createMyParty(e.party), 500);
+      // console.log("Party Changed", e);
+      if (soumaRuntimeJSData === undefined)
+        setTimeout(() => createMyParty(e.party), 500);
       else createMyParty(e.party);
     });
-    addOverlayListener("ChangeZone", placeReset);
+    // addOverlayListener("ChangeZone", placeReset);
     addOverlayListener("BroadcastMessage", handleBroadcastMessage);
   }
   function handleBroadcastMessage(msg) {
     if (msg.source === "soumaRuntimeJS") {
       soumaRuntimeJSData = msg.msg.party;
-      updateNewPartyRP();
+      if (soumaRuntimeJSData !== undefined) {
+        updateNewPartyRP();
+      }
     }
   }
   function updateNewPartyRP() {
     if (isNotInRaidboss) defaultSort();
     else {
       clearTimeout(timer);
-      if (soumaRuntimeJSData) {
-        soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
+      if (soumaRuntimeJSData !== undefined) {
+        soumaParty.forEach(
+          (p) =>
+          (p.myRP =
+            soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown")
+        );
         sendBroadcast("updateNewPartyRP Success");
       } else {
         timer = setTimeout(() => {
-          if (!soumaRuntimeJSData) {
+          if (soumaRuntimeJSData === undefined) {
             defaultSort();
             console.error("未在3秒内接受到soumaRuntimeJSData，采用默认排序。");
-            doQueueActions([{ c: "command", p: "/e <se.10>缺少配套悬浮窗 https://souma.diemoe.net/#/cactbotRuntime" }]);
+            doQueueActions([
+              {
+                c: "command",
+                p: "/e 未接收到职能分配数据，将采用默认排序<se.10>。可能是缺少配套悬浮窗 https://souma.diemoe.net/ff14-overlay-vue/#/cactbotRuntime",
+              },
+            ]);
           } else {
-            soumaParty.forEach((p) => (p.myRP = soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ?? "unknown"));
+            soumaParty.forEach(
+              (p) =>
+              (p.myRP =
+                soumaRuntimeJSData.find((r) => r.id === p.id)?.rp ??
+                "unknown")
+            );
             sendBroadcast("updateNewPartyRP Success");
-            // doQueueActions([{ c: "stop", p: "update party rp" }]);
-            // doTextCommand("/e 成功<se.9>");
           }
         }, 3000);
       }
     }
   }
   function sendBroadcast(text) {
-    callOverlayHandler({ call: "broadcast", source: "soumaUserJS", msg: { text: text } });
+    callOverlayHandler({
+      call: "broadcast",
+      source: "soumaUserJS",
+      msg: { text: text },
+    });
   }
   function defaultSort() {
     const sort = [
@@ -486,9 +443,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
       Array(l)
         .fill(r)
         .map((v, i) => v + ++i);
-    const tRP = ["MT", "ST", ...createRPArr("T", 70)];
-    const hRP = [...createRPArr("H", 72)];
-    const dRP = [...createRPArr("D", 72)];
+    const tRP = ["MT", "ST", ...createRPArr("T", 14)];
+    const hRP = [...createRPArr("H", 16)];
+    const dRP = [...createRPArr("D", 16)];
     const role = {
       tank: [1, 3, 19, 21, 32, 37],
       healer: [6, 24, 28, 33, 40],
@@ -497,7 +454,9 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     let t = 0;
     let h = 0;
     let d = 0;
-    soumaParty = soumaParty.sort((a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString()));
+    soumaParty = soumaParty.sort(
+      (a, b) => sort.indexOf(a.job.toString()) - sort.indexOf(b.job.toString())
+    );
     soumaParty.forEach((v) => {
       if (role.tank.includes(Number(v.job))) v.myRP = tRP[t++];
       else if (role.healer.includes(Number(v.job))) v.myRP = hRP[h++];
