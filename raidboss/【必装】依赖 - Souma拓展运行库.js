@@ -148,31 +148,6 @@ if (
       });
     }
   }
-  function doQueueActionsDebug(queue, notes, data) {
-    console.debug(
-      "debug queue",
-      notes,
-      JSON.stringify(
-        queue.map((v) => {
-          if (v.c === "mark") {
-            if (typeof v.p === "string") v.p = JSON.parse(v.p);
-            if (typeof v.p.ActorID === "string")
-              v.p.ActorID = parseInt(v.p.ActorID, 16);
-            if (Number.isNaN(v.p.ActorID)) throw "v.p.ActorID is not a number";
-            if (/undefined/.test(v.p.MarkType)) throw "MarkType has undefined";
-            // const decId = v.p.ActorID;
-            const hexId = v.p.ActorID.toString(16).toUpperCase();
-            v.debugHexId = hexId;
-            v.debugName = getNameByHexId(data, hexId);
-            if (v.debugName) v.debugRp = getRpByHexId(data, hexId);
-          }
-          return v;
-        }),
-        null,
-        1
-      )
-    );
-  }
   function doQueueActions(queue, notes) {
     queue.forEach((v) => {
       if (v.c === "mark") {
@@ -210,35 +185,6 @@ if (
     if (isNotInRaidboss) console.debug("邮差clear");
     else callOverlayHandler({ call: "PostNamazu", c: "place", p: "clear" });
   }
-  function calculationDistance(x1, y1, x2 = 100, y2 = 100) {
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-  }
-  function handleSettings(value) {
-    switch (value.toLowerCase()) {
-      case "true":
-      case "ture": // 猪头专用
-      case "是":
-      case "开":
-      case "开启":
-      case "启用":
-      case "使能":
-      case "确定":
-      case "对":
-        return true;
-      case "false":
-      case "flase": // 猪头专用
-      case "0":
-      case "否":
-      case "关":
-      case "关闭":
-      case "取消":
-      case "不":
-      case "错":
-        return false;
-      default:
-        return value.split("/").length >= 2 ? value.split("/") : value;
-    }
-  }
   function getClearMarkQueue(localOnly = ifMissing(), delayMs = 0) {
     return localOnly
       ? markTypes.map((v, i) => ({ c: "mark", p: JSON.stringify({ ActorID: 0xe000000, MarkType: v, LocalOnly: true, d: i === 0 ? delayMs : 0 }) }))
@@ -256,7 +202,7 @@ if (
   function getRotationAngle(x, y) {
     return (Math.atan2(x, y) * 180) / Math.PI;
   }
-  function getDistance(x1, y1, x2, y2) {
+  function getDistance(x1, y1, x2 = 100, y2 = 100) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
   /**
@@ -336,12 +282,9 @@ if (
     clearMark,
     doWaymarks,
     doQueueActions,
-    doQueueActionsDebug,
     placeSave,
     placeLoad,
     placeClear,
-    calculationDistance,
-    handleSettings,
     getClearMarkQueue,
     getLegalityMarkType,
     rotateCoord,
