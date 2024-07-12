@@ -251,13 +251,13 @@ Options.Triggers.push({
         backRight: {
           en: 'Behind + Boss\'s Left',
           de: 'Hinten + Links vom Boss',
-          cn: 'Boss 左前',
+          cn: 'Boss 左后',
         },
         ...stayGoOutputStrings,
         backRightKnockaround: {
           en: 'Behind + Boss\'s Left (${stayGo})',
           de: 'Hinten + Links vom Boss (${stayGo})',
-          cn: 'Boss 左前 (${stayGo})',
+          cn: 'Boss 左后 (${stayGo})',
         },
       },
     },
@@ -277,13 +277,13 @@ Options.Triggers.push({
         backLeft: {
           en: 'Behind + Boss\'s Right',
           de: 'Hinten + Rechts vom Boss',
-          cn: 'Boss 右前',
+          cn: 'Boss 右后',
         },
         ...stayGoOutputStrings,
         backLeftKnockaround: {
           en: 'Behind + Boss\'s Right (${stayGo})',
           de: 'Hinten + Rechts vom Boss (${stayGo})',
-          cn: 'Boss 右前 (${stayGo})',
+          cn: 'Boss 右后 (${stayGo})',
         },
       },
     },
