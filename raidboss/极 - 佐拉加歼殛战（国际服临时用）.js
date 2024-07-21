@@ -370,17 +370,17 @@ Options.Triggers.push({
         insideWest: {
           en: 'Inner West Diamond',
           de: 'Innerer Westlicher Diamant',
-          cn: '内部左',
+          cn: '内部左菱形',
         },
         insideEast: {
           en: 'Inner East Diamond',
           de: 'Innerer Östlicher Diamant',
-          cn: '内部右',
+          cn: '内部右菱形',
         },
         insideNS: {
           en: 'Inner North/South Diamonds - ${lean}',
           de: 'Innerer Nördlicher/Südlicher Diamant - ${lean}',
-          cn: '内部上/下 (${lean})',
+          cn: '内部上/下菱形 (${lean})',
         },
         leanWest: {
           en: 'Lean West',
@@ -578,11 +578,11 @@ Options.Triggers.push({
       outputStrings: {
         leanLeft: {
           en: '<= Inside Left (Facing Boss)',
-          cn: '<= 站在左边(面向Boss)',
+          cn: '<= (面向Boss)站在内左边',
         },
         leanRight: {
           en: 'Inside Right (Facing Boss) =>',
-          cn: '站在右边(面向Boss) =>',
+          cn: '(面向Boss)站在内右边 =>',
         },
         corner: {
           en: 'Corners Safe',
@@ -590,19 +590,19 @@ Options.Triggers.push({
         },
         northwest: {
           en: 'Northwest',
-          cn: '左上',
+          cn: '左上边',
         },
         northeast: {
           en: 'Northeast',
-          cn: '右上',
+          cn: '右上边',
         },
         southeast: {
           en: 'Southeast',
-          cn: '右下',
+          cn: '右下边',
         },
         southwest: {
           en: 'Southwest',
-          cn: '左下',
+          cn: '左下边',
         },
         fire: {
           en: 'Go Far',
@@ -615,7 +615,7 @@ Options.Triggers.push({
         },
         combo: {
           en: '${fireWindCombo} + ${tile}',
-          cn: '${fireWindCombo}的边 + ${tile}',
+          cn: '${fireWindCombo} + ${tile}',
         },
         unknown: {
           en: 'Avoid Swords',
@@ -773,17 +773,17 @@ Options.Triggers.push({
         unknown: {
           en: 'Safe Quadrant + Spread Out',
           de: 'Sicherer Quadrant + Verteilen',
-          cn: '安全角 + 散开',
+          cn: '安全象限 + 散开',
         },
         left: {
           en: '<= Front Left Quadrant + Spread Out',
           de: '<= Vorderer linker Quadrant + Verteilen',
-          cn: '左前方角 + 散开',
+          cn: '左前方象限 + 散开',
         },
         right: {
           en: 'Front Right Quadrant + Spread Out =>',
           de: 'Vorderer rechter Quadrant + Verteilen =>',
-          cn: '右前方角 + 散开 =>',
+          cn: '右前方象限 + 散开 =>',
         },
       },
     },
