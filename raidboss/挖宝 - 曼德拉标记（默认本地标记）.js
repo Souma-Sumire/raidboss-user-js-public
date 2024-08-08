@@ -102,6 +102,12 @@ if (
             12038, //育体大蒜
             12039, //育体番茄
             12040, //育体王后
+
+            13242, // Turali onion
+            13243, // Turali eggplant
+            13244, // Turali garlic
+            13245, // Turali tomato
+            13246, // Tuligora queen
           ],
           capture: true,
         },
