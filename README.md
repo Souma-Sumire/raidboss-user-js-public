@@ -36,7 +36,7 @@
 
 需要：
 
-1. 加载 `依赖 - Souma拓展运行库.js`
+1. **加载 `[重要] 依赖 - Souma拓展运行库.js`**
 1. 在 OverlayPlugin 插件中添加 悬浮窗 `https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`，并在进本后分配职能位置
 1. 如果你需要开启标点等操作，可以加载正确版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 
