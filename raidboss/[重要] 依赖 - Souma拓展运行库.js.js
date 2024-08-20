@@ -12,7 +12,7 @@ if (
   const waitForData = async (data, attrName, overtime = 7000) =>
     Promise.race([waitFor(() => data[attrName]), sleep(overtime)]);
   const isNotInRaidboss = /(raidemulator|config)\.html/.test(location.href);
-  if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2024.3.7");
+  // if (!isNotInRaidboss) console.log("souma拓展运行库已加载 2024.3.7");
   let soumaRuntimeJSData;
   let timer;
   if (!isNotInRaidboss) sendBroadcast("requestData");
@@ -333,12 +333,12 @@ if (
           if (soumaRuntimeJSData === undefined) {
             defaultSort();
             console.error("未在3秒内接受到soumaRuntimeJSData，采用默认排序。");
-            doQueueActions([
-              {
-                c: "command",
-                p: "/e 未接收到职能分配数据，将采用默认排序<se.10>。可能是缺少配套悬浮窗 https://souma.diemoe.net/ff14-overlay-vue/#/cactbotRuntime",
-              },
-            ]);
+            // doQueueActions([
+            //   {
+            //     c: "command",
+            //     p: "/e 未接收到职能分配数据，将采用默认排序<se.10>。可能是缺少配套悬浮窗 https://souma.diemoe.net/ff14-overlay-vue/#/cactbotRuntime",
+            //   },
+            // ]);
           } else {
             soumaParty.forEach(
               (p) =>
