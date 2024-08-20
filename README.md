@@ -25,7 +25,7 @@
 
 ### 部分文件需要额外依赖
 
-包括：
+以下副本
 
 - 绝神兵三连桶
 - 绝龙诗
@@ -34,11 +34,11 @@
 - 阿罗阿罗岛
 - 挖宝曼德拉
 
-需要：
+需要
 
-1. **加载 `[重要] 依赖 - Souma拓展运行库.js`**
-1. 在 OverlayPlugin 插件中添加 悬浮窗 `https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`，并在进本后分配职能位置
-1. 如果你需要开启标点等操作，可以加载正确版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
+1. 除了副本本身的 js 文件，还需要 **加载 `[重要] 依赖 - Souma拓展运行库.js`**
+1. 在 OverlayPlugin 插件中添加数据统计悬浮窗 `https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`，用于手动分配位置，否则会默认分配（MT、ST、H1、H2、D1、D2、D3、D4）
+1. 若需要标点等操作，还需要加载正确版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 
 ### 其他说明
 
