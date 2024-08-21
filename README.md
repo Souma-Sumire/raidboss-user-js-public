@@ -17,7 +17,7 @@
 ## 6.X 及之前
 
 1. 确保 Cactbot Raidboss 悬浮窗正常工作
-1. 下载相应 js 文件放入你的 user\raidboss 文件夹
+1. [下载](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip) 后，将相应 js 文件放入你的 user\raidboss 文件夹
 1. 刷新 Raidboss 悬浮窗
 
 ### User 文件夹在哪？
