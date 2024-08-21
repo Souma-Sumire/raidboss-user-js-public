@@ -1,31 +1,29 @@
 # raidboss-user-js-public
 
-## 7.0 使用
+## 7.0 之后
 
-由于之前让用户自己下载 JS 的门槛过高，即使坚持制作了3年，还是有大把的人被“怎么导入”这一点点门槛所拦住。同时时常有冲突的风险。于是 7.0 目前改用在线链接的方式。
+由于之前让用户自己下载 JS 的门槛过高，即使坚持制作了3年，还是有大把的人被“怎么导入”这一点点门槛所拦住。同时时常有冲突的风险。于是 7.0 目前改用在线链接的方式
 
-只需要添加**数据统计**悬浮窗：<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html> ，以代替原来的Raidboss。
+只需要添加**数据统计**悬浮窗：<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html> ，以代替原来的Raidboss
 
-虽然编辑这段的时候已经是国际服第四周了，但其实从首周第三天时我就在QQ群发布了，当时4层的主分支还是空白的，目前已经完善了不少，或许就不需要我写的了？但总之更新一下这里的文档。
+虽然编辑这段的时候已经是国际服第四周了，但其实从首周第三天时我就在QQ群发布了，当时4层的主分支还是空白的，目前已经完善了不少，或许就不需要我写的了？但总之更新一下这里的文档
 
 ### 修改输出文本
 
-新增悬浮窗，地址是“上面的链接把raidboss全部改成config”。
+新增悬浮窗，地址是“上面的链接把raidboss全部改成config”
 
-不直接贴出链接，因为这是一个智商检测。
+不直接贴出链接，因为这是一个智商检测
 
-## 6.X 使用
+## 6.X 及之前
 
-1. 请确保 Cactbot Raidboss 悬浮窗正常工作。
-1. 将相应文件放入你的 user\raidboss 文件夹，刷新 Raidboss 悬浮窗，即可成功加载。
+1. 确保 Cactbot Raidboss 悬浮窗正常工作
+1. 下载相应 js 文件放入你的 user\raidboss 文件夹
+1. 刷新 Raidboss 悬浮窗
 
 ### User 文件夹在哪？
 
 - 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
-
 - 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
-
-例如 `D:\ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\零式 - p9s.js`
 
 ### 部分文件需要额外依赖
 
