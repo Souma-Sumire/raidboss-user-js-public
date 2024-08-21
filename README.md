@@ -2,15 +2,21 @@
 
 ## 7.0 之后
 
-我不想再在教用户“怎么导入”这件事情上浪费时间，于是 7.0 及以后改用在线链接的方式
-
-只需要添加**数据统计**悬浮窗：<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html> ，以代替原来的Raidboss悬浮窗
+悬浮窗中添加以下Raidboss链接，并临时关闭原有的Raidboss悬浮窗，以免重复报。
+地址：<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html>
+![image](https://github.com/user-attachments/assets/de4902c5-3490-4386-a1a8-914412ae9898)
+![image](https://github.com/user-attachments/assets/5bb036bf-aa5e-4219-b491-f8dbd1949a23)
 
 ### 修改输出文本
 
-新增悬浮窗，地址是“上面的链接把raidboss全部改成config”
+上面的链接把raidboss全部改成config，在这里面可以改设置。
+不直接贴出链接，因为这是一个智商检测。看不懂就别改。
 
-不直接贴出链接，因为这是一个智商检测
+### 其他说明
+
+使用在线链接的目的是为了防止冲突并方便更新。其他副本几乎都是由各位社区大佬开发，没有侵占冠名权的意思。
+
+不要在任何ACT整合群或Cactbot的GitHub页面提问本链接的问题，他们不负责这部分内容（如果你这样做了，只会让别人觉得你是傻逼）
 
 ## 6.X 及之前
 
