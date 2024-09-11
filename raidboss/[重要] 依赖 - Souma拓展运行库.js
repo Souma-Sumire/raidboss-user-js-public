@@ -332,7 +332,7 @@ if (
         timer = setTimeout(() => {
           if (soumaRuntimeJSData === undefined) {
             defaultSort();
-            console.error("未在3秒内接受到soumaRuntimeJSData，采用默认排序。");
+            // console.error("未在3秒内接受到soumaRuntimeJSData，采用默认排序。");
             // doQueueActions([
             //   {
             //     c: "command",
