@@ -80,6 +80,69 @@ const universalSortMarking = (arr, sortRule = []) => {
 };
 Options.Triggers.push({
   zoneId: ZoneId.DragonsongsRepriseUltimate,
+  id: 'SoumaDragonsongsRepriseUltimate',
+  config: [
+    {
+      id: "P2骑神一运打法",
+      name: { en: "P2骑神一运打法" },
+      type: "select",
+      options: { en: { "预站位（主流）": "预站位", "优先级": "优先级", } },
+      default: "预站位",
+    },
+    {
+      id: "P2红标分摊换位规则",
+      comment: { en: '请根据队内打法自行选择' },
+      name: { en: "P2红标分摊换位规则" },
+      type: "select",
+      options: { en: { "整组": "整组", "单人": "单人", } },
+      default: "整组",
+    },
+    {
+      id: "P2红标刷BD是否换位",
+      comment: { en: '请根据队内打法自行选择' },
+      name: { en: "P2红标刷BD是否换位" },
+      type: "select",
+      options: { en: { "不换": "不换", "换": "换", } },
+      default: "不换",
+    },
+    {
+      id: "P6传毒打法",
+      name: { en: "P6传毒打法" },
+      type: "select",
+      options: { en: { "DTTDD（主流）": "DTTDD", "全D": "全D", } },
+      default: "DTTDD",
+    },
+    {
+      id: "P6冰火线第二次打法",
+      name: { en: "P6冰火线第二次打法" },
+      type: "select",
+      options: { en: { "六固定（主流）": "六固定", "四固定": "四固定", } },
+      default: "六固定",
+    },
+
+    {
+      id: "P5雷标记",
+      name: { en: "P5雷标记" },
+      type: "select",
+      options: { en: { "开(小队标点)": "开", "关": "关", "开(本地标点)": "本地" } },
+      default: "关",
+    },
+    {
+      id: "P6传毒标记",
+      name: { en: "P6传毒标记" },
+      type: "select",
+      options: { en: { "开(小队标点)": "开", "关": "关", "开(本地标点)": "本地" } },
+      default: "关",
+    },
+    {
+      id: "P6黑白无标记",
+      comment: { en: '会优先让即将传毒的2人获得数字更大的标记' },
+      name: { en: "P6黑白无标记" },
+      type: "select",
+      options: { en: { "开(小队标点)": "开", "关": "关", "开(本地标点)": "本地" } },
+      default: "关",
+    },
+  ],
   initData: () => {
     return {
       soumaP1ShiningBlade: null,
@@ -279,7 +342,7 @@ Options.Triggers.push({
       },
       tts: (data, _matches, output) =>
         output.优先级()?.split("/")?.[data.soumaP1HoliestHallowing] ===
-        data.soumaFL.getRpByName(data, data.me)
+          data.soumaFL.getRpByName(data, data.me)
           ? output.text({ name: "" })
           : null,
       soundVolume: 0,
@@ -351,8 +414,8 @@ Options.Triggers.push({
         data.soumaPhase !== "doorboss" || data.soumaP1SeenEmptyDimension
           ? output.in()
           : data.role === "tank"
-          ? output.inAndTetherTank()
-          : output.inAndTetherNotTank(),
+            ? output.inAndTetherTank()
+            : output.inAndTetherNotTank(),
       run: (data) => {
         data.soumaP1SeenEmptyDimension = true;
       },
@@ -436,7 +499,7 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const p = output.第1组().split("/");
         switch (
-          p.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
+        p.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
         ) {
           case -1:
             return output.notYou({ tar1: p[0], tar2: p[1] });
@@ -464,7 +527,7 @@ Options.Triggers.push({
         const i = (data.soumaP15BrightwingCounter - 1) * 2;
         const group = p.slice(i, i + 2);
         switch (
-          group.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
+        group.findIndex((v) => v === data.soumaFL.getRpByName(data, data.me))
         ) {
           case -1:
             return {
@@ -633,6 +696,7 @@ Options.Triggers.push({
           data.soumaFL.getRpByName(data, matches.target)
         ),
       response: (data, _matches, output) => {
+        const play = data.triggerSetConfig.P2骑神一运打法;
         if (data.soumaP2SkywardTriple.length === 3) {
           if (["MT", "ST"].includes(data.soumaFL.getRpByName(data, data.me)))
             return;
@@ -648,14 +712,13 @@ Options.Triggers.push({
                   .join(" / "),
               }),
               tts:
-                output.打法() === "优先级"
+                play === "优先级"
                   ? output[
-                      `meteor${
-                        list.findIndex(
-                          (v) => v === data.soumaFL.getRpByName(data, data.me)
-                        ) + 1
-                      }TTS`
-                    ]
+                  `meteor${list.findIndex(
+                    (v) => v === data.soumaFL.getRpByName(data, data.me)
+                  ) + 1
+                  }TTS`
+                  ]
                   : output.meteorNoPriorityTTS(),
             };
           }
@@ -668,14 +731,13 @@ Options.Triggers.push({
               text: none.map((v) => handleDistributeName(data, v)).join(" / "),
             }),
             tts:
-              output.打法() === "优先级"
+              play === "优先级"
                 ? output[
-                    `noMarker${
-                      none.findIndex(
-                        (v) => v === data.soumaFL.getRpByName(data, data.me)
-                      ) + 1
-                    }TTS`
-                  ]
+                `noMarker${none.findIndex(
+                  (v) => v === data.soumaFL.getRpByName(data, data.me)
+                ) + 1
+                }TTS`
+                ]
                 : output.noMarkerNoPriorityTTS(),
             sound: "",
             soundVolume: 0,
@@ -693,11 +755,7 @@ Options.Triggers.push({
         meteor2TTS: { en: "下下下" },
         meteor3TTS: { en: "右右右" },
         meteorNoPriorityTTS: { en: "核爆" },
-        优先级: {
-          en: ["D1", "D2", "D3", "D4", "H1", "H2"].join("/"),
-        },
-        注: { en: "预站位or优先级" },
-        打法: { en: "预站位" },
+        优先级: { en: ["D1", "D2", "D3", "D4", "H1", "H2"].join("/"), },
         noMarker1TTS: { en: "去骑神 => 左侧塔" },
         noMarker2TTS: { en: "去骑神 => 中间塔" },
         noMarker3TTS: { en: "去骑神 => 右侧塔" },
@@ -872,10 +930,10 @@ Options.Triggers.push({
           );
           const twoMeteorsWays = twoMeteors.map((v) => getWays(v.rp));
           const iNeedSwitch =
-            output.换位规则() === "整组" ||
+            data.triggerSetConfig.P2红标分摊换位规则 === "整组" ||
             ["D1", "D2", "D3", "D4"].includes(twoMeteors[0].rp) ===
-              (data.role === "dps");
-          const BDSwitch = output.BD换不换() !== "不换";
+            (data.role === "dps");
+          const BDSwitch = data.triggerSetConfig.P2红标刷BD是否换位 !== "不换";
           const myWay = getWays(playerD);
           if (
             (twoMeteorsWays[0] === direction.N &&
@@ -1023,8 +1081,6 @@ Options.Triggers.push({
         东DPS: { en: "D4" },
         safe: { en: "不动" },
         switch: { en: "去${dir}" },
-        换位规则: { en: "整组" },
-        BD换不换: { en: "不换" },
       },
     },
     {
@@ -1722,7 +1778,7 @@ Options.Triggers.push({
           );
         }
       },
-      infoText: () => {},
+      infoText: '',
       outputStrings: {
         sort: { en: ["MT", "ST", "H1", "H2"].join("/") },
       },
@@ -1987,17 +2043,8 @@ Options.Triggers.push({
           data.soumaP5ThunderStruck.length = 0;
           const arr = universalSortMarking(_, output.优先级().split("/"));
           const pov = data.soumaFL.getRpByName(data, data.me);
-          if (
-            output.标记() === "开" ||
-            output.标记() === "true" ||
-            output.标记() === "1" ||
-            output.标记() === "是"
-          ) {
-            const local =
-              output.本地标点() === "开" ||
-              output.本地标点() === "true" ||
-              output.本地标点() === "1" ||
-              output.本地标点() === "是";
+          if (['开', '本地'].includes(data.triggerSetConfig.P5雷标记)) {
+            const local = data.triggerSetConfig.P5雷标记 === '本地'
             data.soumaFL.mark(
               data.soumaFL.getHexIdByRp(data, arr[0]),
               "stop1",
@@ -2007,6 +2054,18 @@ Options.Triggers.push({
               data.soumaFL.getHexIdByRp(data, arr[1]),
               "stop2",
               local
+            );
+            data.soumaFL.doQueueActions(
+              [
+                { c: "DoTextCommand", p: "/mk off <1>", d: 16000 },
+                { c: "DoTextCommand", p: "/mk off <2>" },
+                { c: "DoTextCommand", p: "/mk off <3>" },
+                { c: "DoTextCommand", p: "/mk off <4>" },
+                { c: "DoTextCommand", p: "/mk off <5>" },
+                { c: "DoTextCommand", p: "/mk off <6>" },
+                { c: "DoTextCommand", p: "/mk off <7>" },
+                { c: "DoTextCommand", p: "/mk off <8>" },
+              ],
             );
           }
           if (!arr.includes(pov)) return null;
@@ -2025,44 +2084,6 @@ Options.Triggers.push({
         },
         优先级: {
           en: ["H1", "H2", "MT", "ST", "D1", "D2", "D3", "D4"].join("/"),
-        },
-        标记: { en: "关" },
-        本地标点: { en: "否" },
-      },
-    },
-    {
-      id: "DSR P5一运开始清理脑袋上的标记",
-      netRegex: NetRegexes.startsUsing({ id: "6B89", capture: false }),
-      run: (data, _matches, output) => {
-        if (
-          output.P5一运开始清空标记() === "开" ||
-          output.P5一运开始清空标记() === "true" ||
-          output.P5一运开始清空标记() === "1" ||
-          output.P5一运开始清空标记() === "是"
-        )
-          data.soumaFL.clearMark();
-      },
-      outputStrings: {
-        P5一运开始清空标记: {
-          en: "否",
-        },
-      },
-    },
-    {
-      id: "DSR P5一运结束清理脑袋上的标记",
-      netRegex: NetRegexes.startsUsing({ id: "63C6", capture: false }),
-      run: (data, _matches, output) => {
-        if (
-          output.P5一运结束清空标记() === "开" ||
-          output.P5一运结束清空标记() === "true" ||
-          output.P5一运结束清空标记() === "1" ||
-          output.P5一运结束清空标记() === "是"
-        )
-          data.soumaFL.clearMark();
-      },
-      outputStrings: {
-        P5一运结束清空标记: {
-          en: "否",
         },
       },
     },
@@ -2317,8 +2338,9 @@ Options.Triggers.push({
         data.soumaFL.waitForData(data, "soumaP6NidhoggGlowing"),
       suppressSeconds: 20,
       infoText: (data, matches, output) => {
+        const play = data.triggerSetConfig.P6冰火线第二次打法
         const pov = data.soumaFL.getRpByName(data, data.me);
-        if (output.打法() === "四固定") {
+        if (play === "四固定") {
           if (data.role === "tank") return;
           switch (pov) {
             case "H1":
@@ -2344,12 +2366,11 @@ Options.Triggers.push({
                 return output.四固定D1Fire();
               console.error(matches);
           }
-        } else if (output.打法() === "六固定") {
+        } else if (play === "六固定") {
           return output[`六固定${pov}`]();
         }
       },
       outputStrings: {
-        打法: { en: "六固定" },
         四固定H1: { en: "正北" },
         四固定H2: { en: "正南" },
         四固定D1Fire: { en: "右偏下" },
@@ -2635,12 +2656,7 @@ Options.Triggers.push({
       response: (data, _matches, output) => {
         if (data.soumaP6SpreadingFlame.length < 4) return;
         if (data.soumaP6EntangledFlame.length < 2) return;
-        if (
-          output.标记() === "开" ||
-          output.标记() === "true" ||
-          output.标记() === "1" ||
-          output.标记() === "是"
-        ) {
+        if (['开', '本地'].includes(data.triggerSetConfig.P6黑白无标记)) {
           const arr = [
             data.soumaP6PoisonSecondHolder,
             data.soumaP6PoisonSecondTarget,
@@ -2651,11 +2667,7 @@ Options.Triggers.push({
             .slice()
             .filter((v) => !(black.includes(v) || white.includes(v)))
             .sort(sort);
-          const local =
-            output.本地标点() === "开" ||
-            output.本地标点() === "true" ||
-            output.本地标点() === "1" ||
-            output.本地标点() === "是";
+          const local = data.triggerSetConfig.P6黑白无标记 === "本地";
           data.soumaFL.mark(black[0], "attack1", local);
           data.soumaFL.mark(black[1], "attack2", local);
           data.soumaFL.mark(black[2], "attack3", local);
@@ -2664,6 +2676,18 @@ Options.Triggers.push({
           data.soumaFL.mark(nobuff[1], "stop2", local);
           data.soumaFL.mark(white[0], "bind1", local);
           data.soumaFL.mark(white[1], "bind2", local);
+          data.soumaFL.doQueueActions(
+            [
+              { c: "DoTextCommand", p: "/mk off <1>", d: 28000 },
+              { c: "DoTextCommand", p: "/mk off <2>" },
+              { c: "DoTextCommand", p: "/mk off <3>" },
+              { c: "DoTextCommand", p: "/mk off <4>" },
+              { c: "DoTextCommand", p: "/mk off <5>" },
+              { c: "DoTextCommand", p: "/mk off <6>" },
+              { c: "DoTextCommand", p: "/mk off <7>" },
+              { c: "DoTextCommand", p: "/mk off <8>" },
+            ],
+          );
           function sort(a, b) {
             if (arr.includes(a)) return 1;
             if (arr.includes(b)) return -1;
@@ -2690,9 +2714,6 @@ Options.Triggers.push({
         spreadTTS: { en: "黑" },
         stackTTS: { en: "白" },
         nodebuffTTS: { en: "无" },
-        标记: { en: "关" },
-        本地标点: { en: "否" },
-        注: { en: "会优先让传毒的2人获得数字更大的标记" },
       },
     },
     {
@@ -2769,7 +2790,7 @@ Options.Triggers.push({
           const a = data.soumaP6PoisonArr.slice();
           a.push(data.soumaFL.getRpByName(data, matches.target));
           let arr =
-            output.打法() === "全D"
+            data.triggerSetConfig.P6传毒打法 === "全D"
               ? output.全Darr().split("/")
               : output.DTTDDarr().split("/");
           arr = [...arr, ...arr];
@@ -2784,16 +2805,17 @@ Options.Triggers.push({
       },
       delaySeconds: (_data, matches) => Number.parseFloat(matches.duration) - 5,
       response: (data, matches, output) => {
+        const play = data.triggerSetConfig.P6传毒打法
         data.soumaP6Poison++;
         if (data.soumaP6Poison >= 4) return null;
         const ori = data.soumaFL.getRpByName(data, matches.target);
         data.soumaP6PoisonArr.push(ori);
         let arr;
         let p;
-        if (output.打法() === "全D") {
+        if (play === "全D") {
           arr = output.全Darr().split("/");
           p = output.全Dpos().split("/");
-        } else if (output.打法() === "DTTDD") {
+        } else if (play === "DTTDD") {
           arr = output.DTTDDarr().split("/");
           p = output.DTTDDpos().split("/");
         } else {
@@ -2804,7 +2826,7 @@ Options.Triggers.push({
         arr = [...arr, ...arr];
         let tar;
         if (data.soumaP6Poison === 3) {
-          if (output.打法() === "全D") {
+          if (play === "全D") {
             tar = data.soumaP6PoisonArr[0];
           } else {
             tar = ["D1", "D2"].find((v) => data.soumaP6PoisonArr[3] !== v);
@@ -2818,17 +2840,8 @@ Options.Triggers.push({
           }
         }
         const pos = [...p][data.soumaP6Poison];
-        if (
-          output.标记() === "开" ||
-          output.标记() === "true" ||
-          output.标记() === "1" ||
-          output.标记() === "是"
-        ) {
-          const local =
-            output.本地标点() === "开" ||
-            output.本地标点() === "true" ||
-            output.本地标点() === "1" ||
-            output.本地标点() === "是";
+        if (['开', '本地'].includes(data.triggerSetConfig.P6传毒标记)) {
+          const local = data.triggerSetConfig.P6传毒标记 === "本地";
           data.soumaFL.mark(
             data.soumaFL.getHexIdByRp(data, ori),
             "circle",
@@ -2838,6 +2851,18 @@ Options.Triggers.push({
             data.soumaFL.getHexIdByRp(data, tar),
             "triangle",
             local
+          );
+          data.soumaFL.doQueueActions(
+            [
+              { c: "DoTextCommand", p: "/mk off <1>", d: 5000 },
+              { c: "DoTextCommand", p: "/mk off <2>" },
+              { c: "DoTextCommand", p: "/mk off <3>" },
+              { c: "DoTextCommand", p: "/mk off <4>" },
+              { c: "DoTextCommand", p: "/mk off <5>" },
+              { c: "DoTextCommand", p: "/mk off <6>" },
+              { c: "DoTextCommand", p: "/mk off <7>" },
+              { c: "DoTextCommand", p: "/mk off <8>" },
+            ],
           );
         }
         return {
@@ -2854,10 +2879,6 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: "${ori}→${tar}${pos}传毒",
-        },
-        注: { en: "打法在全D与DTTDD中选择" },
-        打法: {
-          en: "DTTDD",
         },
         全Darr: {
           en: ["D1", "D2", "D3", "D4"].join("/"),
@@ -2877,8 +2898,6 @@ Options.Triggers.push({
         away: {
           en: "远离${pos}",
         },
-        标记: { en: "关" },
-        本地标点: { en: "否" },
       },
     },
     {
