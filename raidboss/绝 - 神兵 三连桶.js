@@ -5,8 +5,8 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     id: "Souma_TheWeaponsRefrainUltimate",
     zoneId: ZoneId.TheWeaponsRefrainUltimate,
     config: [
-      { id: "UWU_Titan_Gaols_Sort", name: { en: "机制优先级" }, type: "string", default: defaultPriority },
-      { id: "UWU_Titan_Gaols_Mark", name: { en: "头顶标点" }, type: "checkbox", default: false },
+      { id: "UWU_Titan_Gaols_Mark", name: { en: "开启三连桶标记" }, type: "checkbox", default: false },
+      { id: "UWU_Titan_Gaols_Sort", name: { en: "标点优先级" }, type: "string", default: defaultPriority },
     ],
     triggers: [
       {
@@ -63,7 +63,25 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         type: "Ability",
         netRegex: { id: ["2B6C", "2B6B"], capture: false },
         delaySeconds: 15,
-        run: (data) => delete data.titanGaols,
+        run: (data) => {
+          if (data.titanGaols?.length === 3 && data.triggerSetConfig.UWU_Titan_Gaols_Mark) {
+            callOverlayHandler({
+              call: "PostNamazu",
+              c: "DoQueueActions",
+              p: JSON.stringify([
+                { c: "DoTextCommand", p: "/mk off <1>" },
+                { c: "DoTextCommand", p: "/mk off <2>" },
+                { c: "DoTextCommand", p: "/mk off <3>" },
+                { c: "DoTextCommand", p: "/mk off <4>" },
+                { c: "DoTextCommand", p: "/mk off <5>" },
+                { c: "DoTextCommand", p: "/mk off <6>" },
+                { c: "DoTextCommand", p: "/mk off <7>" },
+                { c: "DoTextCommand", p: "/mk off <8>" },
+              ]),
+            });
+          }
+          delete data.titanGaols
+        },
       },
     ],
   });
