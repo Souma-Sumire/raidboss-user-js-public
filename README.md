@@ -1,15 +1,37 @@
-## 我找零式阿卡狄亚登天斗技场 & 光暗未来绝境战
+## 7.0 之后的更新
 
-将你原来的 Raidboss 本地地址替换为此在线链接：`https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html`
 <img src='https://github.com/user-attachments/assets/de4902c5-3490-4386-a1a8-914412ae9898' style='width:480px'></img>
 
-### 与原版的区别
+### 咖啡 ACT 整合
+
+在咖啡 ACT 整合中，Raidboss 悬浮窗的默认标签名称是 `时间轴 (cactbot)`，请你将其的悬浮窗地址修改为 **<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html>**
+
+*该默认名称具有极大的误导性，实际上 Raidboss 是时间轴 + 触发器。*
+
+### 呆萌 ACT 整合
+
+在呆萌ACT整合中，Raidboss 悬浮窗默认被分成了两部分，他们是：
+
+- 名称【时间轴】，地址是
+`file://此处省略/raidboss.html?timeline=1&alerts=0`，
+请你将其修改为 **<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html?timeline=1&alerts=0>**
+
+- 名称【触发器提示】，地址是 `file://此处省略/raidboss.html?timeline=0&alerts=1`，请你将其修改为 **<https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html?timeline=0&alerts=1>**
+
+### 与原版 Raidboss 的区别
+
+在原版基础上进行了一些个性化修改，包括：
+
+- 阿卡狄亚零式登天斗技场
+- 光暗未来绝境战
 
 在 M1S ~ M3S 中，仅一些细节改动，并没有太大变化。
 
 在 M4S，采用我首周编写的报法，并不会理会主分支的更新。
 
 我从未使用过主分支的 4 层，也许人家经过几个月的迭代已经非常成熟了，所以你并不一定非要使用我的版本。
+
+绝伊甸计划：莫古力一套，同样会完全忽视主分支的更新。
 
 ### 自定义配置
 
@@ -21,7 +43,9 @@
 
 ![演示图](img/image.png)
 
-当你做对了，打开配置面板时会打印一条日志。如果没有打印这一条，说明你做错了，请重新检查你的操作或放弃修改。
+当你做对了，打开配置面板时会打印一条日志。
+
+如果没有打印这一条，说明你做错了，请重新检查你的操作或放弃修改（99%的人根本不需要修改配置，请不要钻牛角尖非要搞明白）。
 
 ![log演示图](img/config_log.png)
 
