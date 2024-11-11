@@ -1,8 +1,15 @@
 ## 我找零式阿卡狄亚登天斗技场 & 光暗未来绝境战
 
 将你原来的 Raidboss 本地地址替换为此在线链接：`https://souma.diemoe.net/cactbot/ui/raidboss/raidboss.html`
-
 <img src='https://github.com/user-attachments/assets/de4902c5-3490-4386-a1a8-914412ae9898' style='width:480px'></img>
+
+### 与原版的区别
+
+在 M1S ~ M3S 中，仅一些细节改动，并没有太大变化。
+
+在 M4S，采用我首周编写的报法，并不会理会主分支的更新。
+
+我从未使用过主分支的 4 层，也许人家经过几个月的迭代已经非常成熟了，所以你并不一定非要使用我的版本。
 
 ### 自定义配置
 
