@@ -10,13 +10,15 @@
 
 为了解决这个问题，我们需要通过一个简单的小脚本劫持内嵌的 config 面板。
 
-只需要将 [config面板转换.js](config面板转换.js)，置入 user 文件夹即可。
+只需要将 [config面板转换.js](https://raw.githubusercontent.com/Souma-Sumire/raidboss-user-js-public/refs/heads/main/config%E9%9D%A2%E6%9D%BF%E8%BD%AC%E6%8D%A2.js)，打开后 Ctrl+S 保存至 user 文件夹即可。
 
 ![演示图](img/image.png)
 
-以后当你点击 config 面板时，会自动跳转到在线版 config，此时你便可以如原生版一样进行配置了。
+当你做对了，打开配置面板时会打印一条日志。如果没有打印这一条，说明你做错了，请重新检查你的操作或放弃修改。
 
 ![log演示图](img/config_log.png)
+
+以后当你点击 config 面板时，会自动跳转到在线版 config，此时你便可以如原生版一样进行配置了。
 
 ## 我找 6.X 以前的东西
 
