@@ -37,13 +37,20 @@
 
 为了解决这个问题，我们需要通过一个简单的小脚本劫持内嵌的 config 面板。
 
-只需要将 [config面板转换.js](https://raw.githubusercontent.com/Souma-Sumire/raidboss-user-js-public/refs/heads/main/config%E9%9D%A2%E6%9D%BF%E8%BD%AC%E6%8D%A2.js)，打开后 Ctrl+S 保存至 user 文件夹即可。
+只需要在 user/raidboss 文件夹内新建一个文本文档，并写入内容：
+
+```
+if (/^file:\/\/.+\/config\/config\.html$/.test(location.href)) {
+    location.href = 'http://souma.diemoe.net/cactbot/ui/config/config.html';
+    console.log('已重定向至 souma 修改版 config');
+}
+```
+
+然后，将这个文件的重命名为 `config面板转换.js`
 
 ![演示图](img/image.png)
 
 当你做对了，打开配置面板时会打印一条日志。
-
-如果没有打印这一条，说明你做错了，请重新检查你的操作或放弃修改（99%的人根本不需要修改配置，请不要钻牛角尖非要搞明白）。
 
 ![log演示图](img/config_log.png)
 
