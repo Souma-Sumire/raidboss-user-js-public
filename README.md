@@ -1,5 +1,13 @@
 ## 7.0 之后的更新
 
+## 国服特供公告
+
+如果你在国服出现了大部分机制不报的情况，说明你的 ACT 读取到了上一个版本的缓存。
+
+你需要：点开 `DevTools`，跳转至 `Network` 选项卡，勾选 `Disable cache`，然后按 F5 进行强制刷新。
+
+## 使用
+
 <img src='https://github.com/user-attachments/assets/de4902c5-3490-4386-a1a8-914412ae9898' style='width:480px'></img>
 
 ### 咖啡 ACT 整合
@@ -39,7 +47,7 @@
 
 只需要在 user/raidboss 文件夹内新建一个文本文档，并写入内容：
 
-```
+```javascript
 if (/^file:\/\/.+\/config\/config\.html$/.test(location.href)) {
     location.href = 'http://souma.diemoe.net/cactbot/ui/config/config.html';
     console.log('已重定向至 souma 修改版 config');
