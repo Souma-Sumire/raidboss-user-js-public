@@ -4,7 +4,7 @@
 
 如果你在国服出现了大部分机制不报的情况，说明你的 ACT 读取到了上一个版本的缓存。
 
-你需要：点开 `DevTools`，跳转至 `Network` 选项卡，勾选 `Disable cache`，然后按 F5 进行强制刷新。
+你需要：点开 `DevTools`，跳转至 `Network` 选项卡，勾选 `Disable cache`，然后按 F5 进行强制刷新（只需要点一次就够了，蠢货）
 
 ## 声明
 
