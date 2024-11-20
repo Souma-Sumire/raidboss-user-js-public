@@ -8,7 +8,7 @@
 
 ### 下载器
 
-1. 下载[下崽器]<https://github.com/Souma-Sumire/SoumaDownloader/releases>
+1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 2. 在 ACT 中 添加 `SoumaDownloader.dll`，并启用
 3. 切换到下崽器，选择你需要的 `.js` 文件，点击 `下载` 按钮，程序会自动识别你的 user 目录， 并将文件下载到该文件夹
 4. 刷新 Cactbot Raidboss 悬浮窗
