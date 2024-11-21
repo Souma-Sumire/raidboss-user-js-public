@@ -1392,7 +1392,7 @@ Options.Triggers.push({
       id: 'Souma R4S Souma Clone Cleave Collector',
       type: 'CombatantMemory',
       netRegex: {
-        id: 'Souma 4[0-9A-Fa-f]{7}',
+        id: '4[0-9A-Fa-f]{7}',
         pair: [{ key: 'WeaponId', value: ['33', '121'] }],
         capture: true,
       },
@@ -1736,7 +1736,7 @@ Options.Triggers.push({
       id: 'Souma R4S Souma 本体二运影分身',
       type: 'CombatantMemory',
       netRegex: {
-        id: 'Souma 4[0-9A-Fa-f]{7}',
+        id: '4[0-9A-Fa-f]{7}',
         pair: [{ key: 'WeaponId', value: '28' }],
         capture: true,
       },
