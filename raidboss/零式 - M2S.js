@@ -31,9 +31,8 @@ const poisonOutputStrings = {
 };
 const beelovedDebuffDurationOrder = [12, 28, 44, 62];
 Options.Triggers.push({
-  id: 'AacLightHeavyweightM2Savage',
+  id: 'SoumaAacLightHeavyweightM2Savage',
   zoneId: ZoneId.AacLightHeavyweightM2Savage,
-  timelineFile: 'r2s.txt',
   initData: () => ({
     partnersSpreadCounter: 0,
     beatTwoSpreadCollect: [],
@@ -44,8 +43,44 @@ Options.Triggers.push({
     },
   }),
   triggers: [
+    { id: 'R2S Beat Tracker', disabled: true },
+    { id: 'R2S Heart Debuff', disabled: true },
+    { id: 'R2S Headmarker Shared Tankbuster', disabled: true },
+    { id: 'R2S Headmarker Cone Tankbuster Collect', disabled: true },
+    { id: 'R2S Headmarker Cone Tankbuster', disabled: true },
+    { id: 'R2S Headmarker Spread Collect', disabled: true },
+    { id: 'R2S Headmarker Spread', disabled: true },
+    { id: 'R2S Headmarker Alarm Pheromones Puddle', disabled: true },
+    { id: 'R2S Headmarker Party Stacks', disabled: true },
+    { id: 'R2S Call Me Honey', disabled: true },
+    { id: 'R2S Partners/Spread Counter', disabled: true },
+    { id: 'R2S Drop of Venom', disabled: true },
+    { id: 'R2S Splash of Venom', disabled: true },
+    { id: 'R2S Drop of Love', disabled: true },
+    { id: 'R2S Spread Love', disabled: true },
+    { id: 'R2S Honey Beeline Initial', disabled: true },
+    { id: 'R2S Honey Beeline After Reminder', disabled: true },
+    { id: 'R2S Honey Beeline Followup', disabled: true },
+    { id: 'R2S Tempting Twist Initial', disabled: true },
+    { id: 'R2S Tempting Twist After Reminder', disabled: true },
+    { id: 'R2S Tempting Twist Followup', disabled: true },
+    { id: 'R2S Honey B. Live: 1st Beat', disabled: true },
+    { id: 'R2S Honey B. Live: 2nd Beat', disabled: true },
+    { id: 'R2S Honey B. Live: 3rd Beat', disabled: true },
+    { id: 'R2S Loveseeker', disabled: true },
+    { id: 'R2S Centerstage Combo', disabled: true },
+    { id: 'R2S Outerstage Combo', disabled: true },
+    { id: 'R2S Poison Debuff Tracker', disabled: true },
+    { id: 'R2S Poison First Defamations', disabled: true },
+    { id: 'R2S Poison Second Defamations', disabled: true },
+    { id: 'R2S Poison Towers', disabled: true },
+    { id: 'R2S Honey B. Finale', disabled: true },
+    { id: 'R2S Rotten Heart', disabled: true },
+    { id: 'R2S Beeloved Venom Tracker', disabled: true },
+    { id: 'R2S Beeloved Venom Player Merge', disabled: true },
+    { id: 'R2S Beeloved Venom Other Merge', disabled: true },
     {
-      id: 'R2S Beat Tracker',
+      id: 'Souma R2S Beat Tracker',
       type: 'StartsUsing',
       netRegex: { id: ['9C24', '9C25', '9C26'], capture: true },
       run: (data, matches) => {
@@ -58,7 +93,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Heart Debuff',
+      id: 'Souma R2S Heart Debuff',
       type: 'GainsEffect',
       netRegex: { effectId: ['F52', 'F53', 'F54'], capture: true },
       condition: Conditions.targetIsYou(),
@@ -112,19 +147,19 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Headmarker Shared Tankbuster',
+      id: 'Souma R2S Headmarker Shared Tankbuster',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.sharedBuster, capture: true },
       response: Responses.sharedTankBuster(),
     },
     {
-      id: 'R2S Headmarker Cone Tankbuster Collect',
+      id: 'Souma R2S Headmarker Cone Tankbuster Collect',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.tankLaser, capture: true },
       run: (data, matches) => data.tankLaserCollect.push(matches.target),
     },
     {
-      id: 'R2S Headmarker Cone Tankbuster',
+      id: 'Souma R2S Headmarker Cone Tankbuster',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.tankLaser, capture: false },
       delaySeconds: 0.1,
@@ -141,13 +176,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Headmarker Spread Collect',
+      id: 'Souma R2S Headmarker Spread Collect',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker2, capture: true },
       run: (data, matches) => data.beatTwoSpreadCollect.push(matches.target),
     },
     {
-      id: 'R2S Headmarker Spread',
+      id: 'Souma R2S Headmarker Spread',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker2, capture: false },
       delaySeconds: 0.1,
@@ -175,7 +210,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Headmarker Alarm Pheromones Puddle',
+      id: 'Souma R2S Headmarker Alarm Pheromones Puddle',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker1, capture: true },
       condition: Conditions.targetIsYou(),
@@ -192,7 +227,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Headmarker Party Stacks',
+      id: 'Souma R2S Headmarker Party Stacks',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.heartStackMarker, capture: false },
       suppressSeconds: 1,
@@ -202,19 +237,19 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Call Me Honey',
+      id: 'Souma R2S Call Me Honey',
       type: 'StartsUsing',
       netRegex: { id: '9183', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Partners/Spread Counter',
+      id: 'Souma R2S Partners/Spread Counter',
       type: 'StartsUsing',
       netRegex: { id: ['9184', '9185', '9B08', '9B09'], source: 'Honey B. Lovely', capture: false },
       run: (data) => data.partnersSpreadCounter++,
     },
     {
-      id: 'R2S Drop of Venom',
+      id: 'Souma R2S Drop of Venom',
       type: 'StartsUsing',
       netRegex: { id: '9185', source: 'Honey B. Lovely', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -231,7 +266,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Splash of Venom',
+      id: 'Souma R2S Splash of Venom',
       type: 'StartsUsing',
       netRegex: { id: '9184', source: 'Honey B. Lovely', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -248,7 +283,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Drop of Love',
+      id: 'Souma R2S Drop of Love',
       type: 'StartsUsing',
       netRegex: { id: '9B09', source: 'Honey B. Lovely', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -265,7 +300,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Spread Love',
+      id: 'Souma R2S Spread Love',
       type: 'StartsUsing',
       netRegex: { id: '9B08', source: 'Honey B. Lovely', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -282,13 +317,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Honey Beeline Initial',
+      id: 'Souma R2S Honey Beeline Initial',
       type: 'StartsUsing',
       netRegex: { id: ['9186', '9B0C'], source: 'Honey B. Lovely', capture: false },
       response: Responses.goSides(), // default is alertText, no need to specify
     },
     {
-      id: 'R2S Honey Beeline After Reminder',
+      id: 'Souma R2S Honey Beeline After Reminder',
       type: 'StartsUsing',
       netRegex: { id: ['9186', '9B0C'], source: 'Honey B. Lovely', capture: false },
       delaySeconds: 1.5,
@@ -324,7 +359,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Honey Beeline Followup',
+      id: 'Souma R2S Honey Beeline Followup',
       type: 'Ability',
       netRegex: { id: ['9186', '9B0C'], source: 'Honey B. Lovely', capture: false },
       alertText: (data, _matches, output) => {
@@ -363,13 +398,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Tempting Twist Initial',
+      id: 'Souma R2S Tempting Twist Initial',
       type: 'StartsUsing',
       netRegex: { id: ['9187', '9B0D'], source: 'Honey B. Lovely', capture: false },
       response: Responses.getUnder('alert'),
     },
     {
-      id: 'R2S Tempting Twist After Reminder',
+      id: 'Souma R2S Tempting Twist After Reminder',
       type: 'StartsUsing',
       netRegex: { id: ['9187', '9B0D'], source: 'Honey B. Lovely', capture: false },
       delaySeconds: 1.5,
@@ -405,7 +440,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Tempting Twist Followup',
+      id: 'Souma R2S Tempting Twist Followup',
       type: 'Ability',
       netRegex: { id: ['9187', '9B0D'], source: 'Honey B. Lovely', capture: false },
       alertText: (data, _matches, output) => {
@@ -444,31 +479,31 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Honey B. Live: 1st Beat',
+      id: 'Souma R2S Honey B. Live: 1st Beat',
       type: 'StartsUsing',
       netRegex: { id: '9C24', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Honey B. Live: 2nd Beat',
+      id: 'Souma R2S Honey B. Live: 2nd Beat',
       type: 'StartsUsing',
       netRegex: { id: '9C25', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Honey B. Live: 3rd Beat',
+      id: 'Souma R2S Honey B. Live: 3rd Beat',
       type: 'StartsUsing',
       netRegex: { id: '9C26', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Loveseeker',
+      id: 'Souma R2S Loveseeker',
       type: 'StartsUsing',
       netRegex: { id: '9B7D', source: 'Honey B. Lovely', capture: false },
       response: Responses.getOut(),
     },
     {
-      id: 'R2S Centerstage Combo',
+      id: 'Souma R2S Centerstage Combo',
       type: 'StartsUsing',
       netRegex: { id: '91AC', source: 'Honey B. Lovely', capture: false },
       durationSeconds: 9,
@@ -485,7 +520,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Outerstage Combo',
+      id: 'Souma R2S Outerstage Combo',
       type: 'StartsUsing',
       netRegex: { id: '91AD', source: 'Honey B. Lovely', capture: false },
       durationSeconds: 9,
@@ -502,7 +537,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Poison Debuff Tracker',
+      id: 'Souma R2S Poison Debuff Tracker',
       type: 'GainsEffect',
       netRegex: { effectId: 'F5E' },
       condition: Conditions.targetIsYou(),
@@ -511,7 +546,7 @@ Options.Triggers.push({
         data.poisonDebuff = parseFloat(matches.duration) > 30 ? 'long' : 'short',
     },
     {
-      id: 'R2S Poison First Defamations',
+      id: 'Souma R2S Poison First Defamations',
       type: 'GainsEffect',
       netRegex: { effectId: 'F5E', capture: false },
       delaySeconds: 20,
@@ -525,7 +560,7 @@ Options.Triggers.push({
       outputStrings: poisonOutputStrings,
     },
     {
-      id: 'R2S Poison Second Defamations',
+      id: 'Souma R2S Poison Second Defamations',
       type: 'GainsEffect',
       netRegex: { effectId: 'F5E', capture: false },
       delaySeconds: 40,
@@ -539,7 +574,7 @@ Options.Triggers.push({
       outputStrings: poisonOutputStrings,
     },
     {
-      id: 'R2S Poison Towers',
+      id: 'Souma R2S Poison Towers',
       type: 'GainsEffect',
       netRegex: { effectId: 'F5E' },
       // use condition instead of suppress to prevent race condition with Poison Debuff Tracker
@@ -556,19 +591,19 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Honey B. Finale',
+      id: 'Souma R2S Honey B. Finale',
       type: 'StartsUsing',
       netRegex: { id: '918F', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Rotten Heart',
+      id: 'Souma R2S Rotten Heart',
       type: 'StartsUsing',
       netRegex: { id: '91AA', source: 'Honey B. Lovely', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R2S Beeloved Venom Tracker',
+      id: 'Souma R2S Beeloved Venom Tracker',
       type: 'GainsEffect',
       // F5C: Alpha, F5D: Beta
       // durations are 12s, 28s, 44s, and 62s
@@ -585,7 +620,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Beeloved Venom Player Merge',
+      id: 'Souma R2S Beeloved Venom Player Merge',
       type: 'GainsEffect',
       netRegex: { effectId: ['F5C', 'F5D'] },
       condition: Conditions.targetIsYou(),
@@ -616,7 +651,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R2S Beeloved Venom Other Merge',
+      id: 'Souma R2S Beeloved Venom Other Merge',
       type: 'GainsEffect',
       // only fire on the Alpha debuffs so the trigger fires once per merge
       netRegex: { effectId: 'F5C' },
@@ -814,8 +849,8 @@ Options.Triggers.push({
         'Spread Love': '爱之雨',
         'Stinging Slash': '杀人斩',
         'Tempting Twist': '甜心旋风',
-        '\\(cast\\)': '(咏唱)',
-        '\\(damage\\)': '(伤害)',
+        '\\(cast\\)': '(读条)',
+        '\\(damage\\)': '(判定)',
         '\\(drop\\)': '(放圈)',
         '\\(enrage\\)': '(狂暴)',
         '\\(stun for': '(眩晕',

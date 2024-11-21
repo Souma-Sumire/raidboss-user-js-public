@@ -48,7 +48,7 @@ const tagTeamOutputStrings = {
   },
 };
 Options.Triggers.push({
-  id: 'AacLightHeavyweightM3Savage',
+  id: 'SoumaAacLightHeavyweightM3Savage',
   zoneId: ZoneId.AacLightHeavyweightM3Savage,
   config: [
     {
@@ -111,32 +111,55 @@ Options.Triggers.push({
       default: 'none',
     },
   ],
-  timelineFile: 'r3s.txt',
   initData: () => ({
     phaseTracker: 0,
     tagTeamClones: [],
   }),
   triggers: [
+    { id: 'R3S Phase Tracker', disabled: true },
+    { id: 'R3S Knuckle Sandwich', disabled: true },
+    { id: 'R3S Brutal Impact', disabled: true },
+    { id: 'R3S Octuple Lariat Out', disabled: true },
+    { id: 'R3S Octuple Lariat In', disabled: true },
+    { id: 'R3S Octoboom Dive Proximity', disabled: true },
+    { id: 'R3S Octoboom Dive Knockback', disabled: true },
+    { id: 'R3S Barbarous Barrage Uptime Knockback', disabled: true },
+    { id: 'R3S Murderous Mist', disabled: true },
+    { id: 'R3S Quadroboom Dive Proximity', disabled: true },
+    { id: 'R3S Quadroboom Dive Knockback', disabled: true },
+    { id: 'R3S Quadruple Lariat Out', disabled: true },
+    { id: 'R3S Quadruple Lariat In', disabled: true },
+    { id: 'R3S Short Fuse', disabled: true },
+    { id: 'R3S Long Fuse', disabled: true },
+    { id: 'R3S Fuse Field', disabled: true },
+    { id: 'R3S Octoboom Bombarian Special', disabled: true },
+    { id: 'R3S Octoboom Bombarian Special Reminder', disabled: true },
+    { id: 'R3S Quadroboom Bombarian Special', disabled: true },
+    { id: 'R3S Quadroboom Bombarian Special Reminder', disabled: true },
+    { id: 'R3S Tag Team Tether', disabled: true },
+    { id: 'R3S Tag Team Clone', disabled: true },
+    { id: 'R3S Tag Team Murderous Mist', disabled: true },
+    { id: 'R3S KB Towers 2 Lariat Combo', disabled: true },
     {
-      id: 'R3S Phase Tracker',
+      id: 'Souma R3S Phase Tracker',
       type: 'GainsEffect',
       netRegex: { effectId: 'FB6', capture: true },
       run: (data, matches) => data.phaseTracker = parseInt(matches.count, 16),
     },
     {
-      id: 'R3S Knuckle Sandwich',
+      id: 'Souma R3S Knuckle Sandwich',
       type: 'StartsUsing',
       netRegex: { id: '9423', source: 'Brute Bomber' },
       response: Responses.sharedTankBuster(),
     },
     {
-      id: 'R3S Brutal Impact',
+      id: 'Souma R3S Brutal Impact',
       type: 'StartsUsing',
       netRegex: { id: '9425', source: 'Brute Bomber', capture: false },
       response: Responses.aoe(),
     },
     {
-      id: 'R3S Octuple Lariat Out',
+      id: 'Souma R3S Octuple Lariat Out',
       type: 'StartsUsing',
       netRegex: { id: '93D8', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -152,7 +175,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Octuple Lariat In',
+      id: 'Souma R3S Octuple Lariat In',
       type: 'StartsUsing',
       netRegex: { id: '93D9', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -168,7 +191,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Octoboom Dive Proximity',
+      id: 'Souma R3S Octoboom Dive Proximity',
       type: 'StartsUsing',
       netRegex: { id: '93DE', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -184,7 +207,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Octoboom Dive Knockback',
+      id: 'Souma R3S Octoboom Dive Knockback',
       type: 'StartsUsing',
       netRegex: { id: '93DF', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -200,7 +223,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Barbarous Barrage Uptime Knockback',
+      id: 'Souma R3S Barbarous Barrage Uptime Knockback',
       type: 'StartsUsing',
       netRegex: { id: '93FB', source: 'Brute Bomber', capture: false },
       delaySeconds: (data) => {
@@ -224,7 +247,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Murderous Mist',
+      id: 'Souma R3S Murderous Mist',
       type: 'StartsUsing',
       netRegex: { id: '93FE', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.getBehind(),
@@ -233,7 +256,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadroboom Dive Proximity',
+      id: 'Souma R3S Quadroboom Dive Proximity',
       type: 'StartsUsing',
       netRegex: { id: '93E0', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -249,7 +272,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadroboom Dive Knockback',
+      id: 'Souma R3S Quadroboom Dive Knockback',
       type: 'StartsUsing',
       netRegex: { id: '93E1', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -265,7 +288,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadruple Lariat Out',
+      id: 'Souma R3S Quadruple Lariat Out',
       type: 'StartsUsing',
       netRegex: { id: '93DA', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -281,7 +304,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadruple Lariat In',
+      id: 'Souma R3S Quadruple Lariat In',
       type: 'StartsUsing',
       netRegex: { id: '93DB', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text(),
@@ -297,7 +320,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Short Fuse',
+      id: 'Souma R3S Short Fuse',
       type: 'GainsEffect',
       netRegex: { effectId: 'FB8', capture: true },
       condition: Conditions.targetIsYou(),
@@ -314,7 +337,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Long Fuse',
+      id: 'Souma R3S Long Fuse',
       type: 'GainsEffect',
       netRegex: { effectId: 'FB9', capture: true },
       condition: Conditions.targetIsYou(),
@@ -331,7 +354,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Fuse Field',
+      id: 'Souma R3S Fuse Field',
       type: 'GainsEffect',
       netRegex: { effectId: 'FB4' },
       condition: Conditions.targetIsYou(),
@@ -360,7 +383,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Octoboom Bombarian Special',
+      id: 'Souma R3S Octoboom Bombarian Special',
       type: 'StartsUsing',
       netRegex: { id: '9752', source: 'Brute Bomber', capture: false },
       durationSeconds: 30,
@@ -377,7 +400,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Octoboom Bombarian Special Reminder',
+      id: 'Souma R3S Octoboom Bombarian Special Reminder',
       type: 'StartsUsing',
       netRegex: { id: '9752', source: 'Brute Bomber', capture: false },
       delaySeconds: 20,
@@ -388,7 +411,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadroboom Bombarian Special',
+      id: 'Souma R3S Quadroboom Bombarian Special',
       type: 'StartsUsing',
       netRegex: { id: '940A', source: 'Brute Bomber', capture: false },
       durationSeconds: 30,
@@ -405,7 +428,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Quadroboom Bombarian Special Reminder',
+      id: 'Souma R3S Quadroboom Bombarian Special Reminder',
       type: 'StartsUsing',
       netRegex: { id: '940A', source: 'Brute Bomber', capture: false },
       delaySeconds: 20,
@@ -416,7 +439,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Tag Team Tether',
+      id: 'Souma R3S Tag Team Tether',
       type: 'Tether',
       // The clone uses ID `0112`, the boss uses ID `0113`.
       netRegex: { id: '0112', capture: true },
@@ -450,7 +473,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R3S Tag Team Clone',
+      id: 'Souma R3S Tag Team Clone',
       type: 'StartsUsing',
       /*
               Clones spawn on a random cardinal. They do one lariat dash across, then another one back.
@@ -508,7 +531,7 @@ Options.Triggers.push({
       outputStrings: tagTeamOutputStrings,
     },
     {
-      id: 'R3S Tag Team Murderous Mist',
+      id: 'Souma R3S Tag Team Murderous Mist',
       type: 'StartsUsingExtra',
       netRegex: { id: '9BD7', capture: true },
       // Sometimes this MM cast is before the clones, sometimes it's after
@@ -547,7 +570,7 @@ Options.Triggers.push({
       outputStrings: tagTeamOutputStrings,
     },
     {
-      id: 'R3S KB Towers 2 Lariat Combo',
+      id: 'Souma R3S KB Towers 2 Lariat Combo',
       type: 'StartsUsing',
       /*
               Boss jumps to a random cardinal. Does one lariat dash across, then another one back.
@@ -759,8 +782,8 @@ Options.Triggers.push({
         'Lit Fuse': '导火线爆弹怪',
       },
       'replaceText': {
-        '\\(cast\\)': '(咏唱)',
-        '\\(damage\\)': '(伤害)',
+        '\\(cast\\)': '(读条)',
+        '\\(damage\\)': '(判定)',
         '\\(enrage\\)': '(狂暴)',
         'Barbarous Barrage': '野蛮爆炸',
         'Blazing Lariat': '怒焰碎颈臂',

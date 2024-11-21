@@ -166,25 +166,8 @@ const handleSportsMeetingInfoText = (data) => {
   // return `踩塔`;
 };
 Options.Triggers.push({
-  id: 'AacLightHeavyweightM4Savage',
+  id: 'SoumaAacLightHeavyweightM4Savage',
   zoneId: ZoneId.AacLightHeavyweightM4Savage,
-  // config: [
-  // {
-  //   id: 'r4s_souma_门神长短分组',
-  //   name: {
-  //     en: '门神长短buff机制的分组',
-  //   },
-  //   type: 'select',
-  //   options: {
-  //     'en': {
-  //       'dps左tn右': 'dps左tn右',
-  //       'tn左dps右': 'tn左dps右',
-  //     },
-  //   },
-  //   default: 'dps左tn右',
-  // },
-  // ],
-  timelineFile: 'r4s.txt',
   initData: () => {
     return {
       souma门神第一次易伤收集组: { tn: 0, dps: 0 },
@@ -232,8 +215,77 @@ Options.Triggers.push({
     },
   ],
   triggers: [
+    { id: 'R4S Phase Tracker', disabled: true },
+    { id: 'R4S Wrath of Zeus', disabled: true },
+    { id: 'R4S Wicked Bolt', disabled: true },
+    { id: 'R4S Wicked Jolt', disabled: true },
+    { id: 'R4S Bewitching Flight', disabled: true },
+    { id: 'R4S Betwitching Flight Burst', disabled: true },
+    { id: 'R4S Electrifying Witch Hunt', disabled: true },
+    { id: 'R4S Witch Hunt Close/Far Collect', disabled: true },
+    { id: 'R4S Forked Lightning Collect', disabled: true },
+    { id: 'R4S Witch Hunt', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt Bait Collect', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt General', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt First', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt Second', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt Third', disabled: true },
+    { id: 'R4S Narrowing/Widening Witch Hunt Fourth', disabled: true },
+    { id: 'R4S Electrope Edge Positions', disabled: true },
+    { id: 'R4S Witchgleam Electromine Collect', disabled: true },
+    { id: 'R4S Witchgleam Electromine Counter', disabled: true },
+    { id: 'R4S Witchgleam Electromine Hit Collect', disabled: true },
+    { id: 'R4S Four/Eight Star Effect Collect', disabled: true },
+    { id: 'R4S Electrope Edge 1 Sidewise Spark', disabled: true },
+    { id: 'R4S Electrical Condenser Debuff Collect', disabled: true },
+    { id: 'R4S Electrical Condenser Debuff Initial', disabled: true },
+    { id: 'R4S Witchgleam Self Tracker', disabled: true },
+    { id: 'R4S Witchgleam Self Reminder', disabled: true },
+    { id: 'R4S Electrical Condenser Debuff Expiring', disabled: true },
+    { id: 'R4S Electrope Edge 2 Sidewise Spark', disabled: true },
+    { id: 'R4S Left Roll', disabled: true },
+    { id: 'R4S Right Roll', disabled: true },
+    { id: 'R4S Electron Stream Debuff', disabled: true },
+    { id: 'R4S Electron Stream Initial', disabled: true },
+    { id: 'R4S Electron Stream Subsequent', disabled: true },
+    { id: 'R4S Conductor/Current Debuffs', disabled: true },
+    { id: 'R4S Fulminous Field', disabled: true },
+    { id: 'R4S Fulminous Field Spread', disabled: true },
+    { id: 'R4S Conduction Point Collect', disabled: true },
+    { id: 'R4S Forked Fissures', disabled: true },
+    { id: 'R4S Replica ActorSetPos Data Collect', disabled: true },
+    { id: 'R4S Azure Thunder', disabled: true },
+    { id: 'R4S Wicked Thunder', disabled: true },
+    { id: 'R4S Mustard Bomb Initial', disabled: true },
+    { id: 'R4S Mustard Bomb Collect', disabled: true },
+    { id: 'R4S Mustard Bomb Followup', disabled: true },
+    { id: 'R4S Wicked Special Sides', disabled: true },
+    { id: 'R4S Wicked Special Middle', disabled: true },
+    { id: 'R4S Aetherial Conversion', disabled: true },
+    { id: 'R4S Tail Thrust', disabled: true },
+    { id: 'R4S Cross Tail Switch', disabled: true },
+    { id: 'R4S Wicked Blaze', disabled: true },
+    { id: 'R4S Twilight Sabbath Sidewise Spark', disabled: true },
+    { id: 'R4S Twilight Sabbath + Wicked Special', disabled: true },
+    { id: 'R4S Midnight Sabbath First Adds', disabled: true },
+    { id: 'R4S Midnight Sabbath Second Adds', disabled: true },
+    { id: 'R4S Concentrated/Scattered Burst 1', disabled: true },
+    { id: 'R4S Concentrated/Scattered Burst 2', disabled: true },
+    { id: 'R4S Flame Slash', disabled: true },
+    { id: 'R4S Raining Swords Tower', disabled: true },
+    { id: 'R4S Raining Swords Collector', disabled: true },
+    { id: 'R4S Raining Swords My Side Detector', disabled: true },
+    { id: 'R4S Raining Swords Collect + Initial', disabled: true },
+    { id: 'R4S Raining Swords Safe List', disabled: true },
+    { id: 'R4S Ion Cluster Debuff Initial', disabled: true },
+    { id: 'R4S Sunrise Sabbath Jumping Clone Collect 1', disabled: true },
+    { id: 'R4S Replica Jumping Clone Collect 2', disabled: true },
+    { id: 'R4S Sunrise Sabbath Cannon Color Collect', disabled: true },
+    { id: 'R4S Sunrise Sabbath Cannnons + Towers', disabled: true },
+    { id: 'R4S Sword Quiver AoE', disabled: true },
+    { id: 'R4S Sword Quiver Safe', disabled: true },
     {
-      id: 'R4S Sunrise Sabbath Cannon Color Collect',
+      id: 'Souma R4S Sunrise Sabbath Cannon Color Collect',
       type: 'GainsEffect',
       // 2F4 = yellow cannnon, 2F5 = blue cannon
       netRegex: { effectId: 'B9A', count: ['2F4', '2F5'] },
@@ -245,7 +297,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Replica ActorSetPos Data Collect',
+      id: 'Souma R4S Replica ActorSetPos Data Collect',
       type: 'ActorSetPos',
       netRegex: { id: '4.{7}' },
       condition: (data) => data.phase !== 'door',
@@ -267,7 +319,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Phase Tracker',
+      id: 'Souma R4S Phase Tracker',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(phaseMap) },
       suppressSeconds: 1,
@@ -279,7 +331,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma Betwitching Flight Burst',
+      id: 'Souma R4S Souma Betwitching Flight Burst',
       type: 'StartsUsingExtra',
       netRegex: { id: '95EA' },
       suppressSeconds: 1,
@@ -294,7 +346,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神第一次易伤',
+      id: 'Souma R4S Souma 门神第一次易伤',
       type: 'GainsEffect',
       netRegex: { effectId: '24B' },
       preRun: (data, matches) => {
@@ -302,7 +354,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神六根山buff',
+      id: 'Souma R4S Souma 门神六根山buff',
       type: 'GainsEffect',
       netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
       preRun: (data, matches) => {
@@ -311,7 +363,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神连线紫色小东西',
+      id: 'Souma R4S Souma 门神连线紫色小东西',
       type: 'AbilityExtra',
       netRegex: { 'id': '95C7' },
       run: (data, matches) => {
@@ -327,7 +379,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神二二还是八人',
+      id: 'Souma R4S Souma 门神二二还是八人',
       type: 'GainsEffect',
       netRegex: { effectId: 'B9A', count: ['2F0', '2F1'] },
       preRun: (data, matches) => {
@@ -336,7 +388,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神第一次六根山处理',
+      id: 'Souma R4S Souma 门神第一次六根山处理',
       type: 'GainsEffect',
       netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
       condition: (data) => {
@@ -365,7 +417,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神紫色buff',
+      id: 'Souma R4S Souma 门神紫色buff',
       type: 'GainsEffect',
       netRegex: { effectId: 'B7C' },
       preRun: (data, matches) => {
@@ -373,13 +425,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神AoE',
+      id: 'Souma R4S Souma 门神AoE',
       type: 'StartsUsing',
       netRegex: { id: '95EF' },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R4S Souma 3 门神钢铁月环',
+      id: 'Souma R4S Souma 3 门神钢铁月环',
       type: 'StartsUsing',
       netRegex: { id: ['95E0', '95E1'] },
       delaySeconds: 0.5,
@@ -428,7 +480,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神半场刀',
+      id: 'Souma R4S Souma 门神半场刀',
       type: 'StartsUsing',
       netRegex: { id: ['95EC', '95ED'] },
       delaySeconds: 0.5,
@@ -503,7 +555,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神找不到北机制',
+      id: 'Souma R4S Souma 门神找不到北机制',
       type: 'StartsUsingExtra',
       netRegex: { id: '95CF' },
       preRun: (data, matches) => {
@@ -511,7 +563,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神找不到北机制结算',
+      id: 'Souma R4S Souma 门神找不到北机制结算',
       type: 'StartsUsingExtra',
       netRegex: { id: '95CF' },
       delaySeconds: 0.5,
@@ -663,7 +715,7 @@ Options.Triggers.push({
     //   outputStrings: { text: { en: 'HW远' } },
     // },
     {
-      id: 'R4S Souma 22/42',
+      id: 'Souma R4S Souma 22/42',
       type: 'GainsEffect',
       netRegex: { effectId: 'F9F' },
       condition: Conditions.targetIsYou(),
@@ -681,7 +733,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 42/22 Ability',
+      id: 'Souma R4S Souma 42/22 Ability',
       type: 'Ability',
       netRegex: { id: '9786' },
       condition: Conditions.targetIsYou(),
@@ -696,7 +748,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma Wicked Thunder',
+      id: 'Souma R4S Souma Wicked Thunder',
       type: 'StartsUsing',
       netRegex: { id: '95CE' },
       durationSeconds: 40,
@@ -738,7 +790,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神颜色',
+      id: 'Souma R4S Souma 门神颜色',
       type: 'GainsEffect',
       netRegex: { effectId: ['FA0', 'FA1'] },
       condition: (data, matches) => {
@@ -750,7 +802,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神的大炮',
+      id: 'Souma R4S Souma 门神的大炮',
       type: 'AbilityExtra',
       netRegex: { id: '95D[23]' },
       infoText: (_data, matches, output) => {
@@ -765,7 +817,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Conductor/Current Debuffs',
+      id: 'Souma R4S Conductor/Current Debuffs',
       type: 'GainsEffect',
       netRegex: { effectId: ['FA2', 'FA3', 'FA4', 'FA5', 'FA6'] },
       condition: Conditions.targetIsYou(),
@@ -793,7 +845,7 @@ Options.Triggers.push({
       run: (data) => data.seenConductorDebuffs = true,
     },
     {
-      id: 'R4S Electron Stream Debuff',
+      id: 'Souma R4S Electron Stream Debuff',
       type: 'GainsEffect',
       // FA0 - Positron (Yellow), blue safe
       // FA1 - Negatron (Blue), yellow safe
@@ -803,7 +855,7 @@ Options.Triggers.push({
         data.electronStreamSafe = matches.effectId === 'FA0' ? 'blue' : 'yellow',
     },
     {
-      id: 'R4S Electron Stream Initial',
+      id: 'Souma R4S Electron Stream Initial',
       type: 'StartsUsing',
       // 95D6 - Yellow cannon north, Blue cannnon south
       // 95D7 - Blue cannon north, Yellow cannon south
@@ -834,7 +886,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Electron Stream Subsequent',
+      id: 'Souma R4S Electron Stream Subsequent',
       type: 'StartsUsing',
       // 95D6 - Yellow cannon north, Blue cannnon south
       // 95D7 - Blue cannon north, Yellow cannon south
@@ -880,7 +932,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 门神连续分摊',
+      id: 'Souma R4S Souma 门神连续分摊',
       type: 'StartsUsing',
       netRegex: { id: '92C2' },
       alarmText: (_data, _matches, output) => {
@@ -891,7 +943,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma Wicked Jolt Tankbuster',
+      id: 'Souma R4S Souma Wicked Jolt Tankbuster',
       type: 'StartsUsing',
       netRegex: { id: '95F0' },
       response: Responses.tankBusterSwap(),
@@ -899,7 +951,7 @@ Options.Triggers.push({
     // 水波阶段
     // Fulminous Field
     {
-      id: 'R4S Fulminous Field',
+      id: 'Souma R4S Fulminous Field',
       type: 'Ability',
       netRegex: { id: '98D3', capture: false },
       infoText: (_data, _matches, output) => output.dodge(),
@@ -914,7 +966,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Fulminous Field Spread',
+      id: 'Souma R4S Fulminous Field Spread',
       type: 'Ability',
       // 90FE = initial hit, 98CD = followup hits (x6)
       netRegex: { id: ['90FE', '98CD'] },
@@ -932,13 +984,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Conduction Point Collect',
+      id: 'Souma R4S Conduction Point Collect',
       type: 'Ability',
       netRegex: { id: '98CE' },
       run: (data, matches) => data.conductionPointTargets.push(matches.target),
     },
     {
-      id: 'R4S Forked Fissures',
+      id: 'Souma R4S Forked Fissures',
       type: 'Ability',
       netRegex: { id: '98CE', capture: false },
       delaySeconds: 0.2,
@@ -968,13 +1020,13 @@ Options.Triggers.push({
     },
     // 本体
     {
-      id: 'R4S Souma 本体第一个AoE（交叉尾特技）',
+      id: 'Souma R4S Souma 本体第一个AoE（交叉尾特技）',
       type: 'StartsUsing',
       netRegex: { id: '95F2' },
       run: (data) => data.soumaPhase = 2,
     },
     {
-      id: 'R4S Cross Tail Switch',
+      id: 'Souma R4S Cross Tail Switch',
       type: 'StartsUsing',
       netRegex: { id: '95F2', capture: false },
       delaySeconds: (data) => data.role === 'tank' ? 3 : 1,
@@ -995,7 +1047,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Wicked Blaze',
+      id: 'Souma R4S Wicked Blaze',
       type: 'HeadMarker',
       netRegex: { id: '013C', capture: false },
       condition: (data) => data.soumaPhase === 2,
@@ -1006,7 +1058,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Wicked Fire',
+      id: 'Souma R4S Wicked Fire',
       type: 'StartsUsing',
       disabled: true,
       netRegex: { id: '9630', capture: false },
@@ -1016,7 +1068,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体1',
+      id: 'Souma R4S Souma 本体1',
       type: 'StartsUsing',
       netRegex: { id: '9610' },
       durationSeconds: 4,
@@ -1028,7 +1080,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体去两侧BBB',
+      id: 'Souma R4S Souma 本体去两侧BBB',
       type: 'StartsUsing',
       netRegex: { id: '9614' },
       infoText: (_data, _matches, output) => {
@@ -1039,19 +1091,19 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体3Aoe',
+      id: 'Souma R4S Souma 本体3Aoe',
       type: 'StartsUsing',
       netRegex: { id: '962F' },
       response: Responses.aoe(),
     },
     {
-      id: 'R4S Souma 本体3Aoe2',
+      id: 'Souma R4S Souma 本体3Aoe2',
       type: 'StartsUsing',
       netRegex: { id: '949B' },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R4S Souma 本体去中间',
+      id: 'Souma R4S Souma 本体去中间',
       type: 'StartsUsing',
       netRegex: { id: '9612' },
       durationSeconds: 4,
@@ -1063,7 +1115,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体白给接线',
+      id: 'Souma R4S Souma 本体白给接线',
       type: 'StartsUsing',
       netRegex: { id: '961E' },
       durationSeconds: 4,
@@ -1079,7 +1131,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体白给接线爆炸',
+      id: 'Souma R4S Souma 本体白给接线爆炸',
       type: 'Ability',
       netRegex: { id: '9620' },
       preRun: (data, matches) => {
@@ -1113,7 +1165,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体储存击退1',
+      id: 'Souma R4S Souma 本体储存击退1',
       type: 'StartsUsing',
       netRegex: { id: '9603' },
       infoText: (data, _matches, output) => {
@@ -1126,7 +1178,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体储存击退2',
+      id: 'Souma R4S Souma 本体储存击退2',
       type: 'StartsUsing',
       netRegex: { id: '9605' },
       infoText: (data, _matches, output) => {
@@ -1139,7 +1191,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体储存大钢铁1',
+      id: 'Souma R4S Souma 本体储存大钢铁1',
       type: 'StartsUsing',
       netRegex: { id: '9602' },
       infoText: (data, _matches, output) => {
@@ -1152,7 +1204,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体储存大钢铁2',
+      id: 'Souma R4S Souma 本体储存大钢铁2',
       type: 'StartsUsing',
       netRegex: { id: '9604' },
       infoText: (data, _matches, output) => {
@@ -1165,7 +1217,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体释放钢铁1',
+      id: 'Souma R4S Souma 本体释放钢铁1',
       type: 'StartsUsing',
       netRegex: { id: '9606' },
       durationSeconds: 8,
@@ -1178,7 +1230,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体释放钢铁2',
+      id: 'Souma R4S Souma 本体释放钢铁2',
       type: 'StartsUsing',
       netRegex: { id: '9608' },
       durationSeconds: 8,
@@ -1191,7 +1243,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体释放击退1',
+      id: 'Souma R4S Souma 本体释放击退1',
       type: 'StartsUsing',
       netRegex: { id: '9607' },
       durationSeconds: 8,
@@ -1204,7 +1256,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体释放击退2',
+      id: 'Souma R4S Souma 本体释放击退2',
       type: 'StartsUsing',
       netRegex: { id: '9609' },
       durationSeconds: 8,
@@ -1217,7 +1269,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Twilight Sabbath Sidewise Spark',
+      id: 'Souma R4S Twilight Sabbath Sidewise Spark',
       type: 'ActorControlExtra',
       // category: 0197 - PlayActionTimeline
       // param1: 11D6 - first,  right cleave
@@ -1282,7 +1334,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 分身的武器刀收集者',
+      id: 'Souma R4S Souma 分身的武器刀收集者',
       type: 'GainsEffect',
       netRegex: { effectId: '808' },
       preRun: (data, matches) => {
@@ -1327,7 +1379,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 分身的武器刀结束',
+      id: 'Souma R4S Souma 分身的武器刀结束',
       type: 'GainsEffect',
       netRegex: { effectId: '808' },
       delaySeconds: 20,
@@ -1337,10 +1389,10 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma Clone Cleave Collector',
+      id: 'Souma R4S Souma Clone Cleave Collector',
       type: 'CombatantMemory',
       netRegex: {
-        id: '4[0-9A-Fa-f]{7}',
+        id: 'Souma 4[0-9A-Fa-f]{7}',
         pair: [{ key: 'WeaponId', value: ['33', '121'] }],
         capture: true,
       },
@@ -1396,7 +1448,7 @@ Options.Triggers.push({
     },
     // 夜半
     {
-      id: 'R4S Souma 夜半 1',
+      id: 'Souma R4S Souma 夜半 1',
       type: 'ActorControlExtra',
       netRegex: {
         category: '0197',
@@ -1408,7 +1460,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 夜半 2',
+      id: 'Souma R4S Souma 夜半 2',
       type: 'StartsUsing',
       netRegex: { id: ['962C', '962B'] },
       condition: (data) => data.soumaPhase === 2,
@@ -1435,7 +1487,7 @@ Options.Triggers.push({
     // param1 月环：11D3先判定 11D4后判定
     // param1 激光：11D1先判定 11D2后判定
     {
-      id: 'R4S Souma 夜半 3',
+      id: 'Souma R4S Souma 夜半 3',
       type: 'StartsUsing',
       netRegex: { id: ['962C', '962B'] },
       condition: (data) => data.soumaPhase === 2,
@@ -1493,7 +1545,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体地火',
+      id: 'Souma R4S Souma 本体地火',
       type: 'StartsUsingExtra',
       netRegex: { id: '95F5' },
       preRun: (data, matches) => {
@@ -1521,7 +1573,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 八人塔id',
+      id: 'Souma R4S Souma 八人塔id',
       type: 'StartsUsing',
       netRegex: { id: '9617' },
       preRun: (data, matches) => {
@@ -1529,7 +1581,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 八人塔连线',
+      id: 'Souma R4S Souma 八人塔连线',
       type: 'Tether',
       netRegex: {
         id: ['0117', '0118'],
@@ -1556,7 +1608,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 八人塔玩家位置',
+      id: 'Souma R4S Souma 八人塔玩家位置',
       type: 'Ability',
       netRegex: { id: '9617' },
       condition: Conditions.targetIsYou(),
@@ -1566,7 +1618,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 八人塔连线结算',
+      id: 'Souma R4S Souma 八人塔连线结算',
       type: 'Tether',
       netRegex: {
         id: ['0117', '0118'],
@@ -1626,7 +1678,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体二运1',
+      id: 'Souma R4S Souma 本体二运1',
       type: 'GainsEffect',
       netRegex: { effectId: ['FA0', 'FA1'] },
       condition: (data, matches) => {
@@ -1654,7 +1706,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体二运2',
+      id: 'Souma R4S Souma 本体二运2',
       type: 'GainsEffect',
       netRegex: { effectId: ['FA0', 'FA1'] },
       condition: (data, matches) => {
@@ -1681,10 +1733,10 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R4S Souma 本体二运影分身',
+      id: 'Souma R4S Souma 本体二运影分身',
       type: 'CombatantMemory',
       netRegex: {
-        id: '4[0-9A-Fa-f]{7}',
+        id: 'Souma 4[0-9A-Fa-f]{7}',
         pair: [{ key: 'WeaponId', value: '28' }],
         capture: true,
       },
@@ -1697,7 +1749,7 @@ Options.Triggers.push({
       infoText: handleSportsMeetingInfoText,
     },
     {
-      id: 'R4S Souma 本体二运2第二次小怪',
+      id: 'Souma R4S Souma 本体二运2第二次小怪',
       type: 'GainsEffect',
       netRegex: { effectId: ['FA0', 'FA1'] },
       condition: (data, matches) => {
@@ -1710,7 +1762,7 @@ Options.Triggers.push({
     },
     // Finale
     {
-      id: 'R4S Sword Quiver AoE',
+      id: 'Souma R4S Sword Quiver AoE',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(swordQuiverSafeMap), capture: false },
       response: Responses.bigAoe(),
@@ -1719,7 +1771,7 @@ Options.Triggers.push({
     // and also because the cast starts ~14s before the mechanic resolves, and FFXIV
     // players have goldfish memories.
     {
-      id: 'R4S Sword Quiver Safe',
+      id: 'Souma R4S Sword Quiver Safe',
       type: 'Ability',
       netRegex: { id: Object.keys(swordQuiverSafeMap) },
       durationSeconds: 10,

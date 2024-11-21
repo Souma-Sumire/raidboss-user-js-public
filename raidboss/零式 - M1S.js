@@ -49,9 +49,8 @@ const headMarkerData = {
   pawprint: '021A',
 };
 Options.Triggers.push({
-  id: 'AacLightHeavyweightM1Savage',
+  id: 'SoumaAacLightHeavyweightM1Savage',
   zoneId: ZoneId.AacLightHeavyweightM1Savage,
-  timelineFile: 'r1s.txt',
   initData: () => ({
     actorSetPosTracker: {},
     storedLeaps: {
@@ -60,8 +59,32 @@ Options.Triggers.push({
     },
   }),
   triggers: [
+    { id: 'R1S Shockwave Knockback Safe Directions', disabled: true},
+    { id: 'R1S One-two Paw Right Left', disabled: true},
+    { id: 'R1S One-two Paw Left Right', disabled: true},
+    { id: 'R1S Biscuit Maker', disabled: true},
+    { id: 'R1S Bloody Scratch', disabled: true},
+    { id: 'R1S ActorSetPos Collector', disabled: true},
+    { id: 'R1S Mouser Collect', disabled: true},
+    { id: 'R1S Mouser', disabled: true},
+    { id: 'R1S Headmarker Nailchipper Spread', disabled: true},
+    { id: 'R1S Headmarker Grimalkin Gale Spread', disabled: true},
+    { id: 'R1S Headmarker Pawprint Collector', disabled: true},
+    { id: 'R1S Elevate and Eviscerate Launch Self', disabled: true},
+    { id: 'R1S Elevate and Eviscerate Launch Other', disabled: true},
+    { id: 'R1S Elevate and Eviscerate Stun Self', disabled: true},
+    { id: 'R1S Elevate and Eviscerate Stun Other', disabled: true},
+    { id: 'R1S Quadruple Swipe', disabled: true},
+    { id: 'R1S Delayed Quadruple Swipe', disabled: true},
+    { id: 'R1S Double Swipe', disabled: true},
+    { id: 'R1S Delayed Double Swipe', disabled: true},
+    { id: 'R1S Overshadow', disabled: true},
+    { id: 'R1S Splintering Nails', disabled: true},
+    { id: 'R1S Leaping One-two Paw', disabled: true},
+    { id: 'R1S Leaping Quadruple Crossing', disabled: true},
+    { id: 'R1S Leaping clone collector', disabled: true},
     {
-      id: 'R1S Shockwave Knockback Safe Directions',
+      id: 'Souma R1S Shockwave Knockback Safe Directions',
       type: 'MapEffect',
       netRegex: { location: ['00', '03'], flags: mapEffectTileState.quickRebuid, capture: true },
       infoText: (_data, matches, output) => {
@@ -91,33 +114,33 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S One-two Paw Right Left',
+      id: 'Souma R1S One-two Paw Right Left',
       type: 'StartsUsing',
       netRegex: { id: '9436', source: 'Black Cat', capture: false },
       durationSeconds: 9.5,
       response: Responses.goLeftThenRight(),
     },
     {
-      id: 'R1S One-two Paw Left Right',
+      id: 'Souma R1S One-two Paw Left Right',
       type: 'StartsUsing',
       netRegex: { id: '9439', source: 'Black Cat', capture: false },
       durationSeconds: 9.5,
       response: Responses.goRightThenLeft(),
     },
     {
-      id: 'R1S Biscuit Maker',
+      id: 'Souma R1S Biscuit Maker',
       type: 'StartsUsing',
       netRegex: { id: '9495', source: 'Black Cat', capture: true },
       response: Responses.tankBuster(),
     },
     {
-      id: 'R1S Bloody Scratch',
+      id: 'Souma R1S Bloody Scratch',
       type: 'StartsUsing',
       netRegex: { id: '9494', source: 'Black Cat', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R1S ActorSetPos Collector',
+      id: 'Souma R1S ActorSetPos Collector',
       type: 'ActorSetPos',
       netRegex: { id: '4[0-9A-F]{7}', capture: true },
       run: (data, matches) => {
@@ -125,7 +148,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Mouser Collect',
+      id: 'Souma R1S Mouser Collect',
       type: 'StartsUsing',
       netRegex: { id: '996C' },
       delaySeconds: 0.2,
@@ -149,7 +172,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Mouser',
+      id: 'Souma R1S Mouser',
       type: 'StartsUsing',
       netRegex: { id: '996C', capture: false },
       delaySeconds: 0.2,
@@ -202,7 +225,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Headmarker Nailchipper Spread',
+      id: 'Souma R1S Headmarker Nailchipper Spread',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker1, capture: true },
       condition: Conditions.targetIsYou(),
@@ -220,20 +243,20 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Headmarker Grimalkin Gale Spread',
+      id: 'Souma R1S Headmarker Grimalkin Gale Spread',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker2, capture: false },
       suppressSeconds: 5,
       response: Responses.spread(),
     },
     {
-      id: 'R1S Headmarker Pawprint Collector',
+      id: 'Souma R1S Headmarker Pawprint Collector',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.pawprint, capture: true },
       run: (data, matches) => data.lastPawprintTarget = matches.target,
     },
     {
-      id: 'R1S Elevate and Eviscerate Launch Self',
+      id: 'Souma R1S Elevate and Eviscerate Launch Self',
       type: 'StartsUsing',
       netRegex: { id: '9446', source: 'Copy Cat', capture: false },
       condition: (data) => data.me === data.lastPawprintTarget,
@@ -250,7 +273,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Elevate and Eviscerate Launch Other',
+      id: 'Souma R1S Elevate and Eviscerate Launch Other',
       type: 'StartsUsing',
       netRegex: { id: '9446', source: 'Copy Cat', capture: false },
       condition: (data) => data.me !== data.lastPawprintTarget,
@@ -268,7 +291,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Elevate and Eviscerate Stun Self',
+      id: 'Souma R1S Elevate and Eviscerate Stun Self',
       type: 'StartsUsing',
       netRegex: { id: '9448', source: 'Copy Cat', capture: false },
       condition: (data) => data.me === data.lastPawprintTarget,
@@ -285,7 +308,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Elevate and Eviscerate Stun Other',
+      id: 'Souma R1S Elevate and Eviscerate Stun Other',
       type: 'StartsUsing',
       netRegex: { id: '9448', source: 'Copy Cat', capture: false },
       condition: (data) => data.me !== data.lastPawprintTarget,
@@ -303,7 +326,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Quadruple Swipe',
+      id: 'Souma R1S Quadruple Swipe',
       type: 'StartsUsing',
       netRegex: { id: '945D', source: 'Black Cat', capture: false },
       infoText: (_data, _matches, output) => output.partner(),
@@ -319,7 +342,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Delayed Quadruple Swipe',
+      id: 'Souma R1S Delayed Quadruple Swipe',
       type: 'StartsUsing',
       netRegex: { id: '945D', source: 'Black Cat', capture: false },
       delaySeconds: 24.4,
@@ -336,7 +359,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Double Swipe',
+      id: 'Souma R1S Double Swipe',
       type: 'StartsUsing',
       netRegex: { id: '945F', source: 'Black Cat', capture: false },
       infoText: (_data, _matches, output) => output.healerStacks(),
@@ -345,7 +368,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Delayed Double Swipe',
+      id: 'Souma R1S Delayed Double Swipe',
       type: 'StartsUsing',
       netRegex: { id: '945F', source: 'Black Cat', capture: false },
       delaySeconds: 24.4,
@@ -355,13 +378,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Overshadow',
+      id: 'Souma R1S Overshadow',
       type: 'StartsUsing',
       netRegex: { id: '9497', source: 'Black Cat', capture: true },
       response: Responses.stackMarkerOn(),
     },
     {
-      id: 'R1S Splintering Nails',
+      id: 'Souma R1S Splintering Nails',
       type: 'StartsUsing',
       netRegex: { id: '9499', source: 'Black Cat', capture: false },
       infoText: (_data, _matches, output) => output.rolePositions(),
@@ -377,7 +400,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Leaping One-two Paw',
+      id: 'Souma R1S Leaping One-two Paw',
       type: 'StartsUsing',
       netRegex: { id: ['944D', '944E', '944F', '9450'], source: 'Black Cat', capture: true },
       infoText: (_data, matches, output) => {
@@ -452,7 +475,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Quadruple Crossing',
+      id: 'Souma R1S Quadruple Crossing',
       type: 'StartsUsing',
       netRegex: { id: '943C', source: 'Black Cat', capture: true },
       infoText: (_data, _matches, output) => {
@@ -465,7 +488,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Leaping Quadruple Crossing',
+      id: 'Souma R1S Leaping Quadruple Crossing',
       type: 'StartsUsing',
       netRegex: { id: ['9457', '982F'], source: 'Black Cat', capture: true },
       infoText: (_data, matches, output) => {
@@ -495,7 +518,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R1S Leaping clone collector',
+      id: 'Souma R1S Leaping clone collector',
       type: 'Tether',
       netRegex: { id: '0066', capture: true },
       infoText: (data, matches, output) => {
@@ -782,8 +805,8 @@ Options.Triggers.push({
       'replaceText': {
         '\\(First\\)': '(一)',
         '\\(Second\\)': '(二)',
-        '\\(cast\\)': '(咏唱)',
-        '\\(damage\\)': '(伤害)',
+        '\\(cast\\)': '(读条)',
+        '\\(damage\\)': '(判定)',
         '\\(enrage\\)': '(狂暴)',
         '\\(hit\\)': '(命中)',
         '\\(hits\\)': '(命中)',
