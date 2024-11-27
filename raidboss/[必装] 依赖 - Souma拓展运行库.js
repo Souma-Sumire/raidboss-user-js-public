@@ -63,11 +63,17 @@ if (
   function getRpByHexId(data = ifMissing(), hexId = ifMissing()) {
     return getRpByName(data, getNameByHexId(data, hexId));
   }
+  function getRpById(data = ifMissing(), id = ifMissing()) {
+    return getRpByName(data, getNameByHexId(data, id.toString(16)));
+  }
   function getNameByRp(data = ifMissing(), rp = ifMissing()) {
     if (soumaParty.length === 0) {
       createMyParty(data.party.details);
     }
     return soumaParty.find((v) => v.myRP === rp)?.name;
+  }
+  function getDecIdByRp(data = ifMissing(), rp = ifMissing()) {
+    return parseInt(getHexIdByName(data, getNameByRp(data, rp)), 16);
   }
   function getNameByHexId(data = ifMissing(), hexId = ifMissing()) {
     return data.party.idToName_[hexId.toUpperCase()];
@@ -269,10 +275,12 @@ if (
   const souma = {
     getRpByName,
     getRpByHexId,
+    getRpById,
     getNameByRp,
     getNameByHexId,
     getHexIdByRp,
     getHexIdByName,
+    getDecIdByRp,
     loop,
     sleep,
     waitFor,
