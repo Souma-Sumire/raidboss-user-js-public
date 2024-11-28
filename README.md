@@ -1,30 +1,12 @@
 ## 使用说明
 
-### 2024-11-21 更新
-
-由于使用在线链接的人数过多，对服务器压力过大，现将回归原始方法。
-
-曾经加载了 `config面板转换.js` 的用户，需删除该文件。
-
-曾经使用了在线链接的用户，需恢复至原本的 Cactbot Raidboss 版本。
-
-- 咖啡 ACT 如何恢复：地址下面有个下拉选择框，选择 `Cactbot 副本辅助(时间轴+触发器)` 即可。
-
-- 呆萌 ACT 如何恢复：删了之前的，左下角新建预设 `Cactbot 时间轴与触发器` 即可。
-
 ### 使用下崽器下载
 
 1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 1. 在 ACT 中 添加 `SoumaDownloader.dll`，并启用
 1. 在下崽器中勾选你需要的 `.js` 文件，点击 `下载` 按钮，程序会自动识别你的 user 目录， 并下载文件
-1. （可选）需要分配优先级的副本，需勾选 `[必装] 依赖 - Souma拓展运行库.js` ，并新建*数据统计*悬浮窗 <https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>，以实现职能位置分配
-
-    - 本次零式 M1S ~ M4S 不需要这一步操作
-
-1. （可选）若使用标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
-
-    - 本次零式 M1S ~ M4S 不需要这一步操作
-
+1. 需要分配优先级的副本，还需新建*数据统计*悬浮窗 <https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>，以实现职能位置分配（请将所有人的位置都设置对，而不是仅仅是你自己的）
+1. 若在 config 面板中开启了标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 1. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效
 
 ### 手动下载
@@ -35,9 +17,7 @@
 1. （可选）使用标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 1. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效
 
-## 常见问题
-
-### User 文件夹在哪
+#### User 文件夹在哪
 
 - 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
 - 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
@@ -45,3 +25,4 @@
 ### 其他
 
 - [欧米茄标点说明](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+- 伊甸标点说明：暂无
