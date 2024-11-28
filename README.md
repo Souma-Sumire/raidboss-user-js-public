@@ -1,6 +1,6 @@
 ## 使用说明
 
-### 使用下崽器下载
+### 使用下崽器
 
 1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 1. 在 ACT 中 添加 `SoumaDownloader.dll`，并启用
@@ -9,13 +9,12 @@
 1. 若在 config 面板中开启了标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 1. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效
 
-### 手动下载
+### 手动
 
 1. [下载本仓库](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
 1. 将 raidboss 文件夹中 *你需要的* `.js` 文件，放入你的 `user\raidboss` 文件夹
-1. （可选）存在优先级的副本，需将 `[必装] 依赖 - Souma拓展运行库.js` 文件也一并放入，并新建*数据统计*悬浮窗 <https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>，以实现职能位置分配
-1. （可选）使用标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
-1. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效
+1. 需要分配优先级的副本，还需新建*数据统计*悬浮窗 <https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>，以实现职能位置分配（请将所有人的位置都设置对，而不是仅仅是你自己的）
+1. 若在 config 面板中开启了标点功能，需要加载**正确版本**的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)
 
 #### User 文件夹在哪
 
