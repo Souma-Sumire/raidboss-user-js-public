@@ -1,9 +1,22 @@
-const { getRpByName, mark, getRpById, getDecIdByRp } = Util.souma;
-const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
-const sortRp = (rpList) => {
+const { getRpByName, mark, getRpById, getDecIdByRp, doQueueActions } = Util.souma;
+const defaultSortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+const sortRp = (rpList, rule = defaultSortRule) => {
   return rpList.sort((a, b) => {
-    return sortRule.indexOf(a) - sortRule.indexOf(b);
+    return rule.indexOf(a) - rule.indexOf(b);
   });
+};
+const clearMark = (delay = 0) => {
+  console.debug('clearMark');
+  doQueueActions([
+    { c: 'command', p: '/mk off <1>', d: delay * 1000 },
+    { c: 'command', p: '/mk off <2>' },
+    { c: 'command', p: '/mk off <3>' },
+    { c: 'command', p: '/mk off <4>' },
+    { c: 'command', p: '/mk off <5>' },
+    { c: 'command', p: '/mk off <6>' },
+    { c: 'command', p: '/mk off <7>' },
+    { c: 'command', p: '/mk off <8>' },
+  ]);
 };
 const markTypeOptions = {
   空: '',
@@ -25,6 +38,16 @@ const markTypeOptions = {
   三角: 'triangle',
   方块: 'square',
 };
+const p3buffs = {
+  '锤': '996',
+  '火': '997',
+  '眼': '998',
+  '圈': '99C',
+  '水': '99D',
+  '冰': '99E',
+  '返': '9A0', // 延迟咏唱：回返
+};
+const p3BuffsIdToName = Object.fromEntries(Object.entries(p3buffs).map(([name, id]) => [id, name]));
 const headmarkers = {
   tankBuster: '00DA',
   冰花: '0159',
@@ -48,7 +71,7 @@ Options.Triggers.push({
       id: '伊甸P1连线机制标点',
       name: { en: '伊甸P1连线机制标点' },
       type: 'select',
-      options: { en: { '开': '开', '关': '关' } },
+      options: { en: { '开√': '开', '关': '关' } },
       default: '关',
     },
     {
@@ -107,12 +130,21 @@ Options.Triggers.push({
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
     },
+    // {
+    //   id: '伊甸P2光暴机制标点',
+    //   name: { en: '伊甸P2光暴机制标点' },
+    //   type: 'select',
+    //   options: { en: { '开√': '开', '关': '关' } },
+    //   default: '关',
+    // },
   ],
   overrideTimelineFile: true,
   timeline: `
 hideall "--Reset--"
 hideall "--sync--"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
+# P1
+0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
 14.9 "雷/火龙卷破击"
 25.4 "连锁爆印刻"
 36 "乐园绝技"
@@ -126,7 +158,7 @@ hideall "--sync--"
 131.4 "连锁爆印刻"
 142.9 "燃烧击"
 161.8 "光焰圆光"
-##### "P2"
+# P2
 159.2 "--可选中--"
 165 "--sync--" StartsUsing { id: "9CFF" } window 300,0
 170 "四重强击"
@@ -146,6 +178,30 @@ hideall "--sync--"
 316.7 "强放逐"
 324.8 "光之海啸"
 344.2 "绝对零度"
+# P3
+440.8 "地狱审判" StartsUsing { id: "9D49" } window 500,0
+455.0 "时间压缩·绝"
+464.6 "限速"
+502.8 "破盾一击"
+503.2 "破盾一击"
+511.3 "脉冲星震波"
+519.6 "黑色光环"
+528.8 "延迟咏唱·回响"
+537.0 "黑暗狂水"
+544.1 "启示"
+549.3 "碎灵一击"
+549.5 "碎灵一击"
+559.6 "暗炎喷发"
+568.3 "暗夜舞蹈"
+568.6 "暗夜舞蹈"
+571.4 "暗夜舞蹈"
+580.7 "脉冲星震波"
+594.4 "记忆终结"
+611.5 "具象化"
+637.1 "光暗龙诗"
+637.1 "光与暗的龙诗"
+648.3 "光之波动"
+651.3 "碎灵一击"
 `,
   initData: () => {
     return {
@@ -156,13 +212,17 @@ hideall "--sync--"
       soumaP1线处理: undefined,
       soumaP1雾龙ids: [],
       soumaP1雾龙属性: undefined,
-      soumaP1线处理Nums: [],
       soumaP2冰圈初始位置DirNum: [],
       soumaP2冰圈初始位置: undefined,
       soumaP2冰花点名: [],
       soumaP2钢月: undefined,
       soumaP2DD处理: undefined,
-      // 花姐
+      soumaP2镜中奇遇: false,
+      soumaP2镜中奇遇分身: [],
+      soumaP2光之暴走连线: [],
+      soumaP2光暴过量光层数: 0,
+      soumaP3阶段: undefined,
+      soumaP3一运buff: {},
     };
   },
   triggers: [
@@ -179,14 +239,35 @@ hideall "--sync--"
     {
       id: 'Souma 绝伊甸 阶段控制',
       type: 'StartsUsing',
-      // 9CFF = P2开场死刑
-      netRegex: { id: ['9CFF'], capture: true },
+      // 9CFF = P2 四重强击
+      // 9D49 = P3 地狱审判
+      netRegex: { id: ['9CFF', '9D49'], capture: true },
       suppressSeconds: 20,
       run: (data, matches) => {
         switch (matches.id) {
           case '9CFF':
+          {
             data.soumaPhase = 'P2';
+            data.soumaP1线存储.length = 0;
+            data.soumaP1线处理 = undefined;
+            data.soumaP1雾龙ids.length = 0;
+            data.soumaP1雾龙属性 = undefined;
             break;
+          }
+          case '9D49':
+          {
+            data.soumaPhase = 'P3';
+            data.soumaP2DD处理 = undefined;
+            data.soumaP2镜中奇遇 = false;
+            data.soumaP2镜中奇遇分身.length = 0;
+            data.soumaP2光之暴走连线.length = 0;
+            data.soumaP2光暴过量光层数 = 0;
+            data.soumaP2冰圈初始位置 = undefined;
+            data.soumaP2冰圈初始位置DirNum.length = 0;
+            data.soumaP2冰花点名.length = 0;
+            data.soumaP2钢月 = undefined;
+            break;
+          }
         }
       },
     },
@@ -427,44 +508,51 @@ hideall "--sync--"
       preRun: (data, matches) => {
         data.soumaP1线存储.push(matches);
       },
-      // durationSeconds: 15,
+      durationSeconds: 15,
       response: (data, _matches, output) => {
         // cactbot-builtin-response
         output.responseOutputStrings = {
           switch: { en: '换换换！' },
           fire: { en: '火' },
           thunder: { en: '雷' },
-          line1: { en: '1${el}：上A' },
-          line2: { en: '2${el}：下C' },
-          line3: { en: '3${el}：上A' },
-          line4: { en: '4${el}：下C' },
-          nothing1: { en: '闲1：上A' },
-          nothing2: { en: '闲2：上A' },
-          nothing3: { en: '闲3：下C' },
-          nothing4: { en: '闲4：下C' },
-          handleEl: { en: '处理顺序：${el1} => ${el2}' },
+          line1: { en: '1${el}：去上面正点' },
+          line2: { en: '2${el}：去下面正点' },
+          line3: { en: '3${el}：去上面最外侧' },
+          line4: { en: '4${el}：去下面最外侧' },
+          nothing1: { en: '闲1：去上面' },
+          nothing2: { en: '闲2：去上面' },
+          nothing3: { en: '闲3：去下面' },
+          nothing4: { en: '闲4：去下面' },
+          handleEl: { en: '处理：${el1} => ${el2}' },
           text: { en: '${switcherRes}（分摊点：${lines}）' },
           needSwitch: { en: '${rp}换' },
-          dontSwitch: { en: '不换' },
+          dontSwitch: { en: '不用换' },
+          stack: { en: '分摊点名（不用换）' },
           stackHigh: { en: '高优先级：近A' },
           stackDown: { en: '低优先级：近C' },
         };
         // 第一次连线机制 双分摊
         if (data.soumaP1线存储.length === 2) {
-          const lines = sortRp(data.soumaP1线存储.map((v) => getRpByName(data, v.target)));
-          const mtGroup = ['MT', 'H1', 'D1', 'D3'];
-          const mtCount = lines.filter((v) => mtGroup.includes(v)).length;
+          const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+          const mtGroup = ['MT', 'ST', 'H1', 'H2'];
+          const lines = sortRp(data.soumaP1线存储.map((v) => getRpByName(data, v.target)), sortRule);
+          const tnCount = lines.filter((v) => mtGroup.includes(v)).length;
           let switcher;
-          if (mtCount === 0) {
+          if (tnCount === 0) {
+            switcher = 'MT';
+          } else if (tnCount === 2) {
             switcher = 'D1';
-          } else if (mtCount === 2) {
-            switcher = 'D2';
           }
           const povRp = getRpByName(data, data.me);
           if (lines[0] === povRp) {
+            // if (switcher === undefined)
+            //   return { alertText: output.stack!() };
             return { alarmText: output.stackHigh() };
           }
           if (lines[1] === povRp) {
+            // if (switcher === undefined) {
+            //   return { alertText: output.stack!() };
+            // }
             return { alarmText: output.stackDown() };
           }
           if (switcher === povRp) {
@@ -480,6 +568,7 @@ hideall "--sync--"
         }
         // 第二次连线机制 四根雷火线
         if (data.soumaP1线存储.length === 3) {
+          // console.debug('P1线');
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
             mark(
               parseInt(data.soumaP1线存储[2].targetId, 16),
@@ -523,12 +612,14 @@ hideall "--sync--"
         }
         if (data.soumaP1线存储.length === 6) {
           let res;
-          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
+          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开') {
             mark(
               parseInt(data.soumaP1线存储[5].targetId, 16),
               data.triggerSetConfig.伊甸P1标线4.toString(),
               false,
             );
+            clearMark(15);
+          }
           if (data.soumaP1线存储[5]?.target === data.me) {
             data.soumaP1线处理 = '线4';
             const element = data.soumaP1线存储[5].id === '00F9' ? 'fire' : 'thunder';
@@ -538,8 +629,8 @@ hideall "--sync--"
           const targetsIds = lines.map((v) => v.targetId);
           const nothing = data.party.details.filter((v) => !targetsIds.includes(v.id)).sort(
             (a, b) => {
-              return sortRule.indexOf(getRpByName(data, a.name)) -
-                sortRule.indexOf(getRpByName(data, b.name));
+              return defaultSortRule.indexOf(getRpByName(data, a.name)) -
+                defaultSortRule.indexOf(getRpByName(data, b.name));
             },
           );
           const nothingRp = nothing.map((v) => getRpById(data, parseInt(v.id, 16)));
@@ -579,7 +670,6 @@ hideall "--sync--"
             '闲4': [2, 4],
           };
           const playerHandle = handler[data.soumaP1线处理];
-          data.soumaP1线处理Nums = playerHandle;
           const elements = data.soumaP1线存储.map((v) => v.id === '00F9' ? 'fire' : 'thunder').slice(
             2,
             6,
@@ -603,37 +693,6 @@ hideall "--sync--"
         return undefined;
       },
     },
-    ...Array.from({ length: 4 }, (_, i) => {
-      return {
-        id: `Souma 绝伊甸 P1 第二次连线判定${i + 1}`,
-        type: 'StartsUsing',
-        netRegex: { 'id': ['9CCC'] },
-        condition: (data) => data.soumaPhase === 'P1',
-        delaySeconds: [9, 12, 15, 17][i],
-        suppressSeconds: 999,
-        response: (data, _matches, output) => {
-          output.responseOutputStrings = {
-            text: { en: '${num}${attr}${handler}' },
-            fire: { en: '火' },
-            thunder: { en: '雷' },
-            fireHandler: { en: '集合' },
-            thunderHandler: { en: '劈叉' },
-          };
-          const num = i + 1;
-          const hand = data.soumaP1线处理Nums.includes(num);
-          const type = hand ? 'alarmText' : 'infoText';
-          const attrStr = data.soumaP1线存储[num + 1].id === '00F9' ? 'fire' : 'thunder';
-          const handler = hand ? output[`${attrStr}Handler`]() : '';
-          return {
-            [type]: output.text({
-              num: num,
-              attr: output[attrStr](),
-              handler: handler,
-            }),
-          };
-        },
-      };
-    }),
     {
       id: 'Souma 绝伊甸 P1 塔+火塔器Q',
       type: 'StartsUsing',
@@ -704,8 +763,217 @@ hideall "--sync--"
     },
     // #endregion P1
     // #region P2
+    {
+      id: 'Souma 伊甸 P2 死刑',
+      type: 'StartsUsing',
+      netRegex: { id: '9CFF' },
+      response: Responses.tankBusterSwap(),
+    },
+    {
+      id: 'Souma 伊甸 P2 钻石星辰',
+      type: 'StartsUsing',
+      netRegex: { id: '9D05' },
+      response: Responses.bigAoe('alert'),
+    },
+    {
+      id: 'Souma 伊甸 P2 冰圈初始点',
+      type: 'CombatantMemory',
+      netRegex: {
+        id: '4[0-9A-Fa-f]{7}',
+        pair: [
+          { key: 'BNpcNameID', value: '3209' },
+        ],
+        capture: true,
+      },
+      condition: (data, matches) => matches.change === 'Change' && data.soumaPhase === 'P2',
+      suppressSeconds: 30,
+      run: (data, matches) => {
+        const { pairPosX: x, pairPosY: y } = matches;
+        const dirNum = Directions.xyTo8DirNum(parseFloat(x), parseFloat(y), 100, 100);
+        const sortRule = [0, 7, 6, 5, 4, 3, 2, 1];
+        data.soumaP2冰圈初始位置DirNum = [dirNum, (dirNum + 4) % 8].sort((a, b) =>
+          sortRule.indexOf(a) - sortRule.indexOf(b)
+        );
+        data.soumaP2冰圈初始位置 = dirNum % 2 === 0 ? '正' : '斜';
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 钢铁还是月环',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D0A', '9D0B'] },
+      run: (data, matches, output) => {
+        data.soumaP2钢月 = matches.id === '9D0A' ? output.钢铁() : output.月环();
+      },
+      outputStrings: {
+        钢铁: { en: '钢铁外' },
+        月环: { en: '月环内' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 冰花点名',
+      type: 'HeadMarker',
+      netRegex: {},
+      condition: (data, matches) =>
+        data.soumaPhase === 'P2' && getHeadmarkerId(data, matches) === headmarkers.冰花,
+      preRun: (data, matches) => {
+        data.soumaP2冰花点名.push(matches);
+      },
+      delaySeconds: 0.4,
+      alarmText: (data, _matches, output) => {
+        if (data.soumaP2冰花点名.length === 4) {
+          const 冰花RP = data.soumaP2冰花点名.map((v) => getRpByName(data, v.target));
+          const 冰花职能 = ['MT', 'ST', 'H1', 'H2'].find((v) => 冰花RP.includes(v))
+            ? 'TH'
+            : 'DPS';
+          const 冰花去 = data.soumaP2冰圈初始位置 === '正' ? output.斜() : output.正();
+          const 水波去 = data.soumaP2冰圈初始位置;
+          const 玩家职能 = data.role === 'dps' ? 'DPS' : 'TH';
+          data.soumaP2冰花点名.length = 0;
+          data.soumaP2DD处理 = 玩家职能 === 冰花职能 ? '冰花' : '水波';
+          return 玩家职能 === 冰花职能
+            ? output.冰花({ go: data.soumaP2钢月, direction: 冰花去 })
+            : output.水波({ go: data.soumaP2钢月, direction: 水波去 });
+        }
+      },
+      outputStrings: {
+        正: { en: '正' },
+        斜: { en: '斜' },
+        水波: { en: '${go} + ${direction} 水波(靠近)' },
+        冰花: { en: '${go} + ${direction} 冰花(远一点)' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 冰花点名2',
+      type: 'HeadMarker',
+      netRegex: {},
+      condition: (data, matches) =>
+        data.soumaPhase === 'P2' && getHeadmarkerId(data, matches) === headmarkers.冰花,
+      delaySeconds: 5,
+      suppressSeconds: 999,
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          冰花: { en: '放冰花' },
+          水波: { en: '去场中' },
+        };
+        if (data.soumaP2DD处理 === '冰花') {
+          return { alarmText: output.冰花() };
+        }
+        return { infoText: output.水波() };
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 击退Re',
+      type: 'StartsUsing',
+      netRegex: { id: '9D05' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 17,
+      durationSeconds: 5,
+      alarmText: (data, _matches, output) => {
+        return output.text({ dir: data.soumaP2冰圈初始位置DirNum.map((v) => output[v]()).join('/') });
+      },
+      outputStrings: {
+        text: { en: '${dir}击退' },
+        0: Outputs.north,
+        1: Outputs.northeast,
+        2: Outputs.east,
+        3: Outputs.southeast,
+        4: Outputs.south,
+        5: Outputs.southwest,
+        6: Outputs.west,
+        7: Outputs.northwest,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 击退分身',
+      type: 'StartsUsing',
+      netRegex: { id: '9D10' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 3,
+      durationSeconds: 9,
+      response: (data, matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          0: { en: '<= 顺180' },
+          180: { en: '<= 顺180' },
+          135: { en: '<= 顺135' },
+          90: { en: '<= 顺90' },
+          45: { en: '反跑！逆135 =>' },
+        };
+        const { x, y } = matches;
+        const num = Directions.xyTo8DirNum(parseFloat(x), parseFloat(y), 100, 100);
+        const dir = data.soumaP2冰圈初始位置DirNum;
+        const myRp = getRpByName(data, data.me);
+        const myDir = ['MT', 'H1', 'D1', 'D3'].includes(myRp)
+          ? dir[0]
+          : dir[1];
+        let index = 0;
+        for (let i = 0; i < 8; i++) {
+          const d = (myDir + i) % 8;
+          if (d === num || d === (num + 4) % 8) {
+            index = i;
+            break;
+          }
+        }
+        const angle = index * 45;
+        if (angle === 45) {
+          return { alarmText: output[angle]() };
+        }
+        return { infoText: output[angle]() };
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 4连分摊',
+      type: 'StartsUsing',
+      netRegex: { id: '9D10' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: (_data, matches) => parseFloat(matches.castTime),
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '连续分摊（4次）' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 背对',
+      type: 'StartsUsing',
+      netRegex: { id: '9D10' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 12,
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '背对场外分身' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 静后',
+      type: 'StartsUsing',
+      netRegex: { id: '9D01' },
+      response: Responses.getBackThenFront(),
+    },
+    {
+      id: 'Souma 伊甸 P2 闲前',
+      type: 'StartsUsing',
+      netRegex: { id: '9D02' },
+      response: Responses.getFrontThenBack(),
+    },
+    {
+      id: 'Souma 伊甸 P2 直线分摊',
+      type: 'StartsUsing',
+      netRegex: { id: '9D12' },
+      alertText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '直线分摊' },
+      },
+    },
     // #endregion P2
-    // #region 花姐
-    // #endregion 花姐
+    // #region P3
+    // #endregion P3
+
   ],
 });
