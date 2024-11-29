@@ -48,6 +48,15 @@ const p3buffs = {
   '返': '9A0', // 延迟咏唱：回返
 };
 const p3BuffsIdToName = Object.fromEntries(Object.entries(p3buffs).map(([name, id]) => [id, name]));
+const p3Outputs = {
+  '0': { en: '场中分摊' },
+  '1': { en: '引导灯' },
+  '2': { en: '远离放火' },
+  '圈': { en: '灯脚下' },
+  '眼': { en: '内小圆' },
+  '水': { en: '内小圆' },
+  '0/2': { en: '场中或远离' },
+};
 const headmarkers = {
   tankBuster: '00DA',
   冰花: '0159',
@@ -65,6 +74,7 @@ Options.Triggers.push({
   id: 'SoumaEdenUltimate',
   // zoneId: ZoneId.FuturesRewrittenUltimate,
   zoneId: 1238,
+  zoneLabel: { en: '光暗未来绝境战（莫古力攻略） by Souma' },
   config: [
     // location.href = 'http://localhost:8080/ui/config/config.html'
     {
@@ -73,6 +83,9 @@ Options.Triggers.push({
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
+      comment: {
+        en: '线：锁1锁2禁1禁2。闲：攻1攻2攻3攻4。',
+      },
     },
     {
       id: '伊甸P1标线1',
@@ -130,13 +143,16 @@ Options.Triggers.push({
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
     },
-    // {
-    //   id: '伊甸P2光暴机制标点',
-    //   name: { en: '伊甸P2光暴机制标点' },
-    //   type: 'select',
-    //   options: { en: { '开√': '开', '关': '关' } },
-    //   default: '关',
-    // },
+    {
+      id: '伊甸P2光暴机制标点',
+      name: { en: '伊甸P2光暴机制标点' },
+      type: 'select',
+      options: { en: { '开√': '开', '关': '关' } },
+      default: '关',
+      comment: {
+        en: '塔位置：上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。',
+      },
+    },
   ],
   overrideTimelineFile: true,
   timeline: `
@@ -159,9 +175,7 @@ hideall "--sync--"
 142.9 "燃烧击"
 161.8 "光焰圆光"
 # P2
-159.2 "--可选中--"
-165 "--sync--" StartsUsing { id: "9CFF" } window 300,0
-170 "四重强击"
+169.4 "四重强击" StartsUsing { id: "9CFF" } window 200,20
 174.1 "四重强击"
 183.6 "镜像"
 190.7 "钻石星尘"
@@ -179,7 +193,7 @@ hideall "--sync--"
 324.8 "光之海啸"
 344.2 "绝对零度"
 # P3
-440.8 "地狱审判" StartsUsing { id: "9D49" } window 500,0
+440.8 "地狱审判" StartsUsing { id: "9D49" } window 500,20
 455.0 "时间压缩·绝"
 464.6 "限速"
 502.8 "破盾一击"
@@ -223,6 +237,10 @@ hideall "--sync--"
       soumaP2光暴过量光层数: 0,
       soumaP3阶段: undefined,
       soumaP3一运buff: {},
+      soumaP3二运水: [],
+      soumaSorrows: {},
+      soumaP3线存储: [],
+      soumaP3处理: [],
     };
   },
   triggers: [
@@ -785,7 +803,9 @@ hideall "--sync--"
         ],
         capture: true,
       },
-      condition: (data, matches) => matches.change === 'Change' && data.soumaPhase === 'P2',
+      condition: (data, matches) =>
+        matches.change === 'Change' && data.soumaPhase === 'P2' && matches.pairPosX !== undefined &&
+        matches.pairPosY !== undefined,
       suppressSeconds: 30,
       run: (data, matches) => {
         const { pairPosX: x, pairPosY: y } = matches;
@@ -848,7 +868,7 @@ hideall "--sync--"
       netRegex: {},
       condition: (data, matches) =>
         data.soumaPhase === 'P2' && getHeadmarkerId(data, matches) === headmarkers.冰花,
-      delaySeconds: 5,
+      delaySeconds: 5.5,
       suppressSeconds: 999,
       response: (data, _matches, output) => {
         // cactbot-builtin-response
@@ -971,9 +991,400 @@ hideall "--sync--"
         text: { en: '直线分摊' },
       },
     },
+    {
+      id: 'Souma 伊甸 P2 镜中奇遇',
+      type: 'StartsUsing',
+      netRegex: { id: '9CF3' },
+      condition: (data) => data.soumaPhase === 'P2',
+      preRun: (data, _matches) => {
+        data.soumaP2镜中奇遇 = true;
+        // console.log(_matches.timestamp);
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 镜中奇遇分身',
+      type: 'CombatantMemory',
+      netRegex: {
+        id: '4[0-9A-Fa-f]{7}',
+        capture: true,
+      },
+      condition: (data, matches) => {
+        if (!data.soumaP2镜中奇遇 || data.soumaPhase !== 'P2' || matches.change !== 'Change') {
+          return false;
+        }
+        const t = [
+          'type',
+          'timestamp',
+          'change',
+          'id',
+          'pairHeading',
+          'pairPosX',
+          'pairPosY',
+          'pairPosZ',
+        ];
+        const m = Object.entries(matches).filter(([_k, v]) => v !== undefined);
+        if (m.length !== t.length || m.some(([k, _v]) => !t.includes(k)))
+          return false;
+        return true;
+      },
+      preRun: (data, matches) => {
+        data.soumaP2镜中奇遇分身.push(matches);
+      },
+      durationSeconds: 20,
+      promise: async (data) => {
+        if (data.soumaP2镜中奇遇分身.length === 3) {
+          data.soumaCombatantData = (await callOverlayHandler({
+            call: 'getCombatants',
+          })).combatants.filter((v) =>
+            v.BNpcNameID === 9317 && v.BNpcID === 17825 &&
+            data.soumaP2镜中奇遇分身.find((w) => parseInt(w.id, 16) === v.ID)
+          );
+        }
+      },
+      infoText: (data, _matches, output) => {
+        if (data.soumaP2镜中奇遇分身.length === 3 && data.soumaP2镜中奇遇) {
+          const kagami = data.soumaCombatantData.sort((a, b) => a.ID - b.ID);
+          const dirs = kagami.map((v) => Directions.xyTo8DirNum(v.PosX, v.PosY, 100, 100));
+          const blue = dirs[0];
+          const reds = dirs.slice(1);
+          const group = ['MT', 'ST', 'D1', 'D2'].includes(getRpByName(data, data.me)) ? '近战' : '远程';
+          const start = group === '近战' ? (blue + 4) % 8 : blue;
+          // 找到距离start最近的红
+          let minDist = 999;
+          let minI = 999;
+          let end = 999;
+          reds.forEach((v) => {
+            const d = Math.abs(v - start);
+            const dd = d < 4 ? d : 8 - d;
+            if (dd < minDist) {
+              minDist = dd;
+              end = v;
+            }
+            // 距离相同时，去逆时针方向
+            if (dd === minDist) {
+              for (let i = 0; i < 8; i++) {
+                if (((start - i) + 8) % 8 === v) {
+                  if (i < minI) {
+                    minI = i;
+                    end = ((start - i) + 8) % 8;
+                  }
+                  break;
+                }
+              }
+            }
+          });
+          // console.log(
+          //   `timestamp: ${_matches.timestamp}, blue: ${blue}, reds: ${
+          //     reds.join(',')
+          //   }, start: ${start}, end: ${end}`,
+          // );
+          data.soumaP2镜中奇遇 = false;
+          return output.text({ dir1: output[start](), dir2: output[end]() });
+        }
+      },
+      outputStrings: {
+        text: { en: '${dir1} => ${dir2}' },
+        0: Outputs.north,
+        1: Outputs.northeast,
+        2: Outputs.east,
+        3: Outputs.southeast,
+        4: Outputs.south,
+        5: Outputs.southwest,
+        6: Outputs.west,
+        7: Outputs.northwest,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 强放逐 分摊',
+      type: 'StartsUsing',
+      netRegex: { id: '9D1C' },
+      condition: (data) => data.soumaPhase === 'P2',
+      durationSeconds: 6,
+      alertText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: Outputs.stackPartner,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 强放逐 分散',
+      type: 'StartsUsing',
+      netRegex: { id: '9D1D' },
+      condition: (data) => data.soumaPhase === 'P2',
+      durationSeconds: 6,
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: Outputs.spread,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之暴走',
+      type: 'StartsUsing',
+      netRegex: { id: '9D14' },
+      condition: (data) => data.soumaPhase === 'P2',
+      response: Responses.bigAoe('alert'),
+    },
+    {
+      id: 'Souma 伊甸 P2 光之暴走连线',
+      type: 'Tether',
+      netRegex: { id: '006E' },
+      condition: (data) => data.soumaPhase === 'P2',
+      preRun: (data, matches) => {
+        data.soumaP2光之暴走连线.push(matches);
+      },
+      promise: async (data) => {
+        if (data.soumaP2光之暴走连线.length === 6) {
+          const combatants = (await callOverlayHandler({
+            call: 'getCombatants',
+          })).combatants;
+          data.soumaCombatantData = combatants.filter((v) =>
+            data.party.nameToRole_[v.Name] && v.ID.toString(16).startsWith('1')
+          );
+        }
+      },
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          圈: { en: '放圈' },
+          上1: { en: '上1：去左上↖' },
+          上2: { en: '上2：去下中↓' },
+          上3: { en: '上3：去右上↗' },
+          下1: { en: '下1：去右下↘' },
+          下2: { en: '下2：去上中↑' },
+          下3: { en: '下3：去左下↙' },
+          备用1: { en: '上1：去左上↖' },
+          备用2: { en: '上2：去下中↓' },
+          备用3: { en: '上3：去右上↗' },
+          备用4: { en: '下3：去左下↙' },
+          备用5: { en: '下2：去上中↑' },
+          备用6: { en: '下1：去右下↘' },
+          unknown: { en: '未知，自己看' },
+          error: { en: '出错了，自己看' },
+        };
+        if (data.soumaP2光之暴走连线.length === 6) {
+          const upperHalfPlayerCount = data.soumaCombatantData.filter((player) =>
+            player.PosY < 100
+          ).length;
+          const lowerHalfPlayerCount = data.soumaCombatantData.filter((player) =>
+            player.PosY >= 100
+          ).length;
+          if (upperHalfPlayerCount === 4 && lowerHalfPlayerCount === 4) {
+            // 99%的情况：上下半场站好了各4个人，以当时x轴排序，以保证站错了也能标出可以处理的标点，如果站的对就跟攻略解法的result一样。
+            const sortGroup = ['TN', 'DPS'];
+            const lightRampant = data.soumaP2光之暴走连线.map((v) => {
+              const x = data.soumaCombatantData.find((w) => w.ID === parseInt(v.sourceId, 16)).PosX;
+              const y = data.soumaCombatantData.find((w) => w.ID === parseInt(v.sourceId, 16)).PosY;
+              const rp = getRpByName(data, v.source);
+              const role = ['MT', 'ST', 'H1', 'H2'].includes(rp) ? 'TN' : 'DPS';
+              return {
+                decId: parseInt(v.sourceId, 16),
+                name: v.source,
+                rp: rp,
+                role: role,
+                x: x,
+                y: y,
+              };
+            }).sort((a, b) => {
+              if (a.role === b.role) {
+                return a.x - b.x;
+              }
+              return sortGroup.indexOf(a.role) - sortGroup.indexOf(b.role);
+            });
+            const topGroup = lightRampant.filter((v) => v.y < 100);
+            const bottomGroup = lightRampant.filter((v) => v.y >= 100);
+            if (topGroup.length === 2) {
+              topGroup.push(bottomGroup.pop());
+            }
+            if (bottomGroup.length === 2) {
+              bottomGroup.push(topGroup.pop());
+            }
+            if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
+              console.debug('P2光暴');
+              mark(topGroup[0].decId, 'bind1', false);
+              mark(topGroup[1].decId, 'attack2', false);
+              mark(topGroup[2].decId, 'bind3', false);
+              mark(bottomGroup[0].decId, 'attack3', false);
+              mark(bottomGroup[1].decId, 'bind2', false);
+              mark(bottomGroup[2].decId, 'attack1', false);
+              clearMark(18);
+            }
+            data.soumaP2光之暴走连线.length = 0;
+            const player = lightRampant.find((v) => v.name === data.me);
+            if (player === undefined) {
+              return { alarmText: output.圈() };
+            }
+            const playerGroup = topGroup.find((v) => v.name === data.me) ? 'top' : 'bottom';
+            const index = [...topGroup, ...bottomGroup].findIndex((v) => v.name === data.me) % 3 +
+              1;
+            if (index === 0) {
+              console.error(data.me, playerGroup, topGroup, bottomGroup);
+              return { infoText: output.unknown(), tts: null };
+            }
+            return { infoText: output[`${playerGroup === 'bottom' ? '下' : '上'}${index}`]() };
+          }
+          // 有SB连上下站位都没做到，则无视攻略，暴力标出一套可以处理的标点
+          // 未经过实测，可能有误
+          console.error('有人没按上下分组站位，光之暴走进入备用逻辑');
+          const lr = data.soumaP2光之暴走连线.map((v) => ({
+            name: v.source,
+            decId: parseInt(v.sourceId, 16),
+          }));
+          if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
+            mark(lr[0].decId, 'bind1', false);
+            mark(lr[1].decId, 'attack2', false);
+            mark(lr[2].decId, 'bind3', false);
+            mark(lr[3].decId, 'attack1', false);
+            mark(lr[4].decId, 'bind2', false);
+            mark(lr[5].decId, 'attack3', false);
+            clearMark(18);
+          }
+          const index = lr.findIndex((v) => v.name === data.me);
+          data.soumaP2光之暴走连线.length = 0;
+          if (index === -1) {
+            return { infoText: output.error(), tts: null };
+          }
+          return { infoText: output[`备用${index + 1}`]() };
+        }
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之暴走层数',
+      type: 'GainsEffect',
+      netRegex: { effectId: '8D1' },
+      condition: (data, matches) => data.soumaPhase === 'P2' && data.me === matches.target,
+      run: (data, matches) => {
+        data.soumaP2光暴过量光层数 = parseInt(matches.count, 16);
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之暴走踩塔',
+      type: 'StartsUsing',
+      netRegex: { id: '9D14' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 26,
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          踩塔: { en: '去踩塔！' },
+          不踩: { en: '不踩' },
+        };
+        return data.soumaP2光暴过量光层数 === 2 ? { alarmText: output.踩塔() } : { infoText: output.不踩() };
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之海啸',
+      type: 'StartsUsing',
+      netRegex: { id: '9DFD' },
+      condition: (data) => data.soumaPhase === 'P2',
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: {
+          en: '八方分散',
+        },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 绝对零度',
+      type: 'StartsUsing',
+      netRegex: { id: '9D20' },
+      condition: (data) => data.soumaPhase === 'P2',
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: {
+          en: '9.7秒狂暴读条 打到20%',
+        },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P2 无敌消失',
+      type: 'LosesEffect',
+      netRegex: { effectId: '307' },
+      condition: (data) => data.soumaPhase === 'P2',
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: {
+          en: '打大冰（打到50%）',
+        },
+      },
+    },
+    // 39.7秒狂暴读条 打到50%
+    {
+      id: 'Souma 伊甸 P2 光之泛滥1',
+      type: 'StartsUsing',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 39.7 - 6,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '5' } },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之泛滥2',
+      type: 'StartsUsing',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 39.7 - 5,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '4' } },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之泛滥3',
+      type: 'StartsUsing',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 39.7 - 4,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '3' } },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之泛滥4',
+      type: 'StartsUsing',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 39.7 - 3,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '2' } },
+    },
+    {
+      id: 'Souma 伊甸 P2 光之泛滥5',
+      type: 'StartsUsing',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 39.7 - 2,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '1' } },
+    },
+    {
+      id: 'Souma 伊甸 P2 连结',
+      type: 'NetworkCancelAbility',
+      netRegex: { id: '9D43' },
+      condition: (data) => data.soumaPhase === 'P2',
+      delaySeconds: 7,
+      response: Responses.bigAoe('alert'),
+    },
     // #endregion P2
+    // #region P2.5
+    {
+      id: 'Souma 伊甸 P2.5 水波',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D46', '9D42'] },
+      condition: (data) =>
+        data.soumaPhase === 'P2' && ['H1', 'H2', 'D3', 'D4'].includes(getRpByName(data, data.me)),
+      suppressSeconds: 1,
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '水波' } },
+    },
+    // #endregion P2.5
     // #region P3
-    // #endregion P3
 
+    // #endregion P3
   ],
 });
