@@ -1,5 +1,10 @@
 ## 使用说明
 
+### 绝伊甸
+
+快速开发中，不会帮你禁用自带触发器。请自行禁用cactbot自带的伊甸触发器。（别他妈的把cactbot悬浮窗关了，那还报个集贸了）
+![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
+
 ### 使用下崽器
 
 1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases)
