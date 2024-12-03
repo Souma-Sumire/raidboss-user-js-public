@@ -38,14 +38,24 @@ const markTypeOptions = {
   三角: 'triangle',
   方块: 'square',
 };
+// type P4Gimmick = '短红（冰）高' | '短红（冰）低' | '长红（风）高' | '长红（风）低' | '蓝暗钢铁' | '蓝水分摊' | '蓝冰月环' | '蓝黄分摊';
 const p3buffs = {
-  '锤': '996',
+  '摊': '996',
   '火': '997',
   '眼': '998',
   '圈': '99C',
   '水': '99D',
   '冰': '99E',
   '返': '9A0', // 延迟咏唱：回返
+};
+const p4buffs = {
+  红buff: 'CBF',
+  蓝buff: 'CC0',
+  冰月环: '99E',
+  分摊: '996',
+  暗钢铁: '99C',
+  水分摊: '99D',
+  风击退: '99F', // 延迟咏唱：黑暗暴风 风击退
 };
 const p3BuffsIdToName = Object.fromEntries(Object.entries(p3buffs).map(([name, id]) => [id, name]));
 const p3Outputs = {
@@ -335,8 +345,12 @@ hideall "--sync--"
       soumaP3线存储: [],
       soumaP3处理: [],
       soumaP3MyDir: undefined,
-      soumaP3二运半场: undefined,
+      soumaP3水分组结果左: [],
+      soumaP3水分组结果右: [],
       soumaP4光之暴走连线: [],
+      soumaP4黑暗狂水: [],
+      soumaP4阶段: undefined,
+      soumaP4二运buff: {},
     };
   },
   triggers: [
@@ -363,6 +377,7 @@ hideall "--sync--"
           case '9CFF':
           {
             data.soumaPhase = 'P2';
+            data.soumaCombatantData = [];
             data.soumaP1线存储.length = 0;
             data.soumaP1线处理 = undefined;
             data.soumaP1雾龙ids.length = 0;
@@ -372,6 +387,7 @@ hideall "--sync--"
           case '9D49':
           {
             data.soumaPhase = 'P3';
+            data.soumaCombatantData = [];
             data.soumaP2DD处理 = undefined;
             data.soumaP2镜中奇遇 = false;
             data.soumaP2镜中奇遇分身.length = 0;
@@ -386,10 +402,12 @@ hideall "--sync--"
           case '9D36':
           {
             data.soumaPhase = 'P4';
+            data.soumaCombatantData = [];
             data.soumaP3MyDir = undefined;
-            data.soumaP3二运半场 = undefined;
             data.soumaP3一运buff = {};
             data.soumaP3二运水.length = 0;
+            data.soumaP3水分组结果左.length = 0;
+            data.soumaP3水分组结果右.length = 0;
             data.soumaP3线存储.length = 0;
             data.soumaP3处理.length = 0;
             data.soumaP3Sorrows = {};
@@ -544,6 +562,7 @@ hideall "--sync--"
           const safeDirs = allDirs.filter((dir) => {
             return shadows.every((v) => v.dir !== dir && v.opposite !== dir);
           });
+          data.soumaCombatantData = [];
           return output[safeDirs.join('')]();
         }
       },
@@ -645,7 +664,7 @@ hideall "--sync--"
           line1: { en: '1${el}：上↑正点' },
           line2: { en: '2${el}：下↓正点' },
           line3: { en: '3${el}：上↑最外' },
-          line4: { en: '4${el}：下↓最外' },
+          line4: { en: '4${el}：下↓最外 ${handleOrder}' },
           nothing1: { en: '闲1：上↑' },
           nothing2: { en: '闲2：上↑' },
           nothing3: { en: '闲3：下↓' },
@@ -739,7 +758,6 @@ hideall "--sync--"
           return;
         }
         if (data.soumaP1线存储.length === 6) {
-          let res;
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开') {
             mark(
               parseInt(data.soumaP1线存储[5].targetId, 16),
@@ -750,8 +768,6 @@ hideall "--sync--"
           }
           if (data.soumaP1线存储[5]?.target === data.me) {
             data.soumaP1线处理 = '线4';
-            const element = data.soumaP1线存储[5].id === '00F9' ? 'fire' : 'thunder';
-            res = { alertText: output.line4({ el: output[element]() }) };
           }
           const lines = data.soumaP1线存储.slice(2, 6);
           const targetsIds = lines.map((v) => v.targetId);
@@ -803,9 +819,6 @@ hideall "--sync--"
             6,
           ).map((v) => output[v]());
           const youIsNothing = nothing.findIndex((v) => v.name === data.me);
-          if (data.soumaP1线存储[5]?.target === data.me) {
-            return res;
-          }
           const gimmick = `${
             youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
           }`;
@@ -813,6 +826,12 @@ hideall "--sync--"
             el1: elements[playerHandle[0] - 1],
             el2: elements[playerHandle[1] - 1],
           });
+          if (data.soumaP1线存储[5]?.target === data.me) {
+            const element = data.soumaP1线存储[5].id === '00F9' ? 'fire' : 'thunder';
+            return {
+              alertText: output.line4({ el: output[element](), handleOrder: handleOrder }),
+            };
+          }
           return {
             infoText: output.handleOrder({ gimmick, handleOrder }),
             // tts: gimmick,
@@ -1354,6 +1373,7 @@ hideall "--sync--"
           }
           const index = lr.findIndex((v) => v.name === data.me);
           data.soumaP2光之暴走连线.length = 0;
+          data.soumaCombatantData = [];
           if (index === -1) {
             return { infoText: output.error(), tts: null };
           }
@@ -1860,9 +1880,312 @@ hideall "--sync--"
         busterOnYou: { en: '分摊死刑点名' },
       },
     },
-
-
-
+    {
+      id: 'Souma 伊甸 P3 三连黑暗狂水',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
+      preRun: (data, matches) => {
+        data.soumaP3二运水.push(matches);
+      },
+    },
+    {
+      id: 'Souma 伊甸 P3 三连黑暗狂水1',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data, matches) =>
+        data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运' && parseInt(matches.duration) === 10,
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 3,
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '分摊' } },
+    },
+    {
+      id: 'Souma 伊甸 P3 三连黑暗狂水2',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data, matches) =>
+        data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运' && parseInt(matches.duration) === 29,
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 3,
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '分摊' } },
+    },
+    {
+      id: 'Souma 伊甸 P3 三连黑暗狂水3',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data, matches) =>
+        data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运' && parseInt(matches.duration) === 38,
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 3,
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '分摊' } },
+    },
+    {
+      id: 'Souma 伊甸 P3 碎灵一击',
+      type: 'StartsUsing',
+      netRegex: { id: '9D60', capture: false },
+      condition: (data) => data.soumaPhase === 'P3',
+      delaySeconds: 1,
+      response: Responses.spread(),
+    },
+    {
+      id: 'Souma 伊甸 P3 三连黑暗狂水 判定',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水, capture: false },
+      condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
+      delaySeconds: 0.5,
+      durationSeconds: 40,
+      suppressSeconds: 1,
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          separator: { en: '、' },
+          switcherInfo: { en: '（${name1}与${name2}换）' },
+          donTMove: { en: '（都不换）' },
+          no: { en: '你不换' },
+          text: { en: '${no} ${switcherInfo}' },
+          switch: { en: '与${switcher}交换！' },
+        };
+        const leftRps = ['MT', 'ST', 'H1', 'H2'];
+        const rightRps = ['D1', 'D2', 'D3', 'D4'];
+        const allSortRule = [...leftRps, ...rightRps];
+        const leftSwitcherNames = new Set();
+        const rightSwitcherNames = new Set();
+        // let res: Record<string, string> | undefined = undefined;
+        // 死人的清空下，有3个无，此时让第3个无 与单独的水进行配对。
+        const lonely = data.party.details.map((v) =>
+          v.name
+        ).filter((v) => !data.soumaP3二运水.find((vv) => vv.target === v))[2];
+        // console.log(lonely);
+        for (
+          const name of data.party.details.map((v) =>
+            v.name
+          )
+        ) {
+          if (name === lonely) {
+            // 跳过第三个无的处理，否则污染结果。
+            continue;
+          }
+          const me = data.soumaP3二运水.find((v) => v.target === name);
+          const rp = getRpByName(data, name);
+          const meHalf = leftRps.includes(rp) ? 'left' : 'right';
+          const partner = me === undefined
+            ? data.party.details.find((v) =>
+              v.name !== name && !data.soumaP3二运水.find((vv) => vv.target === v.name)
+            ).name
+            : data.soumaP3二运水.find((v) => v.target !== name && v.duration === me.duration)
+              ?.target ?? lonely ?? '???';
+          const partnerRp = getRpByName(data, partner);
+          const partnerHalf = leftRps.includes(partnerRp) ? 'left' : 'right';
+          const sortIndex = allSortRule.indexOf(rp) - allSortRule.indexOf(partnerRp);
+          const priority = sortIndex < 0 ? '高' : '低';
+          if (meHalf === partnerHalf) {
+            (meHalf === 'left' ? leftSwitcherNames : rightSwitcherNames).add(
+              priority === '低' ? name : partner,
+            );
+            // const otherGroup = meHalf === 'left' ? rightRps : leftRps;
+            // const otherGroupPeoples = data.soumaP3二运水.filter((v) =>
+            //   otherGroup.includes(getRpByName(data, v.target))
+            // );
+            // const otherGroupTotal = otherGroupPeoples.reduce<Record<string, number>>(
+            //   (acc, cur) => {
+            //     if (acc[cur.duration] === undefined) {
+            //       acc[cur.duration] = 0;
+            //     }
+            //     acc[cur.duration]! += 1;
+            //     return acc;
+            //   },
+            //   {},
+            // );
+            // const otherDuplicateDuration = Object.keys(otherGroupTotal).filter((v) =>
+            //   otherGroupTotal[v] === 2
+            // );
+            // const result: string[] = [];
+            // otherDuplicateDuration.forEach((o) => {
+            //   const otherDupPeoples = otherGroupPeoples.filter((v) => v.duration === o).sort(
+            //     (a, b) => {
+            //       const aIndex = allSortRule.indexOf(getRpByName(data, a.target));
+            //       const bIndex = allSortRule.indexOf(getRpByName(data, b.target));
+            //       return aIndex - bIndex;
+            //     },
+            //   ).map((v) => ({
+            //     name: v.target,
+            //     rp: getRpByName(data, v.target),
+            //     duration: v.duration,
+            //   }));
+            //   result.push(otherDupPeoples[1]!.rp);
+            // });
+            // if (name === data.me) {
+            //   res = { alarmText: output.switch!({ switch: result.join('、') }) };
+            // }
+          }
+        }
+        const leftSwitcherNamesArr = Array.from(leftSwitcherNames);
+        const rightSwitcherNamesArr = Array.from(rightSwitcherNames);
+        const tnSwitcherRps = leftSwitcherNamesArr.map((v) => getRpByName(data, v));
+        const dpsSwitcherRps = rightSwitcherNamesArr.map((v) => getRpByName(data, v));
+        let i = 0;
+        let ii = 0;
+        data.soumaP3水分组结果左 = leftRps.map((v) =>
+          (tnSwitcherRps.includes(v) ? dpsSwitcherRps[i++] : v) ?? lonely
+        );
+        data.soumaP3水分组结果右 = rightRps.map((v) =>
+          (dpsSwitcherRps.includes(v) ? tnSwitcherRps[ii++] : v) ?? lonely
+        );
+        for (
+          let i = 0;
+          i < Math.max(rightSwitcherNamesArr.length, leftSwitcherNamesArr.length);
+          i++
+        ) {
+          rightSwitcherNamesArr[i] = rightSwitcherNamesArr[i] ?? lonely;
+          leftSwitcherNamesArr[i] = leftSwitcherNamesArr[i] ?? lonely;
+        }
+        const switcherInfo = leftSwitcherNamesArr.map((v, i) =>
+          output.switcherInfo({
+            name1: data.party.member(v).job,
+            name2: data.party.member(rightSwitcherNamesArr[i]).job,
+          })
+        ).join(output.separator()) || output.donTMove();
+        // console.log(
+        //   rightSwitcherNamesArr,
+        //   leftSwitcherNamesArr,
+        //   data.soumaP3水分组结果左,
+        //   data.soumaP3水分组结果右,
+        // );
+        const meIsSwitcher = leftSwitcherNames.has(data.me) || rightSwitcherNames.has(data.me);
+        data.soumaP3二运水.length = 0;
+        if (meIsSwitcher) {
+          const meIndex = leftSwitcherNames.has(data.me)
+            ? leftSwitcherNamesArr.indexOf(data.me)
+            : rightSwitcherNamesArr.indexOf(data.me);
+          const switcher = leftSwitcherNames.has(data.me)
+            ? rightSwitcherNamesArr[meIndex]
+            : leftSwitcherNamesArr[meIndex];
+          return {
+            alarmText: output.switch({
+              switcher: data.party.member(switcher).job,
+            }),
+          };
+        }
+        const no = output.no();
+        return {
+          infoText: output.text({ no, switcherInfo }),
+          tts: no,
+        };
+      },
+    },
+    {
+      id: 'Souma 伊甸 P3 二运地火',
+      type: 'ActorControlExtra',
+      netRegex: {
+        category: '019D',
+        param1: '4',
+        param2: [
+          '40',
+          '10', // 逆
+        ],
+      },
+      condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
+      delaySeconds: 2,
+      durationSeconds: 6,
+      suppressSeconds: 999,
+      promise: async (data, matches) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          ids: [parseInt(matches.id, 16)],
+        })).combatants;
+      },
+      alertText: (data, matches, output) => {
+        const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : '';
+        // console.log(data.soumaP3水分组结果左, data.soumaP3水分组结果右);
+        const clock = matches.param2 === '40' ? -1 : 1;
+        const target = data.soumaCombatantData[0];
+        const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
+        const mtDir = (dirNum + 2) % 4;
+        const raidDir = (mtDir + clock + 4) % 4;
+        const dirText = Directions.outputFrom8DirNum(mtDir);
+        const raidDirText = Directions.outputFrom8DirNum(raidDir);
+        // const caster =
+        //   [...data.soumaP3水分组结果左.slice(0, 2), ...data.soumaP3水分组结果右.slice(0, 2)].includes(
+        //       getRpByName(data, data.me),
+        //     )
+        //     ? 'caster'
+        //     : 'melee';
+        data.soumaCombatantData = [];
+        if (['MT', 'D1'].includes(getRpByName(data, data.me))) {
+          return output[`${dirText}${r}`]();
+        }
+        if (dirText === 'dirN' && clock === 1) {
+          // console.warn('特殊情况');
+          return output.dirNER();
+        }
+        return output[`${raidDirText}${r}`]();
+      },
+      outputStrings: {
+        dirN: '上↑（A点）',
+        dirNR: '下↓（C点）',
+        dirNE: '左下↙（4点）',
+        dirNER: '右上↗（2点）',
+        dirE: '左←（D点）',
+        dirER: '右→（B点）',
+        dirSE: '左上↖（1点）',
+        dirSER: '右下↘（3点）',
+      },
+    },
+    {
+      id: 'Souma 伊甸 P3 二运分散',
+      type: 'StartsUsing',
+      netRegex: { id: '9D51', capture: false },
+      condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: {
+          en: '分散',
+        },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P3 暗夜舞蹈',
+      type: 'StartsUsing',
+      netRegex: { id: '9CF5', capture: false },
+      condition: (data) => data.soumaPhase === 'P3',
+      alertText: (data, _matches, output) => {
+        if (data.role === 'tank')
+          return output.tanksOutPartyIn();
+        // return output.partyInTanksOut!();
+      },
+      outputStrings: {
+        // partyInTanksOut: {
+        //   en: '人群靠近',
+        // },
+        tanksOutPartyIn: {
+          en: '坦克引导',
+        },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P3 暗夜舞蹈2',
+      type: 'StartsUsing',
+      netRegex: { id: '9CF5', capture: false },
+      condition: (data) => data.soumaPhase === 'P3',
+      delaySeconds: 6.5,
+      infoText: (data, _matches, output) => {
+        const half = data.soumaP3水分组结果左.includes(getRpByName(data, data.me)) ? 'left' : 'right';
+        return output.text({
+          knockback: output.knockback(),
+          stack: output[half](),
+        });
+      },
+      outputStrings: {
+        left: { en: '↙左下分摊' },
+        right: { en: '右下分摊↘' },
+        text: { en: '${knockback} => ${stack}' },
+        knockback: Outputs.knockback,
+      },
+      // response: Responses.knockback(),
+    },
     {
       id: 'Souma 伊甸 P3 记忆终结',
       type: 'StartsUsing',
@@ -1875,5 +2198,7 @@ hideall "--sync--"
       },
     },
     // #endregion P3
+    // #region P4
+    // #endregion P4
   ],
 });
