@@ -38,7 +38,6 @@ const markTypeOptions = {
   三角: 'triangle',
   方块: 'square',
 };
-// type P4Gimmick = '短红（冰）高' | '短红（冰）低' | '长红（风）高' | '长红（风）低' | '蓝暗钢铁' | '蓝水分摊' | '蓝冰月环' | '蓝黄分摊';
 const p3buffs = {
   '摊': '996',
   '火': '997',
@@ -52,10 +51,10 @@ const p4buffs = {
   红buff: 'CBF',
   蓝buff: 'CC0',
   冰月环: '99E',
-  分摊: '996',
+  风击退: '99F',
+  黄分摊: '996',
   暗钢铁: '99C',
-  水分摊: '99D',
-  风击退: '99F', // 延迟咏唱：黑暗暴风 风击退
+  水分摊: '99D', // 延迟咏唱：黑暗狂水 分摊
 };
 const p3BuffsIdToName = Object.fromEntries(Object.entries(p3buffs).map(([name, id]) => [id, name]));
 const p3Outputs = {
@@ -99,6 +98,15 @@ Options.Triggers.push({
   zoneLabel: { en: '光暗未来绝境战（莫古力攻略） by Souma' },
   config: [
     // location.href = 'http://localhost:8080/ui/config/config.html'
+    {
+      id: '启用雾龙报安全区',
+      name: { en: '启用雾龙报安全区' },
+      type: 'checkbox',
+      default: true,
+      comment: {
+        en: '野队请关闭该功能，并正常处理该机制，以免影响纯净玩家。',
+      },
+    },
     {
       id: '伊甸P1连线机制标点',
       name: { en: '伊甸P1连线机制标点' },
@@ -217,6 +225,70 @@ Options.Triggers.push({
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击1,
     },
+    // {
+    //   id: '伊甸P4二运机制标点',
+    //   name: { en: '伊甸P4二运机制标点' },
+    //   type: 'select',
+    //   options: { en: { '开√': '开', '关': '关' } },
+    //   default: '关',
+    //   comment: { en: '<a href="https://www.bilibili.com/video/BV1HbzQYpEde">动画演示视频</a>' },
+    // },
+    // {
+    //   id: '伊甸P4二运标短红高',
+    //   name: { en: '伊甸P4二运标短红高' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.锁链1,
+    // },
+    // {
+    //   id: '伊甸P4二运标短红低',
+    //   name: { en: '伊甸P4二运标短红低' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.锁链2,
+    // },
+    // {
+    //   id: '伊甸P4二运标长红高',
+    //   name: { en: '伊甸P4二运标长红高' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.禁止1,
+    // },
+    // {
+    //   id: '伊甸P4二运标长红低',
+    //   name: { en: '伊甸P4二运标长红低' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.禁止2,
+    // },
+    // {
+    //   id: '伊甸P4二运标暗钢铁',
+    //   name: { en: '伊甸P4二运标暗钢铁' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.攻击1,
+    // },
+    // {
+    //   id: '伊甸P4二运标黄分摊',
+    //   name: { en: '伊甸P4二运标黄分摊' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.攻击2,
+    // },
+    // {
+    //   id: '伊甸P4二运标冰月环',
+    //   name: { en: '伊甸P4二运标冰月环' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.攻击3,
+    // },
+    // {
+    //   id: '伊甸P4二运标水分摊',
+    //   name: { en: '伊甸P4二运标水分摊' },
+    //   type: 'select',
+    //   options: { en: markTypeOptions },
+    //   default: markTypeOptions.攻击4,
+    // },
   ],
   overrideTimelineFile: true,
   timeline: `
@@ -341,7 +413,7 @@ hideall "--sync--"
       soumaP3阶段: undefined,
       soumaP3一运buff: {},
       soumaP3二运水: [],
-      soumaP3Sorrows: {},
+      soumaP3沙漏: {},
       soumaP3线存储: [],
       soumaP3处理: [],
       soumaP3MyDir: undefined,
@@ -351,6 +423,9 @@ hideall "--sync--"
       soumaP4黑暗狂水: [],
       soumaP4阶段: undefined,
       soumaP4二运buff: {},
+      soumaP4二运机制: undefined,
+      soumaP4沙漏: {},
+      soumaP4地火: [],
     };
   },
   triggers: [
@@ -410,7 +485,7 @@ hideall "--sync--"
             data.soumaP3水分组结果右.length = 0;
             data.soumaP3线存储.length = 0;
             data.soumaP3处理.length = 0;
-            data.soumaP3Sorrows = {};
+            data.soumaP3沙漏 = {};
             break;
           }
         }
@@ -541,6 +616,7 @@ hideall "--sync--"
       id: 'Souma 绝伊甸 P1 雾龙',
       type: 'StartsUsing',
       netRegex: { id: '9CDE' },
+      condition: (data) => data.triggerSetConfig.启用雾龙报安全区 !== false,
       preRun: (data, matches) => {
         data.soumaP1雾龙ids.push(matches);
       },
@@ -1356,7 +1432,6 @@ hideall "--sync--"
             return { infoText: output[`${playerGroup === 'bottom' ? '下' : '上'}${index}`]() };
           }
           // 有SB连上下站位都没做到，则无视攻略，暴力标出一套可以处理的标点
-          // 未经过实测，可能有误
           console.error('有人没按上下分组站位，光之暴走进入备用逻辑');
           const lr = data.soumaP2光之暴走连线.map((v) => ({
             name: v.source,
@@ -1784,7 +1859,7 @@ hideall "--sync--"
       condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '一运',
       run: (data, matches) => {
         const id = matches.id.toUpperCase();
-        data.soumaP3Sorrows[id] = Directions.xyTo8DirNum(
+        data.soumaP3沙漏[id] = Directions.xyTo8DirNum(
           parseInt(matches.x),
           parseInt(matches.y),
           100,
@@ -1808,12 +1883,11 @@ hideall "--sync--"
         if (data.soumaP3线存储.length === 5) {
           const yellows = data.soumaP3线存储.filter((v) => v.id === '0086');
           const reds = data.soumaP3线存储.filter((v) => v.id === '0085');
-          const yellowDirs = yellows.map((v) => data.soumaP3Sorrows[v.sourceId]);
-          const purpleDirs = reds.map((v) => data.soumaP3Sorrows[v.sourceId]);
+          const yellowDirs = yellows.map((v) => data.soumaP3沙漏[v.sourceId]);
+          const purpleDirs = reds.map((v) => data.soumaP3沙漏[v.sourceId]);
           const northDIr = yellowDirs.find((v) =>
             purpleDirs.includes((v + 2) % 8) && purpleDirs.includes((v + 6) % 8)
           );
-          Directions.outputFrom8DirNum(northDIr);
           // console.log(yellowDirs, purpleDirs, targetDir, Directions.outputFrom8DirNum(targetDir));
           data.soumaP3线存储.length = 0;
           const finallyDir = (northDIr + data.soumaP3MyDir) % 8;
@@ -1985,41 +2059,6 @@ hideall "--sync--"
             (meHalf === 'left' ? leftSwitcherNames : rightSwitcherNames).add(
               priority === '低' ? name : partner,
             );
-            // const otherGroup = meHalf === 'left' ? rightRps : leftRps;
-            // const otherGroupPeoples = data.soumaP3二运水.filter((v) =>
-            //   otherGroup.includes(getRpByName(data, v.target))
-            // );
-            // const otherGroupTotal = otherGroupPeoples.reduce<Record<string, number>>(
-            //   (acc, cur) => {
-            //     if (acc[cur.duration] === undefined) {
-            //       acc[cur.duration] = 0;
-            //     }
-            //     acc[cur.duration]! += 1;
-            //     return acc;
-            //   },
-            //   {},
-            // );
-            // const otherDuplicateDuration = Object.keys(otherGroupTotal).filter((v) =>
-            //   otherGroupTotal[v] === 2
-            // );
-            // const result: string[] = [];
-            // otherDuplicateDuration.forEach((o) => {
-            //   const otherDupPeoples = otherGroupPeoples.filter((v) => v.duration === o).sort(
-            //     (a, b) => {
-            //       const aIndex = allSortRule.indexOf(getRpByName(data, a.target));
-            //       const bIndex = allSortRule.indexOf(getRpByName(data, b.target));
-            //       return aIndex - bIndex;
-            //     },
-            //   ).map((v) => ({
-            //     name: v.target,
-            //     rp: getRpByName(data, v.target),
-            //     duration: v.duration,
-            //   }));
-            //   result.push(otherDupPeoples[1]!.rp);
-            // });
-            // if (name === data.me) {
-            //   res = { alarmText: output.switch!({ switch: result.join('、') }) };
-            // }
           }
         }
         const leftSwitcherNamesArr = Array.from(leftSwitcherNames);
@@ -2098,8 +2137,9 @@ hideall "--sync--"
         })).combatants;
       },
       alertText: (data, matches, output) => {
-        const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : '';
+        const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : 'L';
         // console.log(data.soumaP3水分组结果左, data.soumaP3水分组结果右);
+        // -1顺  1逆
         const clock = matches.param2 === '40' ? -1 : 1;
         const target = data.soumaCombatantData[0];
         const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
@@ -2107,31 +2147,34 @@ hideall "--sync--"
         const raidDir = (mtDir + clock + 4) % 4;
         const dirText = Directions.outputFrom8DirNum(mtDir);
         const raidDirText = Directions.outputFrom8DirNum(raidDir);
-        // const caster =
-        //   [...data.soumaP3水分组结果左.slice(0, 2), ...data.soumaP3水分组结果右.slice(0, 2)].includes(
-        //       getRpByName(data, data.me),
-        //     )
-        //     ? 'caster'
-        //     : 'melee';
         data.soumaCombatantData = [];
         if (['MT', 'D1'].includes(getRpByName(data, data.me))) {
           return output[`${dirText}${r}`]();
         }
+        // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
         if (dirText === 'dirN' && clock === 1) {
-          // console.warn('特殊情况');
-          return output.dirNER();
+          // MTAC、顺、大团42
+          return output[`sp1${r}`]();
+        }
+        if (dirText === 'dirNE' && clock === -1) {
+          // MT42、逆、大团CA
+          return output[`sp2${r}`]();
         }
         return output[`${raidDirText}${r}`]();
       },
       outputStrings: {
-        dirN: '上↑（A点）',
-        dirNR: '下↓（C点）',
-        dirNE: '左下↙（4点）',
-        dirNER: '右上↗（2点）',
-        dirE: '左←（D点）',
-        dirER: '右→（B点）',
-        dirSE: '左上↖（1点）',
-        dirSER: '右下↘（3点）',
+        sp1L: { en: '右上↗（2点）' },
+        sp1R: { en: '左下↙（4点）' },
+        sp2L: { en: '下↓（C点）' },
+        sp2R: { en: '上↑（A点）' },
+        dirNL: { en: '上↑（A点）' },
+        dirNR: { en: '下↓（C点）' },
+        dirNEL: { en: '左下↙（4点）' },
+        dirNER: { en: '右上↗（2点）' },
+        dirEL: { en: '左←（D点）' },
+        dirER: { en: '右→（B点）' },
+        dirSEL: { en: '左上↖（1点）' },
+        dirSER: { en: '右下↘（3点）' },
       },
     },
     {
@@ -2199,6 +2242,288 @@ hideall "--sync--"
     },
     // #endregion P3
     // #region P4
-    // #endregion P4
+    {
+      id: 'Souma 伊甸 P4 具象化',
+      type: 'StartsUsing',
+      netRegex: { id: '9D36', capture: false },
+      delaySeconds: 12,
+      response: Responses.getTogether(),
+    },
+    {
+      id: 'Souma 伊甸 P4 圣龙护甲',
+      type: 'Ability',
+      netRegex: { id: '9CFA', sourceId: '4.{7}', capture: false },
+      response: Responses.moveAway('alert'),
+    },
+    {
+      id: 'Souma 伊甸 P4 光与暗的龙诗',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D6D', '9D2F'], capture: false },
+      suppressSeconds: 1,
+      response: Responses.bigAoe(),
+      run: (data) => {
+        data.soumaP4阶段 = '一运';
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 光之暴走',
+      type: 'Tether',
+      netRegex: { id: '006E' },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '一运',
+      preRun: (data, matches) => {
+        data.soumaP4光之暴走连线.push(matches);
+      },
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          bowTieShape: { en: '蝴蝶结，不用动' },
+          hourglass: { en: '沙漏，${healer}${dps}换' },
+          rectangle: { en: '方形，${tank}${dps}换' },
+          noTether: { en: '引导水波' },
+          switch: { en: '与${direction}${switcher}交换！' },
+          dirDps: { en: '左下' },
+          dirTank: { en: '左上' },
+          dirHealer: { en: '右上' },
+        };
+        if (data.soumaP4光之暴走连线.length !== 4) {
+          return;
+        }
+        const iAmLine = data.soumaP4光之暴走连线.find((v) =>
+          v.source === data.me || v.target === data.me
+        );
+        // console.log(data.me, iAmLine);
+        if (iAmLine !== undefined) {
+          const lines = data.soumaP4光之暴走连线.map((v) => {
+            return {
+              name: v.source,
+              rp: getRpByName(data, v.source),
+              role: data.party.nameToRole_[v.source],
+            };
+          });
+          const thGroup = ['MT', 'ST', 'H1', 'H2'];
+          const dpsGroup = ['D1', 'D2', 'D3', 'D4'];
+          // 该机制必点THD，所以不必考虑2根线点奶妈的情况。
+          // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。（不取坐标，不需要判定时就站准，之后晚一点到也不影响）
+          while (!thGroup.slice(0, 2).includes(lines[0].rp)) {
+            lines.push(lines.shift());
+          }
+          const t = lines[0];
+          const nearSet = new Set();
+          data.soumaP4光之暴走连线.filter((v) => v.source === t.name || v.target === t.name).forEach(
+            (v) => {
+              nearSet.add(v.source);
+              nearSet.add(v.target);
+            },
+          );
+          const nearByTank = Array.from(nearSet).filter((v) => v !== t.name).map((v) => {
+            return {
+              name: v,
+              rp: getRpByName(data, v),
+              role: data.party.nameToRole_[v],
+            };
+          });
+          // console.log(t, nearByTank);
+          if (
+            nearByTank.find((v) => v.role === 'healer') && nearByTank.find((v) => v.role === 'dps')
+          ) {
+            const dps = nearByTank.find((v) => v.role === 'dps');
+            const otherDps = lines.find((v) => v.role === 'dps' && v.name !== dps.name);
+            const priority = dpsGroup.findIndex((v) => v === dps.rp) < dpsGroup.findIndex((v) =>
+                v === otherDps.rp
+              )
+              ? '方形'
+              : '沙漏';
+            // console.log(dps, otherDps, priority);
+            if (priority === '方形') {
+              // console.warn('方形');
+              const tankName = t.name;
+              const dpsName = dps.name;
+              if (tankName === data.me) {
+                return {
+                  alarmText: output.switch({
+                    direction: output.dirDps(),
+                    switcher: data.party.member(dpsName),
+                  }),
+                };
+              }
+              if (dpsName === data.me) {
+                return {
+                  alarmText: output.switch({
+                    direction: output.dirTank(),
+                    switcher: data.party.member(tankName),
+                  }),
+                };
+              }
+              return {
+                alertText: output.rectangle({
+                  tank: data.party.member(tankName),
+                  dps: data.party.member(dpsName),
+                }),
+              };
+            }
+            if (priority === '沙漏') {
+              const healerName = nearByTank.find((v) => v.role === 'healer').name;
+              const dpsName = otherDps.name;
+              // console.warn('沙漏形', healerName, dpsName);
+              if (healerName === data.me) {
+                return {
+                  alarmText: output.switch({
+                    direction: output.dirDps(),
+                    switcher: data.party.member(dpsName),
+                  }),
+                };
+              }
+              if (dpsName === data.me) {
+                return {
+                  alarmText: output.switch({
+                    direction: output.dirHealer(),
+                    switcher: data.party.member(healerName),
+                  }),
+                };
+              }
+              return {
+                alertText: output.hourglass({
+                  healer: data.party.member(healerName),
+                  dps: data.party.member(dpsName),
+                }),
+              };
+            }
+          }
+          // 蝴蝶结形
+          return { alertText: output.bowTieShape() };
+        }
+        return { infoText: output.noTether() };
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 碎灵一击',
+      type: 'StartsUsing',
+      netRegex: { id: '9D60', capture: false },
+      condition: (data) => data.soumaPhase === 'P4',
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '分散' } },
+    },
+    {
+      id: 'Souma 伊甸 P4 黑暗狂水收集',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '一运',
+      preRun: (data, matches) => {
+        data.soumaP4黑暗狂水.push(matches);
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 光之波动',
+      type: 'Ability',
+      netRegex: { id: '9D15', capture: false },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '一运',
+      suppressSeconds: 1,
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+        })).combatants;
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 黑暗狂水',
+      type: 'GainsEffect',
+      netRegex: { effectId: p3buffs.水 },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '一运',
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 5,
+      durationSeconds: 6,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        try {
+          if (data.soumaP4光之暴走连线.find((v) => v.source === data.me || v.target === data.me)) {
+            // 光暴4个人，就地分摊
+            return output.lines();
+          }
+          // 剩余4个人
+          const towerWater = data.soumaP4黑暗狂水.find((w) =>
+            data.soumaP4光之暴走连线.find((l) => l.target === w.target || l.source === w.target)
+          );
+          const freeWater = data.soumaP4黑暗狂水.find((v) => v.target !== towerWater.target);
+          const towerWaterObj = data.soumaCombatantData.find((v) => v.Name === towerWater.target);
+          const freeWaterObj = data.soumaCombatantData.find((v) => v.Name === freeWater.target);
+          const towerWaterPos = towerWaterObj.PosY < 100 ? 'Top' : 'Bottom';
+          const freeWaterPos = freeWaterObj.PosX < 100 ? 'Left' : 'Right';
+          const playerSide = data.soumaCombatantData.find((v) => v.Name === data.me).PosX < 100
+            ? 'Left'
+            : 'Right';
+          return output.stack({
+            dir: output[
+              `from${playerSide}To${
+                playerSide === freeWaterPos
+                  ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
+                  : towerWaterPos
+              }`
+            ](),
+          });
+        } catch (e) {
+          console.error(e);
+          return output.unknown();
+        }
+      },
+      outputStrings: {
+        lines: { en: '分摊，躲开水晶' },
+        stack: { en: '${dir}分摊' },
+        fromLeftToTop: { en: '←向左' },
+        fromLeftToBottom: { en: '向右→' },
+        fromRightToTop: { en: '向右→' },
+        fromRightToBottom: { en: '←向左' },
+        unknown: { en: '分摊' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 暗夜舞蹈',
+      type: 'StartsUsing',
+      netRegex: { id: '9D5B', capture: false },
+      condition: (data) =>
+        data.soumaPhase === 'P4' && data.role === 'tank' && data.soumaP4阶段 === '一运',
+      durationSeconds: 4.5,
+      alarmText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '最远死刑！' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 暗夜舞蹈2',
+      type: 'StartsUsing',
+      netRegex: { id: '9D5B', capture: false },
+      condition: (data) =>
+        data.soumaPhase === 'P4' && data.role === 'tank' && data.soumaP4阶段 === '一运',
+      delaySeconds: 4.7,
+      alarmText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '最近死刑！' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 死亡轮回',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D6E', '9D37'], capture: false },
+      condition: (data) => data.soumaPhase === 'P4',
+      suppressSeconds: 1,
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '分组分摊，平血' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 无尽顿悟',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D70', '9D39'], capture: true },
+      condition: (data) => data.soumaPhase === 'P4',
+      suppressSeconds: 1,
+      alertText: (_data, _matches, output) => {
+        return output.mornAfah();
+      },
+      outputStrings: {
+        mornAfah: { en: '集合分摊' },
+      },
+    },
   ],
 });
