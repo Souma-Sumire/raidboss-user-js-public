@@ -91,6 +91,109 @@ const getHeadmarkerId = (data, matches) => {
     '0',
   );
 };
+const p5MtMapping = {
+  '5光': '3',
+  '1光': '5',
+  '3光': '1',
+  '5暗': '1',
+  '1暗': '3',
+  '3暗': '5',
+  '5暗opt': 'ESE',
+  '5光opt': 'SSE',
+  '1暗opt': 'SSW',
+  '1光opt': 'WSW',
+  '3暗opt': 'NNW',
+  '3光opt': 'NNE', // A偏2
+};
+const p5TowerMapping = { '33': 5, '34': 1, '35': 3 };
+const p5TowerOutput = {
+  mt: { en: '${pos}目标圈' },
+  st: { en: '${pos}+${buster}' },
+  lightBuster: { en: '远死刑' },
+  darkBuster: { en: '近死刑' },
+  getTower: { en: '${pos}' },
+  tower1: { en: '右上↗踩塔' },
+  tower3: { en: '下↓踩塔' },
+  tower5: { en: '左上↖踩塔' },
+  tower1opt暗: { en: '右上↗塔，站左半边' },
+  tower1opt光: { en: '右上↗塔，站右半边' },
+  tower3opt暗: { en: '下↓塔，站左半边' },
+  tower3opt光: { en: '下↓塔，站右半边' },
+  tower5opt暗: { en: '左上↖塔，站左半边' },
+  tower5opt光: { en: '左上↖塔，站右半边' },
+  other: { en: '${pos}躲开塔' },
+  dir0: { en: '上↑（A点）' },
+  dir1: { en: '右上↗（2点）' },
+  dir2: { en: '右下↘（3点）' },
+  dir3: { en: '下↓（C点）' },
+  dir4: { en: '左下↙（4点）' },
+  dir5: { en: '左上↖（1点）' },
+  dir1opt暗: { en: '右下↘' },
+  dir1opt光: { en: '上↑' },
+  dir3opt暗: { en: '左下↙' },
+  dir3opt光: { en: '右下↘' },
+  dir5opt暗: { en: '上↑' },
+  dir5opt光: { en: '左下↙' },
+  dirESE: { en: '右下↘（3偏B）' },
+  dirSSE: { en: '右下↘（3偏C）' },
+  dirSSW: { en: '左下↙（4偏C）' },
+  dirWSW: { en: '左下↙（4偏B）' },
+  dirNNW: { en: '上↑（A偏1）' },
+  dirNNE: { en: '上↑（A偏2）' },
+};
+const getTowerResult = (data, output) => {
+  data.soumaP5单轮翅膀计数++;
+  const rule = [
+    ['H1', 'H2'],
+    ['D1', 'D2'],
+    ['D3', 'D4'],
+  ];
+  const rp = getRpByName(data, data.me);
+  const location = data.soumaP5塔[data.soumaP5单轮翅膀计数 - 1].location;
+  const towerDir = p5TowerMapping[location];
+  const attr = data.soumaP5单轮翅膀计数 === 1
+    ? data.soumaP5翅膀属性
+    : data.soumaP5翅膀属性 === '光'
+    ? '暗'
+    : '光';
+  const opt = data.soumaP5单轮翅膀计数 === 3
+    ? ''
+    : (data.triggerSetConfig.伊甸P5翅膀踩塔打法 === '正攻' ? '' : `opt${attr}`);
+  const otherOutput = `dir${towerDir}${opt}`;
+  if (rule[data.soumaP5单轮翅膀计数 - 1].includes(rp)) {
+    return { alertText: output.getTower({ pos: output[`tower${towerDir}${opt}`]() }) };
+  }
+  if (data.soumaP5单轮翅膀计数 === 3) {
+    return;
+  }
+  if (data.role === 'tank') {
+    return getTankResult(data, output, towerDir, otherOutput);
+  }
+  return { infoText: output.other({ pos: output[otherOutput]() }) };
+};
+const getTankResult = (data, output, towerDir, otherOutput) => {
+  const rp = getRpByName(data, data.me);
+  const attr = data.soumaP5单轮翅膀计数 === 1
+    ? data.soumaP5翅膀属性
+    : data.soumaP5翅膀属性 === '光'
+    ? '暗'
+    : '光';
+  const opt = data.triggerSetConfig.伊甸P5翅膀踩塔打法 === '正攻' ? '' : 'opt';
+  if (
+    (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] === rp &&
+      data.soumaP5单轮翅膀计数 === 1) ||
+    (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] !== rp && data.soumaP5单轮翅膀计数 === 2)
+  ) {
+    // 当前一仇
+    const mtDir = p5MtMapping[`${towerDir}${attr}${opt}`];
+    const mtOutput = `dir${mtDir}`;
+    // console.log(towerDir, attr, opt, mtOutput, output[mtOutput]!());
+    return { alarmText: output.mt({ pos: output[mtOutput]() }) };
+  }
+  // 当前二仇
+  const buster = attr === '光' ? output.lightBuster() : output.darkBuster();
+  return { alarmText: output.st({ pos: output[otherOutput](), buster: buster }) };
+};
 Options.Triggers.push({
   id: 'SoumaEdenUltimate',
   // zoneId: ZoneId.FuturesRewrittenUltimate,
@@ -100,7 +203,7 @@ Options.Triggers.push({
     // location.href = 'http://localhost:8080/ui/config/config.html'
     {
       id: '启用雾龙报安全区',
-      name: { en: '启用雾龙报安全区' },
+      name: { en: '启用雾龙直接报安全区' },
       type: 'checkbox',
       default: true,
       comment: {
@@ -225,70 +328,118 @@ Options.Triggers.push({
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击1,
     },
-    // {
-    //   id: '伊甸P4二运机制标点',
-    //   name: { en: '伊甸P4二运机制标点' },
-    //   type: 'select',
-    //   options: { en: { '开√': '开', '关': '关' } },
-    //   default: '关',
-    //   comment: { en: '<a href="https://www.bilibili.com/video/BV1HbzQYpEde">动画演示视频</a>' },
-    // },
-    // {
-    //   id: '伊甸P4二运标短红高',
-    //   name: { en: '伊甸P4二运标短红高' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.锁链1,
-    // },
-    // {
-    //   id: '伊甸P4二运标短红低',
-    //   name: { en: '伊甸P4二运标短红低' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.锁链2,
-    // },
-    // {
-    //   id: '伊甸P4二运标长红高',
-    //   name: { en: '伊甸P4二运标长红高' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.禁止1,
-    // },
-    // {
-    //   id: '伊甸P4二运标长红低',
-    //   name: { en: '伊甸P4二运标长红低' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.禁止2,
-    // },
-    // {
-    //   id: '伊甸P4二运标暗钢铁',
-    //   name: { en: '伊甸P4二运标暗钢铁' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.攻击1,
-    // },
-    // {
-    //   id: '伊甸P4二运标黄分摊',
-    //   name: { en: '伊甸P4二运标黄分摊' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.攻击2,
-    // },
-    // {
-    //   id: '伊甸P4二运标冰月环',
-    //   name: { en: '伊甸P4二运标冰月环' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.攻击3,
-    // },
-    // {
-    //   id: '伊甸P4二运标水分摊',
-    //   name: { en: '伊甸P4二运标水分摊' },
-    //   type: 'select',
-    //   options: { en: markTypeOptions },
-    //   default: markTypeOptions.攻击4,
-    // },
+    {
+      id: '伊甸P3二运地火安全区报法',
+      name: { en: '伊甸P3二运地火安全区报法' },
+      type: 'select',
+      options: {
+        en: {
+          '只报自己去的位置': 'simple',
+          'MTXX，大团XX': 'complex',
+        },
+      },
+      default: 'simple',
+    },
+    {
+      id: '伊甸P4二运机制标点',
+      name: { en: '伊甸P4二运机制标点' },
+      type: 'select',
+      options: { en: { '开√': '开', '关': '关' } },
+      default: '关',
+      comment: { en: '<a href="https://www.bilibili.com/video/BV1HbzQYpEde">动画演示视频</a>' },
+    },
+    {
+      id: '伊甸P4二运标短红高',
+      name: { en: '伊甸P4二运标短红高' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.锁链1,
+    },
+    {
+      id: '伊甸P4二运标短红低',
+      name: { en: '伊甸P4二运标短红低' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.锁链2,
+    },
+    {
+      id: '伊甸P4二运标长红高',
+      name: { en: '伊甸P4二运标长红高' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.禁止1,
+    },
+    {
+      id: '伊甸P4二运标长红低',
+      name: { en: '伊甸P4二运标长红低' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.禁止2,
+    },
+    {
+      id: '伊甸P4二运标暗钢铁',
+      name: { en: '伊甸P4二运标暗钢铁' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.攻击1,
+    },
+    {
+      id: '伊甸P4二运标黄分摊',
+      name: { en: '伊甸P4二运标黄分摊' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.攻击2,
+    },
+    {
+      id: '伊甸P4二运标冰月环',
+      name: { en: '伊甸P4二运标冰月环' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.攻击3,
+    },
+    {
+      id: '伊甸P4二运标水分摊',
+      name: { en: '伊甸P4二运标水分摊' },
+      type: 'select',
+      options: { en: markTypeOptions },
+      default: markTypeOptions.攻击4,
+    },
+    {
+      id: '伊甸P5第1次翅膀先拉的T',
+      name: { en: '伊甸P5第1次翅膀先拉的T' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+        },
+      },
+      default: 'MT',
+    },
+    {
+      id: '伊甸P5第2次翅膀先拉的T',
+      name: { en: '伊甸P5第2次翅膀先拉的T' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+        },
+      },
+      default: 'MT',
+    },
+    {
+      id: '伊甸P5翅膀踩塔打法',
+      name: { en: '伊甸P5翅膀踩塔打法' },
+      type: 'select',
+      options: {
+        en: {
+          '莫古力文档': '莫古力文档',
+          '正攻': '正攻',
+        },
+      },
+      default: '莫古力文档',
+    },
   ],
   overrideTimelineFile: true,
   timeline: `
@@ -356,21 +507,16 @@ hideall "--sync--"
 683.4 "无尽顿悟"
 699 "时间结晶"
 708.7 "限速"
-720.3 "光之巨浪"
 726.7 "光之巨浪"
-736.1 "碎灵一击"
 736.4 "碎灵一击"
-740.3 "神圣之翼"
 742.2 "神圣之翼"
-744.8 "神圣之翼"
 746.7 "神圣之翼"
 756 "死亡轮回"
 766.2 "无尽顿悟"
 851.6 "--sync--" StartsUsing { id: "9D72" } window 100,30
 857.6 "光尘之剑"
 884.5 "死亡轮回"
-892.8 "重获乐园"
-902.8 "光与暗的双翼"
+892.8 "复乐园"
 903.3 "光与暗的双翼"
 907.1 "光与暗的双翼"
 924.5 "星灵之剑"
@@ -380,8 +526,7 @@ hideall "--sync--"
 958.8 "潘多拉之匣"
 971 "光尘之剑"
 997.9 "死亡轮回"
-1010.3 "重获乐园"
-1020.4 "光与暗的双翼"
+1010.3 "复乐园"
 1020.8 "光与暗的双翼"
 1024.6 "光与暗的双翼"
 1036.7 "星灵之剑"
@@ -426,6 +571,11 @@ hideall "--sync--"
       soumaP4二运机制: undefined,
       soumaP4沙漏: {},
       soumaP4地火: [],
+      soumaP5翅膀属性: undefined,
+      soumaP5单轮翅膀计数: 0,
+      soumaP5翅膀全局轮次: 0,
+      soumaP5塔: [],
+      soumaP5单轮塔计数: 0,
     };
   },
   triggers: [
@@ -445,7 +595,8 @@ hideall "--sync--"
       // 9CFF = P2 四重强击
       // 9D49 = P3 地狱审判
       // 9D36 = P4 具象化
-      netRegex: { id: ['9CFF', '9D49', '9D36'], capture: true },
+      // 9D72 = P5 光尘之剑
+      netRegex: { id: ['9CFF', '9D49', '9D36', '9D72'], capture: true },
       suppressSeconds: 20,
       run: (data, matches) => {
         switch (matches.id) {
@@ -486,6 +637,18 @@ hideall "--sync--"
             data.soumaP3线存储.length = 0;
             data.soumaP3处理.length = 0;
             data.soumaP3沙漏 = {};
+            break;
+          }
+          case '9D72':
+          {
+            data.soumaPhase = 'P5';
+            data.soumaCombatantData = [];
+            data.soumaP4光之暴走连线.length = 0;
+            data.soumaP4黑暗狂水.length = 0;
+            data.soumaP4二运buff = {};
+            data.soumaP4二运机制 = undefined;
+            data.soumaP4沙漏 = {};
+            data.soumaP4地火.length = 0;
             break;
           }
         }
@@ -1528,7 +1691,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: '9D43', capture: false },
       condition: (data) => data.soumaPhase === 'P2',
-      delaySeconds: 39.7 - 6,
+      delaySeconds: 39.7 - 7,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '5' } },
     },
@@ -1537,7 +1700,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: '9D43', capture: false },
       condition: (data) => data.soumaPhase === 'P2',
-      delaySeconds: 39.7 - 5,
+      delaySeconds: 39.7 - 6,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '4' } },
     },
@@ -1546,7 +1709,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: '9D43', capture: false },
       condition: (data) => data.soumaPhase === 'P2',
-      delaySeconds: 39.7 - 4,
+      delaySeconds: 39.7 - 5,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '3' } },
     },
@@ -1555,7 +1718,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: '9D43', capture: false },
       condition: (data) => data.soumaPhase === 'P2',
-      delaySeconds: 39.7 - 3,
+      delaySeconds: 39.7 - 4,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '2' } },
     },
@@ -1564,7 +1727,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: '9D43', capture: false },
       condition: (data) => data.soumaPhase === 'P2',
-      delaySeconds: 39.7 - 2,
+      delaySeconds: 39.7 - 3,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '1' } },
     },
@@ -1666,7 +1829,7 @@ hideall "--sync--"
             })[0];
             const bf = p3BuffsIdToName[mostLongBuff.effectId];
             mostLong = bf;
-            // console.warn(name, bf);
+            // console.log(name, bf);
           }
           const type = fire ? '火' : '冰';
           const group = data.party.nameToRole_[name] === 'dps' ? 'dps' : 'tn';
@@ -2123,7 +2286,7 @@ hideall "--sync--"
         param1: '4',
         param2: [
           '40',
-          '10', // 逆
+          '10', // 顺
         ],
       },
       condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
@@ -2139,7 +2302,7 @@ hideall "--sync--"
       alertText: (data, matches, output) => {
         const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : 'L';
         // console.log(data.soumaP3水分组结果左, data.soumaP3水分组结果右);
-        // -1顺  1逆
+        // 1顺  -1逆
         const clock = matches.param2 === '40' ? -1 : 1;
         const target = data.soumaCombatantData[0];
         const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
@@ -2148,33 +2311,45 @@ hideall "--sync--"
         const dirText = Directions.outputFrom8DirNum(mtDir);
         const raidDirText = Directions.outputFrom8DirNum(raidDir);
         data.soumaCombatantData = [];
-        if (['MT', 'D1'].includes(getRpByName(data, data.me))) {
-          return output[`${dirText}${r}`]();
+        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'simple') {
+          if (['MT', 'D1'].includes(getRpByName(data, data.me))) {
+            return output[`${dirText}${r}`]();
+          }
+          // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
+          if (dirText === 'dirN' && clock === 1) {
+            // MTAC、顺、大团24
+            return output[`sp1${r}`]();
+          }
+          if (dirText === 'dirNE' && clock === -1) {
+            // MT42、逆、大团CA
+            return output[`sp2${r}`]();
+          }
+          return output[`${raidDirText}${r}`]();
+        } else if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'complex') {
+          return output[`${mtDir}${clock === -1 ? '逆' : '顺'}`]();
         }
-        // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
-        if (dirText === 'dirN' && clock === 1) {
-          // MTAC、顺、大团42
-          return output[`sp1${r}`]();
-        }
-        if (dirText === 'dirNE' && clock === -1) {
-          // MT42、逆、大团CA
-          return output[`sp2${r}`]();
-        }
-        return output[`${raidDirText}${r}`]();
       },
       outputStrings: {
-        sp1L: { en: '右上↗（2点）' },
-        sp1R: { en: '左下↙（4点）' },
-        sp2L: { en: '下↓（C点）' },
-        sp2R: { en: '上↑（A点）' },
-        dirNL: { en: '上↑（A点）' },
-        dirNR: { en: '下↓（C点）' },
-        dirNEL: { en: '左下↙（4点）' },
-        dirNER: { en: '右上↗（2点）' },
-        dirEL: { en: '左←（D点）' },
-        dirER: { en: '右→（B点）' },
-        dirSEL: { en: '左上↖（1点）' },
-        dirSER: { en: '右下↘（3点）' },
+        '0顺': { en: 'MTAC、大团四二' },
+        '0逆': { en: 'MTAC、大团一三' },
+        '1顺': { en: 'MT四二、大团DB' },
+        '1逆': { en: 'MT四二、大团CA' },
+        '2顺': { en: 'MTDB、大团一三' },
+        '2逆': { en: 'MTDB、大团四二' },
+        '3顺': { en: 'MT一三、大团AC' },
+        '3逆': { en: 'MT一三、大团DB' },
+        'sp1L': { en: '右上↗（2点）' },
+        'sp1R': { en: '左下↙（4点）' },
+        'sp2L': { en: '下↓（C点）' },
+        'sp2R': { en: '上↑（A点）' },
+        'dirNL': { en: '上↑（A点）' },
+        'dirNR': { en: '下↓（C点）' },
+        'dirNEL': { en: '左下↙（4点）' },
+        'dirNER': { en: '右上↗（2点）' },
+        'dirEL': { en: '左←（D点）' },
+        'dirER': { en: '右→（B点）' },
+        'dirSEL': { en: '左上↖（1点）' },
+        'dirSER': { en: '右下↘（3点）' },
       },
     },
     {
@@ -2334,7 +2509,7 @@ hideall "--sync--"
               : '沙漏';
             // console.log(dps, otherDps, priority);
             if (priority === '方形') {
-              // console.warn('方形');
+              // console.log('方形');
               const tankName = t.name;
               const dpsName = dps.name;
               if (tankName === data.me) {
@@ -2363,7 +2538,7 @@ hideall "--sync--"
             if (priority === '沙漏') {
               const healerName = nearByTank.find((v) => v.role === 'healer').name;
               const dpsName = otherDps.name;
-              // console.warn('沙漏形', healerName, dpsName);
+              // console.log('沙漏形', healerName, dpsName);
               if (healerName === data.me) {
                 return {
                   alarmText: output.switch({
@@ -2525,5 +2700,197 @@ hideall "--sync--"
         mornAfah: { en: '集合分摊' },
       },
     },
-  ],
+    {
+      id: 'Souma 伊甸 P4 时间结晶',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D6A', '9D30'], capture: true },
+      condition: (data) => data.soumaPhase === 'P4',
+      suppressSeconds: 1,
+      response: Responses.bigAoe(),
+      run: (data) => {
+        data.soumaP4阶段 = '二运';
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶BUFF',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.values(p4buffs) },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '二运',
+      preRun: (data, matches) => {
+        (data.soumaP4二运buff[matches.target] ??= []).push(matches);
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶BUFF 初始预提醒',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.values(p4buffs), capture: false },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '二运',
+      delaySeconds: 0.5,
+      suppressSeconds: 1,
+      alertText: (data, _matches, output) => {
+        const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+        const allBuffs = Object.entries(data.soumaP4二运buff).map(([name, buffs]) => {
+          return { name, buffs };
+        });
+        const getPartner = (name, effectId, duration) => {
+          return allBuffs.find((member) =>
+            member.name !== name &&
+            member.buffs.find((b) => b.effectId === effectId && b.duration === duration)
+          );
+        };
+        const playersGimmick = {};
+        const gimmickIds = {
+          '冰月环': 0,
+          '水分摊': 0,
+          '暗钢铁': 0,
+          '黄分摊': 0,
+          '短红低': 0,
+          '短红高': 0,
+          '长红低': 0,
+          '长红高': 0,
+        };
+        data.party.details.map((v) => ({ id: v.id, name: v.name })).forEach(({ name, id }) => {
+          const youBuff = data.soumaP4二运buff[name];
+          if (youBuff.find((v) => v.effectId === p4buffs.红buff)?.duration === '17.00') {
+            // 短红
+            const partner = getPartner(name, p4buffs.红buff, '17.00');
+            if (!partner) {
+              return output.unknown();
+            }
+            const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
+                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+              ? '高'
+              : '低';
+            playersGimmick[name] = `短红${priority}`;
+            gimmickIds[`短红${priority}`] = parseInt(id, 16);
+          } else if (youBuff.find((v) => v.effectId === p4buffs.红buff)?.duration === '40.00') {
+            // 长红
+            const partner = getPartner(name, p4buffs.红buff, '40.00');
+            if (!partner) {
+              return output.unknown();
+            }
+            const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
+                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+              ? '高'
+              : '低';
+            playersGimmick[name] = `长红${priority}`;
+            gimmickIds[`长红${priority}`] = parseInt(id, 16);
+          } else if (youBuff.find((v) => v.effectId === p4buffs.暗钢铁)) {
+            playersGimmick[name] = '暗钢铁';
+            gimmickIds.暗钢铁 = parseInt(id, 16);
+          } else if (youBuff.find((v) => v.effectId === p4buffs.水分摊)) {
+            playersGimmick[name] = '水分摊';
+            gimmickIds.水分摊 = parseInt(id, 16);
+          } else if (youBuff.find((v) => v.effectId === p4buffs.冰月环)) {
+            playersGimmick[name] = '冰月环';
+            gimmickIds.冰月环 = parseInt(id, 16);
+          } else if (youBuff.find((v) => v.effectId === p4buffs.黄分摊)) {
+            playersGimmick[name] = '黄分摊';
+            gimmickIds.黄分摊 = parseInt(id, 16);
+          }
+        });
+        data.soumaP4二运机制 = playersGimmick[data.me];
+        if (data.triggerSetConfig.伊甸P4二运机制标点 === '开') {
+          // console.log(playersGimmick, gimmickIds);
+          mark(gimmickIds.短红高, data.triggerSetConfig.伊甸P4二运标短红高.toString(), false);
+          mark(gimmickIds.短红低, data.triggerSetConfig.伊甸P4二运标短红低.toString(), false);
+          mark(gimmickIds.长红高, data.triggerSetConfig.伊甸P4二运标长红高.toString(), false);
+          mark(gimmickIds.长红低, data.triggerSetConfig.伊甸P4二运标长红低.toString(), false);
+          mark(gimmickIds.暗钢铁, data.triggerSetConfig.伊甸P4二运标暗钢铁.toString(), false);
+          mark(gimmickIds.黄分摊, data.triggerSetConfig.伊甸P4二运标黄分摊.toString(), false);
+          mark(gimmickIds.冰月环, data.triggerSetConfig.伊甸P4二运标冰月环.toString(), false);
+          mark(gimmickIds.水分摊, data.triggerSetConfig.伊甸P4二运标水分摊.toString(), false);
+          clearMark(48);
+        }
+        if (!data.soumaP4二运机制) {
+          return output.unknown();
+        }
+        return output[data.soumaP4二运机制]();
+      },
+      outputStrings: {
+        unknown: { en: '???' },
+        短红高: { en: '短红（高）：去左←' },
+        短红低: { en: '短红（低）：去右→' },
+        长红高: { en: '长红（高）：去左下↙' },
+        长红低: { en: '长红（低）：去右下↘' },
+        暗钢铁: { en: '蓝暗：去上半场紫线' },
+        黄分摊: { en: '蓝风：去下半场紫线' },
+        冰月环: { en: '蓝冰：去下半场紫线' },
+        水分摊: { en: '蓝水：去下半场紫线' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶 线实体',
+      type: 'AddedCombatant',
+      netRegex: { npcNameId: '9823' },
+      condition: (data) => data.soumaPhase === 'P4',
+      run: (data, matches) => {
+        const id = matches.id.toUpperCase();
+        data.soumaP4沙漏[id] = Directions.xyTo8DirNum(
+          parseInt(matches.x),
+          parseInt(matches.y),
+          100,
+          100,
+        );
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶 线',
+      type: 'Tether',
+      // '0085' Purple
+      netRegex: { id: '0085' },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '二运',
+      durationSeconds: 29,
+      suppressSeconds: 1,
+      infoText: (data, matches, output) => {
+        const dir = data.soumaP4沙漏[matches.sourceId] % 4;
+        const type = dir === 1 ? '左下右上安全' : '左上右下安全';
+        return output[`${data.soumaP4二运机制}${type}`]?.() ?? output.unknown();
+      },
+      outputStrings: {
+        短红高左下右上安全: { en: 'D点←撞头 => 向下躲钢铁' },
+        短红低左下右上安全: { en: 'B点→撞头 => 分摊(躲开A)' },
+        长红高左下右上安全: { en: '左下↙击退人群 => 稍后撞头' },
+        长红低左下右上安全: { en: '右下↘ => 躲钢铁 => 撞头' },
+        暗钢铁左下右上安全: { en: '右上↗ => 分摊(躲开A) => 踩圈' },
+        水分摊左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
+        冰月环左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
+        黄分摊左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
+        短红高左上右下安全: { en: 'D点←撞头 => 分摊(躲开A)' },
+        短红低左上右下安全: { en: 'B点→撞头 => 向下躲钢铁' },
+        长红高左上右下安全: { en: '左下↙ => 躲钢铁 => 撞头' },
+        长红低左上右下安全: { en: '右下↘击退人群 => 稍后撞头' },
+        暗钢铁左上右下安全: { en: '左上↖ => 分摊(躲开A)' },
+        水分摊左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
+        冰月环左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
+        黄分摊左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
+        unknown: { en: '???' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶 地火',
+      type: 'StartsUsingExtra',
+      netRegex: { id: ['9D3B', '9D3C'] },
+      preRun: (data, matches) => data.soumaP4地火.push(matches),
+      durationSeconds: 8.5,
+      suppressSeconds: 1,
+      alarmText: (data, _matches, output) => {
+        if (data.soumaP4地火.length < 2) {
+          return;
+        }
+        const dirs = data.soumaP4地火.map((v) =>
+          Directions.xyTo4DirNum(parseInt(v.x), parseInt(v.y), 100, 100)
+        ).sort((a, b) => a - b);
+        // console.log(data.soumaP4地火);
+        return output[dirs.join('')]();
+      },
+      outputStrings: {
+        '01': { en: '回返：2点' },
+        '12': { en: '回返：3点' },
+        '23': { en: '回返：4点' },
+        '03': { en: '回返：1点' },
+      },
+    },
+    // #endregion
+    ],
 });
