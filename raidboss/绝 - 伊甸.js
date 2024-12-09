@@ -39,22 +39,36 @@ const markTypeOptions = {
   方块: 'square',
 };
 const p3buffs = {
+  // 延迟咏唱：黑暗神圣 分摊
   '摊': '996',
+  // 延迟咏唱：黑暗爆炎 分散
   '火': '997',
+  // 延迟咏唱：暗影之眼 石化
   '眼': '998',
+  // 延迟咏唱：暗炎喷发 分散
   '圈': '99C',
+  // 延迟咏唱：黑暗狂水 分摊
   '水': '99D',
+  // 延迟咏唱：黑暗冰封 月环
   '冰': '99E',
-  '返': '9A0', // 延迟咏唱：回返
+  // 延迟咏唱：回返
+  '返': '9A0',
 };
 const p4buffs = {
+  // 圣龙牙 红buff 需要撞头
   红buff: 'CBF',
+  // 圣龙爪 蓝buff 需要踩圈
   蓝buff: 'CC0',
+  // 延迟咏唱：黑暗冰封 月环
   冰月环: '99E',
+  // 延迟咏唱：黑暗暴风 风击退
   风击退: '99F',
+  // 延迟咏唱：黑暗神圣 分摊
   黄分摊: '996',
+  // 延迟咏唱：暗炎喷发 暗钢铁
   暗钢铁: '99C',
-  水分摊: '99D', // 延迟咏唱：黑暗狂水 分摊
+  // 延迟咏唱：黑暗狂水 分摊
+  水分摊: '99D',
 };
 const p3BuffsIdToName = Object.fromEntries(Object.entries(p3buffs).map(([name, id]) => [id, name]));
 const p3Outputs = {
@@ -98,12 +112,18 @@ const p5MtMapping = {
   '5暗': '1',
   '1暗': '3',
   '3暗': '5',
+  // 3偏B
   '5暗opt': 'ESE',
+  // 3偏C
   '5光opt': 'SSE',
+  // 4偏C
   '1暗opt': 'SSW',
+  // 4偏B
   '1光opt': 'WSW',
+  // A偏1
   '3暗opt': 'NNW',
-  '3光opt': 'NNE', // A偏2
+  // A偏2
+  '3光opt': 'NNE',
 };
 const p5TowerMapping = { '33': 5, '34': 1, '35': 3 };
 const p5TowerOutput = {
@@ -134,12 +154,18 @@ const p5TowerOutput = {
   dir3opt光: { en: '右下↘' },
   dir5opt暗: { en: '上↑' },
   dir5opt光: { en: '左下↙' },
-  dirESE: { en: '右下↘（3偏B）' },
-  dirSSE: { en: '右下↘（3偏C）' },
-  dirSSW: { en: '左下↙（4偏C）' },
-  dirWSW: { en: '左下↙（4偏B）' },
+  dirESE: { en: '右下↘（3B偏B）' },
+  dirSSE: { en: '右下↘（3B偏3）' },
+  dirSSW: { en: '左下↙（4D偏4）' },
+  dirWSW: { en: '左下↙（4D偏D）' },
   dirNNW: { en: '上↑（A偏1）' },
   dirNNE: { en: '上↑（A偏2）' },
+  dark: { en: '暗左' },
+  light: { en: '光右' },
+  lightMT: { en: '光右目标圈' },
+  lightST: { en: '光远死刑' },
+  darkMT: { en: '暗左目标圈' },
+  darkST: { en: '暗近死刑' },
 };
 const getTowerResult = (data, output) => {
   data.soumaP5单轮翅膀计数++;
@@ -154,11 +180,11 @@ const getTowerResult = (data, output) => {
   const attr = data.soumaP5单轮翅膀计数 === 1
     ? data.soumaP5翅膀属性
     : data.soumaP5翅膀属性 === '光'
-    ? '暗'
-    : '光';
+      ? '暗'
+      : '光';
   const opt = data.soumaP5单轮翅膀计数 === 3
     ? ''
-    : (data.triggerSetConfig.伊甸P5翅膀踩塔打法 === '正攻' ? '' : `opt${attr}`);
+    : (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? `opt${attr}` : '');
   const otherOutput = `dir${towerDir}${opt}`;
   if (rule[data.soumaP5单轮翅膀计数 - 1].includes(rp)) {
     return { alertText: output.getTower({ pos: output[`tower${towerDir}${opt}`]() }) };
@@ -169,6 +195,9 @@ const getTowerResult = (data, output) => {
   if (data.role === 'tank') {
     return getTankResult(data, output, towerDir, otherOutput);
   }
+  if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
+    return { infoText: output[attr === '光' ? 'light' : 'dark']() };
+  }
   return { infoText: output.other({ pos: output[otherOutput]() }) };
 };
 const getTankResult = (data, output, towerDir, otherOutput) => {
@@ -176,9 +205,9 @@ const getTankResult = (data, output, towerDir, otherOutput) => {
   const attr = data.soumaP5单轮翅膀计数 === 1
     ? data.soumaP5翅膀属性
     : data.soumaP5翅膀属性 === '光'
-    ? '暗'
-    : '光';
-  const opt = data.triggerSetConfig.伊甸P5翅膀踩塔打法 === '正攻' ? '' : 'opt';
+      ? '暗'
+      : '光';
+  const opt = data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? 'opt' : '';
   if (
     (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] === rp &&
       data.soumaP5单轮翅膀计数 === 1) ||
@@ -188,10 +217,16 @@ const getTankResult = (data, output, towerDir, otherOutput) => {
     const mtDir = p5MtMapping[`${towerDir}${attr}${opt}`];
     const mtOutput = `dir${mtDir}`;
     // console.log(towerDir, attr, opt, mtOutput, output[mtOutput]!());
+    if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
+      return { alarmText: output[attr === '光' ? 'lightMT' : 'darkMT']() };
+    }
     return { alarmText: output.mt({ pos: output[mtOutput]() }) };
   }
   // 当前二仇
   const buster = attr === '光' ? output.lightBuster() : output.darkBuster();
+  if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
+    return { alarmText: output[attr === '光' ? 'lightST' : 'darkST']() };
+  }
   return { alarmText: output.st({ pos: output[otherOutput](), buster: buster }) };
 };
 Options.Triggers.push({
@@ -429,16 +464,76 @@ Options.Triggers.push({
       default: 'MT',
     },
     {
-      id: '伊甸P5翅膀踩塔打法',
-      name: { en: '伊甸P5翅膀踩塔打法' },
+      id: '伊甸P5翅膀踩塔报点',
+      name: { en: '伊甸P5翅膀踩塔报点' },
       type: 'select',
       options: {
         en: {
-          '莫古力文档': '莫古力文档',
-          '正攻': '正攻',
+          '莫古力文档报点位': '莫古力',
+          '正攻报点位': '正攻',
+          '仅黑左/白右': '仅黑左/白右',
         },
       },
-      default: '莫古力文档',
+      default: '仅黑左/白右',
+      comment: {
+        en: '报点位感觉有点乱…',
+      },
+    },
+    {
+      id: '伊甸P5挡枪顺序1',
+      name: { en: '伊甸P5挡枪顺序1' },
+      type: 'select',
+      options: {
+        en: {
+          'MT/ST': 'MT/ST',
+          'H1/H2': 'H1/H2',
+          'D1/D2': 'D1/D2',
+          'D3/D4': 'D3/D4',
+        },
+      },
+      default: 'MT/ST',
+    },
+    {
+      id: '伊甸P5挡枪顺序2',
+      name: { en: '伊甸P5挡枪顺序2' },
+      type: 'select',
+      options: {
+        en: {
+          'MT/ST': 'MT/ST',
+          'H1/H2': 'H1/H2',
+          'D1/D2': 'D1/D2',
+          'D3/D4': 'D3/D4',
+        },
+      },
+      default: 'H1/H2',
+    },
+    {
+      id: '伊甸P5挡枪顺序3',
+      name: { en: '伊甸P5挡枪顺序3' },
+      type: 'select',
+      options: {
+        en: {
+          'MT/ST': 'MT/ST',
+          'H1/H2': 'H1/H2',
+          'D1/D2': 'D1/D2',
+          'D3/D4': 'D3/D4',
+        },
+      },
+      default: 'D1/D2',
+    },
+    {
+      id: '伊甸P5挡枪顺序4',
+      name: { en: '伊甸P5挡枪顺序4' },
+      type: 'select',
+      options: {
+        en: {
+          'MT/ST': 'MT/ST',
+          'H1/H2': 'H1/H2',
+          'D1/D2': 'D1/D2',
+          'D3/D4': 'D3/D4',
+        },
+      },
+      default: 'D3/D4',
     },
   ],
   overrideTimelineFile: true,
@@ -495,6 +590,7 @@ hideall "--sync--"
 571.4 "暗夜舞蹈"
 580.7 "脉冲星震波"
 594.4 "记忆终结"
+## P4
 611.5 "具象化"
 637.1 "光暗龙诗"
 637.1 "光与暗的龙诗"
@@ -513,6 +609,7 @@ hideall "--sync--"
 746.7 "神圣之翼"
 756 "死亡轮回"
 766.2 "无尽顿悟"
+## P5
 851.6 "--sync--" StartsUsing { id: "9D72" } window 100,30
 857.6 "光尘之剑"
 884.5 "死亡轮回"
@@ -576,10 +673,12 @@ hideall "--sync--"
       soumaP5翅膀全局轮次: 0,
       soumaP5塔: [],
       soumaP5单轮塔计数: 0,
+      soumaP5星灵之剑: [],
+      soumaP5星灵之剑阶段: false,
     };
   },
   triggers: [
-    // 通用
+    // #region 通用
     {
       id: 'Souma 绝伊甸 Headmarker',
       type: 'HeadMarker',
@@ -601,59 +700,60 @@ hideall "--sync--"
       run: (data, matches) => {
         switch (matches.id) {
           case '9CFF':
-          {
-            data.soumaPhase = 'P2';
-            data.soumaCombatantData = [];
-            data.soumaP1线存储.length = 0;
-            data.soumaP1线处理 = undefined;
-            data.soumaP1雾龙ids.length = 0;
-            data.soumaP1雾龙属性 = undefined;
-            break;
-          }
+            {
+              data.soumaPhase = 'P2';
+              data.soumaCombatantData = [];
+              data.soumaP1线存储.length = 0;
+              data.soumaP1线处理 = undefined;
+              data.soumaP1雾龙ids.length = 0;
+              data.soumaP1雾龙属性 = undefined;
+              break;
+            }
           case '9D49':
-          {
-            data.soumaPhase = 'P3';
-            data.soumaCombatantData = [];
-            data.soumaP2DD处理 = undefined;
-            data.soumaP2镜中奇遇 = false;
-            data.soumaP2镜中奇遇分身.length = 0;
-            data.soumaP2光之暴走连线.length = 0;
-            data.soumaP2光暴过量光层数 = 0;
-            data.soumaP2冰圈初始位置 = undefined;
-            data.soumaP2冰圈初始位置DirNum.length = 0;
-            data.soumaP2冰花点名.length = 0;
-            data.soumaP2钢月 = undefined;
-            break;
-          }
+            {
+              data.soumaPhase = 'P3';
+              data.soumaCombatantData = [];
+              data.soumaP2DD处理 = undefined;
+              data.soumaP2镜中奇遇 = false;
+              data.soumaP2镜中奇遇分身.length = 0;
+              data.soumaP2光之暴走连线.length = 0;
+              data.soumaP2光暴过量光层数 = 0;
+              data.soumaP2冰圈初始位置 = undefined;
+              data.soumaP2冰圈初始位置DirNum.length = 0;
+              data.soumaP2冰花点名.length = 0;
+              data.soumaP2钢月 = undefined;
+              break;
+            }
           case '9D36':
-          {
-            data.soumaPhase = 'P4';
-            data.soumaCombatantData = [];
-            data.soumaP3MyDir = undefined;
-            data.soumaP3一运buff = {};
-            data.soumaP3二运水.length = 0;
-            data.soumaP3水分组结果左.length = 0;
-            data.soumaP3水分组结果右.length = 0;
-            data.soumaP3线存储.length = 0;
-            data.soumaP3处理.length = 0;
-            data.soumaP3沙漏 = {};
-            break;
-          }
+            {
+              data.soumaPhase = 'P4';
+              data.soumaCombatantData = [];
+              data.soumaP3MyDir = undefined;
+              data.soumaP3一运buff = {};
+              data.soumaP3二运水.length = 0;
+              data.soumaP3水分组结果左.length = 0;
+              data.soumaP3水分组结果右.length = 0;
+              data.soumaP3线存储.length = 0;
+              data.soumaP3处理.length = 0;
+              data.soumaP3沙漏 = {};
+              break;
+            }
           case '9D72':
-          {
-            data.soumaPhase = 'P5';
-            data.soumaCombatantData = [];
-            data.soumaP4光之暴走连线.length = 0;
-            data.soumaP4黑暗狂水.length = 0;
-            data.soumaP4二运buff = {};
-            data.soumaP4二运机制 = undefined;
-            data.soumaP4沙漏 = {};
-            data.soumaP4地火.length = 0;
-            break;
-          }
+            {
+              data.soumaPhase = 'P5';
+              data.soumaCombatantData = [];
+              data.soumaP4光之暴走连线.length = 0;
+              data.soumaP4黑暗狂水.length = 0;
+              data.soumaP4二运buff = {};
+              data.soumaP4二运机制 = undefined;
+              data.soumaP4沙漏 = {};
+              data.soumaP4地火.length = 0;
+              break;
+            }
         }
       },
     },
+    // #endregion 通用
     // #region P1
     {
       id: 'Souma 绝伊甸 P1 老父亲AOE',
@@ -1058,9 +1158,8 @@ hideall "--sync--"
             6,
           ).map((v) => output[v]());
           const youIsNothing = nothing.findIndex((v) => v.name === data.me);
-          const gimmick = `${
-            youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
-          }`;
+          const gimmick = `${youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
+            }`;
           const handleOrder = output.handleEl({
             el1: elements[playerHandle[0] - 1],
             el2: elements[playerHandle[1] - 1],
@@ -1189,12 +1288,8 @@ hideall "--sync--"
       id: 'Souma 伊甸 P2 钢铁还是月环',
       type: 'StartsUsing',
       netRegex: { id: ['9D0A', '9D0B'] },
-      run: (data, matches, output) => {
-        data.soumaP2钢月 = matches.id === '9D0A' ? output.钢铁() : output.月环();
-      },
-      outputStrings: {
-        钢铁: { en: '钢铁外' },
-        月环: { en: '月环内' },
+      run: (data, matches) => {
+        data.soumaP2钢月 = matches.id === '9D0A' ? '钢铁' : '月环';
       },
     },
     {
@@ -1219,11 +1314,13 @@ hideall "--sync--"
           data.soumaP2冰花点名.length = 0;
           data.soumaP2DD处理 = 玩家职能 === 冰花职能 ? '冰花' : '水波';
           return 玩家职能 === 冰花职能
-            ? output.冰花({ go: data.soumaP2钢月, direction: 冰花去 })
-            : output.水波({ go: data.soumaP2钢月, direction: 水波去 });
+            ? output.冰花({ go: output[data.soumaP2钢月](), direction: 冰花去 })
+            : output.水波({ go: output[data.soumaP2钢月](), direction: 水波去 });
         }
       },
       outputStrings: {
+        钢铁: { en: '钢铁外' },
+        月环: { en: '月环内' },
         正: { en: '正' },
         斜: { en: '斜' },
         水波: { en: '${go} + ${direction} 水波(靠近)' },
@@ -1846,9 +1943,8 @@ hideall "--sync--"
           playersGimmick[name] = k;
         }
         const gimmick = playersGimmick[data.me];
-        const back = `${
-          { '圈': output.回返圈(), '眼': output.回返眼(), '水': output.回返水() }[mostLong] ?? '?'
-        }`;
+        const back = `${{ '圈': output.回返圈(), '眼': output.回返眼(), '水': output.回返水() }[mostLong] ?? '?'
+          }`;
         if (gimmick === '短火') {
           data.soumaP3处理 = ['2', mostLong, '0', '1', '0', '0'];
           const pithy = output.短火口诀({ back });
@@ -2058,13 +2154,21 @@ hideall "--sync--"
         }
       },
       outputStrings: {
+        // 上↑
         dirN: 'A点',
+        // 右上↗
         dirNE: '2点',
+        // 右→
         dirE: 'B点',
+        // 右下↘
         dirSE: '3点',
+        // 下↓
         dirS: 'C点',
+        // 左下↙
         dirSW: '4点',
+        // 左←
         dirW: 'D点',
+        // 左上↖
         dirNW: '1点',
         text: {
           en: '${dir}方向处理',
@@ -2285,8 +2389,10 @@ hideall "--sync--"
         category: '019D',
         param1: '4',
         param2: [
+          // 逆
           '40',
-          '10', // 顺
+          // 顺
+          '10',
         ],
       },
       condition: (data) => data.soumaPhase === 'P3' && data.soumaP3阶段 === '二运',
@@ -2503,8 +2609,8 @@ hideall "--sync--"
             const dps = nearByTank.find((v) => v.role === 'dps');
             const otherDps = lines.find((v) => v.role === 'dps' && v.name !== dps.name);
             const priority = dpsGroup.findIndex((v) => v === dps.rp) < dpsGroup.findIndex((v) =>
-                v === otherDps.rp
-              )
+              v === otherDps.rp
+            )
               ? '方形'
               : '沙漏';
             // console.log(dps, otherDps, priority);
@@ -2626,10 +2732,9 @@ hideall "--sync--"
             : 'Right';
           return output.stack({
             dir: output[
-              `from${playerSide}To${
-                playerSide === freeWaterPos
-                  ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
-                  : towerWaterPos
+              `from${playerSide}To${playerSide === freeWaterPos
+                ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
+                : towerWaterPos
               }`
             ](),
           });
@@ -2758,7 +2863,7 @@ hideall "--sync--"
               return output.unknown();
             }
             const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
-                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+              sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
               ? '高'
               : '低';
             playersGimmick[name] = `短红${priority}`;
@@ -2770,7 +2875,7 @@ hideall "--sync--"
               return output.unknown();
             }
             const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
-                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+              sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
               ? '高'
               : '低';
             playersGimmick[name] = `长红${priority}`;
@@ -2891,6 +2996,6 @@ hideall "--sync--"
         '03': { en: '回返：1点' },
       },
     },
-    // #endregion
-    ],
+    // #endregion P4
+  ],
 });
