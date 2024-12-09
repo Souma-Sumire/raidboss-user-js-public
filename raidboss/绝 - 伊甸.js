@@ -2436,7 +2436,7 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        '0顺': { en: 'MTAC、大团四二' },
+        '0顺': { en: 'MTAC、大团二四' },
         '0逆': { en: 'MTAC、大团一三' },
         '1顺': { en: 'MT四二、大团DB' },
         '1逆': { en: 'MT四二、大团CA' },
