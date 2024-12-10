@@ -180,8 +180,8 @@ const getTowerResult = (data, output) => {
   const attr = data.soumaP5单轮翅膀计数 === 1
     ? data.soumaP5翅膀属性
     : data.soumaP5翅膀属性 === '光'
-      ? '暗'
-      : '光';
+    ? '暗'
+    : '光';
   const opt = data.soumaP5单轮翅膀计数 === 3
     ? ''
     : (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? `opt${attr}` : '');
@@ -205,8 +205,8 @@ const getTankResult = (data, output, towerDir, otherOutput) => {
   const attr = data.soumaP5单轮翅膀计数 === 1
     ? data.soumaP5翅膀属性
     : data.soumaP5翅膀属性 === '光'
-      ? '暗'
-      : '光';
+    ? '暗'
+    : '光';
   const opt = data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? 'opt' : '';
   if (
     (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] === rp &&
@@ -700,56 +700,56 @@ hideall "--sync--"
       run: (data, matches) => {
         switch (matches.id) {
           case '9CFF':
-            {
-              data.soumaPhase = 'P2';
-              data.soumaCombatantData = [];
-              data.soumaP1线存储.length = 0;
-              data.soumaP1线处理 = undefined;
-              data.soumaP1雾龙ids.length = 0;
-              data.soumaP1雾龙属性 = undefined;
-              break;
-            }
+          {
+            data.soumaPhase = 'P2';
+            data.soumaCombatantData = [];
+            data.soumaP1线存储.length = 0;
+            data.soumaP1线处理 = undefined;
+            data.soumaP1雾龙ids.length = 0;
+            data.soumaP1雾龙属性 = undefined;
+            break;
+          }
           case '9D49':
-            {
-              data.soumaPhase = 'P3';
-              data.soumaCombatantData = [];
-              data.soumaP2DD处理 = undefined;
-              data.soumaP2镜中奇遇 = false;
-              data.soumaP2镜中奇遇分身.length = 0;
-              data.soumaP2光之暴走连线.length = 0;
-              data.soumaP2光暴过量光层数 = 0;
-              data.soumaP2冰圈初始位置 = undefined;
-              data.soumaP2冰圈初始位置DirNum.length = 0;
-              data.soumaP2冰花点名.length = 0;
-              data.soumaP2钢月 = undefined;
-              break;
-            }
+          {
+            data.soumaPhase = 'P3';
+            data.soumaCombatantData = [];
+            data.soumaP2DD处理 = undefined;
+            data.soumaP2镜中奇遇 = false;
+            data.soumaP2镜中奇遇分身.length = 0;
+            data.soumaP2光之暴走连线.length = 0;
+            data.soumaP2光暴过量光层数 = 0;
+            data.soumaP2冰圈初始位置 = undefined;
+            data.soumaP2冰圈初始位置DirNum.length = 0;
+            data.soumaP2冰花点名.length = 0;
+            data.soumaP2钢月 = undefined;
+            break;
+          }
           case '9D36':
-            {
-              data.soumaPhase = 'P4';
-              data.soumaCombatantData = [];
-              data.soumaP3MyDir = undefined;
-              data.soumaP3一运buff = {};
-              data.soumaP3二运水.length = 0;
-              data.soumaP3水分组结果左.length = 0;
-              data.soumaP3水分组结果右.length = 0;
-              data.soumaP3线存储.length = 0;
-              data.soumaP3处理.length = 0;
-              data.soumaP3沙漏 = {};
-              break;
-            }
+          {
+            data.soumaPhase = 'P4';
+            data.soumaCombatantData = [];
+            data.soumaP3MyDir = undefined;
+            data.soumaP3一运buff = {};
+            data.soumaP3二运水.length = 0;
+            data.soumaP3水分组结果左.length = 0;
+            data.soumaP3水分组结果右.length = 0;
+            data.soumaP3线存储.length = 0;
+            data.soumaP3处理.length = 0;
+            data.soumaP3沙漏 = {};
+            break;
+          }
           case '9D72':
-            {
-              data.soumaPhase = 'P5';
-              data.soumaCombatantData = [];
-              data.soumaP4光之暴走连线.length = 0;
-              data.soumaP4黑暗狂水.length = 0;
-              data.soumaP4二运buff = {};
-              data.soumaP4二运机制 = undefined;
-              data.soumaP4沙漏 = {};
-              data.soumaP4地火.length = 0;
-              break;
-            }
+          {
+            data.soumaPhase = 'P5';
+            data.soumaCombatantData = [];
+            data.soumaP4光之暴走连线.length = 0;
+            data.soumaP4黑暗狂水.length = 0;
+            data.soumaP4二运buff = {};
+            data.soumaP4二运机制 = undefined;
+            data.soumaP4沙漏 = {};
+            data.soumaP4地火.length = 0;
+            break;
+          }
         }
       },
     },
@@ -833,7 +833,7 @@ hideall "--sync--"
         if (matches.target === data.me) {
           return output.me();
         }
-        return output.text({ player: data.party.member(matches.target) });
+        return output.text({ player: data.party.member(matches.target).job });
       },
       outputStrings: {
         me: { en: '爆印死刑' },
@@ -1158,8 +1158,9 @@ hideall "--sync--"
             6,
           ).map((v) => output[v]());
           const youIsNothing = nothing.findIndex((v) => v.name === data.me);
-          const gimmick = `${youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
-            }`;
+          const gimmick = `${
+            youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
+          }`;
           const handleOrder = output.handleEl({
             el1: elements[playerHandle[0] - 1],
             el2: elements[playerHandle[1] - 1],
@@ -1943,8 +1944,9 @@ hideall "--sync--"
           playersGimmick[name] = k;
         }
         const gimmick = playersGimmick[data.me];
-        const back = `${{ '圈': output.回返圈(), '眼': output.回返眼(), '水': output.回返水() }[mostLong] ?? '?'
-          }`;
+        const back = `${
+          { '圈': output.回返圈(), '眼': output.回返眼(), '水': output.回返水() }[mostLong] ?? '?'
+        }`;
         if (gimmick === '短火') {
           data.soumaP3处理 = ['2', mostLong, '0', '1', '0', '0'];
           const pithy = output.短火口诀({ back });
@@ -2214,7 +2216,7 @@ hideall "--sync--"
       infoText: (data, matches, output) => {
         if (matches.target === data.me)
           return;
-        return output.busterOn({ player: data.party.member(matches.target) });
+        return output.busterOn({ player: data.party.member(matches.target).job });
       },
       outputStrings: {
         busterOn: { en: '分摊死刑点 ${player}' },
@@ -2369,10 +2371,13 @@ hideall "--sync--"
           const switcher = leftSwitcherNames.has(data.me)
             ? rightSwitcherNamesArr[meIndex]
             : leftSwitcherNamesArr[meIndex];
+          const alarmText = output.switch({
+            switcher: data.party.member(switcher).job,
+          });
           return {
-            alarmText: output.switch({
-              switcher: data.party.member(switcher).job,
-            }),
+            alarmText: alarmText,
+            infoText: switcherInfo,
+            tts: alarmText,
           };
         }
         const no = output.no();
@@ -2609,8 +2614,8 @@ hideall "--sync--"
             const dps = nearByTank.find((v) => v.role === 'dps');
             const otherDps = lines.find((v) => v.role === 'dps' && v.name !== dps.name);
             const priority = dpsGroup.findIndex((v) => v === dps.rp) < dpsGroup.findIndex((v) =>
-              v === otherDps.rp
-            )
+                v === otherDps.rp
+              )
               ? '方形'
               : '沙漏';
             // console.log(dps, otherDps, priority);
@@ -2622,7 +2627,7 @@ hideall "--sync--"
                 return {
                   alarmText: output.switch({
                     direction: output.dirDps(),
-                    switcher: data.party.member(dpsName),
+                    switcher: data.party.member(dpsName).job,
                   }),
                 };
               }
@@ -2630,14 +2635,14 @@ hideall "--sync--"
                 return {
                   alarmText: output.switch({
                     direction: output.dirTank(),
-                    switcher: data.party.member(tankName),
+                    switcher: data.party.member(tankName).job,
                   }),
                 };
               }
               return {
                 alertText: output.rectangle({
-                  tank: data.party.member(tankName),
-                  dps: data.party.member(dpsName),
+                  tank: data.party.member(tankName).job,
+                  dps: data.party.member(dpsName).job,
                 }),
               };
             }
@@ -2649,7 +2654,7 @@ hideall "--sync--"
                 return {
                   alarmText: output.switch({
                     direction: output.dirDps(),
-                    switcher: data.party.member(dpsName),
+                    switcher: data.party.member(dpsName).job,
                   }),
                 };
               }
@@ -2657,14 +2662,14 @@ hideall "--sync--"
                 return {
                   alarmText: output.switch({
                     direction: output.dirHealer(),
-                    switcher: data.party.member(healerName),
+                    switcher: data.party.member(healerName).job,
                   }),
                 };
               }
               return {
                 alertText: output.hourglass({
-                  healer: data.party.member(healerName),
-                  dps: data.party.member(dpsName),
+                  healer: data.party.member(healerName).job,
+                  dps: data.party.member(dpsName).job,
                 }),
               };
             }
@@ -2732,9 +2737,10 @@ hideall "--sync--"
             : 'Right';
           return output.stack({
             dir: output[
-              `from${playerSide}To${playerSide === freeWaterPos
-                ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
-                : towerWaterPos
+              `from${playerSide}To${
+                playerSide === freeWaterPos
+                  ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
+                  : towerWaterPos
               }`
             ](),
           });
@@ -2863,7 +2869,7 @@ hideall "--sync--"
               return output.unknown();
             }
             const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
-              sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
               ? '高'
               : '低';
             playersGimmick[name] = `短红${priority}`;
@@ -2875,7 +2881,7 @@ hideall "--sync--"
               return output.unknown();
             }
             const priority = sortRule.findIndex((v) => v === getRpByName(data, name)) -
-              sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
+                  sortRule.findIndex((v) => v === getRpByName(data, partner.name)) < 0
               ? '高'
               : '低';
             playersGimmick[name] = `长红${priority}`;
@@ -2997,5 +3003,202 @@ hideall "--sync--"
       },
     },
     // #endregion P4
+    // #region P5
+    {
+      id: 'Souma 伊甸 P5 光尘之剑',
+      type: 'StartsUsing',
+      netRegex: { id: '9D72', capture: false },
+      response: Responses.bigAoe(),
+    },
+    {
+      id: 'Souma 伊甸 P5 死亡轮回',
+      type: 'StartsUsing',
+      netRegex: { id: '9D76', capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      delaySeconds: 5,
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '分组分摊' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 死亡轮回后',
+      type: 'StartsUsing',
+      netRegex: { id: '9D76', capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      delaySeconds: 8.5,
+      suppressSeconds: 999,
+      infoText: (data, _matches, output) => {
+        if (getRpByName(data, data.me) === 'MT')
+          return output.tank();
+        return output.text();
+      },
+      outputStrings: {
+        tank: { en: '拉正点，准备踩塔' },
+        text: { en: '准备踩塔' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 复乐园',
+      type: 'StartsUsing',
+      netRegex: { id: '9D7F', capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      // infoText: 'test',
+      run: (data) => {
+        data.soumaP5塔.length = 0;
+        data.soumaP5翅膀属性 = undefined;
+        data.soumaP5翅膀全局轮次++;
+        data.soumaP5单轮翅膀计数 = 0;
+        data.soumaP5单轮塔计数 = 0;
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 塔',
+      type: 'MapEffect',
+      netRegex: {
+        flags: '00020001',
+        // 33 左上
+        // 34 右上
+        // 35 左下
+        location: ['33', '34', '35'],
+      },
+      condition: (data) => data.soumaPhase === 'P5',
+      preRun: (data, matches) => {
+        data.soumaP5塔.push(matches);
+      },
+      delaySeconds: (data) => {
+        const res = ([0, 7, 7][data.soumaP5单轮塔计数++]);
+        return res;
+      },
+      response: (data, _matches, output) => {
+        if (data.soumaP5单轮塔计数 === 1) {
+          return;
+        }
+        return getTowerResult(data, output);
+      },
+      outputStrings: {
+        ...p5TowerOutput,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 光与暗的双翼',
+      type: 'StartsUsing',
+      // 9D79 先光再暗
+      // 9D29 先暗再光
+      netRegex: { id: ['9D79', '9D29'] },
+      condition: (data) => data.soumaPhase === 'P5',
+      preRun: (data, matches) => {
+        data.soumaP5翅膀属性 = matches.id === '9D79' ? '光' : '暗';
+      },
+      suppressSeconds: 1,
+      response: (data, _matches, output) => {
+        return getTowerResult(data, output);
+      },
+      outputStrings: {
+        ...p5TowerOutput,
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 光与暗的双翼之后',
+      type: 'StartsUsing',
+      netRegex: { id: ['9D79', '9D29'], capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      delaySeconds: 15,
+      infoText: (data, _matches, output) => {
+        if (getRpByName(data, data.me) === 'MT') {
+          return output.tank();
+        }
+        return output.text();
+      },
+      outputStrings: {
+        tank: { en: '拉正点，准备挡枪' },
+        text: { en: '准备挡枪' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 星灵之剑',
+      type: 'StartsUsing',
+      netRegex: { id: '9D7C', capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      alertText: (data, _matches, output) => {
+        const charger = data.triggerSetConfig.伊甸P5挡枪顺序1.toString().split('/');
+        const rp = getRpByName(data, data.me);
+        if (charger.includes(rp)) {
+          return output.charge();
+        }
+      },
+      run: (data) => {
+        data.soumaP5星灵之剑.length = 0;
+        data.soumaP5星灵之剑阶段 = true;
+      },
+      outputStrings: {
+        charge: { en: '站在最前' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 星灵之剑结束',
+      type: 'StartsUsing',
+      netRegex: { id: '9D7C', capture: false },
+      condition: (data) => data.soumaPhase === 'P5',
+      delaySeconds: 25,
+      run: (data) => {
+        data.soumaP5星灵之剑.length = 0;
+        data.soumaP5星灵之剑阶段 = false;
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 星灵之剑2',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: ['1044', 'CFB'],
+      },
+      condition: (data) => data.soumaPhase === 'P5' && data.soumaP5星灵之剑阶段,
+      preRun: (data, matches) => {
+        data.soumaP5星灵之剑.push(matches.target);
+      },
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          changeToOtherSide: { en: '走，换边！' },
+          dodge: { en: '走' },
+        };
+        if (data.soumaP5星灵之剑.length % 2 === 0) {
+          const turn = data.soumaP5星灵之剑.slice(-2);
+          const hasMe = turn.includes(data.me);
+          if (hasMe) {
+            return { alarmText: output.changeToOtherSide() };
+          }
+          return { alertText: output.dodge() };
+        }
+      },
+    },
+    {
+      id: 'Souma 伊甸 P5 星灵之剑3',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: ['1044', 'CFB'],
+        capture: false,
+      },
+      condition: (data) => data.soumaPhase === 'P5' && data.soumaP5星灵之剑阶段,
+      delaySeconds: 2,
+      suppressSeconds: 1,
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          text: { en: '进' },
+          charge: { en: '进+最前' },
+        };
+        if (data.soumaP5星灵之剑.length === 8) {
+          return;
+        }
+        const round = Math.floor(data.soumaP5星灵之剑.length % 8 / 2);
+        const charger = data.triggerSetConfig[`伊甸P5挡枪顺序${round + 1}`].toString().split('/');
+        const rp = getRpByName(data, data.me);
+        if (charger.includes(rp) && !data.soumaP5星灵之剑.includes(data.me)) {
+          return { alarmText: output.charge() };
+        }
+        return { infoText: output.text() };
+      },
+    },
+    // #endregion P5
   ],
 });
