@@ -240,7 +240,7 @@ Options.Triggers.push({
       id: '启用雾龙报安全区',
       name: { en: '启用雾龙直接报安全区' },
       type: 'checkbox',
-      default: true,
+      default: false,
       comment: {
         en: '野队请关闭该功能，并正常处理该机制，以免影响纯净玩家。',
       },
