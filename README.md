@@ -21,6 +21,17 @@
 
 ## 常见问题
 
+### 绝伊甸相关
+
+1. 前半段与自带的触发器重复报
+
+    关掉默认自带的触发器
+    ![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
+
+2. 雾龙怎么不报
+
+    为了保护野队环境，雾龙的触发器默认关闭，需要手动到 config 面板勾选开启
+
 ### 设置职能位置（我是MT/ST/H1/H2/D1/D2/D3/D4）
 
 默认以 `战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青` 的顺序自动分配。
@@ -35,17 +46,12 @@
 
 ![image](https://github.com/user-attachments/assets/1a9ccfc6-35d1-4f93-a3b8-0a41c698d946)
 
-### 绝伊甸跟自带的触发器重复报
-
-自行禁用cactbot自带的伊甸触发器
-![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
-
 ### 如何使用标点功能
 
 1. 需要加载对应版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)（一般来说是最新版）
 1. 在 config 面板中手动开启标点功能
 ![image](https://github.com/user-attachments/assets/3efa5c75-e02d-46c2-a987-eaf008c9e039)
 
-## 其他
+### 其他
 
 [欧米茄标点说明](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
