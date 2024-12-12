@@ -1,10 +1,6 @@
 const { getRpByName, mark, getRpById, getDecIdByRp, doQueueActions } = Util.souma;
-const defaultSortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
-const sortRp = (rpList, rule = defaultSortRule) => {
-  return rpList.sort((a, b) => {
-    return rule.indexOf(a) - rule.indexOf(b);
-  });
-};
+// 仅影响文本输出时的排序
+const showRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
 const clearMark = (delay = 0) => {
   // console.debug('clearMark');
   doQueueActions([
@@ -170,9 +166,15 @@ const p5TowerOutput = {
 const getTowerResult = (data, output) => {
   data.soumaP5单轮翅膀计数++;
   const rule = [
-    ['H1', 'H2'],
-    ['D1', 'D2'],
-    ['D3', 'D4'],
+    data.triggerSetConfig.P5光与暗的双翼踩1塔的人.toString().split(/[,\\/，]/).map((
+      v,
+    ) => (v.trim().toUpperCase())),
+    data.triggerSetConfig.P5光与暗的双翼踩2塔的人.toString().split(/[,\\/，]/).map((
+      v,
+    ) => (v.trim().toUpperCase())),
+    data.triggerSetConfig.P5光与暗的双翼踩3塔的人.toString().split(/[,\\/，]/).map((
+      v,
+    ) => (v.trim().toUpperCase())),
   ];
   const rp = getRpByName(data, data.me);
   const location = data.soumaP5塔[data.soumaP5单轮翅膀计数 - 1].location;
@@ -246,8 +248,56 @@ Options.Triggers.push({
       },
     },
     {
+      id: 'P1双火线上半场组',
+      name: { en: 'P1双火线 上半场组' },
+      type: 'string',
+      default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P1双火线上半场组换位人',
+      name: { en: 'P1双火线 上半场组 换位人' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+          'H1': 'H1',
+          'H2': 'H2',
+          'D1': 'D1',
+          'D2': 'D2',
+          'D3': 'D3',
+          'D4': 'D4',
+        },
+      },
+      default: 'MT',
+    },
+    {
+      id: 'P1双火线下半场组换位人',
+      name: { en: 'P1双火线 下半场组 换位人' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+          'H1': 'H1',
+          'H2': 'H2',
+          'D1': 'D1',
+          'D2': 'D2',
+          'D3': 'D3',
+          'D4': 'D4',
+        },
+      },
+      default: 'D1',
+    },
+    {
+      id: 'P1连线机制闲人优先级',
+      name: { en: 'P1雷火线 闲人优先级' },
+      type: 'string',
+      default: 'MT/ST/H1/H2/D1/D2/D3/D4',
+    },
+    {
       id: '伊甸P1连线机制标点',
-      name: { en: '伊甸P1连线机制标点' },
+      name: { en: 'P1雷火线 标点' },
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
@@ -257,63 +307,69 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1标线1',
-      name: { en: '伊甸P1标线1' },
+      name: { en: 'P1雷火线 标线1' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链1,
     },
     {
       id: '伊甸P1标线2',
-      name: { en: '伊甸P1标线2' },
+      name: { en: 'P1雷火线 标线2' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链2,
     },
     {
       id: '伊甸P1标线3',
-      name: { en: '伊甸P1标线3' },
+      name: { en: 'P1雷火线 标线3' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.禁止1,
     },
     {
       id: '伊甸P1标线4',
-      name: { en: '伊甸P1标线4' },
+      name: { en: 'P1雷火线 标线4' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.禁止2,
     },
     {
       id: '伊甸P1标闲1',
-      name: { en: '伊甸P1标闲1' },
+      name: { en: 'P1雷火线 标闲1' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击1,
     },
     {
       id: '伊甸P1标闲2',
-      name: { en: '伊甸P1标闲2' },
+      name: { en: 'P1雷火线 标闲2' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击2,
     },
     {
       id: '伊甸P1标闲3',
-      name: { en: '伊甸P1标闲3' },
+      name: { en: 'P1雷火线 标闲3' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击3,
     },
     {
       id: '伊甸P1标闲4',
-      name: { en: '伊甸P1标闲4' },
+      name: { en: 'P1雷火线 标闲4' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
     },
     {
+      id: 'P2击退分组左组',
+      name: { en: 'P2钻石星辰 击退分组 左组' },
+      type: 'string',
+      default: 'MT/H1/D1/D3',
+    },
+    {
       id: '伊甸P2光暴机制标点',
-      name: { en: '伊甸P2光暴机制标点' },
+      name: { en: 'P2光暴 标点' },
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
@@ -323,49 +379,61 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P2光暴标上1',
-      name: { en: '伊甸P2光暴标上1' },
+      name: { en: 'P2光暴 标上1' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链1,
     },
     {
       id: '伊甸P2光暴标上2',
-      name: { en: '伊甸P2光暴标上2' },
+      name: { en: 'P2光暴 标上2' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击2,
     },
     {
       id: '伊甸P2光暴标上3',
-      name: { en: '伊甸P2光暴标上3' },
+      name: { en: 'P2光暴 标上3' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链3,
     },
     {
       id: '伊甸P2光暴标下1',
-      name: { en: '伊甸P2光暴标下1' },
+      name: { en: 'P2光暴 标下1' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击3,
     },
     {
       id: '伊甸P2光暴标下2',
-      name: { en: '伊甸P2光暴标下2' },
+      name: { en: 'P2光暴 标下2' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链2,
     },
     {
       id: '伊甸P2光暴标下3',
-      name: { en: '伊甸P2光暴标下3' },
+      name: { en: 'P2光暴 标下3' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击1,
     },
     {
+      id: 'P3一运TH同BUFF优先级',
+      name: { en: 'P3一运 TH同BUFF优先级' },
+      type: 'string',
+      default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P3一运DPS同BUFF优先级',
+      name: { en: 'P3一运 DPS同BUFF优先级' },
+      type: 'string',
+      default: 'D1/D2/D3/D4',
+    },
+    {
       id: '伊甸P3二运地火安全区报法',
-      name: { en: '伊甸P3二运地火安全区报法' },
+      name: { en: 'P3二运 地火安全区报法' },
       type: 'select',
       options: {
         en: {
@@ -376,8 +444,32 @@ Options.Triggers.push({
       default: 'simple',
     },
     {
+      id: 'P3二运水分摊预站位左组',
+      name: { en: 'P3二运 水分摊预站位 左组' },
+      type: 'string',
+      default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P3二运水分摊预站位右组',
+      name: { en: 'P3二运 水分摊预站位 右组' },
+      type: 'string',
+      default: 'D1/D2/D3/D4',
+    },
+    {
+      id: 'P3二运地火基准二人',
+      name: { en: 'P3二运地火 基准二人' },
+      type: 'string',
+      default: 'MT/D1',
+    },
+    {
+      id: 'P4二运同BUFF优先级',
+      name: { en: 'P4二运 同BUFF优先级' },
+      type: 'string',
+      default: 'MT/ST/H1/H2/D1/D2/D3/D4',
+    },
+    {
       id: '伊甸P4二运机制标点',
-      name: { en: '伊甸P4二运机制标点' },
+      name: { en: 'P4二运 标点' },
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
@@ -385,63 +477,87 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P4二运标短红高',
-      name: { en: '伊甸P4二运标短红高' },
+      name: { en: 'P4二运 标短红高' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链1,
     },
     {
       id: '伊甸P4二运标短红低',
-      name: { en: '伊甸P4二运标短红低' },
+      name: { en: 'P4二运 标短红低' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.锁链2,
     },
     {
       id: '伊甸P4二运标长红高',
-      name: { en: '伊甸P4二运标长红高' },
+      name: { en: 'P4二运 标长红高' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.禁止1,
     },
     {
       id: '伊甸P4二运标长红低',
-      name: { en: '伊甸P4二运标长红低' },
+      name: { en: 'P4二运 标长红低' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.禁止2,
     },
     {
       id: '伊甸P4二运标暗钢铁',
-      name: { en: '伊甸P4二运标暗钢铁' },
+      name: { en: 'P4二运 标暗钢铁' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击1,
     },
     {
       id: '伊甸P4二运标黄分摊',
-      name: { en: '伊甸P4二运标黄分摊' },
+      name: { en: 'P4二运 标黄分摊' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击2,
     },
     {
       id: '伊甸P4二运标冰月环',
-      name: { en: '伊甸P4二运标冰月环' },
+      name: { en: 'P4二运 标冰月环' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击3,
     },
     {
       id: '伊甸P4二运标水分摊',
-      name: { en: '伊甸P4二运标水分摊' },
+      name: { en: 'P4二运 标水分摊' },
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
     },
     {
+      id: 'P5死亡轮回后谁拉BOSS',
+      name: { en: 'P5死亡轮回后 谁负责拉正BOSS' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+        },
+      },
+      default: 'MT',
+    },
+    {
+      id: 'P5光与暗的双翼后谁拉BOSS',
+      name: { en: 'P5光与暗的双翼后 谁负责拉正BOSS' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+        },
+      },
+      default: 'MT',
+    },
+    {
       id: '伊甸P5第1次翅膀先拉的T',
-      name: { en: '伊甸P5第1次翅膀先拉的T' },
+      name: { en: 'P5第1次翅膀 先拉的T' },
       type: 'select',
       options: {
         en: {
@@ -453,7 +569,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P5第2次翅膀先拉的T',
-      name: { en: '伊甸P5第2次翅膀先拉的T' },
+      name: { en: 'P5第2次翅膀 先拉的T' },
       type: 'select',
       options: {
         en: {
@@ -465,7 +581,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P5翅膀踩塔报点',
-      name: { en: '伊甸P5翅膀踩塔报点' },
+      name: { en: 'P5光与暗的双翼 报点方式' },
       type: 'select',
       options: {
         en: {
@@ -480,59 +596,45 @@ Options.Triggers.push({
       },
     },
     {
-      id: '伊甸P5挡枪顺序1',
-      name: { en: '伊甸P5挡枪顺序1' },
-      type: 'select',
-      options: {
-        en: {
-          'MT/ST': 'MT/ST',
-          'H1/H2': 'H1/H2',
-          'D1/D2': 'D1/D2',
-          'D3/D4': 'D3/D4',
-        },
-      },
-      default: 'MT/ST',
-    },
-    {
-      id: '伊甸P5挡枪顺序2',
-      name: { en: '伊甸P5挡枪顺序2' },
-      type: 'select',
-      options: {
-        en: {
-          'MT/ST': 'MT/ST',
-          'H1/H2': 'H1/H2',
-          'D1/D2': 'D1/D2',
-          'D3/D4': 'D3/D4',
-        },
-      },
+      id: 'P5光与暗的双翼踩1塔的人',
+      name: { en: 'P5光与暗的双翼 踩1塔的人' },
+      type: 'string',
       default: 'H1/H2',
     },
     {
-      id: '伊甸P5挡枪顺序3',
-      name: { en: '伊甸P5挡枪顺序3' },
-      type: 'select',
-      options: {
-        en: {
-          'MT/ST': 'MT/ST',
-          'H1/H2': 'H1/H2',
-          'D1/D2': 'D1/D2',
-          'D3/D4': 'D3/D4',
-        },
-      },
+      id: 'P5光与暗的双翼踩2塔的人',
+      name: { en: 'P5光与暗的双翼 踩2塔的人' },
+      type: 'string',
       default: 'D1/D2',
     },
     {
-      id: '伊甸P5挡枪顺序4',
-      name: { en: '伊甸P5挡枪顺序4' },
-      type: 'select',
-      options: {
-        en: {
-          'MT/ST': 'MT/ST',
-          'H1/H2': 'H1/H2',
-          'D1/D2': 'D1/D2',
-          'D3/D4': 'D3/D4',
-        },
-      },
+      id: 'P5光与暗的双翼踩3塔的人',
+      name: { en: 'P5光与暗的双翼 踩3塔的人' },
+      type: 'string',
+      default: 'D3/D4',
+    },
+    {
+      id: 'P5挡枪顺序1',
+      name: { en: 'P5挡枪 第1组' },
+      type: 'string',
+      default: 'MT/ST',
+    },
+    {
+      id: 'P5挡枪顺序2',
+      name: { en: 'P5挡枪 第2组' },
+      type: 'string',
+      default: 'H1/H2',
+    },
+    {
+      id: 'P5挡枪顺序3',
+      name: { en: 'P5挡枪 第3组' },
+      type: 'string',
+      default: 'D1/D2',
+    },
+    {
+      id: 'P5挡枪顺序4',
+      name: { en: 'P5挡枪 第4组' },
+      type: 'string',
       default: 'D3/D4',
     },
   ],
@@ -1019,15 +1121,18 @@ hideall "--sync--"
         };
         // 第一次连线机制 双分摊
         if (data.soumaP1线存储.length === 2) {
-          const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
-          const mtGroup = ['MT', 'ST', 'H1', 'H2'];
-          const lines = sortRp(data.soumaP1线存储.map((v) => getRpByName(data, v.target)), sortRule);
+          const mtGroup = data.triggerSetConfig.P1双火线上半场组.toString().split(/[,\\/，]/).map((
+            v,
+          ) => (v.toUpperCase()));
+          const lines = data.soumaP1线存储.map((v) => getRpByName(data, v.target)).sort((a, b) =>
+            showRule.indexOf(a) - showRule.indexOf(b)
+          );
           const tnCount = lines.filter((v) => mtGroup.includes(v)).length;
           let switcher;
           if (tnCount === 0) {
-            switcher = 'MT';
+            switcher = data.triggerSetConfig.P1双火线上半场组换位人.toString();
           } else if (tnCount === 2) {
-            switcher = 'D1';
+            switcher = data.triggerSetConfig.P1双火线下半场组换位人.toString();
           }
           const povRp = getRpByName(data, data.me);
           if (lines[0] === povRp) {
@@ -1110,14 +1215,19 @@ hideall "--sync--"
           }
           const lines = data.soumaP1线存储.slice(2, 6);
           const targetsIds = lines.map((v) => v.targetId);
+          const nothingRule = data.triggerSetConfig.P1连线机制闲人优先级.toString().split(/[,\\/，]/).map((
+            v,
+          ) => (v.toUpperCase()));
           const nothing = data.party.details.filter((v) => !targetsIds.includes(v.id)).sort(
             (a, b) => {
-              return defaultSortRule.indexOf(getRpByName(data, a.name)) -
-                defaultSortRule.indexOf(getRpByName(data, b.name));
+              return nothingRule.indexOf(getRpByName(data, a.name)) -
+                nothingRule.indexOf(getRpByName(data, b.name));
             },
           );
           const nothingRp = nothing.map((v) => getRpById(data, parseInt(v.id, 16)));
-          const sortedNothingRps = sortRp(nothingRp);
+          const sortedNothingRps = nothingRp.sort((a, b) =>
+            showRule.indexOf(a) - showRule.indexOf(b)
+          );
           const nothingIds = sortedNothingRps.map((v) => getDecIdByRp(data, v));
           if (nothingIds.length !== 4) {
             throw new Error('nothingIds长度不等于4');
@@ -1390,7 +1500,10 @@ hideall "--sync--"
         const num = Directions.xyTo8DirNum(parseFloat(x), parseFloat(y), 100, 100);
         const dir = data.soumaP2冰圈初始位置DirNum;
         const myRp = getRpByName(data, data.me);
-        const myDir = ['MT', 'H1', 'D1', 'D3'].includes(myRp)
+        const leftRule = data.triggerSetConfig.P2击退分组左组.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
+        const myDir = leftRule.includes(myRp)
           ? dir[0]
           : dir[1];
         let index = 0;
@@ -1962,7 +2075,8 @@ hideall "--sync--"
             })[0];
             const rp = getRpByName(data, data.me);
             const partnerRp = getRpByName(data, partner);
-            const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+            const sortRule = data.triggerSetConfig.P3一运DPS同BUFF优先级.toString().split(/[,\\/，]/)
+              .map((v) => (v.trim().toUpperCase()));
             const sortIndex = sortRule.indexOf(rp) - sortRule.indexOf(partnerRp);
             const priority = sortIndex < 0 ? '高' : '低';
             const gimmick = output[`DPS短火${priority}`]();
@@ -1988,7 +2102,8 @@ hideall "--sync--"
             })[0];
             const rp = getRpByName(data, data.me);
             const partnerRp = getRpByName(data, partner);
-            const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+            const sortRule = data.triggerSetConfig.P3一运TH同BUFF优先级.toString().split(/[,\\/，]/)
+              .map((v) => (v.trim().toUpperCase()));
             const sortIndex = sortRule.indexOf(rp) - sortRule.indexOf(partnerRp);
             const priority = sortIndex < 0 ? '高' : '低';
             const gimmick = output[`TN长火${priority}`]();
@@ -2291,8 +2406,12 @@ hideall "--sync--"
           text: { en: '${no} ${switcherInfo}' },
           switch: { en: '与${switcher}交换！' },
         };
-        const leftRps = ['MT', 'ST', 'H1', 'H2'];
-        const rightRps = ['D1', 'D2', 'D3', 'D4'];
+        const leftRps = data.triggerSetConfig.P3二运水分摊预站位左组.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
+        const rightRps = data.triggerSetConfig.P3二运水分摊预站位右组.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
         const allSortRule = [...leftRps, ...rightRps];
         const leftSwitcherNames = new Set();
         const rightSwitcherNames = new Set();
@@ -2422,8 +2541,11 @@ hideall "--sync--"
         const dirText = Directions.outputFrom8DirNum(mtDir);
         const raidDirText = Directions.outputFrom8DirNum(raidDir);
         data.soumaCombatantData = [];
+        const baseRule = data.triggerSetConfig.P3二运地火基准二人.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
         if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'simple') {
-          if (['MT', 'D1'].includes(getRpByName(data, data.me))) {
+          if (baseRule.includes(getRpByName(data, data.me))) {
             return output[`${dirText}${r}`]();
           }
           // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
@@ -2839,7 +2961,9 @@ hideall "--sync--"
       delaySeconds: 0.5,
       suppressSeconds: 1,
       alertText: (data, _matches, output) => {
-        const sortRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+        const sortRule = data.triggerSetConfig.P4二运同BUFF优先级.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
         const allBuffs = Object.entries(data.soumaP4二运buff).map(([name, buffs]) => {
           return { name, buffs };
         });
@@ -3029,7 +3153,7 @@ hideall "--sync--"
       delaySeconds: 8.5,
       suppressSeconds: 999,
       infoText: (data, _matches, output) => {
-        if (getRpByName(data, data.me) === 'MT')
+        if (getRpByName(data, data.me) === data.triggerSetConfig.P5死亡轮回后谁拉BOSS.toString())
           return output.tank();
         return output.text();
       },
@@ -3105,7 +3229,7 @@ hideall "--sync--"
       condition: (data) => data.soumaPhase === 'P5',
       delaySeconds: 15,
       infoText: (data, _matches, output) => {
-        if (getRpByName(data, data.me) === 'MT') {
+        if (getRpByName(data, data.me) === data.triggerSetConfig.P5光与暗的双翼后谁拉BOSS.toString()) {
           return output.tank();
         }
         return output.text();
@@ -3121,7 +3245,7 @@ hideall "--sync--"
       netRegex: { id: '9D7C', capture: false },
       condition: (data) => data.soumaPhase === 'P5',
       alertText: (data, _matches, output) => {
-        const charger = data.triggerSetConfig.伊甸P5挡枪顺序1.toString().split('/');
+        const charger = data.triggerSetConfig.P5挡枪顺序1.toString().split(/[,\\/，]/);
         const rp = getRpByName(data, data.me);
         if (charger.includes(rp)) {
           return output.charge();
@@ -3191,7 +3315,7 @@ hideall "--sync--"
           return;
         }
         const round = Math.floor(data.soumaP5星灵之剑.length % 8 / 2);
-        const charger = data.triggerSetConfig[`伊甸P5挡枪顺序${round + 1}`].toString().split('/');
+        const charger = data.triggerSetConfig[`P5挡枪顺序${round + 1}`].toString().split(/[,\\/，]/);
         const rp = getRpByName(data, data.me);
         if (charger.includes(rp) && !data.soumaP5星灵之剑.includes(data.me)) {
           return { alarmText: output.charge() };
