@@ -15,7 +15,7 @@ const clearMark = (delay = 0) => {
   ]);
 };
 const markTypeOptions = {
-  空: '',
+  无: 'none',
   攻击1: 'attack1',
   攻击2: 'attack2',
   攻击3: 'attack3',

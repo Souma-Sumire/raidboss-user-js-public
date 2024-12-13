@@ -97,6 +97,9 @@ if (
     markType = ifMissing(),
     localOnly = false
   ) {
+    if (markType === 'none') {
+      return;
+    }
     if (typeof actorHexID === "string") actorHexID = parseInt(actorHexID, 16);
     if (isNotInRaidboss) {
       console.debug(
