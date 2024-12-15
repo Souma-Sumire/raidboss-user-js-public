@@ -1224,22 +1224,17 @@ hideall "--sync--"
                 nothingRule.indexOf(getRpByName(data, b.name));
             },
           );
-          const nothingRp = nothing.map((v) => getRpById(data, parseInt(v.id, 16)));
-          const sortedNothingRps = nothingRp.sort((a, b) =>
-            showRule.indexOf(a) - showRule.indexOf(b)
-          );
-          const nothingIds = sortedNothingRps.map((v) => getDecIdByRp(data, v));
-          if (nothingIds.length !== 4) {
-            throw new Error('nothingIds长度不等于4');
+          if (nothing.length !== 4) {
+            throw new Error('nothing长度不等于4');
           }
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
-            mark(nothingIds[0], data.triggerSetConfig.伊甸P1标闲1.toString(), false);
+            mark(parseInt(nothing[0].id, 16), data.triggerSetConfig.伊甸P1标闲1.toString(), false);
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
-            mark(nothingIds[1], data.triggerSetConfig.伊甸P1标闲2.toString(), false);
+            mark(parseInt(nothing[1].id, 16), data.triggerSetConfig.伊甸P1标闲2.toString(), false);
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
-            mark(nothingIds[2], data.triggerSetConfig.伊甸P1标闲3.toString(), false);
+            mark(parseInt(nothing[2].id, 16), data.triggerSetConfig.伊甸P1标闲3.toString(), false);
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
-            mark(nothingIds[3], data.triggerSetConfig.伊甸P1标闲4.toString(), false);
+            mark(parseInt(nothing[3].id, 16), data.triggerSetConfig.伊甸P1标闲4.toString(), false);
           if (nothing[0]?.name === data.me) {
             data.soumaP1线处理 = '闲1';
           }
