@@ -1,4 +1,4 @@
-const { getRpByName, mark, getRpById, getDecIdByRp, doQueueActions } = Util.souma;
+const { getRpByName, mark, doQueueActions } = Util.souma;
 // 仅影响文本输出时的排序
 const showRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
 const clearMark = (delay = 0) => {
@@ -33,6 +33,16 @@ const markTypeOptions = {
   十字: 'cross',
   三角: 'triangle',
   方块: 'square',
+};
+const p1Towers = {
+  '9CC3': 1,
+  '9CBA': 2,
+  '9CBB': 3,
+  '9CBC': 4,
+  '9CC7': 1,
+  '9CBD': 2,
+  '9CBE': 3,
+  '9CBF': 4, // 4人塔 雷
 };
 const p3buffs = {
   // 延迟咏唱：黑暗神圣 分摊
@@ -360,6 +370,80 @@ Options.Triggers.push({
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
+    },
+    {
+      id: '伊甸P1踩塔基准',
+      name: { en: '伊甸P1踩塔 报点基准' },
+      type: 'select',
+      options: {
+        en: {
+          '仅塔人数': 'simple',
+          '全填充式（莫古力）': 'mgl',
+          '3固定3补位式（MMW）': 'mmw',
+        },
+      },
+      default: 'simple',
+    },
+    {
+      id: '伊甸P1踩塔填充优先级',
+      name: { en: '伊甸P1踩塔 填充优先级' },
+      type: 'string',
+      default: 'H1/H2/D1/D2/D3/D4',
+      comment: { en: 'MMW莫古力通用' },
+    },
+    {
+      id: '伊甸P1踩塔补位式固定北塔',
+      name: { en: '伊甸P1踩塔 补位式 固定北塔' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+          'H1': 'H1',
+          'H2': 'H2',
+          'D1': 'D1',
+          'D2': 'D2',
+          'D3': 'D3',
+          'D4': 'D4',
+        },
+      },
+      default: 'H1',
+    },
+    {
+      id: '伊甸P1踩塔补位式固定中塔',
+      name: { en: '伊甸P1踩塔 补位式 固定中塔' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+          'H1': 'H1',
+          'H2': 'H2',
+          'D1': 'D1',
+          'D2': 'D2',
+          'D3': 'D3',
+          'D4': 'D4',
+        },
+      },
+      default: 'D4',
+    },
+    {
+      id: '伊甸P1踩塔补位式固定南塔',
+      name: { en: '伊甸P1踩塔 补位式 固定南塔' },
+      type: 'select',
+      options: {
+        en: {
+          'MT': 'MT',
+          'ST': 'ST',
+          'H1': 'H1',
+          'H2': 'H2',
+          'D1': 'D1',
+          'D2': 'D2',
+          'D3': 'D3',
+          'D4': 'D4',
+        },
+      },
+      default: 'H2',
     },
     {
       id: 'P2击退分组左组',
@@ -745,6 +829,7 @@ hideall "--sync--"
       soumaP1线处理: undefined,
       soumaP1雾龙ids: [],
       soumaP1雾龙属性: undefined,
+      soumaP1塔: [],
       soumaP2冰圈初始位置DirNum: [],
       soumaP2冰圈初始位置: undefined,
       soumaP2冰花点名: [],
@@ -809,6 +894,7 @@ hideall "--sync--"
             data.soumaP1线处理 = undefined;
             data.soumaP1雾龙ids.length = 0;
             data.soumaP1雾龙属性 = undefined;
+            data.soumaP1塔.length = 0;
             break;
           }
           case '9D49':
@@ -1350,6 +1436,85 @@ hideall "--sync--"
         text: {
           en: '狂暴',
         },
+      },
+    },
+    {
+      id: 'Souma 绝伊甸 P1 塔 collect',
+      type: 'StartsUsing',
+      netRegex: {
+        id: Object.keys(p1Towers),
+        capture: true,
+      },
+      condition: (data) => data.soumaPhase === 'P1' && data.role !== 'tank',
+      preRun: (data, matches) => {
+        data.soumaP1塔.push({
+          x: parseFloat(matches.x),
+          y: parseFloat(matches.y),
+          count: p1Towers[matches.id],
+        });
+      },
+    },
+    {
+      id: 'Souma 绝伊甸 P1 塔',
+      type: 'StartsUsingExtra',
+      netRegex: {
+        id: Object.keys(p1Towers),
+        capture: false,
+      },
+      condition: (data) => data.soumaPhase === 'P1' && data.role !== 'tank',
+      delaySeconds: 0.5,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        const towers = data.soumaP1塔.sort((a, b) => a.y - b.y).slice();
+        if (towers.length !== 3) {
+          return output.unknown();
+        }
+        if (data.triggerSetConfig.伊甸P1踩塔基准 === 'simple') {
+          return output.simple({
+            c1: towers[0].count,
+            c2: towers[1].count,
+            c3: towers[2].count,
+          });
+        }
+        let priority = data.triggerSetConfig.伊甸P1踩塔填充优先级.toString().split(/[,\\/，]/).map((
+          v,
+        ) => (v.toUpperCase()));
+        const rp = getRpByName(data, data.me);
+        const seat = [
+          Array.from({ length: towers[0].count }),
+          Array.from({ length: towers[1].count }),
+          Array.from({ length: towers[2].count }),
+        ];
+        if (data.triggerSetConfig.伊甸P1踩塔基准 === 'mmw') {
+          const fixed = [
+            data.triggerSetConfig.伊甸P1踩塔补位式固定北塔.toString(),
+            data.triggerSetConfig.伊甸P1踩塔补位式固定中塔.toString(),
+            data.triggerSetConfig.伊甸P1踩塔补位式固定南塔.toString(),
+          ];
+          priority = priority.filter((v) => !fixed.includes(v));
+          seat[0][0] = fixed[0];
+          seat[1][0] = fixed[1];
+          seat[2][0] = fixed[2];
+        }
+        for (let i = 0; i < seat.length; i++) {
+          for (let j = 0; j < seat[i].length; j++) {
+            if (seat[i][j] === undefined) {
+              seat[i][j] = priority.shift();
+            }
+          }
+        }
+        const myIndex = seat.findIndex((v) => v.includes(rp));
+        return output[`place${myIndex}`]();
+      },
+      run: (data) => {
+        data.soumaP1塔.length = 0;
+      },
+      outputStrings: {
+        unknown: { en: '踩塔' },
+        simple: { en: '塔：${c1} ${c2} ${c3}' },
+        place0: { en: '踩 北 塔' },
+        place1: { en: '踩 中间 塔' },
+        place2: { en: '踩 南 塔' },
       },
     },
     // #endregion P1
