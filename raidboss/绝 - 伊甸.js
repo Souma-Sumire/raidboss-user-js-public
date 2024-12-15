@@ -245,7 +245,7 @@ Options.Triggers.push({
   id: 'SoumaEdenUltimate',
   // zoneId: ZoneId.FuturesRewrittenUltimate,
   zoneId: 1238,
-  zoneLabel: { en: '光暗未来绝境战（莫古力攻略） by Souma' },
+  zoneLabel: { en: '光暗未来绝境战 by Souma' },
   config: [
     // location.href = 'http://localhost:8080/ui/config/config.html'
     {
@@ -373,7 +373,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔基准',
-      name: { en: '伊甸P1踩塔 报点基准' },
+      name: { en: 'P1踩塔 报点基准' },
       type: 'select',
       options: {
         en: {
@@ -386,14 +386,14 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔填充优先级',
-      name: { en: '伊甸P1踩塔 填充优先级' },
+      name: { en: 'P1踩塔 填充优先级' },
       type: 'string',
       default: 'H1/H2/D1/D2/D3/D4',
       comment: { en: 'MMW莫古力通用' },
     },
     {
       id: '伊甸P1踩塔补位式固定北塔',
-      name: { en: '伊甸P1踩塔 补位式 固定北塔' },
+      name: { en: 'P1踩塔 补位式 固定北塔' },
       type: 'select',
       options: {
         en: {
@@ -411,7 +411,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔补位式固定中塔',
-      name: { en: '伊甸P1踩塔 补位式 固定中塔' },
+      name: { en: 'P1踩塔 补位式 固定中塔' },
       type: 'select',
       options: {
         en: {
@@ -429,7 +429,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔补位式固定南塔',
-      name: { en: '伊甸P1踩塔 补位式 固定南塔' },
+      name: { en: 'P1踩塔 补位式 固定南塔' },
       type: 'select',
       options: {
         en: {
