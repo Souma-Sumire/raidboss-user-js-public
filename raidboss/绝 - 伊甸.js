@@ -35,14 +35,22 @@ const markTypeOptions = {
   方块: 'square',
 };
 const p1Towers = {
+  // 1人塔 火
   '9CC3': 1,
+  // 2人塔 火
   '9CBA': 2,
+  // 2人塔 火
   '9CBB': 3,
+  // 4人塔 火
   '9CBC': 4,
+  // 1人塔 雷
   '9CC7': 1,
+  // 2人塔 雷
   '9CBD': 2,
+  // 3人塔 雷
   '9CBE': 3,
-  '9CBF': 4, // 4人塔 雷
+  // 4人塔 雷
+  '9CBF': 4,
 };
 const p3buffs = {
   // 延迟咏唱：黑暗神圣 分摊
@@ -243,8 +251,7 @@ const getTankResult = (data, output, towerDir, otherOutput) => {
 };
 Options.Triggers.push({
   id: 'SoumaEdenUltimate',
-  // zoneId: ZoneId.FuturesRewrittenUltimate,
-  zoneId: 1238,
+  zoneId: ZoneId.FuturesRewrittenUltimate,
   zoneLabel: { en: '光暗未来绝境战 by Souma' },
   config: [
     // location.href = 'http://localhost:8080/ui/config/config.html'
@@ -541,7 +548,7 @@ Options.Triggers.push({
     },
     {
       id: 'P3二运地火基准二人',
-      name: { en: 'P3二运地火 基准二人' },
+      name: { en: 'P3二运地火 基准人（去垂直安全区的人）' },
       type: 'string',
       default: 'MT/D1',
     },
@@ -722,104 +729,6 @@ Options.Triggers.push({
       default: 'D3/D4',
     },
   ],
-  overrideTimelineFile: true,
-  timeline: `
-hideall "--Reset--"
-hideall "--sync--"
-0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
-# P1
-0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
-14.9 "龙卷破击"
-25.4 "连锁爆印刻"
-36 "乐园绝技"
-36.7 "--不可选中--"
-81.9 "--可选中--
-87.4 "光焰圆光"
-103 "罪裁断"
-103.7 "浮游拘束"
-105.7 "急冲刺"
-122.9 "光焰圆光"
-131.4 "连锁爆印刻"
-142.9 "燃烧击"
-161.8 "光焰圆光"
-# P2
-169.4 "四重强击#1" StartsUsing { id: "9CFF" } window 200,20
-174.1 "四重强击#2"
-183.6 "镜像"
-190.7 "钻石星尘"
-194.9 "--不可选中--"
-206.2 "天降一击"
-231.8 "--可选中--"
-238 "神圣射线"
-238.7 "神圣射线"
-247.8 "镜中奇遇"
-262 "镰形/阔斧回旋踢"
-278.1 "强放逐"
-287.7 "光之失控"
-290.4 "--不可选中--"
-316.7 "强放逐"
-324.8 "光之海啸"
-344.2 "绝对零度"
-# P3
-440.8 "地狱审判" StartsUsing { id: "9D49" } window 500,20
-455.0 "时间压缩·绝"
-464.6 "限速"
-502.8 "破盾一击"
-511.3 "脉冲星震波"
-519.6 "黑色光环"
-528.8 "延迟咏唱·回响"
-537.0 "黑暗狂水"
-544.1 "启示"
-549.3 "碎灵一击"
-559.6 "暗炎喷发"
-568.3 "暗夜舞蹈"
-571.4 "暗夜舞蹈"
-580.7 "脉冲星震波"
-594.4 "记忆终结"
-## P4
-611.5 "具象化"
-637.1 "光暗龙诗"
-637.1 "光与暗的龙诗"
-648.3 "光之波动"
-651.3 "碎灵一击"
-656.6 "神圣之翼"
-659.8 "真夜舞蹈"
-663.4 "真夜舞蹈"
-673.3 "死亡轮回"
-683.4 "无尽顿悟"
-699 "时间结晶"
-708.7 "限速"
-726.7 "光之巨浪"
-736.4 "碎灵一击"
-742.2 "神圣之翼"
-746.7 "神圣之翼"
-756 "死亡轮回"
-766.2 "无尽顿悟"
-## P5
-851.6 "--sync--" StartsUsing { id: "9D72" } window 100,30
-857.6 "光尘之剑"
-884.5 "死亡轮回"
-892.8 "复乐园"
-903.3 "光与暗的双翼"
-907.1 "光与暗的双翼"
-924.5 "星灵之剑"
-929.1 "星灵之剑"
-933.7 "星灵之剑"
-938.4 "星灵之剑"
-958.8 "潘多拉之匣"
-971 "光尘之剑"
-997.9 "死亡轮回"
-1010.3 "复乐园"
-1020.8 "光与暗的双翼"
-1024.6 "光与暗的双翼"
-1036.7 "星灵之剑"
-1041.3 "星灵之剑"
-1045.9 "星灵之剑"
-1050.6 "星灵之剑"
-1061.8 "光尘之剑"
-1088.7 "死亡轮回"
-1109.2 "失乐园"
-`,
   initData: () => {
     return {
       soumaCombatantData: [],
@@ -1751,7 +1660,7 @@ hideall "--sync--"
         if (!data.soumaP2镜中奇遇 || data.soumaPhase !== 'P2' || matches.change !== 'Change') {
           return false;
         }
-        const t = [
+        const attrs = [
           'type',
           'timestamp',
           'change',
@@ -1761,10 +1670,7 @@ hideall "--sync--"
           'pairPosY',
           'pairPosZ',
         ];
-        const m = Object.entries(matches).filter(([_k, v]) => v !== undefined);
-        if (m.length !== t.length || m.some(([k, _v]) => !t.includes(k)))
-          return false;
-        return true;
+        return attrs.every((a) => matches[a]);
       },
       preRun: (data, matches) => {
         data.soumaP2镜中奇遇分身.push(matches);
@@ -1776,7 +1682,8 @@ hideall "--sync--"
           call: 'getCombatants',
         })).combatants.filter((v) =>
           v.BNpcNameID === 9317 && v.BNpcID === 17825 &&
-          data.soumaP2镜中奇遇分身.find((w) => parseInt(w.id, 16) === v.ID)
+          data.soumaP2镜中奇遇分身.find((w) => parseInt(w.id, 16) === v.ID) &&
+          !(v.PosX === 100 && v.PosY === 100)
         );
       },
       infoText: (data, _matches, output) => {
@@ -3484,5 +3391,145 @@ hideall "--sync--"
       },
     },
     // #endregion P5
+  ],
+  timelineReplace: [
+    {
+      'missingTranslations': true,
+      'locale': 'cn',
+      'replaceSync': {
+        'Fatebreaker(?!\')': '绝命战士',
+        'Fatebreaker\'s Image': '绝命战士的幻影',
+        'Usurper of Frost': '希瓦·米特隆',
+        'Oracle\'s Reflection': '巫女的镜像',
+        'Ice Veil': '永久冰晶',
+      },
+      'replaceText': {
+        '\\(targeted\\)': '(本体)',
+        '\\(follow-up\\)': '(分身)',
+        '--jump south--': '--跳向南方--',
+        '\\(cast\\)': '(咏唱)',
+        '\\(damage\\)': '(判定)',
+        '\\(enrage\\)': '(狂暴)',
+        '\\(lightning\\)': '(雷)',
+        '\\(fire\\)': '(火)',
+        '\\(puddles\\)': '(放圈)',
+        '\\(solo towers\\)': '(单人塔)',
+        '\\(group tower\\)': '(多人塔)',
+        'the Path of Darkness': '暗之波动',
+        'Cruel Path of Light': '光之重波动',
+        'Cruel Path of Darkness': '暗之重波动',
+        'Icecrusher': '削冰击',
+        'Explosion': '爆炸',
+        'Burnished Glory': '光焰圆光',
+        'Burnt Strike': '燃烧击',
+        'Blastburn': '火燃爆',
+        'Unmitigated Explosion': '大爆炸',
+        'Burnout': '雷燃爆',
+        'Fall Of Faith': '罪裁断',
+        'Solemn Charge': '急冲刺',
+        'Sinsmoke': '罪炎',
+        'Sinsmite': '罪雷',
+        'Bow Shock': '弓形冲波',
+        'Cyclonic Break': '龙卷破击',
+        'Turn Of The Heavens': '光轮召唤',
+        'Brightfire': '光炎',
+        'Utopian Sky': '乐园绝技',
+        'Sinblaze': '罪炎',
+        'Blasting Zone': '爆破领域',
+        'Sinbound Fire III': '罪爆炎',
+        'Sinbound Thunder III': '罪暴雷',
+        'Bound of Faith': '罪壤刺',
+        'Powder Mark Trail': '连锁爆印刻',
+        'Burn Mark': '爆印',
+        'Floating Fetters': '浮游拘束',
+        'Edge of Oblivion': '忘却的此岸',
+        'Mirror, Mirror': '镜中奇遇',
+        'Mirror Image': '镜像',
+        'Darkest Dance': '暗夜舞蹈',
+        'Frost Armor': '冰霜护甲',
+        'Shining Armor': '闪光护甲',
+        'Drachen Armor': '圣龙护甲',
+        'the Path of Light': '光之波动',
+        'the House of Light': '光之海啸',
+        'Quadruple Slap': '四重强击',
+        'Twin Stillness': '静寂的双剑技',
+        'Twin Silence': '闲寂的双剑技',
+        'Diamond Dust': '钻石星尘',
+        'Icicle Impact': '冰柱冲击',
+        'Frigid Stone': '冰石',
+        'Frigid Needle': '冰针',
+        'Axe Kick': '阔斧回旋踢',
+        '(?<!Reflected )Scythe Kick': '镰形回旋踢',
+        'Reflected Scythe Kick': '连锁反射：镰形回旋踢',
+        'Heavenly Strike': '天降一击',
+        'Sinbound Holy': '罪神圣',
+        'Hallowed Ray': '神圣射线',
+        'Light Rampant': '光之失控',
+        'Bright Hunger': '侵蚀光',
+        'Inescapable Illumination': '曝露光',
+        'Refulgent Fate': '光之束缚',
+        'Lightsteep': '过量光',
+        'Powerful Light': '光爆',
+        'Luminous Hammer': '光明侵蚀',
+        'Burst': '爆炸',
+        'Banish III': '强放逐',
+        'Banish III Divided': '分裂强放逐',
+        'Absolute Zero': '绝对零度',
+        'Swelling Frost': '冻波',
+        'Junction': '连结',
+        'Hallowed Wings': '神圣之翼',
+        'Wings Dark and Light': '光与暗的双翼',
+        'Polarizing Paths': '星灵之剑',
+        'Sinbound Meltdown': '罪熔毁',
+        'Sinbound Fire': '罪火炎',
+        'Akh Rhai': '天光轮回',
+        'Darklit Dragonsong': '光与暗的龙诗',
+        'Crystallize Time': '时间结晶',
+        'Longing of the Lost': '圣龙气息',
+        'Joyless Dragonsong': '绝望龙诗',
+        'Materialization': '具象化',
+        'Akh Morn': '死亡轮回',
+        'Morn Afah': '无尽顿悟',
+        'Tidal Light': '光之巨浪',
+        'Hiemal Storm': '严冬风暴',
+        'Hiemal Ray': '严冬射线',
+        'Sinbound Blizzard III': '罪冰封',
+        'Endless Ice Age': '光之泛滥',
+        'Depths of Oblivion': '忘却的彼岸',
+        'Memory Paradox': '记忆悖论',
+        'Paradise Lost': '失乐园',
+        'Hell\'s Judgment': '地狱审判',
+        'Ultimate Relativity': '时间压缩·绝',
+        'Return': '回返',
+        'Return IV': '强回返',
+        'Spell-in-Waiting Refrain': '延迟咏唱·回响',
+        'Dark Water III': '黑暗狂水',
+        'Dark Eruption': '暗炎喷发',
+        'Dark Fire III': '黑暗爆炎',
+        'Unholy Darkness': '黑暗神圣',
+        'Shadoweye': '暗影之眼',
+        'Dark Blizzard III': '黑暗冰封',
+        'Dark Aero III': '黑暗暴风',
+        'Quietus': '寂灭',
+        'Shockwave Pulsar': '脉冲星震波',
+        'Somber Dance': '真夜舞蹈',
+        'Shell Crusher': '破盾一击',
+        'Spirit Taker': '碎灵一击',
+        'Black Halo': '黑色光环',
+        'Speed': '限速',
+        'Quicken': '神速',
+        'Slow': '减速',
+        'Apocalypse': '启示',
+        'Maelstrom': '巨漩涡',
+        'Memory\'s End': '记忆终结',
+        'Fulgent Blade': '光尘之剑',
+        'Polarizing Strikes': '星灵之剑',
+        'Paradise Regained': '复乐园',
+        'Twin Poles': '光与暗的双剑技',
+        'Pandora\'s Box': '潘多拉之匣',
+        'Cyckonic Break': '龙卷破击',
+        'Fated Burn Mark': '死爆印',
+      },
+    },
   ],
 });
