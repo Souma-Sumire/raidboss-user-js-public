@@ -459,6 +459,18 @@ Options.Triggers.push({
       default: 'MT/H1/D1/D3',
     },
     {
+      id: 'P2光暴预站位上半场',
+      name: { en: 'P2光暴 预站位 上半场' },
+      type: 'string',
+      default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P2光暴预站位下半场',
+      name: { en: 'P2光暴 预站位 下半场' },
+      type: 'string',
+      default: 'D1/D2/D3/D4',
+    },
+    {
       id: '伊甸P2光暴机制标点',
       name: { en: 'P2光暴 标点' },
       type: 'select',
@@ -2774,8 +2786,8 @@ Options.Triggers.push({
               role: data.party.nameToRole_[v.source],
             };
           });
-          const thGroup = ['MT', 'ST', 'H1', 'H2'];
-          const dpsGroup = ['D1', 'D2', 'D3', 'D4'];
+          const thGroup = data.triggerSetConfig.P2光暴预站位上半场.toString().split(/[,\\/，]/);
+          const dpsGroup = data.triggerSetConfig.P2光暴预站位下半场.toString().split(/[,\\/，]/);
           // 该机制必点THD，所以不必考虑2根线点奶妈的情况。
           // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。（不取坐标，不需要判定时就站准，之后晚一点到也不影响）
           while (!thGroup.slice(0, 2).includes(lines[0].rp)) {
