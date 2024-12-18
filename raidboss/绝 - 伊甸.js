@@ -571,6 +571,13 @@ Options.Triggers.push({
       default: 'MT/ST/H1/H2/D1/D2/D3/D4',
     },
     {
+      id: '伊甸P4一运水波换位',
+      name: { en: 'P4一运 水波换位' },
+      type: 'select',
+      options: { en: { '整组换（4人动）（旧莫古力）': '整组换', '单边（2个人动）（新莫古力）': '单边换' } },
+      default: '单边换',
+    },
+    {
       id: '伊甸P4二运机制标点',
       name: { en: 'P4二运 标点' },
       type: 'select',
@@ -2918,11 +2925,22 @@ Options.Triggers.push({
       delaySeconds: (_data, matches) => parseFloat(matches.duration) - 5,
       durationSeconds: 6,
       suppressSeconds: 1,
-      infoText: (data, _matches, output) => {
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          lines: { en: '分摊，躲开水晶' },
+          stack: { en: '${dir}分摊' },
+          fromLeftToTop: { en: '←向左' },
+          fromLeftToBottom: { en: '向右→' },
+          fromRightToTop: { en: '向右→' },
+          fromRightToBottom: { en: '←向左' },
+          otherSide: { en: '去对面分摊！' },
+          sameSide: { en: '就近分摊' },
+          unknown: { en: '分摊' },
+        };
         try {
           if (data.soumaP4光之暴走连线.find((v) => v.source === data.me || v.target === data.me)) {
             // 光暴4个人，就地分摊
-            return output.lines();
+            return { infoText: output.lines() };
           }
           // 剩余4个人
           const towerWater = data.soumaP4黑暗狂水.find((w) =>
@@ -2931,33 +2949,41 @@ Options.Triggers.push({
           const freeWater = data.soumaP4黑暗狂水.find((v) => v.target !== towerWater.target);
           const towerWaterObj = data.soumaCombatantData.find((v) => v.Name === towerWater.target);
           const freeWaterObj = data.soumaCombatantData.find((v) => v.Name === freeWater.target);
-          const towerWaterPos = towerWaterObj.PosY < 100 ? 'Top' : 'Bottom';
-          const freeWaterPos = freeWaterObj.PosX < 100 ? 'Left' : 'Right';
-          const playerSide = data.soumaCombatantData.find((v) => v.Name === data.me).PosX < 100
+          const towerWaterTB = towerWaterObj.PosY < 100 ? 'Top' : 'Bottom';
+          // 用坐标判断上下不严谨，但不会有人2个水波站同一半场还没团灭吧。
+          const freeWaterTB = freeWaterObj.PosY < 100 ? 'Top' : 'Bottom';
+          const freeWaterLR = freeWaterObj.PosX < 100 ? 'Left' : 'Right';
+          const playerLR = data.soumaCombatantData.find((v) => v.Name === data.me).PosX < 100
             ? 'Left'
             : 'Right';
-          return output.stack({
-            dir: output[
-              `from${playerSide}To${
-                playerSide === freeWaterPos
-                  ? towerWaterPos === 'Bottom' ? 'Top' : 'Bottom'
-                  : towerWaterPos
-              }`
-            ](),
-          });
+          if (data.triggerSetConfig.伊甸P4一运水波换位 === '整组换') {
+            return {
+              infoText: output.stack({
+                dir: output[
+                  `from${playerLR}To${
+                    playerLR === freeWaterLR
+                      ? towerWaterTB === 'Bottom' ? 'Top' : 'Bottom'
+                      : towerWaterTB
+                  }`
+                ](),
+              }),
+            };
+          }
+          if (data.triggerSetConfig.伊甸P4一运水波换位 === '单边换') {
+            // 两个分摊是不是在同（上/下）半场？
+            const isSameSide = towerWaterTB === freeWaterTB;
+            // 如果在同半场，那么无分摊一侧依旧去自己半场，而有分摊一侧的两个人去对方半场。
+            const isStackSide = playerLR === freeWaterLR;
+            if (isSameSide && isStackSide) {
+              return { alarmText: output.otherSide() };
+            }
+            // 如果不在同半场，那么所有人都去自己半场即可。（靠近A的去A，靠近C的去C）
+            return { infoText: output.sameSide() };
+          }
         } catch (e) {
           console.error(e);
-          return output.unknown();
+          return { infoText: output.unknown() };
         }
-      },
-      outputStrings: {
-        lines: { en: '分摊，躲开水晶' },
-        stack: { en: '${dir}分摊' },
-        fromLeftToTop: { en: '←向左' },
-        fromLeftToBottom: { en: '向右→' },
-        fromRightToTop: { en: '向右→' },
-        fromRightToBottom: { en: '←向左' },
-        unknown: { en: '分摊' },
       },
     },
     {
