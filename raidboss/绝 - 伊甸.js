@@ -119,135 +119,56 @@ const getHeadmarkerId = (data, matches) => {
     '0',
   );
 };
-const p5MtMapping = {
-  '5光': '3',
-  '1光': '5',
-  '3光': '1',
-  '5暗': '1',
-  '1暗': '3',
-  '3暗': '5',
-  // 3偏B
-  '5暗opt': 'ESE',
-  // 3偏C
-  '5光opt': 'SSE',
-  // 4偏C
-  '1暗opt': 'SSW',
-  // 4偏B
-  '1光opt': 'WSW',
-  // A偏1
-  '3暗opt': 'NNW',
-  // A偏2
-  '3光opt': 'NNE',
-};
-const p5TowerMapping = { '33': 5, '34': 1, '35': 3 };
 const p5TowerOutput = {
-  mt: { en: '${pos}目标圈' },
-  st: { en: '${pos}+${buster}' },
-  lightBuster: { en: '远死刑' },
-  darkBuster: { en: '近死刑' },
-  getTower: { en: '${pos}' },
-  tower1: { en: '右上↗踩塔' },
-  tower3: { en: '下↓踩塔' },
-  tower5: { en: '左上↖踩塔' },
-  tower1opt暗: { en: '右上↗塔，站左半边' },
-  tower1opt光: { en: '右上↗塔，站右半边' },
-  tower3opt暗: { en: '下↓塔，站左半边' },
-  tower3opt光: { en: '下↓塔，站右半边' },
-  tower5opt暗: { en: '左上↖塔，站左半边' },
-  tower5opt光: { en: '左上↖塔，站右半边' },
-  other: { en: '${pos}躲开塔' },
-  dir0: { en: '上↑（A点）' },
-  dir1: { en: '右上↗（2点）' },
-  dir2: { en: '右下↘（3点）' },
-  dir3: { en: '下↓（C点）' },
-  dir4: { en: '左下↙（4点）' },
-  dir5: { en: '左上↖（1点）' },
-  dir1opt暗: { en: '右下↘' },
-  dir1opt光: { en: '上↑' },
-  dir3opt暗: { en: '左下↙' },
-  dir3opt光: { en: '右下↘' },
-  dir5opt暗: { en: '上↑' },
-  dir5opt光: { en: '左下↙' },
-  dirESE: { en: '右下↘（3B偏B）' },
-  dirSSE: { en: '右下↘（3B偏3）' },
-  dirSSW: { en: '左下↙（4D偏4）' },
-  dirWSW: { en: '左下↙（4D偏D）' },
-  dirNNW: { en: '上↑（A偏1）' },
-  dirNNE: { en: '上↑（A偏2）' },
-  dark: { en: '暗左' },
-  light: { en: '光右' },
-  lightMT: { en: '光右目标圈' },
-  lightST: { en: '光远死刑' },
-  darkMT: { en: '暗左目标圈' },
-  darkST: { en: '暗近死刑' },
+  dark: '←暗左',
+  light: '光右→',
+  darkMt1: '←暗左（换T+减伤）',
+  darkMt1R: '暗右→（换T+减伤）',
+  darkMt2: '暗刀',
+  darkSt1: '←暗左(换T) + 近死刑',
+  darkSt2: '近死刑',
+  lightMt1: '光右→（换T+减伤）',
+  lightMt1R: '←光左（换T+减伤）',
+  lightMt2: '光刀',
+  lightSt1: '光右→(换T) + 远死刑',
+  lightSt2: '远死刑',
 };
 const getTowerResult = (data, output) => {
   data.soumaP5单轮翅膀计数++;
-  const rule = [
-    data.triggerSetConfig.P5光与暗的双翼踩1塔的人.toString().split(/[,\\/，]/).map((
-      v,
-    ) => (v.trim().toUpperCase())),
-    data.triggerSetConfig.P5光与暗的双翼踩2塔的人.toString().split(/[,\\/，]/).map((
-      v,
-    ) => (v.trim().toUpperCase())),
-    data.triggerSetConfig.P5光与暗的双翼踩3塔的人.toString().split(/[,\\/，]/).map((
-      v,
-    ) => (v.trim().toUpperCase())),
-  ];
-  const rp = getRpByName(data, data.me);
-  const location = data.soumaP5塔[data.soumaP5单轮翅膀计数 - 1].location;
-  const towerDir = p5TowerMapping[location];
-  const attr = data.soumaP5单轮翅膀计数 === 1
-    ? data.soumaP5翅膀属性
-    : data.soumaP5翅膀属性 === '光'
-    ? '暗'
-    : '光';
-  const opt = data.soumaP5单轮翅膀计数 === 3
-    ? ''
-    : (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? `opt${attr}` : '');
-  const otherOutput = `dir${towerDir}${opt}`;
-  if (rule[data.soumaP5单轮翅膀计数 - 1].includes(rp)) {
-    return { alertText: output.getTower({ pos: output[`tower${towerDir}${opt}`]() }) };
-  }
   if (data.soumaP5单轮翅膀计数 === 3) {
     return;
   }
-  if (data.role === 'tank') {
-    return getTankResult(data, output, towerDir, otherOutput);
-  }
-  if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
-    return { infoText: output[attr === '光' ? 'light' : 'dark']() };
-  }
-  return { infoText: output.other({ pos: output[otherOutput]() }) };
-};
-const getTankResult = (data, output, towerDir, otherOutput) => {
-  const rp = getRpByName(data, data.me);
   const attr = data.soumaP5单轮翅膀计数 === 1
     ? data.soumaP5翅膀属性
-    : data.soumaP5翅膀属性 === '光'
-    ? '暗'
-    : '光';
-  const opt = data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '莫古力' ? 'opt' : '';
-  if (
-    (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] === rp &&
-      data.soumaP5单轮翅膀计数 === 1) ||
-    (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] !== rp && data.soumaP5单轮翅膀计数 === 2)
-  ) {
+    : data.soumaP5翅膀属性 === 'light'
+    ? 'dark'
+    : 'light';
+  if (data.role === 'tank') {
+    return getTankResult(data, output);
+  }
+  return { infoText: output[attr]() };
+};
+const isCurrentTank = (data) => {
+  const rp = getRpByName(data, data.me);
+  return (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] === rp &&
+    data.soumaP5单轮翅膀计数 === 1) ||
+    (data.triggerSetConfig[`伊甸P5第${data.soumaP5翅膀全局轮次}次翅膀先拉的T`] !== rp && data.soumaP5单轮翅膀计数 === 2);
+};
+const getTankResult = (data, output) => {
+  const attr = data.soumaP5单轮翅膀计数 === 1
+    ? data.soumaP5翅膀属性
+    : data.soumaP5翅膀属性 === 'light'
+    ? 'dark'
+    : 'light';
+  if (isCurrentTank(data)) {
     // 当前一仇
-    const mtDir = p5MtMapping[`${towerDir}${attr}${opt}`];
-    const mtOutput = `dir${mtDir}`;
-    // console.log(towerDir, attr, opt, mtOutput, output[mtOutput]!());
-    if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
-      return { alarmText: output[attr === '光' ? 'lightMT' : 'darkMT']() };
-    }
-    return { alarmText: output.mt({ pos: output[mtOutput]() }) };
+    const reverse = data.triggerSetConfig.伊甸P5翅膀MT反报 && data.soumaP5单轮翅膀计数 === 1
+      ? 'R'
+      : '';
+    return { alarmText: `${output[`${attr}Mt${data.soumaP5单轮翅膀计数}${reverse}`]()}` };
   }
   // 当前二仇
-  const buster = attr === '光' ? output.lightBuster() : output.darkBuster();
-  if (data.triggerSetConfig.伊甸P5翅膀踩塔报点 === '仅黑左/白右') {
-    return { alarmText: output[attr === '光' ? 'lightST' : 'darkST']() };
-  }
-  return { alarmText: output.st({ pos: output[otherOutput](), buster: buster }) };
+  return { alarmText: `${output[`${attr}St${data.soumaP5单轮翅膀计数}`]()}` };
 };
 Options.Triggers.push({
   id: 'SoumaEdenUltimate',
@@ -690,38 +611,11 @@ Options.Triggers.push({
       default: 'MT',
     },
     {
-      id: '伊甸P5翅膀踩塔报点',
-      name: { en: 'P5光与暗的双翼 报点方式' },
-      type: 'select',
-      options: {
-        en: {
-          '莫古力文档报点位': '莫古力',
-          '正攻报点位': '正攻',
-          '仅黑左/白右': '仅黑左/白右',
-        },
-      },
-      default: '仅黑左/白右',
-      comment: {
-        en: '报点位感觉有点乱…',
-      },
-    },
-    {
-      id: 'P5光与暗的双翼踩1塔的人',
-      name: { en: 'P5光与暗的双翼 踩1塔的人' },
-      type: 'string',
-      default: 'H1/H2',
-    },
-    {
-      id: 'P5光与暗的双翼踩2塔的人',
-      name: { en: 'P5光与暗的双翼 踩2塔的人' },
-      type: 'string',
-      default: 'D1/D2',
-    },
-    {
-      id: 'P5光与暗的双翼踩3塔的人',
-      name: { en: 'P5光与暗的双翼 踩3塔的人' },
-      type: 'string',
-      default: 'D3/D4',
+      id: '伊甸P5翅膀MT反报',
+      name: { en: 'P5光与暗的双翼 1刀T反着报' },
+      type: 'checkbox',
+      default: false,
+      comment: { en: '1刀MT若提前穿到1塔对面，此时他的面向就变成了“黑右、白左”' },
     },
     {
       id: 'P5挡枪顺序1',
@@ -995,7 +889,7 @@ Options.Triggers.push({
       id: 'Souma 绝伊甸 P1 雾龙',
       type: 'StartsUsing',
       netRegex: { id: '9CDE' },
-      condition: (data) => data.triggerSetConfig.启用雾龙报安全区 !== false,
+      condition: (data) => data.triggerSetConfig.启用雾龙报安全区,
       preRun: (data, matches) => {
         data.soumaP1雾龙ids.push(matches);
       },
@@ -3291,7 +3185,7 @@ Options.Triggers.push({
         // 35 左下
         location: ['33', '34', '35'],
       },
-      condition: (data) => data.soumaPhase === 'P5',
+      condition: (data) => data.soumaPhase === 'P5' && data.role === 'tank',
       preRun: (data, matches) => {
         data.soumaP5塔.push(matches);
       },
@@ -3317,7 +3211,7 @@ Options.Triggers.push({
       netRegex: { id: ['9D79', '9D29'] },
       condition: (data) => data.soumaPhase === 'P5',
       preRun: (data, matches) => {
-        data.soumaP5翅膀属性 = matches.id === '9D79' ? '光' : '暗';
+        data.soumaP5翅膀属性 = matches.id === '9D79' ? 'light' : 'dark';
       },
       suppressSeconds: 1,
       response: (data, _matches, output) => {
