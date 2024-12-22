@@ -456,34 +456,54 @@ Options.Triggers.push({
       default: 'D1/D2/D3/D4',
     },
     {
-      id: '伊甸P3二运地火安全区报法',
-      name: { en: 'P3二运 地火安全区报法' },
-      type: 'select',
-      options: {
-        en: {
-          '只报自己去的位置': 'simple',
-          'MTXX，大团XX': 'complex',
-        },
-      },
-      default: 'simple',
-    },
-    {
       id: 'P3二运水分摊预站位左组',
-      name: { en: 'P3二运 水分摊预站位 左组' },
+      name: { en: 'P3二运 水分摊预站位优先级 左组（莫古力）' },
       type: 'string',
       default: 'MT/ST/H1/H2',
     },
     {
       id: 'P3二运水分摊预站位右组',
-      name: { en: 'P3二运 水分摊预站位 右组' },
+      name: { en: 'P3二运 水分摊预站位优先级 右组（莫古力）' },
       type: 'string',
       default: 'D1/D2/D3/D4',
     },
     {
+      id: 'P3二运水分摊预站位谁换',
+      name: { en: 'P3二运 水分摊同组时谁换（莫古力）' },
+      type: 'select',
+      options: {
+        en: {
+          '低优先级': '低',
+          '高优先级': '高',
+        },
+      },
+      default: '低',
+      comment: {
+        en:
+          '我知道有一种情况可以让远程换避免近战罚站，但这种打法对玩家水平有要求且需要8个人同时配合且P3不存在dps check，故不做额外适配。（我的开发准则：永远假设队友不开TTS且水平不高）',
+      },
+    },
+    {
+      id: '伊甸P3二运地火安全区报法',
+      name: { en: 'P3二运 地火安全区报法' },
+      type: 'select',
+      options: {
+        en: {
+          '只报自己去的位置（莫古力）': 'simple',
+          'MTXX，大团XX（莫古力）': 'complex',
+          '只报地火，例如AC顺（通用）': 'base',
+        },
+      },
+      default: 'simple',
+    },
+    {
       id: 'P3二运地火基准二人',
-      name: { en: 'P3二运地火 基准人（去垂直安全区的人）' },
+      name: { en: 'P3二运地火 去垂直安全区的人（莫古力）' },
       type: 'string',
       default: 'MT/D1',
+      comment: {
+        en: '只支持莫古力打法。若希望人群固定，MTD1调整，则填写“ST/H1/H2/D2/D3/D4”',
+      },
     },
     {
       id: 'P4二运同BUFF优先级',
@@ -2401,6 +2421,7 @@ Options.Triggers.push({
           v.name
         ).filter((v) => !data.soumaP3二运水.find((vv) => vv.target === v))[2];
         // console.log(lonely);
+        const switcherP = data.triggerSetConfig.P3二运水分摊预站位谁换;
         for (
           const name of data.party.details.map((v) =>
             v.name
@@ -2425,7 +2446,7 @@ Options.Triggers.push({
           const priority = sortIndex < 0 ? '高' : '低';
           if (meHalf === partnerHalf) {
             (meHalf === 'left' ? leftSwitcherNames : rightSwitcherNames).add(
-              priority === '低' ? name : partner,
+              priority === switcherP ? name : partner,
             );
           }
         }
@@ -2510,36 +2531,40 @@ Options.Triggers.push({
         })).combatants;
       },
       alertText: (data, matches, output) => {
-        const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : 'L';
         // console.log(data.soumaP3水分组结果左, data.soumaP3水分组结果右);
         // 1顺  -1逆
         const clock = matches.param2 === '40' ? -1 : 1;
         const target = data.soumaCombatantData[0];
         const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
-        const mtDir = (dirNum + 2) % 4;
-        const raidDir = (mtDir + clock + 4) % 4;
-        const dirText = Directions.outputFrom8DirNum(mtDir);
-        const raidDirText = Directions.outputFrom8DirNum(raidDir);
+        const baseDir = (dirNum + 2) % 4;
+        const otherDir = (baseDir + clock + 4) % 4;
+        const baseDirText = Directions.outputFrom8DirNum(baseDir);
+        const otherDirText = Directions.outputFrom8DirNum(otherDir);
         data.soumaCombatantData = [];
         const baseRule = data.triggerSetConfig.P3二运地火基准二人.toString().split(/[,\\/，]/).map((
           v,
         ) => (v.toUpperCase()));
+        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'base') {
+          return output[`base${baseDir}${clock === -1 ? '逆' : '顺'}`]();
+        }
+        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'complex') {
+          return output[`${baseDir}${clock === -1 ? '逆' : '顺'}`]();
+        }
         if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'simple') {
+          const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : 'L';
           if (baseRule.includes(getRpByName(data, data.me))) {
-            return output[`${dirText}${r}`]();
+            return output[`${baseDirText}${r}`]();
           }
           // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
-          if (dirText === 'dirN' && clock === 1) {
+          if (baseDirText === 'dirN' && clock === 1) {
             // MTAC、顺、大团24
             return output[`sp1${r}`]();
           }
-          if (dirText === 'dirNE' && clock === -1) {
+          if (baseDirText === 'dirNE' && clock === -1) {
             // MT42、逆、大团CA
             return output[`sp2${r}`]();
           }
-          return output[`${raidDirText}${r}`]();
-        } else if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'complex') {
-          return output[`${mtDir}${clock === -1 ? '逆' : '顺'}`]();
+          return output[`${otherDirText}${r}`]();
         }
       },
       outputStrings: {
@@ -2563,6 +2588,14 @@ Options.Triggers.push({
         'dirER': { en: '右→（B点）' },
         'dirSEL': { en: '左上↖（1点）' },
         'dirSER': { en: '右下↘（3点）' },
+        'base0顺': { en: '地火：AC顺' },
+        'base0逆': { en: '地火：AC逆' },
+        'base1顺': { en: '地火：四二顺' },
+        'base1逆': { en: '地火：四二逆' },
+        'base2顺': { en: '地火：DB顺' },
+        'base2逆': { en: '地火：DB逆' },
+        'base3顺': { en: '地火：一三顺' },
+        'base3逆': { en: '地火：一三逆' },
       },
     },
     {
