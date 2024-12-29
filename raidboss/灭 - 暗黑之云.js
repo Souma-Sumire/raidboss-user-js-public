@@ -177,6 +177,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 阿托莫斯',
       type: 'AddedCombatant',
       netRegex: { npcNameId: '13626', capture: false },
+      condition: (data) => Util.isCasterDpsJob(data.job) || Util.isRangedDpsJob(data.job),
       durationSeconds: 6,
       suppressSeconds: 1,
       response: Responses.killAdds('alert'),
@@ -309,18 +310,18 @@ Options.Triggers.push({
       alarmText: (_data, _matches, output) => output.lookAway(),
       outputStrings: { lookAway: { en: '面向场外' } },
     },
-    {
-      id: '灭暗云 P2 种子弹',
-      type: 'StartsUsing',
-      netRegex: { id: '9E2A' },
-      suppressSeconds: 1,
-      infoText: (_data, _matches, output) => {
-        return output.text();
-      },
-      outputStrings: {
-        text: '种子弹',
-      },
-    },
+    // {
+    //   id: '灭暗云 P2 种子弹',
+    //   type: 'StartsUsing',
+    //   netRegex: { id: '9E2A' },
+    //   suppressSeconds: 1,
+    //   infoText: (_data, _matches, output) => {
+    //     return output.text!();
+    //   },
+    //   outputStrings: {
+    //     text: '种子弹',
+    //   },
+    // },
     {
       id: '灭暗云 P2 种子弹点名',
       type: 'HeadMarker',
