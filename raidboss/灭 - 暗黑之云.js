@@ -191,6 +191,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 小怪读条1',
       type: 'StartsUsing',
       netRegex: { id: ['9E20', '9E23'] },
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       preRun: (data, matches) => {
         data.souma灭暗云P2小怪.push({ id: parseInt(matches.sourceId, 16), using: matches.id });
       },
@@ -199,6 +200,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 小怪读条2',
       type: 'StartsUsing',
       netRegex: { id: ['9E20', '9E23'], capture: false },
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       delaySeconds: 0.5,
       suppressSeconds: 1,
       promise: async (data) => {
@@ -230,7 +232,8 @@ Options.Triggers.push({
           '00F2',
         ],
       },
-      condition: (data, matches) => data.souma灭暗云P2本组小怪ID === parseInt(matches.targetId, 16),
+      condition: (data, matches) =>
+        data.souma灭暗云P2本组小怪ID === parseInt(matches.targetId, 16) && data.souma灭暗云内外场 !== '内',
       infoText: (data, matches, output) => {
         data.souma灭暗云P2本组小怪三连.push(output[matches.id]());
         return output[matches.id]();
@@ -254,6 +257,7 @@ Options.Triggers.push({
         ],
         capture: false,
       },
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       delaySeconds: 1,
       durationSeconds: 10,
       alertText: (data, _matches, output) => {
@@ -334,6 +338,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 荆棘之蔓',
       type: 'StartsUsing',
       netRegex: { id: '9E2C' },
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       durationSeconds: (_data, matches) => parseFloat(matches.castTime),
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => {
@@ -347,7 +352,9 @@ Options.Triggers.push({
       id: '灭暗云 P2 黑暗泛滥',
       type: 'StartsUsing',
       netRegex: { id: '9E37' },
-      condition: (data) => data.CanSilence(),
+      condition: (data) => {
+        return data.CanSilence() && (data.souma灭暗云内外场 !== '内' || data.role === 'dps');
+      },
       suppressSeconds: 1,
       response: Responses.interrupt(),
     },
@@ -388,7 +395,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 跳跃波动炮1',
       type: 'StartsUsing',
       netRegex: { id: ['9E2F', '9E30'] },
-      condition: (data) => data.souma灭暗云内外场 === '外',
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       suppressSeconds: 1,
       promise: async (data) => {
         data.soumaCombatantData = (await callOverlayHandler({ call: 'getCombatants' })).combatants
@@ -399,7 +406,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 跳跃波动炮2',
       type: 'StartsUsing',
       netRegex: { id: ['9E2F', '9E30'] },
-      condition: (data) => data.souma灭暗云内外场 === '外',
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       delaySeconds: 1,
       alertText: (data, matches, output) => {
         const player = data.soumaCombatantData[0];
@@ -418,7 +425,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 跳跃波动炮3',
       type: 'StartsUsing',
       netRegex: { id: ['9E2F', '9E30'], capture: false },
-      condition: (data) => data.souma灭暗云内外场 === '外',
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       delaySeconds: 3,
       suppressSeconds: 1,
       run: (data) => data.soumaCombatantData.length = 0,
@@ -441,6 +448,7 @@ Options.Triggers.push({
       id: '灭暗云 P2 死刑',
       type: 'StartsUsing',
       netRegex: { id: '9E36' },
+      condition: (data) => data.souma灭暗云内外场 !== '内',
       response: Responses.tankBuster(),
     },
   ],
