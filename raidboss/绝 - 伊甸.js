@@ -255,14 +255,14 @@ Options.Triggers.push({
       name: { en: 'P1雷火线 标线2' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.锁链2,
+      default: markTypeOptions.禁止1,
     },
     {
       id: '伊甸P1标线3',
       name: { en: 'P1雷火线 标线3' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.禁止1,
+      default: markTypeOptions.锁链2,
     },
     {
       id: '伊甸P1标线4',
@@ -306,18 +306,17 @@ Options.Triggers.push({
       options: {
         en: {
           '仅塔人数': 'simple',
-          '全填充式（莫古力）': 'mgl',
-          '3固定3补位式（MMW）': 'mmw',
+          '全填充式': 'mgl',
+          '3固定3补位式': 'mmw',
         },
       },
-      default: 'simple',
+      default: 'mmw',
     },
     {
       id: '伊甸P1踩塔填充优先级',
       name: { en: 'P1踩塔 填充优先级' },
       type: 'string',
       default: 'H1/H2/D1/D2/D3/D4',
-      comment: { en: 'MMW莫古力通用' },
     },
     {
       id: '伊甸P1踩塔补位式固定北塔',
@@ -494,7 +493,7 @@ Options.Triggers.push({
           '只报地火，例如AC顺（通用）': 'base',
         },
       },
-      default: 'simple',
+      default: 'complex',
     },
     {
       id: 'P3二运地火基准二人',
@@ -1735,12 +1734,12 @@ Options.Triggers.push({
           下1: { en: '下1：去右下↘' },
           下2: { en: '下2：去上中↑' },
           下3: { en: '下3：去左下↙' },
-          备用1: { en: '上1：去左上↖' },
-          备用2: { en: '上2：去下中↓' },
-          备用3: { en: '上3：去右上↗' },
-          备用4: { en: '下3：去左下↙' },
-          备用5: { en: '下2：去上中↑' },
-          备用6: { en: '下1：去右下↘' },
+          // 备用1: { en: '上1：去左上↖' },
+          // 备用2: { en: '上2：去下中↓' },
+          // 备用3: { en: '上3：去右上↗' },
+          // 备用4: { en: '下3：去左下↙' },
+          // 备用5: { en: '下2：去上中↑' },
+          // 备用6: { en: '下1：去右下↘' },
           unknown: { en: '未知，自己看' },
           error: { en: '出错了，自己看' },
         };
@@ -1812,21 +1811,22 @@ Options.Triggers.push({
             decId: parseInt(v.sourceId, 16),
           }));
           if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
-            mark(lr[0].decId, 'bind1', false);
-            mark(lr[1].decId, 'attack2', false);
-            mark(lr[2].decId, 'bind3', false);
-            mark(lr[3].decId, 'attack1', false);
-            mark(lr[4].decId, 'bind2', false);
-            mark(lr[5].decId, 'attack3', false);
+            mark(lr[0].decId, data.triggerSetConfig.伊甸P2光暴标上1.toString(), false);
+            mark(lr[1].decId, data.triggerSetConfig.伊甸P2光暴标上2.toString(), false);
+            mark(lr[2].decId, data.triggerSetConfig.伊甸P2光暴标上3.toString(), false);
+            mark(lr[3].decId, data.triggerSetConfig.伊甸P2光暴标下1.toString(), false);
+            mark(lr[4].decId, data.triggerSetConfig.伊甸P2光暴标下2.toString(), false);
+            mark(lr[5].decId, data.triggerSetConfig.伊甸P2光暴标下3.toString(), false);
             clearMark(18);
           }
-          const index = lr.findIndex((v) => v.name === data.me);
+          // const index = lr.findIndex((v) => v.name === data.me);
           data.soumaP2光之暴走连线.length = 0;
           data.soumaCombatantData = [];
-          if (index === -1) {
-            return { infoText: output.error(), tts: null };
-          }
-          return { infoText: output[`备用${index + 1}`]() };
+          // if (index === -1) {
+          return { infoText: output.error(), tts: null };
+          // }
+          // 好像不对  算了不报了
+          // return { infoText: output[`备用${index + 1}`]!() };
         }
       },
     },
@@ -2865,6 +2865,10 @@ Options.Triggers.push({
           unknown: { en: '分摊' },
         };
         try {
+          if (data.soumaP4光之暴走连线 === undefined) {
+            // 消除config面板的报错
+            return { infoText: output.unknown() };
+          }
           if (data.soumaP4光之暴走连线.find((v) => v.source === data.me || v.target === data.me)) {
             // 光暴4个人，就地分摊
             return { infoText: output.lines() };
@@ -3358,6 +3362,26 @@ Options.Triggers.push({
     // #endregion P5
   ],
   timelineReplace: [
+    {
+      'locale': 'en',
+      'replaceSync': {
+        'Fatebreaker(?!\')': '[^:]+',
+        'Fatebreaker\'s Image': '[^:]+',
+        'Usurper of Frost': '[^:]+',
+        'Oracle\'s Reflection': '[^:]+',
+        'Ice Veil': '[^:]+',
+      },
+    },
+    {
+      'locale': 'ja',
+      'replaceSync': {
+        'Fatebreaker(?!\')': '[^:]+',
+        'Fatebreaker\'s Image': '[^:]+',
+        'Usurper of Frost': '[^:]+',
+        'Oracle\'s Reflection': '[^:]+',
+        'Ice Veil': '[^:]+',
+      },
+    },
     {
       'missingTranslations': true,
       'locale': 'cn',
