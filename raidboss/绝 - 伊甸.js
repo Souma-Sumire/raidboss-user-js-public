@@ -3363,26 +3363,6 @@ Options.Triggers.push({
   ],
   timelineReplace: [
     {
-      'locale': 'en',
-      'replaceSync': {
-        'Fatebreaker(?!\')': '[^:]+',
-        'Fatebreaker\'s Image': '[^:]+',
-        'Usurper of Frost': '[^:]+',
-        'Oracle\'s Reflection': '[^:]+',
-        'Ice Veil': '[^:]+',
-      },
-    },
-    {
-      'locale': 'ja',
-      'replaceSync': {
-        'Fatebreaker(?!\')': '[^:]+',
-        'Fatebreaker\'s Image': '[^:]+',
-        'Usurper of Frost': '[^:]+',
-        'Oracle\'s Reflection': '[^:]+',
-        'Ice Veil': '[^:]+',
-      },
-    },
-    {
       'missingTranslations': true,
       'locale': 'cn',
       'replaceSync': {
