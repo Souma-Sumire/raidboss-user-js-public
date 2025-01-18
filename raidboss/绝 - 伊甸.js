@@ -1,6 +1,4 @@
 const { getRpByName, mark, doQueueActions } = Util.souma;
-// 仅影响文本输出时的排序
-const showRule = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
 const clearMark = (delay = 0) => {
   // console.debug('clearMark');
   doQueueActions([
@@ -187,9 +185,15 @@ Options.Triggers.push({
     },
     {
       id: 'P1双火线上半场组',
-      name: { en: 'P1双火线 上半场组' },
+      name: { en: 'P1双火线 上半场组优先级' },
       type: 'string',
       default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P1双火线下半场组',
+      name: { en: 'P1双火线 下半场组优先级' },
+      type: 'string',
+      default: 'D1/D2/D3/D4',
     },
     {
       id: 'P1双火线上半场组换位人',
@@ -231,7 +235,7 @@ Options.Triggers.push({
       id: 'P1连线机制闲人优先级',
       name: { en: 'P1雷火线 闲人优先级' },
       type: 'string',
-      default: 'MT/ST/H1/H2/D1/D2/D3/D4',
+      default: 'H1/H2/MT/ST/D1/D2/D3/D4',
     },
     {
       id: '伊甸P1连线机制标点',
@@ -306,7 +310,7 @@ Options.Triggers.push({
       options: {
         en: {
           '仅塔人数': 'simple',
-          '全填充式': 'mgl',
+          '全填充式（小学数学）': 'mgl',
           '3固定3补位式': 'mmw',
         },
       },
@@ -314,13 +318,13 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔填充优先级',
-      name: { en: 'P1踩塔 填充优先级' },
+      name: { en: 'P1踩塔 填充式 优先级' },
       type: 'string',
       default: 'H1/H2/D1/D2/D3/D4',
     },
     {
       id: '伊甸P1踩塔补位式固定北塔',
-      name: { en: 'P1踩塔 补位式 固定北塔' },
+      name: { en: 'P1踩塔 补位式 固定北塔者' },
       type: 'select',
       options: {
         en: {
@@ -338,7 +342,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔补位式固定中塔',
-      name: { en: 'P1踩塔 补位式 固定中塔' },
+      name: { en: 'P1踩塔 补位式 固定中塔者' },
       type: 'select',
       options: {
         en: {
@@ -356,7 +360,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P1踩塔补位式固定南塔',
-      name: { en: 'P1踩塔 补位式 固定南塔' },
+      name: { en: 'P1踩塔 补位式 固定南塔者' },
       type: 'select',
       options: {
         en: {
@@ -379,25 +383,14 @@ Options.Triggers.push({
       default: 'MT/H1/D1/D3',
     },
     {
-      id: 'P2光暴预站位上半场',
-      name: { en: 'P2光暴 预站位 上半场' },
-      type: 'string',
-      default: 'MT/ST/H1/H2',
-    },
-    {
-      id: 'P2光暴预站位下半场',
-      name: { en: 'P2光暴 预站位 下半场' },
-      type: 'string',
-      default: 'D1/D2/D3/D4',
-    },
-    {
       id: '伊甸P2光暴机制标点',
       name: { en: 'P2光暴 标点' },
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
       comment: {
-        en: '塔位置：上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。',
+        en:
+          '预站位TN站上半场，DPS站下半场。上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。',
       },
     },
     {
@@ -489,7 +482,7 @@ Options.Triggers.push({
       options: {
         en: {
           '只报自己去的位置（莫古力）': 'simple',
-          'MTXX，大团XX（莫古力）': 'complex',
+          'MTXX，大团XX（莫古力车头法）': 'complex',
           '只报地火，例如AC顺（通用）': 'base',
         },
       },
@@ -497,11 +490,11 @@ Options.Triggers.push({
     },
     {
       id: 'P3二运地火基准二人',
-      name: { en: 'P3二运地火 去垂直安全区的人（莫古力）' },
+      name: { en: 'P3二运地火 去垂直安全区的人（莫古力车头法）' },
       type: 'string',
       default: 'MT/D1',
       comment: {
-        en: '只支持莫古力打法。若希望人群固定，MTD1调整，则填写“ST/H1/H2/D2/D3/D4”',
+        en: '若希望人群固定，MTD1调整，则填写“ST/H1/H2/D2/D3/D4”',
       },
     },
     {
@@ -509,6 +502,18 @@ Options.Triggers.push({
       name: { en: 'P4二运 同BUFF优先级' },
       type: 'string',
       default: 'MT/ST/H1/H2/D1/D2/D3/D4',
+    },
+    {
+      id: 'P4光暴预站位上半场',
+      name: { en: 'P4光暴 上半场站位顺序' },
+      type: 'string',
+      default: 'MT/ST/H1/H2',
+    },
+    {
+      id: 'P4光暴预站位下半场',
+      name: { en: 'P4光暴 下半场站位顺序' },
+      type: 'string',
+      default: 'D1/D2/D3/D4',
     },
     {
       id: '伊甸P4一运水波换位',
@@ -631,7 +636,7 @@ Options.Triggers.push({
     },
     {
       id: '伊甸P5翅膀MT反报',
-      name: { en: 'P5光与暗的双翼 1刀T反着报' },
+      name: { en: 'P5光与暗的双翼 1刀T反着报（以从塔对面看向BOSS的视角）' },
       type: 'checkbox',
       default: false,
       comment: { en: '1刀MT若提前穿到1塔对面，此时他的面向就变成了“黑右、白左”' },
@@ -1048,17 +1053,21 @@ Options.Triggers.push({
         };
         // 第一次连线机制 双分摊
         if (data.soumaP1线存储.length === 2) {
-          const mtGroup = data.triggerSetConfig.P1双火线上半场组.toString().split(/[,\\/，]/).map((
+          const northGroup = data.triggerSetConfig.P1双火线上半场组.toString().split(/[,\\/，]/).map((
             v,
           ) => (v.toUpperCase()));
+          const southGroup = data.triggerSetConfig.P1双火线下半场组.toString().split(/[,\\/，]/).map((
+            v,
+          ) => (v.toUpperCase()));
+          const rule = [...northGroup, ...southGroup];
           const lines = data.soumaP1线存储.map((v) => getRpByName(data, v.target)).sort((a, b) =>
-            showRule.indexOf(a) - showRule.indexOf(b)
+            rule.indexOf(a) - rule.indexOf(b)
           );
-          const tnCount = lines.filter((v) => mtGroup.includes(v)).length;
+          const northCount = lines.filter((v) => northGroup.includes(v)).length;
           let switcher;
-          if (tnCount === 0) {
+          if (northCount === 0) {
             switcher = data.triggerSetConfig.P1双火线上半场组换位人.toString();
-          } else if (tnCount === 2) {
+          } else if (northCount === 2) {
             switcher = data.triggerSetConfig.P1双火线下半场组换位人.toString();
           }
           const povRp = getRpByName(data, data.me);
@@ -2720,8 +2729,8 @@ Options.Triggers.push({
               role: data.party.nameToRole_[v.source],
             };
           });
-          const thGroup = data.triggerSetConfig.P2光暴预站位上半场.toString().split(/[,\\/，]/);
-          const dpsGroup = data.triggerSetConfig.P2光暴预站位下半场.toString().split(/[,\\/，]/);
+          const thGroup = data.triggerSetConfig.P4光暴预站位上半场.toString().split(/[,\\/，]/);
+          const dpsGroup = data.triggerSetConfig.P4光暴预站位下半场.toString().split(/[,\\/，]/);
           // 该机制必点THD，所以不必考虑2根线点奶妈的情况。
           // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。（不取坐标，不需要判定时就站准，之后晚一点到也不影响）
           while (!thGroup.slice(0, 2).includes(lines[0].rp)) {
