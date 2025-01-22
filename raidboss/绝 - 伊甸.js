@@ -4080,7 +4080,7 @@ hideall "--sync--"
       'replaceSync': {
         'Fatebreaker(?!\')': 'フェイトブレイカー',
         'Fatebreaker\'s Image': 'フェイトブレイカーの幻影',
-        'Usurper of Frost': 'シヴァ·ミトロン',
+        'Usurper of Frost': 'シヴァ・ミトロン',
         'Oracle\'s Reflection': '巫女の鏡像',
         'Ice Veil': '永久氷晶',
         'Frozen Mirror': '氷面鏡',
@@ -4091,7 +4091,7 @@ hideall "--sync--"
         'Fragment of Fate': '未来の欠片',
         'Sorrow\'s Hourglass': '悲しみの砂時計',
         'Drachen Wanderer': '聖竜気',
-        'Pandora': 'パンドラ·ミトロン',
+        'Pandora': 'パンドラ・ミトロン',
       },
     },
     {
