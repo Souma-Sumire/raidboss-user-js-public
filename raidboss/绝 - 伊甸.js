@@ -507,9 +507,6 @@ Options.Triggers.push({
       name: { en: 'P3二运地火 去垂直安全区的人（莫古力车头法）' },
       type: 'string',
       default: 'MT/D1',
-      comment: {
-        en: '若希望人群固定，让MTD1调整，则填写“ST/H1/H2/D2/D3/D4”',
-      },
     },
     {
       id: 'P4二运同BUFF优先级',
