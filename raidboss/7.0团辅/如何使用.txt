@@ -1,6 +1,0 @@
-1. 放至
-	咖啡 ACT：ACT\Plugins\cactbot-offline\user\raidboss\Souma\团辅
-
-	呆萌/原生：ACT\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss\Souma\团辅
-
-2. act -> 悬浮窗插件 -> cactbot raidboss -> 重载悬浮窗，才可生效
