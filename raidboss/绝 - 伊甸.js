@@ -181,7 +181,7 @@ Options.Triggers.push({
       type: 'checkbox',
       default: false,
       comment: {
-        en: '野队请关闭该功能，并正常处理该机制，以免影响纯净玩家。',
+        en: '本功能默认关闭，需要启用的玩家自行勾选。野队请正常处理该机制，避免破坏游戏环境。',
       },
     },
     {
@@ -244,9 +244,6 @@ Options.Triggers.push({
       type: 'select',
       options: { en: { '开√': '开', '关': '关' } },
       default: '关',
-      comment: {
-        en: '线：锁1锁2禁1禁2。闲：攻1攻2攻3攻4。',
-      },
     },
     {
       id: '伊甸P1标线1',
@@ -281,28 +278,28 @@ Options.Triggers.push({
       name: { en: 'P1雷火线 标闲1' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.攻击1,
+      default: markTypeOptions.无,
     },
     {
       id: '伊甸P1标闲2',
       name: { en: 'P1雷火线 标闲2' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.攻击2,
+      default: markTypeOptions.无,
     },
     {
       id: '伊甸P1标闲3',
       name: { en: 'P1雷火线 标闲3' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.攻击3,
+      default: markTypeOptions.无,
     },
     {
       id: '伊甸P1标闲4',
       name: { en: 'P1雷火线 标闲4' },
       type: 'select',
       options: { en: markTypeOptions },
-      default: markTypeOptions.攻击4,
+      default: markTypeOptions.无,
     },
     {
       id: '伊甸P1踩塔基准',
@@ -378,16 +375,10 @@ Options.Triggers.push({
       default: 'H2',
     },
     {
-      id: 'P2击退分组左组',
-      name: { en: 'P2钻石星辰 击退分组 左组' },
-      type: 'string',
-      default: 'MT/H1/D1/D3',
-    },
-    {
       id: '伊甸P2光暴打法',
       name: { en: 'P2光暴打法' },
       type: 'select',
-      options: { en: { '莫古力（田园郡） ': 'mgl', '灰9数圈': 'gray9' } },
+      options: { en: { '田园郡 ': 'mgl', '灰9': 'gray9' } },
       default: 'mgl',
     },
     {
@@ -395,6 +386,7 @@ Options.Triggers.push({
       name: { en: 'P2光暴 灰九式 拨号盘顺序' },
       type: 'string',
       default: 'MT/D4/ST/D2/H2/D1/H1/D3',
+      comment: { en: '若修改此处，则下方触发器ID"Souma 伊甸 P2 光之暴走连线灰9"中的密码表部分也需要同步修改' },
     },
     {
       id: '伊甸P2光暴机制标点',
@@ -406,48 +398,6 @@ Options.Triggers.push({
         en:
           '预站位TN站上半场，DPS站下半场。上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。',
       },
-    },
-    {
-      id: '伊甸P2光暴标上1',
-      name: { en: 'P2光暴 田园郡 标上1' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.锁链1,
-    },
-    {
-      id: '伊甸P2光暴标上2',
-      name: { en: 'P2光暴 田园郡 标上2' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.攻击2,
-    },
-    {
-      id: '伊甸P2光暴标上3',
-      name: { en: 'P2光暴 田园郡 标上3' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.锁链3,
-    },
-    {
-      id: '伊甸P2光暴标下1',
-      name: { en: 'P2光暴 田园郡 标下1' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.攻击3,
-    },
-    {
-      id: '伊甸P2光暴标下2',
-      name: { en: 'P2光暴 田园郡 标下2' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.锁链2,
-    },
-    {
-      id: '伊甸P2光暴标下3',
-      name: { en: 'P2光暴 田园郡 标下3' },
-      type: 'select',
-      options: { en: markTypeOptions },
-      default: markTypeOptions.攻击1,
     },
     {
       id: 'P3一运TH同BUFF优先级',
@@ -463,50 +413,17 @@ Options.Triggers.push({
     },
     {
       id: 'P3二运水分摊预站位左组',
-      name: { en: 'P3二运 水分摊预站位优先级 左组（莫古力）' },
+      name: { en: 'P3二运 水分摊预站位优先级 左组' },
       type: 'string',
       default: 'MT/ST/H1/H2',
+      comment: { en: '优先级低负责换过去，如果打双分组法则填写"H1/H2/MT/ST"' },
     },
     {
       id: 'P3二运水分摊预站位右组',
-      name: { en: 'P3二运 水分摊预站位优先级 右组（莫古力）' },
+      name: { en: 'P3二运 水分摊预站位优先级 右组' },
       type: 'string',
       default: 'D1/D2/D3/D4',
-    },
-    {
-      id: 'P3二运水分摊预站位谁换',
-      name: { en: 'P3二运 水分摊同组时谁换（莫古力）' },
-      type: 'select',
-      options: {
-        en: {
-          '低优先级': '低',
-          '高优先级': '高',
-        },
-      },
-      default: '低',
-      comment: {
-        en:
-          '我知道有一种情况可以让远程换避免近战罚站，但这种打法对玩家水平有要求且需要8个人同时配合且P3不存在dps check，故不做额外适配。（我的开发准则：永远假设队友不开TTS且水平不高）',
-      },
-    },
-    {
-      id: '伊甸P3二运地火安全区报法',
-      name: { en: 'P3二运 地火安全区报法' },
-      type: 'select',
-      options: {
-        en: {
-          '只报自己去的位置（莫古力）': 'simple',
-          '车头XX，大团XX（莫古力车头法）': 'complex',
-          '只报地火，例如AC顺（通用）': 'base',
-        },
-      },
-      default: 'complex',
-    },
-    {
-      id: 'P3二运地火基准二人',
-      name: { en: 'P3二运地火 去垂直安全区的人（莫古力车头法）' },
-      type: 'string',
-      default: 'MT/D1',
+      comment: { en: '优先级低负责换过去，如果打双分组法则填写"D4/D3/D2/D1"（应该吧）' },
     },
     {
       id: 'P4二运同BUFF优先级',
@@ -515,29 +432,29 @@ Options.Triggers.push({
       default: 'MT/ST/H1/H2/D1/D2/D3/D4',
     },
     {
+      id: 'P4一运打法',
+      name: { en: 'P4一运打法' },
+      type: 'select',
+      options: { en: { '莫古力（翻花绳）': 'mgl', '牛奶抱枕（分摊基准）': 'nnbz' } },
+      default: 'mgl',
+    },
+    {
       id: 'P4光暴预站位上半场',
-      name: { en: 'P4光暴 上半场站位顺序' },
+      name: { en: 'P4光暴 莫古力 上半场站位顺序' },
       type: 'string',
       default: 'MT/ST/H1/H2',
     },
     {
       id: 'P4光暴预站位下半场',
-      name: { en: 'P4光暴 下半场站位顺序' },
+      name: { en: 'P4光暴 莫古力 下半场站位顺序' },
       type: 'string',
       default: 'D1/D2/D3/D4',
-    },
-    {
-      id: 'P4一运打法',
-      name: { en: 'P4一运打法' },
-      type: 'select',
-      options: { en: { '莫古力': 'mgl', '牛奶抱枕': 'nnbz' } },
-      default: 'mgl',
     },
     {
       id: '伊甸P4一运水波换位',
       name: { en: 'P4一运 莫古力 水波换位打法' },
       type: 'select',
-      options: { en: { '整组换（4人动）（旧莫古力）': '整组换', '单边（2个人动）（新莫古力）': '单边换' } },
+      options: { en: { '整组转': '整组换', '单边换': '单边换' } },
       default: '单边换',
     },
     {
@@ -545,7 +462,7 @@ Options.Triggers.push({
       name: { en: 'P4光暴 牛奶抱枕 预站位' },
       type: 'string',
       default: 'MT/ST/H1/H2/D1/D2/D3/D4',
-      comment: { en: '左边从上到下+右边从上到下' },
+      comment: { en: '以基准点为北，左边从上到下+右边从上到下。报点也是以基准点为北。' },
     },
     {
       id: '伊甸P4二运机制标点',
@@ -663,7 +580,7 @@ Options.Triggers.push({
       id: '伊甸P5翅膀MT反报',
       name: { en: 'P5光与暗的双翼 1刀T反着报（以从塔对面看向BOSS的视角）' },
       type: 'checkbox',
-      default: false,
+      default: true,
       comment: { en: '1刀MT若提前穿到1塔对面，此时他的面向就变成了“黑右、白左”' },
     },
     {
@@ -874,136 +791,117 @@ hideall "--sync--"
 518.3 "Hell's Judgment" Ability { id: "9D49", source: "Oracle of Darkness" }
 521.4 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
 532.4 "Ultimate Relativity" Ability { id: "9D4A", source: "Oracle of Darkness" }
-544.2 "Dark Fire III/Unholy Darkness" Ability { id: "9D54", source: "Oracle of Darkness" }
-549.3 "Sinbound Meltdown 1 (x10)" Ability { id: "9D2B" } duration 10.2
-554.0 "Dark Fire III/Dark Blizzard III/Unholy Darkness" Ability { id: "9D54", source: "Oracle of Darkness" }
-558.8 "Sinbound Meltdown 2 (x10)" Ability { id: "9D2B" } duration 10.2
-563.6 "Dark Fire III/Unholy Darkness" Ability { id: "9D54", source: "Oracle of Darkness" }
-569.3 "Sinbound Meltdown 3 (x10)" Ability { id: "9D2B" } duration 10.2
-572.5 "Stun + Rewind"
-575.0 "Shadoweye/Dark Water III/Dark Eruption" Ability { id: "9D56", source: "Oracle of Darkness" }
-578.6 "Shell Crusher" Ability { id: "9D5E", source: "Oracle of Darkness" }
-587.1 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
-595.5 "Black Halo" Ability { id: "9D62", source: "Oracle of Darkness" }
-604.6 "Spell-in-Waiting Refrain" Ability { id: "9D4D", source: "Oracle of Darkness" }
-619.7 "Apocalypse" Ability { id: "9D68", source: "Oracle of Darkness" }
-623.1 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
-624.8 "Spirit Taker" Ability { id: "9D60", source: "Oracle of Darkness" }
-628.0 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
-633.7 "Apocalypse (x6)" duration 10.0
-636.5 "Dark Eruption" Ability { id: "9D52", source: "Oracle of Darkness" }
-642.1 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
-644.4 "Darkest Dance (jump)" Ability { id: "9CF6", source: "Oracle of Darkness" }
-647.3 "Darkest Dance (knockback)" Ability { id: "9CF7", source: "Oracle of Darkness" }
-651.2 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
-656.6 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
-670.3 "Memory's End (enrage)" Ability { id: "9D6C", source: "Oracle of Darkness" }
+544.2 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+549.4 "Sinbound Meltdown 1 (x10)" Ability { id: "9D2B" } duration 10.2
+554.3 "Dark Fire III/Dark Blizzard III/Unholy Darkness" Ability { id: "9D54" }
+559.4 "Sinbound Meltdown 2 (x10)" Ability { id: "9D2B" } duration 10.2
+564.3 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+570.4 "Sinbound Meltdown 3 (x10)" Ability { id: "9D2B" } duration 10.2
+573.2 "(stun + rewind)" GainsEffect { effectId: "1043" }
+576.2 "Shadoweye/Dark Water III/Dark Eruption" Ability { id: "9D56" }
+580.1 "Shell Crusher" Ability { id: "9D5E", source: "Oracle of Darkness" }
+588.5 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
+596.8 "Black Halo" Ability { id: "9D62", source: "Oracle of Darkness" }
+605.9 "Spell-in-Waiting Refrain" Ability { id: "9D4D", source: "Oracle of Darkness" }
+621.2 "Apocalypse" Ability { id: "9D68", source: "Oracle of Darkness" }
+624.8 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+626.3 "Spirit Taker" Ability { id: "9D60", source: "Oracle of Darkness" }
+629.5 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+635.2 "Apocalypse (x6)" duration 10.0
+637.9 "Dark Eruption" Ability { id: "9D52", source: "Oracle of Darkness" }
+643.7 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+646.0 "Darkest Dance (jump)" Ability { id: "9CF6", source: "Oracle of Darkness" }
+648.9 "Darkest Dance (knockback)" Ability { id: "9CF7", source: "Oracle of Darkness" }
+652.8 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+658.2 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
+672.0 "Memory's End (enrage)" Ability { id: "9D6C", source: "Oracle of Darkness" }
+674.6 "--untargetable--" # RECHECK THIS
 # Phase Four
-684.7 "--sync--" StartsUsing { id: "9D36", source: "Usurper of Frost" } window 10,10
-687.4 "Materialization" Ability { id: "9D36", source: "Usurper of Frost" } window 10,0
-698.6 "Drachen Armor" Ability { id: "9CFA", source: "Usurper of Frost" }
-701.0 "Akh Rhai" Ability { id: "9D2D", source: "Usurper of Frost" } duration 5.1
-703.3 "Edge of Oblivion" Ability { id: "9CEE", source: "Fragment of Fate" }
-706.5 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
-706.5 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-712.7 "Darklit Dragonsong" Ability { id: "9D2F", source: "Usurper of Frost" }
-723.8 "The Path of Light" Ability { id: "9CFB", source: "Usurper of Frost" }
-723.8 "Bright Hunger" Ability { id: "9D15", source: "Usurper of Frost" }
-724.7 "The Path of Light" Ability { id: "9CFE", source: "Usurper of Frost" }
-726.8 "Spirit Taker" Ability { id: "9D60", source: "Oracle of Darkness" }
-727.2 "Spirit Taker" Ability { id: "9D61", source: "Oracle of Darkness" }
-731.8 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
-731.8 "Hallowed Wings" Ability { id: "9D24", source: "Usurper of Frost" }
-734.9 "Somber Dance" Ability { id: "9D5B", source: "Oracle of Darkness" }
-735.1 "Somber Dance" Ability { id: "9D5C", source: "Oracle of Darkness" }
-738.3 "Somber Dance" Ability { id: "9D5D", source: "Oracle of Darkness" }
-741.7 "Edge of Oblivion" Ability { id: "9CEE", source: "Fragment of Fate" }
-742.8 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
-742.8 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-748.0 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
-757.9 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
-762.2 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
-762.2 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-773.4 "Crystallize Time" Ability { id: "9D30", source: "Usurper of Frost" }
-779.4 "Edge of Oblivion" Ability { id: "9CEE", source: "Fragment of Fate" }
-783.1 "Speed/Quicken/Slow" Ability { id: "9D65", source: "Oracle of Darkness" }
-785.2 "Maelstrom" Ability { id: "9D6B", source: "Sorrow's Hourglass" }
-786.2 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
-787.6 "Longing of the Lost" #Ability { id: "9D31", source: "Drachen Wanderer" }
-788.0 "Dark Aero III" Ability { id: "9D58", source: "Oracle of Darkness" }
-788.0 "Dark Eruption" Ability { id: "9D52", source: "Oracle of Darkness" }
-788.0 "Dark Blizzard III" Ability { id: "9D57", source: "Oracle of Darkness" }
-790.1 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-790.5 "Maelstrom" Ability { id: "9D6B", source: "Sorrow's Hourglass" }
-790.9 "Unholy Darkness" Ability { id: "9D55", source: "Oracle of Darkness" }
-792.9 "Longing of the Lost" #Ability { id: "9D31", source: "Drachen Wanderer" }
-794.2 "Tidal Light (x4)" Ability { id: "9D3B", source: "Usurper of Frost" } duration 6
-795.2 "Maelstrom" Ability { id: "9D6B", source: "Sorrow's Hourglass" }
-796.2 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-800.3 "Tidal Light" Ability { id: "9D3B", source: "Usurper of Frost" } duration 6
-804.3 "Quietus" Ability { id: "9D59", source: "Oracle of Darkness" }
-807.6 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-809.6 "Spirit Taker" Ability { id: "9D60", source: "Oracle of Darkness" }
-810.0 "Spirit Taker" Ability { id: "9D61", source: "Oracle of Darkness" }
-813.8 "Hallowed Wings (cast)" Ability { id: "9D25", source: "Usurper of Frost" }
-815.8 "Hallowed Wings (damage)" Ability { id: "9D8C", source: "Usurper of Frost" }
-818.4 "Hallowed Wings (cast)" Ability { id: "9D26", source: "Usurper of Frost" }
-820.4 "Hallowed Wings (damage)" Ability { id: "9D8C", source: "Usurper of Frost" }
-824.4 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
-824.4 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
-829.7 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
-837.5 "Edge of Oblivion" Ability { id: "9CEE", source: "Fragment of Fate" }
-839.6 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
-851.5 "--sync--" Ability { id: "9D27", source: "Usurper of Frost" }
-852.4 "--sync--" Ability { id: "9D28", source: "Usurper of Frost" }
-# Phase five
-930.0 "--targetable--"
-935.0 "--sync--" StartsUsing { id: "9D72", source: "Pandora" } window 935.0,0
-940.7 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
-951.8 "The Path of Darkness/The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 21.9
-967.2 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
-967.2 "Akh Morn" Ability { id: "9D77", source: "Pandora" }
-967.2 "Akh Morn" Ability { id: "9D78", source: "Pandora" }
-975.4 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
-985.4 "Wings Dark and Light" Ability { id: "9D79", source: "Pandora" }
-985.7 "Wings Dark and Light" Ability { id: "9D7A", source: "Pandora" }
-985.7 "Explosion" Ability { id: "9D80", source: "Pandora" }
-986.5 "Wings Dark and Light" Ability { id: "9BC7", source: "Pandora" }
-989.3 "Explosion" Ability { id: "9D80", source: "Pandora" }
-989.3 "Wings Dark and Light" Ability { id: "9D7B", source: "Pandora" }
-990.2 "Wings Dark and Light" Ability { id: "9BC8", source: "Pandora" }
-992.8 "Explosion" Ability { id: "9D80", source: "Pandora" }
-1006.9 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" }
-1007.5 "Cruel Path of Darkness/Cruel Path of Light" Ability { id: "9D7D", source: "Pandora" } duration 15.9
-1011.5 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1016.1 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1020.7 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1040.9 "Pandora's Box" Ability { id: "9D86", source: "Pandora" }
-1053.0 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
-1064.1 "The Path of Darkness/The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 19.7
-1079.3 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
-1079.3 "Akh Morn" Ability { id: "9D77", source: "Pandora" }
-1079.3 "Akh Morn" Ability { id: "9D78", source: "Pandora" }
-1091.5 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
-1101.5 "Wings Dark and Light" Ability { id: "9D29", source: "Pandora" }
-1101.8 "Explosion" Ability { id: "9D80", source: "Pandora" }
-1101.8 "Wings Dark and Light" Ability { id: "9D7B", source: "Pandora" }
-1102.7 "Wings Dark and Light" Ability { id: "9BC8", source: "Pandora" }
-1105.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
-1105.6 "Wings Dark and Light" Ability { id: "9D7A", source: "Pandora" }
-1106.5 "Wings Dark and Light" Ability { id: "9BC7", source: "Pandora" }
-1108.9 "Explosion" Ability { id: "9D80", source: "Pandora" }
-1117.8 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" }
-1118.4 "Cruel Path of Darkness/Cruel Path of Light" Ability { id: "9D7D", source: "Pandora" } duration 16.2
-1122.5 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1127.2 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1131.9 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" }
-1143.1 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
-1154.2 "The Path of Darkness/The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 17.7
-1169.4 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
-1169.4 "Akh Morn" Ability { id: "9D77", source: "Pandora" }
-1169.4 "Akh Morn" Ability { id: "9D78", source: "Pandora" }
-1189.6 "Paradise Lost" Ability { id: "9D87", source: "Pandora" }
+680.8 "--targetable--"  # RECHECK THIS
+686.3 "--sync--" StartsUsing { id: "9D36", source: "Usurper of Frost" } window 10,10
+689.2 "Materialization" Ability { id: "9D36", source: "Usurper of Frost" }
+700.4 "Drachen Armor" Ability { id: "9CFA", source: "Usurper of Frost" }
+702.9 "Akh Rhai" Ability { id: "9D2D", source: "Usurper of Frost" } duration 5.1
+705.4 "Edge of Oblivion 1" Ability { id: "9CEE", source: "Fragment of Fate" }
+706.5 "--Oracle targetable--"  # RECHECK THIS
+708.6 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+714.9 "Darklit Dragonsong" Ability { id: "9D2F", source: "Usurper of Frost" }
+726.1 "Bright Hunger" Ability { id: "9D15", source: "Usurper of Frost" }
+727.0 "The Path of Light" Ability { id: "9CFE", source: "Usurper of Frost" }
+729.1 "Spirit Taker (jump)" Ability { id: "9D60", source: "Oracle of Darkness" }
+729.5 "Spirit Taker (damage)" Ability { id: "9D61", source: "Oracle of Darkness" }
+734.1 "Dark Water III + Hallowed Wings" Ability { id: "9D4F" }
+737.7 "Somber Dance (far)" Ability { id: "9D5C", source: "Oracle of Darkness" }
+741.0 "Somber Dance (close)" Ability { id: "9D5D", source: "Oracle of Darkness" }
+744.4 "Edge of Oblivion 2" Ability { id: "9CEE", source: "Fragment of Fate" }
+745.4 "--Oracle center--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+750.7 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
+760.8 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
+765.1 "--reposition--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+776.3 "Crystallize Time" Ability { id: "9D30", source: "Usurper of Frost" }
+780.2 "--Usurper untargetable--" # RECHECK THIS
+781.3 "--Oracle untargetable--" # RECHECK THIS
+782.4 "Edge of Oblivion 3" Ability { id: "9CEE", source: "Fragment of Fate" }
+788.3 "Maelstrom (fast)" Ability { id: "9D6B" }
+789.3 "Dark Water III" Ability { id: "9D4F" }
+791.3 "Dark Blizzard III + Dark Eruption + Dark Aero III" Ability { id: "9D57" }
+793.4 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+793.9 "Maelstrom (normal)" Ability { id: "9D6B" }
+794.3 "Unholy Darkness" Ability { id: "9D55" }
+797.7 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+798.8 "Maelstrom (slow)" Ability { id: "9D6B" }
+799.8 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+804.0 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+808.2 "Quietus" Ability { id: "9D59", source: "Oracle of Darkness" }
+810.1 "(rewind drop)" LosesEffect { effectId: "1070" }
+813.8 "Spirit Taker" Ability { id: "9D61", source: "Oracle of Darkness" }
+817.2 "(stun + rewind)" LosesEffect { effectId: "994" }
+819.4 "Hallowed Wings 1" Ability { id: "9D8C", source: "Usurper of Frost" }
+824.0 "Hallowed Wings 2" Ability { id: "9D8C", source: "Usurper of Frost" }
+828.1 "--center--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+829.5 "--targetable--" # RECHECK THIS
+833.3 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
+841.3 "Edge of Oblivion 4" Ability { id: "9CEE", source: "Fragment of Fate" }
+843.3 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
+846.5 "--sync--" StartsUsing { id: ["9D71", "9D35"] }
+856.5 "Memory's End + Absolute Zero (enrage)" Ability { id: ["9D71","9D35"] }
+# Phase Five
+956.0 "--sync--" AddedCombatant { name: "Pandora" } window 250,0
+962.3 "(stun + cutscene)" GainsEffect { effectId: "968" }
+1030.0 "--targetable--" # RECHECK THIS
+1035.0 "--sync--" StartsUsing { id: "9D72", source: "Pandora" } window 100,20
+1041.0 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+1052.0 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 21.9
+1067.8 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1076.0 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
+1086.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"], source: "Pandora" }
+1086.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1089.9 "Wings Dark and Light + Explosion" Ability { id: "9D80", source: "Pandora" }
+1093.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1107.4 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" }
+1108.0 "Cruel Path of Darkness + Cruel Path of Light" Ability { id: "9D7D", source: "Pandora" } duration 2.5
+1112.0 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1116.6 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1121.2 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1141.7 "Pandora's Box" Ability { id: "9D86", source: "Pandora" }
+1153.8 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+1164.9 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 19.7
+1180.7 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1193.0 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
+1203.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"], source: "Pandora" }
+1203.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1206.9 "Wings Dark and Light + Explosion" Ability { id: "9D80", source: "Pandora" }
+1210.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1219.2 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" }
+1219.8 "Cruel Path of Darkness + Cruel Path of Light" Ability { id: "9D7D", source: "Pandora" } duration 2.5
+1223.8 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1228.4 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1233.0 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.5
+1244.3 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+1255.3 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 17.7
+1271.3 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1279.8 "--sync--" StartsUsing { id: "9D88", source: "Pandora" }
+1301.3 "Paradise Lost (enrage)" Ability { id: "9D88", source: "Pandora" }
 # IGNORED ABILITIES
 # Fatebreaker
 # 9CB4 --sync--: Auto-attack
@@ -2047,16 +1945,9 @@ hideall "--sync--"
         const { x, y } = matches;
         const num = Directions.xyTo8DirNum(parseFloat(x), parseFloat(y), 100, 100);
         const dir = data.soumaP2冰圈初始位置DirNum;
-        const myRp = getRpByName(data, data.me);
-        const leftRule = data.triggerSetConfig.P2击退分组左组.toString().split(/[,\\/，]/).map((
-          v,
-        ) => (v.trim().toUpperCase()));
-        const myDir = leftRule.includes(myRp)
-          ? dir[0]
-          : dir[1];
         let index = 0;
         for (let i = 0; i < 8; i++) {
-          const d = (myDir + i) % 8;
+          const d = (dir[0] + i) % 8;
           if (d === num || d === (num + 4) % 8) {
             index = i;
             break;
@@ -2329,12 +2220,12 @@ hideall "--sync--"
             }
             if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
               // console.debug('P2光暴');
-              mark(topGroup[0].decId, data.triggerSetConfig.伊甸P2光暴标上1.toString(), false);
-              mark(topGroup[1].decId, data.triggerSetConfig.伊甸P2光暴标上2.toString(), false);
-              mark(topGroup[2].decId, data.triggerSetConfig.伊甸P2光暴标上3.toString(), false);
-              mark(bottomGroup[0].decId, data.triggerSetConfig.伊甸P2光暴标下1.toString(), false);
-              mark(bottomGroup[1].decId, data.triggerSetConfig.伊甸P2光暴标下2.toString(), false);
-              mark(bottomGroup[2].decId, data.triggerSetConfig.伊甸P2光暴标下3.toString(), false);
+              mark(topGroup[0].decId, markTypeOptions.锁链1, false);
+              mark(topGroup[1].decId, markTypeOptions.攻击2, false);
+              mark(topGroup[2].decId, markTypeOptions.锁链3, false);
+              mark(bottomGroup[0].decId, markTypeOptions.攻击3, false);
+              mark(bottomGroup[1].decId, markTypeOptions.锁链2, false);
+              mark(bottomGroup[2].decId, markTypeOptions.攻击1, false);
               clearMark(18);
             }
             data.soumaP2光之暴走连线.length = 0;
@@ -3033,7 +2924,6 @@ hideall "--sync--"
           v.name
         ).filter((v) => !data.soumaP3二运水.find((vv) => vv.target === v))[2];
         // console.log(lonely);
-        const switcherP = data.triggerSetConfig.P3二运水分摊预站位谁换;
         for (
           const name of data.party.details.map((v) =>
             v.name
@@ -3058,7 +2948,7 @@ hideall "--sync--"
           const priority = sortIndex < 0 ? '高' : '低';
           if (meHalf === partnerHalf) {
             (meHalf === 'left' ? leftSwitcherNames : rightSwitcherNames).add(
-              priority === switcherP ? name : partner,
+              priority === '低' ? name : partner,
             );
           }
         }
@@ -3143,41 +3033,13 @@ hideall "--sync--"
         })).combatants;
       },
       alertText: (data, matches, output) => {
-        // console.log(data.soumaP3水分组结果左, data.soumaP3水分组结果右);
         // 1顺  -1逆
-        const clock = matches.param2 === '40' ? -1 : 1;
+        const clock = matches.param2 === '40' ? '逆' : '顺';
         const target = data.soumaCombatantData[0];
         const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
         const baseDir = (dirNum + 2) % 4;
-        const otherDir = (baseDir + clock + 4) % 4;
-        const baseDirText = Directions.outputFrom8DirNum(baseDir);
-        const otherDirText = Directions.outputFrom8DirNum(otherDir);
         data.soumaCombatantData = [];
-        const baseRule = data.triggerSetConfig.P3二运地火基准二人.toString().split(/[,\\/，]/).map((
-          v,
-        ) => (v.trim().toUpperCase()));
-        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'base') {
-          return output[`base${baseDir}${clock === -1 ? '逆' : '顺'}`]();
-        }
-        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'complex') {
-          return output[`${baseDir}${clock === -1 ? '逆' : '顺'}`]();
-        }
-        if (data.triggerSetConfig.伊甸P3二运地火安全区报法 === 'simple') {
-          const r = data.soumaP3水分组结果右.includes(getRpByName(data, data.me)) ? 'R' : 'L';
-          if (baseRule.includes(getRpByName(data, data.me))) {
-            return output[`${baseDirText}${r}`]();
-          }
-          // console.log(dirText, clock, raidDirText, data.soumaP3水分组结果左);
-          if (baseDirText === 'dirN' && clock === 1) {
-            // MTAC、顺、大团24
-            return output[`sp1${r}`]();
-          }
-          if (baseDirText === 'dirNE' && clock === -1) {
-            // MT42、逆、大团CA
-            return output[`sp2${r}`]();
-          }
-          return output[`${otherDirText}${r}`]();
-        }
+        return output[`${baseDir}${clock}`]();
       },
       outputStrings: {
         '0顺': { en: '车头AC、大团二四' },
@@ -3188,26 +3050,6 @@ hideall "--sync--"
         '2逆': { en: '车头DB、大团四二' },
         '3顺': { en: '车头一三、大团AC' },
         '3逆': { en: '车头一三、大团DB' },
-        'sp1L': { en: '右上↗（2点）' },
-        'sp1R': { en: '左下↙（4点）' },
-        'sp2L': { en: '下↓（C点）' },
-        'sp2R': { en: '上↑（A点）' },
-        'dirNL': { en: '上↑（A点）' },
-        'dirNR': { en: '下↓（C点）' },
-        'dirNEL': { en: '左下↙（4点）' },
-        'dirNER': { en: '右上↗（2点）' },
-        'dirEL': { en: '左←（D点）' },
-        'dirER': { en: '右→（B点）' },
-        'dirSEL': { en: '左上↖（1点）' },
-        'dirSER': { en: '右下↘（3点）' },
-        'base0顺': { en: '地火：AC顺' },
-        'base0逆': { en: '地火：AC逆' },
-        'base1顺': { en: '地火：四二顺' },
-        'base1逆': { en: '地火：四二逆' },
-        'base2顺': { en: '地火：DB顺' },
-        'base2逆': { en: '地火：DB逆' },
-        'base3顺': { en: '地火：一三顺' },
-        'base3逆': { en: '地火：一三逆' },
       },
     },
     {
@@ -4077,7 +3919,7 @@ hideall "--sync--"
       'replaceSync': {
         'Fatebreaker(?!\')': 'フェイトブレイカー',
         'Fatebreaker\'s Image': 'フェイトブレイカーの幻影',
-        'Usurper of Frost': 'シヴァ・ミトロン',
+        'Usurper of Frost': 'シヴァ·ミトロン',
         'Oracle\'s Reflection': '巫女の鏡像',
         'Ice Veil': '永久氷晶',
         'Frozen Mirror': '氷面鏡',
@@ -4088,7 +3930,7 @@ hideall "--sync--"
         'Fragment of Fate': '未来の欠片',
         'Sorrow\'s Hourglass': '悲しみの砂時計',
         'Drachen Wanderer': '聖竜気',
-        'Pandora': 'パンドラ・ミトロン',
+        'Pandora': 'パンドラ·ミトロン',
       },
     },
     {
