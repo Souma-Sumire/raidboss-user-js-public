@@ -1,42 +1,28 @@
 # 使用说明
 
-## 用下崽器下载
-
-1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases)
-1. 在 ACT 中 添加 `SoumaDownloader.dll`，并启用
-1. 在下崽器中勾选你需要的 `.js` 文件，点击 `下载/更新` 按钮
-1. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效
-
-### 更新
-
-1. 点击下崽器的 `下载/更新` 按钮，会自动下载最新版本。
-2. 刷新 Raidboss 悬浮窗或重启 ACT，使改动生效。
-
 ## 手动下载
 
 1. [下载本仓库](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-1. 将 raidboss 文件夹中 *你需要的* `.js` 文件，放入你的 `user\raidboss` 文件夹
-    - 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
-    - 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
+1. 将 **raidboss** 文件夹中 _你需要的_ `.js` 文件，放入你的文件夹
+    - 🐱 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
+    - ☕ 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
 
 ## 常见问题
 
 ### 绝伊甸相关
 
-1. 前半段与自带的触发器重复报
+1. **P1~P4与自带的触发器重复报**  
+   关掉默认自带的触发器
+   ![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
 
-    关掉默认自带的触发器
-    ![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
-
-2. 雾龙怎么不报
-
-    为了保护野队环境，雾龙的触发器默认关闭，需要手动到 config 面板勾选开启
+1. **雾龙怎么不报**  
+   雾龙功能默认关闭，需要手动到 **config 面板** 勾选开启
 
 ### 设置职能位置（我是MT/ST/H1/H2/D1/D2/D3/D4）
 
 默认以 `战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青` 的顺序自动分配。
 
-但很明显，固定的顺序并不适合所有人，实战中我们可能有各种位置，所以你需要：
+但实战中我们可能有各种位置，所以你需要：
 
 1. 在 `OverlayPlugin悬浮窗插件` 中，左下角点击 `新建` 按钮。
 1. 名称任意输入，预设选择 `自定义悬浮窗`，类型选择 `数据统计`
@@ -46,12 +32,53 @@
 
 ![image](https://github.com/user-attachments/assets/1a9ccfc6-35d1-4f93-a3b8-0a41c698d946)
 
-### 如何使用标点功能
+### 自动标点或自动喊话功能
 
 1. 需要加载对应版本的 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)（一般来说是最新版）
-1. 在 config 面板中手动开启标点功能
+1. 所有可能对队友产生影响的功能都是默认关闭的，你需要在 **config 面板** 中手动开启他们
 ![image](https://github.com/user-attachments/assets/3efa5c75-e02d-46c2-a987-eaf008c9e039)
 
-### 其他
+## 按文件说明
 
-[欧米茄标点说明](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+### 核心依赖
+
+- `[必装] 依赖 - Souma拓展运行库`：必须有，且最好不要重命名，因需要保证其在名称排序时处于首位
+
+### 绝本系列
+
+- `绝 - 龙诗`：兼容常见打法（不支持P5鸡排式）
+- `绝 - 欧米茄 P2铁匠警察`：当P2有人使用单体技能攻击防火墙时，发出通报批评
+- `绝 - 欧米茄.o`：适配莫古力攻略。[自动标点图示](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)
+- `绝 - 神兵 三连桶`：三连桶标记
+- `绝 - 伊甸 P4未来碎片保镖`：当P4未来碎片被错误攻击时，发出通报并抓出凶手
+- `绝 - 伊甸`：默认“MMW&MGL合作攻略”一套，兼容其他常见打法
+
+### 零式系列
+
+- `零式 - M1S`：略
+- `零式 - M2S`：略
+- `零式 - M3S`：略
+- `零式 - M4S`：首周代码存档，适配Game8攻略
+- `零式 - P1S`：略
+- `零式 - P2S`：略
+- `零式 - P3S`：略
+- `零式 - P4S`：适配海豹式拉线、被窝攻略
+- `零式 - P5S`：略
+- `零式 - P6S`：适配 uptime 打法
+- `零式 - P7S`：略
+- `零式 - P8S`：适配菓子攻略等
+- `零式 - P09S`：略
+- `零式 - P10S`：略
+- `零式 - P11S`：适配"光与暗的调和"机制（Game8/美服uptime）
+- `零式 - P12S`：适配Game8、菓子、NL改、papan等解法
+
+### 其他功能
+
+- `灭 - 暗黑之云`：首周存档，不再维护
+- `挖宝 - 曼德拉标点`：标记曼德拉顺序
+- `玩具 - 食物警察`：检查队友食物是否（即将）到期
+- `异闻零式 - 阿罗阿罗岛`：云编写，适配MMW/肉桂攻略，未经测试
+- `易用性 - TTS不念出东南西北`：屏蔽TTS中的方向词（不影响文本提示）
+- `易用性 - 风脉泉标记`：宏指令 `/e fengmai`
+- `易用性 - 关闭提示音`：关闭默认的触发器音效
+- `易用性 - 招募满人提醒`：若切屏时招募组满人，循环播放"人齐了"语音
