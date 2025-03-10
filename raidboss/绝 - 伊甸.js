@@ -326,8 +326,6 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          'MT': 'MT',
-          'ST': 'ST',
           'H1': 'H1',
           'H2': 'H2',
           'D1': 'D1',
@@ -344,8 +342,6 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          'MT': 'MT',
-          'ST': 'ST',
           'H1': 'H1',
           'H2': 'H2',
           'D1': 'D1',
@@ -362,8 +358,6 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          'MT': 'MT',
-          'ST': 'ST',
           'H1': 'H1',
           'H2': 'H2',
           'D1': 'D1',
@@ -378,7 +372,7 @@ Options.Triggers.push({
       id: '伊甸P2光暴打法',
       name: { en: 'P2光暴打法' },
       type: 'select',
-      options: { en: { '田园郡 ': 'mgl', '灰9': 'gray9' } },
+      options: { en: { '田园郡（六芒星）': 'mgl', '灰9': 'gray9' } },
       default: 'mgl',
     },
     {
@@ -416,14 +410,21 @@ Options.Triggers.push({
       name: { en: 'P3二运 水分摊预站位优先级 左组' },
       type: 'string',
       default: 'MT/ST/H1/H2',
-      comment: { en: '优先级低负责换过去，如果打双分组法则填写"H1/H2/MT/ST"' },
+      comment: { en: '优先级低（写在后面的）换去对面，如果打双分组法则填写"H1/H2/MT/ST"' },
     },
     {
       id: 'P3二运水分摊预站位右组',
       name: { en: 'P3二运 水分摊预站位优先级 右组' },
       type: 'string',
       default: 'D1/D2/D3/D4',
-      comment: { en: '优先级低负责换过去，如果打双分组法则填写"D4/D3/D2/D1"（应该吧）' },
+      comment: { en: '优先级低（写在后面的）换去对面，如果打双分组法则填写"D4/D3/D2/D1"（应该吧）' },
+    },
+    {
+      id: 'P3二运地火报点方式',
+      name: { en: 'P3二运 地火报点方式' },
+      type: 'select',
+      options: { en: { '全部：先报车头再报人群（车头AC、大团二四）': '全', '简洁：报人群和车头怎么走（二四左）': '人群' } },
+      default: '人群',
     },
     {
       id: 'P4二运同BUFF优先级',
@@ -449,13 +450,6 @@ Options.Triggers.push({
       name: { en: 'P4光暴 莫古力 下半场站位顺序' },
       type: 'string',
       default: 'D1/D2/D3/D4',
-    },
-    {
-      id: '伊甸P4一运水波换位',
-      name: { en: 'P4一运 莫古力 水波换位打法' },
-      type: 'select',
-      options: { en: { '整组转': '整组换', '单边换': '单边换' } },
-      default: '单边换',
     },
     {
       id: 'P4光暴牛奶抱枕预站位',
@@ -653,6 +647,246 @@ Options.Triggers.push({
       soumaP5星灵之剑阶段: false,
     };
   },
+  // 临时用，主分支合并国服翻译后删除
+  timeline: `hideall "--Reset--"
+hideall "--sync--"
+0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
+13.9 "--sync--" Ability { id: ["9CD0", "9CD4"] }
+14.6 "Cyclonic Break 1 (targeted)" Ability { id: "9CD1" }
+16.6 "Cyclonic Break 2 (follow-up)" #Ability { id: "9CD2" }
+16.6 "Sinsmoke/Sinsmite" Ability { id: ["9CD3", "9CD5"] }
+18.6 "Cyclonic Break 3 (follow-up)" #Ability { id: "9CD2" }
+20.6 "Cyclonic Break 4 (follow-up)" #Ability { id: "9CD2" }
+24.4 "Powder Mark Trail" Ability { id: "9CE8" }
+28.5 "--center--" Ability { id: "9CED" }
+35.2 "Utopian Sky" Ability { id: ["9CDA", "9CDB"] }
+35.2 "--untargetable--"
+40.6 "Burn Mark" Ability { id: "9CE9" }
+49.5 "--sync--" Ability { id: "9CDD" } # Blasting Zone castbar
+50.4 "Sinbound Fire III/Sinbound Thunder III" Ability { id: ["9CDF", "9CE0"] }
+50.5 "Blasting Zone" Ability { id: "9CDE" }
+55.9 "--sync--" Ability { id: ["9D89", "9D8A"] }
+56.6 "Cyclonic Break 1 (targeted)" Ability { id: "9CD1" }
+58.6 "Cyclonic Break 2 (follow-up)" #Ability { id: "9CD2" }
+58.6 "Sinsmoke/Sinsmite" Ability { id: ["9CD3", "9CD5"] }
+60.6 "Cyclonic Break 3 (follow-up)" #Ability { id: "9CD2" }
+62.6 "Cyclonic Break 4 (follow-up)" #Ability { id: "9CD2" }
+63.8 "Turn Of The Heavens" Ability { id: ["9CD6", "9CD7"] }
+64.8 "Burnt Strike (lightning)" Ability { id: "9CE3" }
+66.5 "Burnout" Ability { id: "9CE4" }
+70.8 "Burnt Strike (fire)" Ability { id: "9CE1" }
+72.8 "Blastburn" Ability { id: "9CE2" }
+75.4 "Floating Fetters" Ability { id: "9CEB" }
+78.6 "Sinsmoke" Ability { id: "9CE7" }
+79.8 "--targetable--"
+86.0 "Burnished Glory" Ability { id: "9CEA" }
+101.4 "Fall Of Faith" Ability { id: ["9CC9", "9CCC"] } # This is manually left in since it's a visible castbar.
+102.2 "Floating Fetters 1" #Ability { id: "9CEB" }
+105.2 "Floating Fetters 2" #Ability { id: "9CEB" }
+105.5 "Sinblaze/Sinsmite 1" #Ability { id: ["9CCE", "9CDC"] }
+107.5 "Floating Fetters 3" #Ability { id: "9CEB" }
+108.4 "Sinblaze/Sinsmite 2" #Ability { id: ["9CCE", "9CDC"] }
+109.9 "Floating Fetters 4" #Ability { id: "9CEB" }
+110.8 "Sinblaze/Sinsmite 3" #Ability { id: ["9CCE", "9CDC"] }
+113.3 "Sinblaze/Sinsmite 4" #Ability { id: ["9CCE", "9CDC"] }
+121.3 "Burnished Glory" Ability { id: "9CEA" }
+129.9 "Powder Mark Trail" Ability { id: "9CE8" }
+132.3 "--center--" Ability { id: "9CED" }
+141.3 "Burnt Strike" Ability { id: ["9CC1", "9CC5"] }
+143.1 "Blastburn/Burnout" #Ability { id: ["9CC2", "9CC6"] }
+145.1 "Explosion" #Ability { id: "9CBD" }
+150.5 "--sync--" StartsUsing { id: "9CC0" } # Burnished Glory
+160.2 "Burnished Glory (enrage)" Ability { id: "9CC0" }
+# Phase Two
+200.0 "--sync--" MapEffect { flags: "00020001", location: "17" } window 200,5
+204.1 "--targetable--"
+210.3 "--sync--" StartsUsing { id: "9CFF" }
+215.3 "Quadruple Slap 1" Ability { id: "9CFF" }
+219.4 "Quadruple Slap 2" Ability { id: "9D00" }
+224.5 "--jump south--" Ability { id: "9CEF" }
+228.8 "Mirror Image" Ability { id: "9CF4" }
+235.9 "Diamond Dust" Ability { id: "9D05" }
+239.0 "--untargetable--"
+244.6 "Axe Kick/Scythe Kick" Ability { id: ["9D0A", "9D0B"] }
+245.5 "The House of Light" Ability { id: "9D0E" }
+247.2 "Frigid Stone" Ability { id: "9D07" }
+247.6 "Icicle Impact" Ability { id: "9D06" }
+248.4 "--center--" Ability { id: "9CEF" }
+251.5 "Heavenly Strike" Ability { id: "9D0F" }
+251.6 "Icicle Impact" Ability { id: "9D06" }
+254.2 "Frigid Needle" Ability { id: "9D08" }
+254.6 "Sinbound Holy (cast)" Ability { id: "9D10" }
+255.5 "Icicle Impact" Ability { id: "9D06" }
+255.5 "Sinbound Holy 1 (puddles)" #Ability { id: "9D11" }
+256.9 "Sinbound Holy 2 (puddles)" #Ability { id: "9D11" }
+258.5 "Sinbound Holy 3 (puddles)" #Ability { id: "9D11" }
+260.1 "Sinbound Holy 4 (puddles)" #Ability { id: "9D11" }
+263.9 "Shining Armor + Frost Armor" Ability { id: ["9CF8", "9CF9"] }
+270.5 "Twin Stillness/Twin Silence" Ability { id: ["9D01", "9D02"] }
+272.6 "Twin Silence/Twin Stillness" Ability { id: ["9D03", "9D04"] }
+276.2 "--targetable--"
+283.3 "Hallowed Ray" Ability { id: "9D12" }
+293.0 "Mirror, Mirror" Ability { id: "9CF3" }
+307.1 "Scythe Kick" Ability { id: "9D0B" }
+317.2 "Reflected Scythe Kick" Ability { id: "9D0D" }
+323.3 "Banish III" Ability { id: ["9D1C", "9D1D"] }
+326.4 "--center--" Ability { id: "9CEF" }
+332.7 "Light Rampant" Ability { id: "9D14" }
+335.7 "--untargetable--"
+340.7 "Luminous Hammer 1" #Ability { id: "9D1A" }
+342.3 "Luminous Hammer 2" #Ability { id: "9D1A" }
+343.9 "Luminous Hammer 3" #Ability { id: "9D1A" }
+344.0 "Bright Hunger (solo towers)" Ability { id: "9D15" }
+345.4 "Luminous Hammer 4" #Ability { id: "9D1A" }
+347.0 "Luminous Hammer 5" #Ability { id: "9D1A" }
+349.8 "Powerful Light" Ability { id: "9D19" }
+352.2 "Burst 1" #Ability { id: "9D1B" }
+355.2 "Burst 2" #Ability { id: "9D1B" }
+358.8 "Bright Hunger (group tower)" Ability { id: "9D15" }
+361.9 "Banish III" Ability { id: ["9D1C", "9D1D"] }
+364.9 "--targetable--"
+370.8 "The House of Light" Ability { id: "9CFC" }
+376.2 "--center--" Ability { id: "9CEF" }
+390.1 "Absolute Zero (enrage)" Ability { id: "9D8D" }
+# Adds Phase
+# The Heimal Storm casts from the Crystals of Light will stop once they all are killed.
+392.4 "Swelling Frost" Ability { id: "9D21" }
+411.4 "--adds targetable--"
+424.4 "Sinbound Blizzard III" Ability { id: "9D42" } window 424.4,2.5
+425.4 "Hiemal Storm" Ability { id: "9D40"  }
+428.6 "Hiemal Storm" Ability { id: "9D40"  }
+429.6 "Sinbound Blizzard III" Ability { id: "9D42" }
+431.8 "Hiemal Storm" Ability { id: "9D40"  }
+434.7 "Sinbound Blizzard III" Ability { id: "9D42" }
+434.9 "Hiemal Storm?" Ability { id: "9D40"  }
+438.1 "Hiemal Storm?" Ability { id: "9D40"  }
+439.9 "Sinbound Blizzard III" Ability { id: "9D42" }
+441.3 "Hiemal Storm?" Ability { id: "9D40"  }
+444.5 "Hiemal Storm?" Ability { id: "9D40"  }
+445.2 "Sinbound Blizzard III" Ability { id: "9D42" }
+447.7 "Hiemal Storm?" Ability { id: "9D40"  }
+450.5 "Sinbound Blizzard III" Ability { id: "9D42" }
+455.7 "Endless Ice Age (enrage)" Ability { id: "9D43" } # interrupted once <50% HP
+# Phase Three
+488.8 "--sync--" WasDefeated { target: 'Ice Veil' } window 488.8,5
+500.0 "Junction" Ability { id: "9D22" } window 500,5
+514.3 "--targetable--"
+518.3 "Hell's Judgment" Ability { id: "9D49" }
+521.4 "--sync--" Ability { id: "9CB5" }
+532.4 "Ultimate Relativity" Ability { id: "9D4A" }
+544.2 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+549.4 "Sinbound Meltdown 1 (x10)" Ability { id: "9D2B" } duration 10.2
+554.3 "Dark Fire III/Dark Blizzard III/Unholy Darkness" Ability { id: "9D54" }
+559.4 "Sinbound Meltdown 2 (x10)" Ability { id: "9D2B" } duration 10.2
+564.3 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+570.4 "Sinbound Meltdown 3 (x10)" Ability { id: "9D2B" } duration 10.2
+573.2 "(stun + rewind)" GainsEffect { effectId: "1043" }
+576.2 "Shadoweye/Dark Water III/Dark Eruption" Ability { id: "9D56" }
+580.1 "Shell Crusher" Ability { id: "9D5E" }
+588.5 "Shockwave Pulsar" Ability { id: "9D5A" }
+596.8 "Black Halo" Ability { id: "9D62" }
+605.9 "Spell-in-Waiting Refrain" Ability { id: "9D4D" }
+621.2 "Apocalypse" Ability { id: "9D68" }
+624.8 "Dark Water III" Ability { id: "9D4F" }
+626.3 "Spirit Taker" Ability { id: "9D60" }
+629.5 "--sync--" Ability { id: "9CB5" }
+635.2 "Apocalypse (x6)" duration 10.0
+637.9 "Dark Eruption" Ability { id: "9D52" }
+643.7 "Dark Water III" Ability { id: "9D4F" }
+646.0 "Darkest Dance (jump)" Ability { id: "9CF6" }
+648.9 "Darkest Dance (knockback)" Ability { id: "9CF7" }
+652.8 "Dark Water III" Ability { id: "9D4F" }
+658.2 "Shockwave Pulsar" Ability { id: "9D5A" }
+672.0 "Memory's End (enrage)" Ability { id: "9D6C" }
+675.4 "--untargetable--"
+# Phase Four
+680.8 "--targetable--"
+686.3 "--sync--" StartsUsing { id: "9D36" } window 686.3,5
+689.2 "Materialization" Ability { id: "9D36" }
+700.4 "Drachen Armor" Ability { id: "9CFA" }
+702.9 "Akh Rhai" Ability { id: "9D2D" } duration 5.1
+705.4 "Edge of Oblivion 1" Ability { id: "9CEE"  }
+706.2 "--Oracle targetable--"
+708.6 "--sync--" Ability { id: "9CEF" }
+714.9 "Darklit Dragonsong" Ability { id: "9D2F" }
+726.1 "Bright Hunger" Ability { id: "9D15" }
+727.0 "The Path of Light" Ability { id: "9CFE" }
+729.1 "Spirit Taker (jump)" Ability { id: "9D60" }
+729.5 "Spirit Taker (damage)" Ability { id: "9D61" }
+734.1 "Dark Water III + Hallowed Wings" Ability { id: "9D4F" }
+737.7 "Somber Dance (far)" Ability { id: "9D5C" }
+741.0 "Somber Dance (close)" Ability { id: "9D5D" }
+744.4 "Edge of Oblivion 2" Ability { id: "9CEE"  }
+745.4 "--Oracle center--" Ability { id: "9CB5" }
+750.7 "Akh Morn (x5)" Ability { id: "9D6E" } duration 3.9
+760.8 "Morn Afah" Ability { id: "9D70" }
+765.1 "--reposition--" Ability { id: "9CB5" }
+776.3 "Crystallize Time" Ability { id: "9D30" }
+779.3 "--Usurper untargetable--"
+780.3 "--Oracle untargetable--"
+782.4 "Edge of Oblivion 3" Ability { id: "9CEE"  }
+788.3 "Maelstrom (fast)" Ability { id: "9D6B" }
+789.3 "Dark Water III" Ability { id: "9D4F" }
+791.3 "Dark Blizzard III + Dark Eruption + Dark Aero III" Ability { id: "9D57" }
+793.4 "--sync--" Ability { id: "9CEF" }
+793.9 "Maelstrom (normal)" Ability { id: "9D6B" }
+794.3 "Unholy Darkness" Ability { id: "9D55" }
+797.7 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+798.8 "Maelstrom (slow)" Ability { id: "9D6B" }
+799.8 "--sync--" Ability { id: "9CEF" }
+804.0 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+808.2 "Quietus" Ability { id: "9D59" }
+810.2 "(rewind drop)"
+813.8 "Spirit Taker" Ability { id: "9D61" }
+817.2 "(stun + rewind)"
+819.4 "Hallowed Wings 1" Ability { id: "9D8C" }
+824.0 "Hallowed Wings 2" Ability { id: "9D8C" }
+828.1 "--center--" Ability { id: "9CB5" }
+829.4 "--targetable--"
+833.3 "Akh Morn (x5)" Ability { id: "9D6E" } duration 3.9
+841.3 "Edge of Oblivion 4" Ability { id: "9CEE"  }
+843.3 "Morn Afah" Ability { id: "9D70" }
+846.5 "--sync--" StartsUsing { id: ["9D71", "9D35"] }
+856.5 "Memory's End + Absolute Zero (enrage)" Ability { id: ["9D71","9D35"] }
+956.0 "--sync--" ActorControlExtra { category: "0197", param1: "1E43" } window 150,5 # limited lookbehind due to re-use
+962.0 "(stun + cutscene)" Ability { id: "9D28" } window 962,5
+# Phase 5
+1029.6 "--targetable--"
+1034.8 "--sync--" StartsUsing { id: "9D72" } window 1034.8,5
+1040.8 "Fulgent Blade" Ability { id: "9D72" }
+# Depending on where the Path of Darkness/Light starts, the duration can range from 18.3s to 22.5s
+# The tail end of this is largely irrelevant since the abilities are used at the far perimeter of the arena.
+# But to simplify, use a duration of 20.4 (the midpoint).
+1052.0 "The Path of Darkness + The Path of Light" Ability { id: "9CB6" } duration 20.4
+1067.8 "Akh Morn" Ability { id: "9D76" }
+1076.0 "Paradise Regained" Ability { id: "9D7F" }
+1086.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"] }
+1086.4 "Explosion" Ability { id: "9D80" }
+1089.9 "Wings Dark and Light + Explosion" Ability { id: "9D80" }
+1093.4 "Explosion" Ability { id: "9D80" }
+1107.4 "Polarizing Strikes" Ability { id: "9D7C" } duration 2.7
+1112.0 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1116.6 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1121.2 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1141.7 "Pandora's Box" Ability { id: "9D86" }
+1153.8 "Fulgent Blade" Ability { id: "9D72" }
+1164.9 "The Path of Darkness + The Path of Light" Ability { id: "9CB6" } duration 20.4
+1180.7 "Akh Morn" Ability { id: "9D76" }
+1193.0 "Paradise Regained" Ability { id: "9D7F" }
+1203.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"] }
+1203.4 "Explosion" Ability { id: "9D80" }
+1206.9 "Wings Dark and Light + Explosion" Ability { id: "9D80" }
+1210.4 "Explosion" Ability { id: "9D80" }
+1219.2 "Polarizing Strikes" Ability { id: "9D7C" } duration 2.7
+1223.8 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1228.4 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1233.0 "Polarizing Paths" Ability { id: "9D2A" } duration 2.7
+1244.3 "Fulgent Blade" Ability { id: "9D72" }
+1255.3 "The Path of Darkness + The Path of Light" Ability { id: "9CB6" } duration 20.4
+1271.3 "Akh Morn" Ability { id: "9D76" }
+1279.8 "--sync--" StartsUsing { id: "9D88" }
+1301.3 "Paradise Lost (enrage)" Ability { id: "9D88" }`,
+  overrideTimelineFile: true,
   triggers: [
     // #region 通用
     {
@@ -667,9 +901,9 @@ Options.Triggers.push({
     {
       id: 'Souma 绝伊甸 阶段控制',
       type: 'StartsUsing',
-      // 9CFF = P2 四重强击
+      // 9CFF = P2 四剑斩
       // 9D49 = P3 地狱审判
-      // 9D36 = P4 具象化
+      // 9D36 = P4 赋形
       // 9D72 = P5 光尘之剑
       netRegex: { id: ['9CFF', '9D49', '9D36', '9D72'], capture: true },
       suppressSeconds: 20,
@@ -1388,7 +1622,7 @@ Options.Triggers.push({
         正: { en: '正' },
         斜: { en: '斜' },
         水波: { en: '${go} + ${direction} 水波(靠近)' },
-        冰花: { en: '${go} + ${direction} 冰花(远一点)' },
+        冰花: { en: '${go} + ${direction} 冰花(远离)' },
       },
     },
     {
@@ -1953,7 +2187,7 @@ Options.Triggers.push({
       outputStrings: { text: { en: '1' } },
     },
     {
-      id: 'Souma 伊甸 P2 连结',
+      id: 'Souma 伊甸 P2 融合',
       type: 'NetworkCancelAbility',
       netRegex: { id: '9D43' },
       condition: (data) => data.soumaPhase === 'P2',
@@ -2280,25 +2514,26 @@ Options.Triggers.push({
           return output.text({ dir: output[Directions.outputFrom8DirNum(finallyDir)]() });
         }
       },
+      tts: null,
       outputStrings: {
         // 上↑
-        dirN: 'A点',
+        dirN: 'A点↑',
         // 右上↗
-        dirNE: '2点',
+        dirNE: '2点↗',
         // 右→
-        dirE: 'B点',
+        dirE: 'B点→',
         // 右下↘
-        dirSE: '3点',
+        dirSE: '3点↘',
         // 下↓
-        dirS: 'C点',
+        dirS: 'C点↓',
         // 左下↙
-        dirSW: '4点',
+        dirSW: '4点↙',
         // 左←
-        dirW: 'D点',
+        dirW: 'D点←',
         // 左上↖
-        dirNW: '1点',
+        dirNW: '1点↖',
         text: {
-          en: '${dir}方向处理',
+          en: '${dir}方向',
         },
       },
     },
@@ -2546,17 +2781,26 @@ Options.Triggers.push({
         const dirNum = Directions.xyTo8DirNum(target.PosX, target.PosY, 100, 100);
         const baseDir = (dirNum + 2) % 4;
         data.soumaCombatantData = [];
-        return output[`${baseDir}${clock}`]();
+        const t = data.triggerSetConfig.P3二运地火报点方式;
+        return output[`${baseDir}${clock}${t}`]();
       },
       outputStrings: {
-        '0顺': { en: '车头AC、大团二四' },
-        '0逆': { en: '车头AC、大团一三' },
-        '1顺': { en: '车头四二、大团DB' },
-        '1逆': { en: '车头四二、大团CA' },
-        '2顺': { en: '车头DB、大团一三' },
-        '2逆': { en: '车头DB、大团四二' },
-        '3顺': { en: '车头一三、大团AC' },
-        '3逆': { en: '车头一三、大团DB' },
+        '0顺全': { en: '车头AC、大团二四' },
+        '0逆全': { en: '车头AC、大团一三' },
+        '1顺全': { en: '车头四二、大团DB' },
+        '1逆全': { en: '车头四二、大团CA' },
+        '2顺全': { en: '车头DB、大团一三' },
+        '2逆全': { en: '车头DB、大团四二' },
+        '3顺全': { en: '车头一三、大团AC' },
+        '3逆全': { en: '车头一三、大团DB' },
+        '0顺人群': { en: '二四左' },
+        '0逆人群': { en: '一三右' },
+        '1顺人群': { en: 'DB左' },
+        '1逆人群': { en: 'CA右' },
+        '2顺人群': { en: '一三左' },
+        '2逆人群': { en: '四二右' },
+        '3顺人群': { en: 'AC左' },
+        '3逆人群': { en: 'DB右' },
       },
     },
     {
@@ -2625,7 +2869,7 @@ Options.Triggers.push({
     // #endregion P3
     // #region P4
     {
-      id: 'Souma 伊甸 P4 具象化',
+      id: 'Souma 伊甸 P4 赋形',
       type: 'StartsUsing',
       netRegex: { id: '9D36', capture: false },
       delaySeconds: 12,
@@ -2737,7 +2981,7 @@ Options.Triggers.push({
               v,
             ) => (v.trim().toUpperCase()));
             // 该机制必点THD，所以不必考虑2根线点奶妈的情况。
-            // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。（不取坐标，不需要判定时就站准，之后晚一点到也不影响）
+            // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。
             while (!thGroup.slice(0, 2).includes(lines[0].rp)) {
               lines.push(lines.shift());
             }
@@ -2911,10 +3155,6 @@ Options.Triggers.push({
         output.responseOutputStrings = {
           lines: { en: '分摊，躲开水晶' },
           stack: { en: '${dir}分摊' },
-          fromLeftToTop: { en: '←向左' },
-          fromLeftToBottom: { en: '向右→' },
-          fromRightToTop: { en: '向右→' },
-          fromRightToBottom: { en: '←向左' },
           otherSide: { en: '去对面分摊！' },
           sameSide: { en: '就近分摊' },
           unknown: { en: '分摊' },
@@ -2942,30 +3182,15 @@ Options.Triggers.push({
           const playerLR = data.soumaCombatantData.find((v) => v.Name === data.me).PosX < 100
             ? 'Left'
             : 'Right';
-          if (data.triggerSetConfig.伊甸P4一运水波换位 === '整组换') {
-            return {
-              infoText: output.stack({
-                dir: output[
-                  `from${playerLR}To${
-                    playerLR === freeWaterLR
-                      ? towerWaterTB === 'Bottom' ? 'Top' : 'Bottom'
-                      : towerWaterTB
-                  }`
-                ](),
-              }),
-            };
+          // 两个分摊是不是在同（上/下）半场？
+          const isSameSide = towerWaterTB === freeWaterTB;
+          // 如果在同半场，那么无分摊一侧依旧去自己半场，而有分摊一侧的两个人去对方半场。
+          const isStackSide = playerLR === freeWaterLR;
+          if (isSameSide && isStackSide) {
+            return { alarmText: output.otherSide() };
           }
-          if (data.triggerSetConfig.伊甸P4一运水波换位 === '单边换') {
-            // 两个分摊是不是在同（上/下）半场？
-            const isSameSide = towerWaterTB === freeWaterTB;
-            // 如果在同半场，那么无分摊一侧依旧去自己半场，而有分摊一侧的两个人去对方半场。
-            const isStackSide = playerLR === freeWaterLR;
-            if (isSameSide && isStackSide) {
-              return { alarmText: output.otherSide() };
-            }
-            // 如果不在同半场，那么所有人都去自己半场即可。（靠近A的去A，靠近C的去C）
-            return { infoText: output.sameSide() };
-          }
+          // 如果不在同半场，那么所有人都去自己半场即可。（靠近A的去A，靠近C的去C）
+          return { infoText: output.sameSide() };
         } catch (e) {
           console.error(e);
           return { infoText: output.unknown() };
@@ -3174,22 +3399,22 @@ Options.Triggers.push({
         return output[`${data.soumaP4二运机制}${type}`]?.() ?? output.unknown();
       },
       outputStrings: {
-        短红高左下右上安全: { en: 'D点←撞头 => 向下躲钢铁' },
-        短红低左下右上安全: { en: 'B点→撞头 => 分摊(躲开A)' },
+        短红高左下右上安全: { en: '撞头 => 躲钢铁' },
+        短红低左下右上安全: { en: '撞头 => 分摊' },
         长红高左下右上安全: { en: '左下↙击退人群 => 稍后撞头' },
         长红低左下右上安全: { en: '右下↘ => 躲钢铁 => 撞头' },
-        暗钢铁左下右上安全: { en: '右上↗ => 分摊(躲开A) => 踩圈' },
-        水分摊左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
-        冰月环左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
-        黄分摊左下右上安全: { en: '左下↙被击退 => 分摊(躲开A) => 踩圈' },
-        短红高左上右下安全: { en: 'D点←撞头 => 分摊(躲开A)' },
-        短红低左上右下安全: { en: 'B点→撞头 => 向下躲钢铁' },
+        暗钢铁左下右上安全: { en: '右上↗ => 分摊 => 踩圈' },
+        水分摊左下右上安全: { en: '左下↙被击退 => 分摊 => 踩圈' },
+        冰月环左下右上安全: { en: '左下↙被击退 => 分摊 => 踩圈' },
+        黄分摊左下右上安全: { en: '左下↙被击退 => 分摊 => 踩圈' },
+        短红高左上右下安全: { en: '撞头 => 分摊' },
+        短红低左上右下安全: { en: '撞头 => 躲钢铁' },
         长红高左上右下安全: { en: '左下↙ => 躲钢铁 => 撞头' },
         长红低左上右下安全: { en: '右下↘击退人群 => 稍后撞头' },
-        暗钢铁左上右下安全: { en: '左上↖ => 分摊(躲开A)' },
-        水分摊左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
-        冰月环左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
-        黄分摊左上右下安全: { en: '右下↘被击退 => 分摊(躲开A)' },
+        暗钢铁左上右下安全: { en: '左上↖ => 分摊' },
+        水分摊左上右下安全: { en: '右下↘被击退 => 分摊' },
+        冰月环左上右下安全: { en: '右下↘被击退 => 分摊' },
+        黄分摊左上右下安全: { en: '右下↘被击退 => 分摊' },
         unknown: { en: '???' },
       },
     },
@@ -3211,10 +3436,10 @@ Options.Triggers.push({
         return output[dirs.join('')]();
       },
       outputStrings: {
-        '01': { en: '回返：2点' },
-        '12': { en: '回返：3点' },
-        '23': { en: '回返：4点' },
-        '03': { en: '回返：1点' },
+        '01': { en: '2点' },
+        '12': { en: '3点' },
+        '23': { en: '4点' },
+        '03': { en: '1点' },
       },
     },
     // #endregion P4
@@ -3419,5 +3644,133 @@ Options.Triggers.push({
       },
     },
     // #endregion P5
+  ],
+  timelineReplace: [
+    {
+      'locale': 'cn',
+      'replaceText': {
+        '\\(cast\\)': '(咏唱)',
+        '\\(damage\\)': '(判定)',
+        '\\(enrage\\)': '(狂暴)',
+        '\\(lightning\\)': '(雷)',
+        '\\(fire\\)': '(火)',
+        '\\(puddles\\)': '(放圈)',
+        '\\(solo towers\\)': '(单人塔)',
+        '\\(group tower\\)': '(多人塔)',
+        'the Path of Darkness': '暗之波动',
+        'Cruel Path of Light': '光之重波动',
+        'Cruel Path of Darkness': '暗之重波动',
+        'Icecrusher': '削冰击',
+        'Explosion': '爆炸',
+        'Burnished Glory': '光焰圆光',
+        'Burnt Strike': '燃烧击',
+        'Blastburn': '火燃爆',
+        'Unmitigated Explosion': '大爆炸',
+        'Burnout': '雷燃爆',
+        'Fall Of Faith': '罪裁断',
+        'Solemn Charge': '急冲刺',
+        'Sinsmoke': '罪炎',
+        'Sinsmite': '罪雷',
+        'Bow Shock': '弓形冲波',
+        'Cyclonic Break': '暴风破',
+        'Turn Of The Heavens': '光轮召唤',
+        'Brightfire': '光炎',
+        'Utopian Sky': '乐园绝技',
+        'Sinblaze': '罪冰焰',
+        'Blasting Zone': '爆破领域',
+        'Sinbound Fire III': '罪爆炎',
+        'Sinbound Thunder III': '罪暴雷',
+        'Bound of Faith': '罪壤刺',
+        'Powder Mark Trail': '连锁爆印铭刻',
+        'Burn Mark': '爆印',
+        'Floating Fetters': '浮游拘束',
+        'Edge of Oblivion': '忘却的此岸',
+        'Mirror, Mirror': '镜中奇遇',
+        'Mirror Image': '镜像',
+        'Darkest Dance': '暗夜舞蹈',
+        'Frost Armor': '冰霜护甲',
+        'Shining Armor': '闪光护甲',
+        'Drachen Armor': '圣龙护甲',
+        'the Path of Light': '光之波动',
+        'the House of Light': '光之海啸',
+        'Quadruple Slap': '四剑斩',
+        'Twin Stillness': '静寂的双剑技',
+        'Twin Silence': '闲寂的双剑技',
+        'Diamond Dust': '钻石星尘',
+        'Icicle Impact': '冰柱冲击',
+        'Frigid Stone': '冰石',
+        'Frigid Needle': '冰针',
+        'Axe Kick': '阔斧回旋踢',
+        '(?<!Reflected )Scythe Kick': '镰形回旋踢',
+        'Reflected Scythe Kick': '连锁反射：镰形回旋踢',
+        'Heavenly Strike': '天降一击',
+        'Sinbound Holy': '罪神圣',
+        'Hallowed Ray': '神圣射线',
+        'Light Rampant': '光之失控',
+        'Bright Hunger': '侵蚀光',
+        'Inescapable Illumination': '曝露光',
+        'Refulgent Fate': '光之束缚',
+        'Lightsteep': '过量光',
+        'Powerful Light': '光爆',
+        'Luminous Hammer': '光明侵蚀',
+        'Burst': '爆炸',
+        'Banish III': '强放逐',
+        'Banish III Divided': '分裂强放逐',
+        'Absolute Zero': '绝对零度',
+        'Swelling Frost': '冻波',
+        'Junction': '融合',
+        'Hallowed Wings': '神圣之翼',
+        'Wings Dark and Light': '光与暗的双翼',
+        'Polarizing Paths': '星灵之剑',
+        'Sinbound Meltdown': '罪熔毁',
+        'Sinbound Fire': '罪火炎',
+        'Akh Rhai': '天光轮回',
+        'Darklit Dragonsong': '光与暗的龙诗',
+        'Crystallize Time': '时间结晶',
+        'Longing of the Lost': '圣龙气息',
+        'Joyless Dragonsong': '绝望龙诗',
+        'Materialization': '具象化',
+        'Akh Morn': '死亡轮回',
+        'Morn Afah': '无尽顿悟',
+        'Tidal Light': '光之巨浪',
+        'Hiemal Storm': '严冬风暴',
+        'Hiemal Ray': '严冬射线',
+        'Sinbound Blizzard III': '罪冰封',
+        'Endless Ice Age': '光之泛滥',
+        'Depths of Oblivion': '忘却的彼岸',
+        'Memory Paradox': '记忆悖论',
+        'Paradise Lost': '失乐园',
+        'Hell\'s Judgment': '地狱审判',
+        'Ultimate Relativity': '时间压缩·绝',
+        'Return': '回返',
+        'Return IV': '强回返',
+        'Spell-in-Waiting Refrain': '延迟咏唱·递进',
+        'Dark Water III': '黑暗狂水',
+        'Dark Eruption': '暗炎喷发',
+        'Dark Fire III': '黑暗爆炎',
+        'Unholy Darkness': '黑暗神圣',
+        'Shadoweye': '暗影之眼',
+        'Dark Blizzard III': '黑暗冰封',
+        'Dark Aero III': '黑暗暴风',
+        'Quietus': '寂灭',
+        'Shockwave Pulsar': '脉冲星震波',
+        'Somber Dance': '真夜舞蹈',
+        'Shell Crusher': '破盾一击',
+        'Spirit Taker': '碎灵一击',
+        'Black Halo': '黑色光环',
+        'Speed': '限速',
+        'Quicken': '神速',
+        'Slow': '减速',
+        'Apocalypse': '启示',
+        'Maelstrom': '巨漩涡',
+        'Memory\'s End': '记忆终结',
+        'Fulgent Blade': '光尘之剑',
+        'Polarizing Strikes': '星灵之剑',
+        'Paradise Regained': '复乐园',
+        'Twin Poles': '光与暗的双剑技',
+        'Pandora\'s Box': '潘多拉之匣',
+        'Fated Burn Mark': '死爆印',
+      },
+    },
   ],
 });
