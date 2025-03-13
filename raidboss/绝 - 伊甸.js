@@ -390,7 +390,7 @@ Options.Triggers.push({
       default: '关',
       comment: {
         en:
-          '预站位TN站上半场，DPS站下半场。上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。',
+          '预站位TN站上半场，DPS站下半场。上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。只支持田园郡或乱站。',
       },
     },
     {
@@ -425,12 +425,12 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '先车头点位，再人群点位（例如：车头AC、人群二四）': '车头人群',
-          '先车头点位，再人群顺逆（例如：AC顺）': '车头顺逆',
-          '先车头点位，再人群左右（例如：AC右）': '车头左右',
-          '先人群点位，再车头点位（例如：人群四二、车头CA）': '人群车头',
-          '先人群点位，再车头顺逆（例如：四二逆）': '人群顺逆',
-          '先人群点位，再车头左右（例如：四二左）': '人群左右',
+          '以车头基准：先报车头点位，再报人群点位（例如：车头AC、人群二四）': '车头人群',
+          '以车头基准：先报车头点位，再报人群顺逆（例如：AC顺）': '车头顺逆',
+          '以车头基准：先报车头点位，再报人群左右（例如：AC右）': '车头左右',
+          '以人群基准：先报人群点位，再报车头点位（例如：人群四二、车头CA）': '人群车头',
+          '以人群基准：先报人群点位，再报车头顺逆（例如：四二逆）': '人群顺逆',
+          '以人群基准：先报人群点位，再报车头左右（例如：四二左）': '人群左右',
         },
       },
       default: '车头人群',
@@ -454,12 +454,14 @@ Options.Triggers.push({
       name: { en: 'P4光暴 莫古力 上半场站位顺序' },
       type: 'string',
       default: 'MT/ST/H1/H2',
+      comment: { en: '不建议改。改的话只能改顺序，不能写DPS' },
     },
     {
       id: 'P4光暴预站位下半场',
       name: { en: 'P4光暴 莫古力 下半场站位顺序' },
       type: 'string',
       default: 'D1/D2/D3/D4',
+      comment: { en: '不建议改。改的话只能改顺序，不能写TH' },
     },
     {
       id: 'P4光暴牛奶抱枕预站位',
@@ -657,6 +659,809 @@ Options.Triggers.push({
       soumaP5星灵之剑阶段: false,
     };
   },
+  timeline: `### FUTURES REWRITTEN (ULTIMATE)
+# ZoneId: 1238
+# -ii 9CB4 9CD8 9CD9 9CC9 9CCA 9CCC 9CCD 9CCF 9CE5 9CE6 9CE9 9CF0 9D0C 9D0E 9D13
+# -p 9CFF:215.3 9D22:500.0 9D72:1041.0
+hideall "--Reset--"
+hideall "--sync--"
+0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
+13.9 "--sync--" Ability { id: ["9CD0", "9CD4"], source: "Fatebreaker" } # Cyclonic Break castbar
+14.6 "Cyclonic Break 1 (targeted)" Ability { id: "9CD1", source: "Fatebreaker" }
+16.6 "Cyclonic Break 2 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker" }
+16.6 "Sinsmoke/Sinsmite" Ability { id: ["9CD3", "9CD5"], source: "Fatebreaker" }
+18.6 "Cyclonic Break 3 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker" }
+20.6 "Cyclonic Break 4 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker" }
+24.4 "Powder Mark Trail" Ability { id: "9CE8", source: "Fatebreaker" }
+28.5 "--center--" Ability { id: "9CED", source: "Fatebreaker" }
+35.2 "Utopian Sky" Ability { id: ["9CDA", "9CDB"], source: "Fatebreaker" }
+35.2 "--untargetable--"
+40.6 "Burn Mark" Ability { id: "9CE9", source: "Fatebreaker" }
+49.5 "--sync--" Ability { id: "9CDD", source: "Fatebreaker's Image" } # Blasting Zone castbar
+50.4 "Sinbound Fire III/Sinbound Thunder III" Ability { id: ["9CDF", "9CE0"], source: ["Fatebreaker", "Fatebreaker's Image"] }
+50.5 "Blasting Zone" Ability { id: "9CDE", source: "Fatebreaker's Image" }
+55.9 "--sync--" Ability { id: ["9D89", "9D8A"], source: "Fatebreaker's Image" } # Cyclonic Break castbar
+56.6 "Cyclonic Break 1 (targeted)" Ability { id: "9CD1", source: "Fatebreaker's Image" }
+58.6 "Cyclonic Break 2 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker's Image" }
+58.6 "Sinsmoke/Sinsmite" Ability { id: ["9CD3", "9CD5"], source: ["Fatebreaker", "Fatebreaker's Image"] }
+60.6 "Cyclonic Break 3 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker's Image" }
+62.6 "Cyclonic Break 4 (follow-up)" #Ability { id: "9CD2", source: "Fatebreaker's Image" }
+63.8 "Turn Of The Heavens" Ability { id: ["9CD6", "9CD7"], source: "Fatebreaker's Image" }
+64.8 "Burnt Strike (lightning)" Ability { id: "9CE3", source: "Fatebreaker's Image" }
+66.5 "Burnout" Ability { id: "9CE4", source: "Fatebreaker's Image" }
+70.8 "Burnt Strike (fire)" Ability { id: "9CE1", source: "Fatebreaker's Image" }
+72.8 "Blastburn" Ability { id: "9CE2", source: "Fatebreaker's Image" }
+75.4 "Floating Fetters" Ability { id: "9CEB", source: "Fatebreaker's Image" }
+78.6 "Sinsmoke" Ability { id: "9CE7", source: "Fatebreaker's Image" }
+79.8 "--targetable--"
+86.0 "Burnished Glory" Ability { id: "9CEA", source: "Fatebreaker" }
+101.4 "Fall Of Faith" Ability { id: ["9CC9", "9CCC"], source: "Fatebreaker" } # This is manually left in since it's a visible castbar.
+102.2 "Floating Fetters 1" #Ability { id: "9CEB", source: "Fatebreaker" }
+105.2 "Floating Fetters 2" #Ability { id: "9CEB", source: "Fatebreaker's Image" }
+105.5 "Sinblaze/Sinsmite 1" #Ability { id: ["9CCE", "9CDC"], source: "Fatebreaker" }
+107.5 "Floating Fetters 3" #Ability { id: "9CEB", source: "Fatebreaker's Image" }
+108.4 "Sinblaze/Sinsmite 2" #Ability { id: ["9CCE", "9CDC"], source: "Fatebreaker's Image" }
+109.9 "Floating Fetters 4" #Ability { id: "9CEB", source: "Fatebreaker's Image" }
+110.8 "Sinblaze/Sinsmite 3" #Ability { id: ["9CCE", "9CDC"], source: "Fatebreaker" }
+113.3 "Sinblaze/Sinsmite 4" #Ability { id: ["9CCE", "9CDC"], source: "Fatebreaker's Image" }
+121.3 "Burnished Glory" Ability { id: "9CEA", source: "Fatebreaker" }
+129.9 "Powder Mark Trail" Ability { id: "9CE8", source: "Fatebreaker" }
+132.3 "--center--" Ability { id: "9CED", source: "Fatebreaker" }
+141.3 "Burnt Strike" Ability { id: ["9CC1", "9CC5"], source: "Fatebreaker" }
+143.1 "Blastburn/Burnout" #Ability { id: ["9CC2", "9CC6"], source: "Fatebreaker" }
+# TODO: Add all tower explosion IDs
+145.1 "Explosion" #Ability { id: "9CBD", source: "Fatebreaker" }
+150.5 "--sync--" StartsUsing { id: "9CC0", source: "Fatebreaker" } # Burnished Glory
+160.2 "Burnished Glory (enrage)" Ability { id: "9CC0", source: "Fatebreaker" }
+# Phase Two
+# Source actors are elided on some lines where stale data can make P1 actors fill it in.
+# Ability IDs should be sufficient in those cases.
+# Sync on the map change
+200.0 "--sync--" MapEffect { flags: "00020001", location: "17" } window 200,5
+204.1 "--targetable--"
+210.3 "--sync--" StartsUsing { id: "9CFF", source: "Usurper of Frost" }
+215.3 "Quadruple Slap 1" Ability { id: "9CFF", source: "Usurper of Frost" }
+219.4 "Quadruple Slap 2" Ability { id: "9D00", source: "Usurper of Frost" }
+224.5 "--jump south--" Ability { id: "9CEF", source: "Usurper of Frost" }
+228.8 "Mirror Image" Ability { id: "9CF4", source: "Usurper of Frost" }
+235.9 "Diamond Dust" Ability { id: "9D05", source: "Usurper of Frost" }
+239.0 "--untargetable--"
+244.6 "Axe Kick/Scythe Kick" Ability { id: ["9D0A", "9D0B"], source: "Oracle's Reflection" }
+245.5 "The House of Light" Ability { id: "9D0E" }
+247.2 "Frigid Stone" Ability { id: "9D07" }
+247.6 "Icicle Impact" Ability { id: "9D06" }
+248.4 "--center--" Ability { id: "9CEF" }
+251.5 "Heavenly Strike" Ability { id: "9D0F", source: "Usurper of Frost" }
+251.6 "Icicle Impact" Ability { id: "9D06" }
+254.2 "Frigid Needle" Ability { id: "9D08" }
+254.6 "Sinbound Holy (cast)" Ability { id: "9D10", source: "Oracle's Reflection" }
+255.5 "Icicle Impact" Ability { id: "9D06" }
+255.5 "Sinbound Holy 1 (puddles)" #Ability { id: "9D11", source: "Usurper of Frost" }
+256.9 "Sinbound Holy 2 (puddles)" #Ability { id: "9D11", source: "Oracle's Reflection" }
+258.5 "Sinbound Holy 3 (puddles)" #Ability { id: "9D11", source: "Oracle's Reflection" }
+260.1 "Sinbound Holy 4 (puddles)" #Ability { id: "9D11", source: "Oracle's Reflection" }
+263.9 "Shining Armor + Frost Armor" Ability { id: ["9CF8", "9CF9"], source: ["Oracle's Reflection", "Usurper Of Frost"] }
+270.5 "Twin Stillness/Twin Silence" Ability { id: ["9D01", "9D02"], source: "Oracle's Reflection" }
+272.6 "Twin Silence/Twin Stillness" Ability { id: ["9D03", "9D04"], source: "Oracle's Reflection" }
+276.2 "--targetable--"
+283.3 "Hallowed Ray" Ability { id: "9D12", source: "Usurper of Frost" }
+293.0 "Mirror, Mirror" Ability { id: "9CF3", source: "Usurper of Frost" }
+307.1 "Scythe Kick" Ability { id: "9D0B", source: "Usurper of Frost" }
+317.2 "Reflected Scythe Kick" Ability { id: "9D0D", source: "Frozen Mirror" }
+323.3 "Banish III" Ability { id: ["9D1C", "9D1D"], source: "Usurper of Frost" }
+326.4 "--center--" Ability { id: "9CEF", source: "Usurper of Frost" }
+332.7 "Light Rampant" Ability { id: "9D14", source: "Usurper of Frost" }
+335.7 "--untargetable--"
+340.7 "Luminous Hammer 1" #Ability { id: "9D1A", source: "Usurper of Frost" }
+342.3 "Luminous Hammer 2" #Ability { id: "9D1A", source: "Usurper of Frost" }
+343.9 "Luminous Hammer 3" #Ability { id: "9D1A", source: "Usurper of Frost" }
+344.0 "Bright Hunger (solo towers)" Ability { id: "9D15", source: "Usurper of Frost" }
+345.4 "Luminous Hammer 4" #Ability { id: "9D1A", source: "Usurper of Frost" }
+347.0 "Luminous Hammer 5" #Ability { id: "9D1A", source: "Usurper of Frost" }
+349.8 "Powerful Light" Ability { id: "9D19", source: "Usurper of Frost" }
+352.2 "Burst 1" #Ability { id: "9D1B", source: "Holy Light" }
+355.2 "Burst 2" #Ability { id: "9D1B", source: "Holy Light" }
+358.8 "Bright Hunger (group tower)" Ability { id: "9D15", source: "Usurper of Frost" }
+361.9 "Banish III" Ability { id: ["9D1C", "9D1D"], source: "Usurper of Frost" }
+364.9 "--targetable--"
+370.8 "The House of Light" Ability { id: "9CFC", source: "Usurper of Frost" }
+376.2 "--center--" Ability { id: "9CEF", source: "Usurper of Frost" }
+390.1 "Absolute Zero (enrage)" Ability { id: "9D8D", source: "Usurper of Frost" }
+# Adds Phase
+# The Heimal Storm casts from the Crystals of Light will stop once they all are killed.
+392.4 "Swelling Frost" Ability { id: "9D21", source: "Usurper of Frost" }
+411.4 "--adds targetable--"
+424.4 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" } window 424.4,2.5
+425.4 "Hiemal Storm" Ability { id: "9D40", source: "Crystal of Light" }
+428.6 "Hiemal Storm" Ability { id: "9D40", source: "Crystal of Light" }
+429.6 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" }
+431.8 "Hiemal Storm" Ability { id: "9D40", source: "Crystal of Light" }
+434.7 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" }
+434.9 "Hiemal Storm?" Ability { id: "9D40", source: "Crystal of Light" }
+438.1 "Hiemal Storm?" Ability { id: "9D40", source: "Crystal of Light" }
+439.9 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" }
+441.3 "Hiemal Storm?" Ability { id: "9D40", source: "Crystal of Light" }
+444.5 "Hiemal Storm?" Ability { id: "9D40", source: "Crystal of Light" }
+445.2 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" }
+447.7 "Hiemal Storm?" Ability { id: "9D40", source: "Crystal of Light" }
+450.5 "Sinbound Blizzard III" Ability { id: "9D42", source: "Crystal of Darkness" }
+455.7 "Endless Ice Age (enrage)" Ability { id: "9D43", source: "Ice Veil" } # interrupted once <50% HP
+# Phase Three
+488.8 "--sync--" WasDefeated { target: 'Ice Veil' } window 488.8,5
+500.0 "Junction" Ability { id: "9D22", source: "Usurper of Frost" } window 500,5
+514.3 "--targetable--"
+518.3 "Hell's Judgment" Ability { id: "9D49", source: "Oracle of Darkness" }
+521.4 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+532.4 "Ultimate Relativity" Ability { id: "9D4A", source: "Oracle of Darkness" }
+544.2 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+549.4 "Sinbound Meltdown 1 (x10)" Ability { id: "9D2B" } duration 10.2
+554.3 "Dark Fire III/Dark Blizzard III/Unholy Darkness" Ability { id: "9D54" }
+559.4 "Sinbound Meltdown 2 (x10)" Ability { id: "9D2B" } duration 10.2
+564.3 "Dark Fire III/Unholy Darkness" Ability { id: "9D54" }
+570.4 "Sinbound Meltdown 3 (x10)" Ability { id: "9D2B" } duration 10.2
+573.2 "(stun + rewind)" GainsEffect { effectId: "1043" }
+576.2 "Shadoweye/Dark Water III/Dark Eruption" Ability { id: "9D56" }
+580.1 "Shell Crusher" Ability { id: "9D5E", source: "Oracle of Darkness" }
+588.5 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
+596.8 "Black Halo" Ability { id: "9D62", source: "Oracle of Darkness" }
+605.9 "Spell-in-Waiting Refrain" Ability { id: "9D4D", source: "Oracle of Darkness" }
+621.2 "Apocalypse" Ability { id: "9D68", source: "Oracle of Darkness" }
+624.8 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+626.3 "Spirit Taker" Ability { id: "9D60", source: "Oracle of Darkness" }
+629.5 "--sync--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+635.2 "Apocalypse (x6)" duration 10.0
+637.9 "Dark Eruption" Ability { id: "9D52", source: "Oracle of Darkness" }
+643.7 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+646.0 "Darkest Dance (jump)" Ability { id: "9CF6", source: "Oracle of Darkness" }
+648.9 "Darkest Dance (knockback)" Ability { id: "9CF7", source: "Oracle of Darkness" }
+652.8 "Dark Water III" Ability { id: "9D4F", source: "Oracle of Darkness" }
+658.2 "Shockwave Pulsar" Ability { id: "9D5A", source: "Oracle of Darkness" }
+672.0 "Memory's End (enrage)" Ability { id: "9D6C", source: "Oracle of Darkness" }
+675.4 "--untargetable--"
+# Phase Four
+680.8 "--targetable--"
+686.3 "--sync--" StartsUsing { id: "9D36", source: "Usurper of Frost" } window 686.3,5
+689.2 "Materialization" Ability { id: "9D36", source: "Usurper of Frost" }
+700.4 "Drachen Armor" Ability { id: "9CFA" }
+702.9 "Akh Rhai" Ability { id: "9D2D", source: "Usurper of Frost" } duration 5.1
+705.4 "Edge of Oblivion 1" Ability { id: "9CEE", source: "Fragment of Fate" }
+706.2 "--Oracle targetable--"
+708.6 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+714.9 "Darklit Dragonsong" Ability { id: "9D2F", source: "Usurper of Frost" }
+726.1 "Bright Hunger" Ability { id: "9D15", source: "Usurper of Frost" }
+727.0 "The Path of Light" Ability { id: "9CFE", source: "Usurper of Frost" }
+729.1 "Spirit Taker (jump)" Ability { id: "9D60", source: "Oracle of Darkness" }
+729.5 "Spirit Taker (damage)" Ability { id: "9D61", source: "Oracle of Darkness" }
+734.1 "Dark Water III + Hallowed Wings" Ability { id: "9D4F" }
+737.7 "Somber Dance (far)" Ability { id: "9D5C", source: "Oracle of Darkness" }
+741.0 "Somber Dance (close)" Ability { id: "9D5D", source: "Oracle of Darkness" }
+744.4 "Edge of Oblivion 2" Ability { id: "9CEE", source: "Fragment of Fate" }
+745.4 "--Oracle center--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+750.7 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
+760.8 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
+765.1 "--reposition--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+776.3 "Crystallize Time" Ability { id: "9D30", source: "Usurper of Frost" }
+779.3 "--Usurper untargetable--"
+780.3 "--Oracle untargetable--"
+782.4 "Edge of Oblivion 3" Ability { id: "9CEE", source: "Fragment of Fate" }
+788.3 "Maelstrom (fast)" Ability { id: "9D6B" }
+789.3 "Dark Water III" Ability { id: "9D4F" }
+791.3 "Dark Blizzard III + Dark Eruption + Dark Aero III" Ability { id: "9D57" }
+793.4 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+793.9 "Maelstrom (normal)" Ability { id: "9D6B" }
+794.3 "Unholy Darkness" Ability { id: "9D55" }
+797.7 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+798.8 "Maelstrom (slow)" Ability { id: "9D6B" }
+799.8 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
+804.0 "Tidal Light (x4)" Ability { id: "9D3B" } duration 6
+808.2 "Quietus" Ability { id: "9D59", source: "Oracle of Darkness" }
+810.2 "(rewind drop)"
+813.8 "Spirit Taker" Ability { id: "9D61", source: "Oracle of Darkness" }
+817.2 "(stun + rewind)"
+819.4 "Hallowed Wings 1" Ability { id: "9D8C", source: "Usurper of Frost" }
+824.0 "Hallowed Wings 2" Ability { id: "9D8C", source: "Usurper of Frost" }
+828.1 "--center--" Ability { id: "9CB5", source: "Oracle of Darkness" }
+829.4 "--targetable--"
+833.3 "Akh Morn (x5)" Ability { id: "9D6E", source: "Oracle of Darkness" } duration 3.9
+841.3 "Edge of Oblivion 4" Ability { id: "9CEE", source: "Fragment of Fate" }
+843.3 "Morn Afah" Ability { id: "9D70", source: "Oracle of Darkness" }
+846.5 "--sync--" StartsUsing { id: ["9D71", "9D35"] }
+856.5 "Memory's End + Absolute Zero (enrage)" Ability { id: ["9D71","9D35"] }
+# Cutscene
+956.0 "--sync--" ActorControlExtra { category: "0197", param1: "1E43" } window 150,5 # limited lookbehind due to re-use
+962.0 "(stun + cutscene)" Ability { id: "9D28" } window 962,5
+# Phase 5
+1029.6 "--targetable--"
+1034.8 "--sync--" StartsUsing { id: "9D72", source: "Pandora" } window 1034.8,5
+1040.8 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+# Depending on where the Path of Darkness/Light starts, the duration can range from 18.3s to 22.5s
+# The tail end of this is largely irrelevant since the abilities are used at the far perimeter of the arena.
+# But to simplify, use a duration of 20.4 (the midpoint).
+1052.0 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 20.4
+1067.8 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1076.0 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
+1086.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"], source: "Pandora" }
+1086.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1089.9 "Wings Dark and Light + Explosion" Ability { id: "9D80", source: "Pandora" }
+1093.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1107.4 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" } duration 2.7
+1112.0 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1116.6 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1121.2 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1141.7 "Pandora's Box" Ability { id: "9D86", source: "Pandora" }
+1153.8 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+1164.9 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 20.4
+1180.7 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1193.0 "Paradise Regained" Ability { id: "9D7F", source: "Pandora" }
+1203.0 "Wings Dark and Light" Ability { id: ["9D29", "9D79"], source: "Pandora" }
+1203.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1206.9 "Wings Dark and Light + Explosion" Ability { id: "9D80", source: "Pandora" }
+1210.4 "Explosion" Ability { id: "9D80", source: "Pandora" }
+1219.2 "Polarizing Strikes" Ability { id: "9D7C", source: "Pandora" } duration 2.7
+1223.8 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1228.4 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1233.0 "Polarizing Paths" Ability { id: "9D2A", source: "Pandora" } duration 2.7
+1244.3 "Fulgent Blade" Ability { id: "9D72", source: "Pandora" }
+1255.3 "The Path of Darkness + The Path of Light" Ability { id: "9CB6", source: "Pandora" } duration 20.4
+1271.3 "Akh Morn" Ability { id: "9D76", source: "Pandora" }
+1279.8 "--sync--" StartsUsing { id: "9D88", source: "Pandora" }
+1301.3 "Paradise Lost (enrage)" Ability { id: "9D88", source: "Pandora" }
+# IGNORED ABILITIES
+# Fatebreaker
+# 9CB4 --sync--: Auto-attack
+# 9CC9 Fall Of Faith: Tether castbar, fire
+# 9CCA Solemn Charge: Rush to tether target, clones
+# 9CCC Fall Of Faith: Tether castbar, lightning
+# 9CCD Solemn Charge: Rush to tether target, Fatebreaker
+# 9CCF Bow Shock: Lightning bait cones (Sinsmite follow-up)
+# 9CD8 Brightfire: Turn Of The Heavens circle explosions
+# 9CD9 Brightfire: Turn Of The Heavens circle explosions
+# 9CE5 Bound of Faith: Roots + lifts tether target
+# 9CE6 Solemn Charge: Rush to tether target, clones, Turn Of The Heavens
+# 9CE9 Burn Mark: Tower failure
+# Usurper Of Frost
+# 9CF0 --sync--: Auto-attack
+# 9D0C Reflected Scythe Kick: Blue mirror copy of Scythe Kick
+# 9D0E The House Of Light: Mirror Proteans
+# 9D13 Hallowed Ray: Stack laser resolves
+# ALL ENCOUNTER ABILITIES
+# 9CB2 attack
+# 9CB3 --sync--: Auto-attack
+# 9CB4 --sync--: Auto-attack
+# 9CB5 --sync--: P4 boss jump
+# 9CB6 the Path of Darkness
+# 9CB7 Cruel Path of Light
+# 9CB8 Cruel Path of Darkness
+# 9CB9 Icecrusher
+# 9CBA Explosion: Tower damage
+# 9CBB Explosion: Tower damage
+# 9CBC Explosion: Tower damage
+# 9CBD Explosion: Tower damage
+# 9CBE Explosion: Tower damage
+# 9CBF Explosion: Tower damage
+# 9CC0 Burnished Glory: Enrage
+# 9CC1 Burnt Strike: Guillotine cleave, fire
+# 9CC2 Blastburn: Fire Burnt Strike knockback
+# 9CC3 Explosion: Tower damage
+# 9CC4 Unmitigated Explosion
+# 9CC5 Burnt Strike: Guillotine cleave, lightning
+# 9CC6 Burnout: Lightning Burnt Strike expansion
+# 9CC7 Explosion: Tower damage
+# 9CC8 Unmitigated Explosion
+# 9CC9 Fall Of Faith: Tether castbar, fire
+# 9CCA Solemn Charge: Rush to tether target, clones
+# 9CCB Sinsmoke
+# 9CCC Fall Of Faith: Tether castbar, lightning
+# 9CCD Solemn Charge: Rush to tether target, Fatebreaker
+# 9CCE Sinsmite: Tether damage, lightning
+# 9CCF Bow Shock: Lightning bait cones (Sinsmite follow-up)
+# 9CD0 Cyclonic Break: Protean castbar, fire
+# 9CD1 Cyclonic Break: Protean, targeted
+# 9CD2 Cyclonic Break: Protean, follow-up
+# 9CD3 Sinsmoke: Protean follow-up, pairs
+# 9CD4 Cyclonic Break: Protean castbar, lightning
+# 9CD5 Sinsmite: Protean follow-up, spreads
+# 9CD6 Turn Of The Heavens: Emote for Brightfire circle expansion, fire
+# 9CD7 Turn Of The Heavens: Emote for Brightfire circle expansion, lightning
+# 9CD8 Brightfire: Turn Of The Heavens circle explosions
+# 9CD9 Brightfire: Turn Of The Heavens circle explosions
+# 9CDA Utopian Sky: Intermission/trio castbar, fire
+# 9CDB Utopian Sky: Intermission/trio castbar, lightning
+# 9CDC Sinblaze: Tether damage, fire
+# 9CDD Blasting Zone: Utopian Sky line AoE castbar
+# 9CDE Blasting Zone: Utopian Sky line AoEs
+# 9CDF Sinbound Fire III: Utopian Sky light party stacks
+# 9CE0 Sinbound Thunder III: Utopian Sky spreads
+# 9CE1 Burnt Strike: Utopian Sky guillotine cleave, fire
+# 9CE2 Blastburn: Utopian Sky fire Burnt Strike knockback
+# 9CE3 Burnt Strike: Utopian Sky guillotine cleave, lightning
+# 9CE4 Burnout: Utopian Sky lightning Burnt Strike expansion
+# 9CE5 Bound of Faith: Utopian Sky -- Roots + lifts tether target
+# 9CE6 Solemn Charge: Utopian Sky -- Rush to tether target, clones
+# 9CE7 Sinsmoke: Utopian Sky fire tether damage
+# 9CE8 Powder Mark Trail: Splashing tank buster
+# 9CE9 Burn Mark: Tower failure
+# 9CEA Burnished Glory: Raidwide + bleed
+# 9CEB Floating Fetters: Roots + lifts tether target
+# 9CEC --sync--: probably also a jump/center
+# 9CED --sync--: --center--
+# 9CEE Edge of Oblivion
+# 9CEF --sync--: P1/P4 boss jump
+# 9CF0 --sync--: Auto-attack
+# 9CF1 --sync--: Auto-attack
+# 9CF2 --sync--: Auto-attack
+# 9CF3 Mirror, Mirror: Summon mirrors
+# 9CF4 Mirror Image: Summon Shiva clone
+# 9CF5 Darkest Dance
+# 9CF6 Darkest Dance
+# 9CF7 Darkest Dance
+# 9CF8 Frost Armor: Slippery floor cast
+# 9CF9 Shining Armor: Gaze attack from Shiva and clone
+# 9CFA Drachen Armor
+# 9CFB the Path of Light
+# 9CFC the House of Light: Final P2 Protean castbar
+# 9CFD the House of Light: Final P2 Protean castbar
+# 9CFE the Path of Light
+# 9CFF Quadruple Slap: Shiva tankbuster hit 1
+# 9D00 Quadruple Slap: Shiva tankbuster hit 2
+# 9D01 Twin Stillness: Front -> back cleave combo, front hit
+# 9D02 Twin Silence: Back -> front cleave combo, back hit
+# 9D03 Twin Silence: Back -> front cleave combo, front hit
+# 9D04 Twin Stillness: Front -> back cleave combo, back hit
+# 9D05 Diamond Dust: Raidwide
+# 9D06 Icicle Impact: Shiva circles
+# 9D07 Frigid Stone: Shiva stars land
+# 9D08 Frigid Needle: Shiva star explosions cast (no visible castbar)
+# 9D09 Frigid Needle: Shiva star explosions
+# 9D0A Axe Kick: Chariot AoE
+# 9D0B Scythe Kick: Dynamo AoE
+# 9D0C Reflected Scythe Kick: Blue mirror copy of Scythe Kick
+# 9D0D Reflected Scythe Kick: Red mirror copy of Scythe Kick
+# 9D0E The House Of Light: Mirror Proteans
+# 9D0F Heavenly Strike: Knockback
+# 9D10 Sinbound Holy: Healer stack puddles castbar
+# 9D11 Sinbound Holy: Healer stack puddles
+# 9D12 Hallowed Ray: Stack laser castbar
+# 9D13 Hallowed Ray: Stack laser resolves
+# 9D14 Light Rampant: Raidwide
+# 9D15 Bright Hunger: Light Rampant tower resolution
+# 9D16 Inescapable Illumination: Lightsteep stacks x5?
+# 9D17 Refulgent Fate: Light Rampant chain break
+# 9D18 Lightsteep: Light Rampant stack addition
+# 9D19 Powerful Light: Light Rampant 4/4 stack orbs
+# 9D1A Luminous Hammer: Light Rampant puddles
+# 9D1B Burst: Light Rampant large puddle AoEs
+# 9D1C Banish III: P2 partner stacks cast (no visible castbar)
+# 9D1D Banish III: P2 spreads cast (no visible castbar)
+# 9D1E Banish III: P2 partner stacks
+# 9D1F Banish III Divided: P2 spreads
+# 9D20 Absolute Zero: P2 phase end castbar, raidwide
+# 9D21 Swelling Frost
+# 9D22 Junction
+# 9D23 Hallowed Wings
+# 9D24 Hallowed Wings
+# 9D25 Hallowed Wings
+# 9D26 Hallowed Wings
+# 9D27 --sync--: probably also a jump/center
+# 9D28 --sync--: probably also a jump/center
+# 9D29 Wings Dark and Light
+# 9D2A Polarizing Paths
+# 9D2B Sinbound Meltdown
+# 9D2C Sinbound Fire
+# 9D2D Akh Rhai
+# 9D2E Akh Rhai
+# 9D2F Darklit Dragonsong
+# 9D30 Crystallize Time
+# 9D31 Longing of the Lost
+# 9D32 Joyless Dragonsong
+# 9D33 Joyless Dragonsong
+# 9D34
+# 9D35 Absolute Zero
+# 9D36 Materialization
+# 9D37 Akh Morn
+# 9D38 Akh Morn
+# 9D39 Morn Afah
+# 9D3A Morn Afah
+# 9D3B Tidal Light
+# 9D3C Tidal Light
+# 9D3D Tidal Light
+# 9D3E
+# 9D3F Hiemal Storm
+# 9D40 Hiemal Storm
+# 9D41 Hiemal Ray
+# 9D42 Sinbound Blizzard III
+# 9D43 Endless Ice Age
+# 9D44 Depths of Oblivion
+# 9D45 Memory Paradox
+# 9D46 Sinbound Blizzard III
+# 9D47 Paradise Lost
+# 9D48
+# 9D49 Hell's Judgment
+# 9D4A Ultimate Relativity
+# 9D4B Return
+# 9D4C Return IV
+# 9D4D Spell-in-Waiting Refrain
+# 9D4E Dark Water III
+# 9D4F Dark Water III
+# 9D50 Dark Water III
+# 9D51 Dark Eruption
+# 9D52 Dark Eruption
+# 9D53 Dark Eruption
+# 9D54 Dark Fire III
+# 9D55 Unholy Darkness
+# 9D56 Shadoweye
+# 9D57 Dark Blizzard III
+# 9D58 Dark Aero III
+# 9D59 Quietus
+# 9D5A Shockwave Pulsar
+# 9D5B Somber Dance
+# 9D5C Somber Dance
+# 9D5D Somber Dance
+# 9D5E Shell Crusher
+# 9D5F Shell Crusher
+# 9D60 Spirit Taker
+# 9D61 Spirit Taker
+# 9D62 Black Halo
+# 9D63 Sinbound Meltdown
+# 9D64 Sinbound Meltdown
+# 9D65 Speed
+# 9D66 Quicken
+# 9D67 Slow
+# 9D68 Apocalypse
+# 9D69 Apocalypse
+# 9D6A Crystallize Time
+# 9D6B Maelstrom
+# 9D6C Memory's End
+# 9D6D Darklit Dragonsong
+# 9D6E Akh Morn
+# 9D6F Akh Morn
+# 9D70 Morn Afah
+# 9D71 Memory's End
+# 9D72 Fulgent Blade
+# 9D73 the Path of Light
+# 9D74 the Path of Light
+# 9D75 the Path of Darkness
+# 9D76 Akh Morn
+# 9D77 Akh Morn
+# 9D78 Akh Morn
+# 9D79 Wings Dark and Light
+# 9D7A Wings Dark and Light
+# 9D7B Wings Dark and Light
+# 9D7C Polarizing Strikes
+# 9D7D Cruel Path of Light
+# 9D7E Cruel Path of Darkness
+# 9D7F Paradise Regained
+# 9D80 Explosion
+# 9D81 Unmitigated Explosion
+# 9D82 Twin Poles
+# 9D83 Twin Poles
+# 9D84 Twin Poles
+# 9D85 Twin Poles
+# 9D86 Pandora's Box
+# 9D87 Paradise Lost
+# 9D88 Paradise Lost
+# 9D89 Cyclonic Break: Utopian Sky Protean castbar, fire
+# 9D8A Cyckonic Break: Utopian Sky Protean castbar, lightning
+# 9D8B Fated Burn Mark
+# 9D8C Hallowed Wings
+# 9D8D Absolute Zero
+# 9D8E Absolute Zero
+# 9D8F Memory's End
+# 9D90 Memory's End
+`,
+  overrideTimelineFile: true,
+  timelineReplace: [
+    {
+      'locale': 'en',
+      'replaceText': {
+        'Axe Kick/Scythe Kick': 'Axe/Scythe Kick',
+        'Shining Armor + Frost Armor': 'Shining + Frost Armor',
+        'Sinbound Fire III/Sinbound Thunder III': 'Sinbound Fire/Thunder',
+        'Dark Fire III/Unholy Darkness': '(spreads/stack)',
+        'Dark Fire III/Dark Blizzard III/Unholy Darkness': '(spreads/donut/stack)',
+        'Shadoweye/Dark Water III/Dark Eruption': '(gazes/stack/spreads)',
+        'Dark Water III + Hallowed Wings': '(cleave + stacks)',
+        'Dark Blizzard III + Dark Eruption + Dark Aero III': '(donut + spread + KBs)',
+        'The Path of Darkness + The Path of Light': '(exa-lines)',
+      },
+    },
+    {
+      'missingTranslations': true,
+      'locale': 'ja',
+      'replaceSync': {
+        'Fatebreaker(?!\')': 'フェイトブレイカー',
+        'Fatebreaker\'s Image': 'フェイトブレイカーの幻影',
+        'Usurper of Frost': 'シヴァ・ミトロン',
+        'Oracle\'s Reflection': '巫女の鏡像',
+        'Ice Veil': '永久氷晶',
+        'Frozen Mirror': '氷面鏡',
+        'Holy Light': '聖なる光',
+        'Crystal of Darkness': '闇水晶',
+        'Crystal of Light': '光水晶',
+        'Oracle of Darkness': '闇の巫女',
+        'Fragment of Fate': '未来の欠片',
+        'Sorrow\'s Hourglass': '悲しみの砂時計',
+        'Drachen Wanderer': '聖竜気',
+        'Pandora': 'パンドラ・ミトロン',
+      },
+      'replaceText': {
+        'Blastburn': 'バーンブラスト',
+        'Blasting Zone': 'ブラスティングゾーン',
+        'Burn Mark': '爆印',
+        'Burnished Glory': '光焔光背',
+        'Burnout': 'バーンアウト',
+        'Burnt Strike': 'バーンストライク',
+        'Cyclonic Break': 'サイクロニックブレイク',
+        'Explosion': '爆発',
+        'Fall Of Faith': 'シンソイルセヴァー',
+        'Floating Fetters': '浮遊拘束',
+        'Powder Mark Trail': '連鎖爆印刻',
+        'Sinblaze': 'シンブレイズ',
+        'Sinbound Fire III': 'シンファイガ',
+        'Sinbound Thunder III': 'シンサンダガ',
+        'Sinsmite': 'シンボルト',
+        'Sinsmoke': 'シンフレイム',
+        'Turn Of The Heavens': '転輪召',
+        'Utopian Sky': '楽園絶技',
+        'the Path of Darkness': '闇の波動',
+        'Cruel Path of Light': '光の重波動',
+        'Cruel Path of Darkness': '闇の重波動',
+        'Icecrusher': '削氷撃',
+        'Unmitigated Explosion': '大爆発',
+        'Solemn Charge': 'チャージスラスト',
+        'Bow Shock': 'バウショック',
+        'Brightfire': '光炎',
+        'Bound of Faith': 'シンソイルスラスト',
+        'Edge of Oblivion': '忘却の此方',
+        'Mirror, Mirror': '鏡の国',
+        'Mirror Image': '鏡写し',
+        'Darkest Dance': '暗夜の舞踏技',
+        'Frost Armor': 'フロストアーマー',
+        'Shining Armor': 'ブライトアーマー',
+        'Drachen Armor': 'ドラゴンアーマー',
+        'the Path of Light': '光の波動',
+        'the House of Light': '光の津波',
+        'Quadruple Slap': 'クアドラストライク',
+        'Twin Stillness': '静寂の双剣技',
+        'Twin Silence': '閑寂の双剣技',
+        'Diamond Dust': 'ダイアモンドダスト',
+        'Icicle Impact': 'アイシクルインパクト',
+        'Frigid Stone': 'アイスストーン',
+        'Frigid Needle': 'アイスニードル',
+        'Axe Kick': 'アクスキック',
+        '(?<!Reflected )Scythe Kick': 'サイスキック',
+        'Reflected Scythe Kick': 'ミラーリング・サイスキック',
+        'Heavenly Strike': 'ヘヴンリーストライク',
+        'Sinbound Holy': 'シンホーリー',
+        'Hallowed Ray': 'ホーリーレイ',
+        'Light Rampant': '光の暴走',
+        'Bright Hunger': '浸食光',
+        'Inescapable Illumination': '曝露光',
+        'Refulgent Fate': '光の呪縛',
+        'Lightsteep': '過剰光',
+        'Powerful Light': '光爆',
+        'Luminous Hammer': 'ルミナスイロード',
+        'Burst': '爆発',
+        'Banish III(?! )': 'バニシュガ',
+        'Banish III Divided': 'ディバイデッド・バニシュガ',
+        'Absolute Zero': '絶対零度',
+        'Swelling Frost': '凍波',
+        'Junction': 'ジャンクション',
+        'Hallowed Wings': 'ホーリーウィング',
+        'Wings Dark and Light': '光と闇の片翼',
+        'Polarizing Paths': '星霊の剣',
+        'Sinbound Meltdown': 'シンメルトン',
+        'Sinbound Fire(?! )': 'シンファイア',
+        'Akh Rhai': 'アク・ラーイ',
+        'Darklit Dragonsong': '光と闇の竜詩',
+        'Crystallize Time': '時間結晶',
+        'Longing of the Lost': '聖竜気',
+        'Joyless Dragonsong': '絶望の竜詩',
+        'Materialization': '具象化',
+        'Akh Morn': 'アク・モーン',
+        'Morn Afah': 'モーン・アファー',
+        'Tidal Light': '光の大波',
+        'Hiemal Storm': 'ハイマルストーム',
+        'Hiemal Ray': 'ハイマルレイ',
+        'Sinbound Blizzard III': 'シンブリザガ',
+        'Endless Ice Age': '光の氾濫',
+        'Depths of Oblivion': '忘却の彼方',
+        'Memory Paradox': 'メモリー·パラドックス',
+        'Paradise Lost': '失楽園',
+        'Hell\'s Judgment': 'ヘル・ジャッジメント',
+        'Ultimate Relativity': '時間圧縮・絶',
+        'Return': 'リターン',
+        'Return IV': 'リタンジャ',
+        'Spell-in-Waiting Refrain': 'ディレイスペル・リフレイン',
+        'Dark Water III': 'ダークウォタガ',
+        'Dark Eruption': 'ダークエラプション',
+        'Dark Fire III': 'ダークファイガ',
+        'Unholy Darkness': 'ダークホーリー',
+        'Shadoweye': 'シャドウアイ',
+        'Dark Blizzard III': 'ダークブリザガ',
+        'Dark Aero III': 'ダークエアロガ',
+        'Quietus': 'クワイタス',
+        'Shockwave Pulsar': 'ショックウェーブ・パルサー',
+        'Somber Dance': '宵闇の舞踏技',
+        'Shell Crusher': 'シェルクラッシャー',
+        'Spirit Taker': 'スピリットテイカー',
+        'Black Halo': 'ブラックヘイロー',
+        'Speed': 'スピード',
+        'Quicken': 'クイック',
+        'Slow': 'スロウ',
+        'Apocalypse': 'アポカリプス',
+        'Maelstrom': 'メイルシュトローム',
+        'Memory\'s End': 'エンド・オブ・メモリーズ',
+        'Fulgent Blade': '光塵の剣',
+        'Polarizing Strikes': '星霊の剣',
+        'Paradise Regained': 'パラダイスリゲイン',
+        'Twin Poles': '光と闇の双剣技',
+        'Pandora\'s Box': 'パンドラの櫃',
+        'Cyckonic Break': 'サイクロニックブレイク',
+        'Fated Burn Mark': '死爆印',
+      },
+    },
+    {
+      'locale': 'cn',
+      'replaceSync': {
+        'Fatebreaker(?!\')': '绝命战士',
+        'Fatebreaker\'s Image': '绝命战士的幻影',
+        'Usurper of Frost': '希瓦·米特隆',
+        'Oracle\'s Reflection': '巫女的镜像',
+        'Ice Veil': '永久冰晶',
+        'Frozen Mirror': '冰面镜',
+        'Holy Light': '圣光',
+        'Crystal of Darkness': '暗水晶',
+        'Crystal of Light': '光水晶',
+        'Oracle of Darkness': '暗之巫女',
+        'Fragment of Fate': '未来的碎片',
+        'Sorrow\'s Hourglass': '悲伤的沙漏',
+        'Drachen Wanderer': '圣龙气息',
+        'Pandora': '潘多拉·米特隆',
+      },
+      'replaceText': {
+        '\\(cast\\)': '(咏唱)',
+        '\\(close\\)': '(近)',
+        '\\(damage\\)': '(伤害)',
+        '\\(far\\)': '(远)',
+        '\\(fast\\)': '(快)',
+        '\\(fire\\)': '(火)',
+        '\\(follow-up\\)': '(后续)',
+        '\\(group tower\\)': '(小队塔)',
+        '\\(jump\\)': '(跳)',
+        '\\(knockback\\)': '(击退)',
+        '\\(lightning\\)': '(雷)',
+        '\\(normal\\)': '(正常)',
+        '\\(puddles\\)': '(圈)',
+        '\\(rewind drop\\)': '(放置回返)',
+        '\\(slow\\)': '(慢)',
+        '\\(solo towers\\)': '(单人塔)',
+        '\\(stun \\+ cutscene\\)': '(眩晕 + 动画)',
+        '\\(stun \\+ rewind\\)': '(眩晕 + 回返)',
+        '\\(targeted\\)': '(定向)',
+        '--jump south--': '--跳南--',
+        '--Oracle center--': '--巫女中央--',
+        '--Oracle targetable--': '--巫女可选中--',
+        '--Oracle untargetable--': '--巫女不可选中--',
+        '--reposition--': '--归位--',
+        '--Usurper untargetable--': '--希瓦·米特隆不可选中--',
+        'Blastburn': '火燃爆',
+        'Blasting Zone': '爆破领域',
+        'Burn Mark': '爆印',
+        'Burnished Glory': '光焰圆光',
+        'Burnout': '雷燃爆',
+        'Burnt Strike': '燃烧击',
+        'Cyclonic Break': '暴风破',
+        'Explosion': '爆炸',
+        'Fall Of Faith': '罪壤断',
+        'Floating Fetters': '浮游拘束',
+        'Powder Mark Trail': '连锁爆印铭刻',
+        'Sinblaze': '罪冰焰',
+        'Sinbound Fire III': '罪爆炎',
+        'Sinbound Thunder III': '罪暴雷',
+        'Sinsmite': '罪雷',
+        'Sinsmoke': '罪炎',
+        'Turn Of The Heavens': '光轮召唤',
+        'Utopian Sky': '乐园绝技',
+        'the Path of Darkness': '暗之波动',
+        'Cruel Path of Light': '光之波涛',
+        'Cruel Path of Darkness': '暗之波涛',
+        'Icecrusher': '碎冰击',
+        'Unmitigated Explosion': '大爆炸',
+        'Solemn Charge': '急冲刺',
+        'Bow Shock': '弓形冲波',
+        'Brightfire': '光炎',
+        'Bound of Faith': '罪壤刺',
+        'Edge of Oblivion': '忘却的此岸',
+        'Mirror, Mirror': '镜中奇遇',
+        'Mirror Image': '镜中显影',
+        'Darkest Dance': '暗夜舞蹈',
+        'Frost Armor': '冰霜护甲',
+        'Shining Armor': '闪光护甲',
+        'Drachen Armor': '圣龙护甲',
+        'the Path of Light': '光之波动',
+        'the House of Light': '光之海啸',
+        'Quadruple Slap': '四剑斩',
+        'Twin Stillness': '静寂的双剑技',
+        'Twin Silence': '闲寂的双剑技',
+        'Diamond Dust': '钻石星尘',
+        'Icicle Impact': '冰柱冲击',
+        'Frigid Stone': '冰石',
+        'Frigid Needle': '冰针',
+        'Axe Kick': '阔斧回旋踢',
+        '(?<!Reflected )Scythe Kick': '镰形回旋踢',
+        'Reflected Scythe Kick': '连锁反射：镰形回旋踢',
+        'Heavenly Strike': '天降一击',
+        'Sinbound Holy': '罪神圣',
+        'Hallowed Ray': '神圣射线',
+        'Light Rampant': '光之失控',
+        'Bright Hunger': '侵蚀光',
+        'Inescapable Illumination': '曝露光',
+        'Refulgent Fate': '光之束缚',
+        'Lightsteep': '过量光',
+        'Powerful Light': '光爆',
+        'Luminous Hammer': '光流侵蚀',
+        'Burst': '爆炸',
+        'Banish III(?! )': '强放逐',
+        'Banish III Divided': '分裂强放逐',
+        'Absolute Zero': '绝对零度',
+        'Swelling Frost': '寒波',
+        'Junction': '融合',
+        'Hallowed Wings': '神圣之翼',
+        'Wings Dark and Light': '光与暗的孤翼',
+        'Polarizing Paths': '星灵之剑',
+        'Sinbound Meltdown': '罪熔毁',
+        'Sinbound Fire(?! )': '罪火炎',
+        'Akh Rhai': '天光轮回',
+        'Darklit Dragonsong': '光与暗的龙诗',
+        'Crystallize Time': '时间结晶',
+        'Longing of the Lost': '圣龙气息',
+        'Joyless Dragonsong': '绝望龙诗',
+        'Materialization': '赋形',
+        'Akh Morn': '死亡轮回',
+        'Morn Afah': '无尽顿悟',
+        'Tidal Light': '光之巨浪',
+        'Hiemal Storm': '严冬风暴',
+        'Hiemal Ray': '严冬射线',
+        'Sinbound Blizzard III': '罪冰封',
+        'Endless Ice Age': '光之泛滥',
+        'Depths of Oblivion': '忘却的彼岸',
+        'Memory Paradox': '记忆悖论',
+        'Paradise Lost': '失乐园',
+        'Hell\'s Judgment': '地狱审判',
+        'Ultimate Relativity': '时间压缩·绝',
+        'Return': '回返',
+        'Return IV': '强回返',
+        'Spell-in-Waiting Refrain': '延迟咏唱·递进',
+        'Dark Water III': '黑暗狂水',
+        'Dark Eruption': '暗炎喷发',
+        'Dark Fire III': '黑暗爆炎',
+        'Unholy Darkness': '黑暗神圣',
+        'Shadoweye': '暗影之眼',
+        'Dark Blizzard III': '黑暗冰封',
+        'Dark Aero III': '黑暗暴风',
+        'Quietus': '寂灭',
+        'Shockwave Pulsar': '脉冲星震波',
+        'Somber Dance': '真夜舞蹈',
+        'Shell Crusher': '破盾一击',
+        'Spirit Taker': '碎灵一击',
+        'Black Halo': '黑色光环',
+        'Speed': '限速',
+        'Quicken': '神速',
+        '(?<!\\()Slow(?<!\\))': '减速',
+        'Apocalypse': '启示',
+        'Maelstrom': '巨漩涡',
+        'Memory\'s End': '记忆终结',
+        'Fulgent Blade': '光尘之剑',
+        'Polarizing Strikes': '星灵之剑',
+        'Paradise Regained': '复乐园',
+        'Twin Poles': '光与暗的双剑技',
+        'Pandora\'s Box': '潘多拉魔盒',
+        'Cyckonic Break': '暴风破',
+        'Fated Burn Mark': '死爆印',
+      },
+    },
+  ],
   triggers: [
     // #region 通用
     {
@@ -814,13 +1619,11 @@ Options.Triggers.push({
         if (matches.target === data.me) {
           return output.me();
         }
-        return output.text({ player: data.party.member(matches.target).job });
+        return output.text({ player: data.party.member(matches.target) });
       },
       outputStrings: {
         me: { en: '爆印死刑' },
-        text: {
-          en: '死刑：靠近 ${player}',
-        },
+        text: { en: '死刑：靠近 ${player}' },
       },
     },
     {
@@ -1690,7 +2493,7 @@ Options.Triggers.push({
           // 备用5: { en: '下2：去上中↑' },
           // 备用6: { en: '下1：去右下↘' },
           unknown: { en: '未知，自己看' },
-          error: { en: '出错了，自己看' },
+          error: { en: '线乱了，自己看' },
         };
         if (data.soumaP2光之暴走连线.length === 6) {
           const upperHalfPlayerCount = data.soumaCombatantData.filter((player) =>
@@ -2346,7 +3149,7 @@ Options.Triggers.push({
       infoText: (data, matches, output) => {
         if (matches.target === data.me)
           return;
-        return output.busterOn({ player: data.party.member(matches.target).job });
+        return output.busterOn({ player: data.party.member(matches.target) });
       },
       outputStrings: {
         busterOn: { en: '分摊死刑点 ${player}' },
@@ -2486,8 +3289,8 @@ Options.Triggers.push({
         }
         const switcherInfo = leftSwitcherNamesArr.map((v, i) =>
           output.switcherInfo({
-            name1: data.party.member(v).job,
-            name2: data.party.member(rightSwitcherNamesArr[i]).job,
+            name1: data.party.member(v),
+            name2: data.party.member(rightSwitcherNamesArr[i]),
           })
         ).join(output.separator()) || output.donTMove();
         // console.log(
@@ -2506,7 +3309,7 @@ Options.Triggers.push({
             ? rightSwitcherNamesArr[meIndex]
             : leftSwitcherNamesArr[meIndex];
           const alarmText = output.switch({
-            switcher: data.party.member(switcher).job,
+            switcher: data.party.member(switcher),
           });
           return {
             alarmText: alarmText,
@@ -2714,8 +3517,8 @@ Options.Triggers.push({
           stackKusari: { en: '原地踩塔' },
           stackIdle: { en: '就近引导水波' },
           doubleIdle: { en: '引导水波' },
-          withKusari: { en: '去${dir}塔（与${player.job}）' },
-          notWithKusari: { en: '去${dir}塔（与${player.job}）' },
+          withKusari: { en: '去${dir}塔（与${player}）' },
+          notWithKusari: { en: '去${dir}塔（与${player}）' },
           north: { en: '上' },
           south: { en: '下' },
         };
@@ -2784,6 +3587,7 @@ Options.Triggers.push({
             ) => (v.trim().toUpperCase()));
             // 该机制必点THD，所以不必考虑2根线点奶妈的情况。
             // 默认T左上奶右上dps下面1234排，不兼容其他情况否则过于麻烦。
+            // 2025/3/14：兼容了奶左上T右上（应该没bug）
             while (!thGroup.slice(0, 2).includes(lines[0].rp)) {
               lines.push(lines.shift());
             }
@@ -2795,7 +3599,10 @@ Options.Triggers.push({
                 nearSet.add(v.target);
               },
             );
-            const nearByTank = Array.from(nearSet).filter((v) => v !== t.name).map((v) => {
+            const otherKey = thGroup.findIndex((v) => ['MT', 'ST'].includes(v)) < 2
+              ? 'healer'
+              : 'tank';
+            const nearByFirst = Array.from(nearSet).filter((v) => v !== t.name).map((v) => {
               return {
                 name: v,
                 rp: getRpByName(data, v),
@@ -2804,10 +3611,10 @@ Options.Triggers.push({
             });
             // console.log(t, nearByTank);
             if (
-              nearByTank.find((v) => v.role === 'healer') &&
-              nearByTank.find((v) => v.role === 'dps')
+              nearByFirst.find((v) => v.role === otherKey) &&
+              nearByFirst.find((v) => v.role === 'dps')
             ) {
-              const dps = nearByTank.find((v) => v.role === 'dps');
+              const dps = nearByFirst.find((v) => v.role === 'dps');
               const otherDps = lines.find((v) => v.role === 'dps' && v.name !== dps.name);
               const priority = dpsGroup.findIndex((v) => v === dps.rp) < dpsGroup.findIndex((v) =>
                   v === otherDps.rp
@@ -2823,7 +3630,7 @@ Options.Triggers.push({
                   return {
                     alarmText: output.switch({
                       direction: output.dirDps(),
-                      switcher: data.party.member(dpsName).job,
+                      switcher: data.party.member(dpsName),
                     }),
                   };
                 }
@@ -2831,26 +3638,26 @@ Options.Triggers.push({
                   return {
                     alarmText: output.switch({
                       direction: output.dirTank(),
-                      switcher: data.party.member(tankName).job,
+                      switcher: data.party.member(tankName),
                     }),
                   };
                 }
                 return {
                   alertText: output.rectangle({
-                    tank: data.party.member(tankName).job,
-                    dps: data.party.member(dpsName).job,
+                    tank: data.party.member(tankName),
+                    dps: data.party.member(dpsName),
                   }),
                 };
               }
               if (priority === '沙漏') {
-                const healerName = nearByTank.find((v) => v.role === 'healer').name;
+                const healerName = nearByFirst.find((v) => v.role === otherKey).name;
                 const dpsName = otherDps.name;
                 // console.log('沙漏形', healerName, dpsName);
                 if (healerName === data.me) {
                   return {
                     alarmText: output.switch({
                       direction: output.dirDps(),
-                      switcher: data.party.member(dpsName).job,
+                      switcher: data.party.member(dpsName),
                     }),
                   };
                 }
@@ -2858,14 +3665,14 @@ Options.Triggers.push({
                   return {
                     alarmText: output.switch({
                       direction: output.dirHealer(),
-                      switcher: data.party.member(healerName).job,
+                      switcher: data.party.member(healerName),
                     }),
                   };
                 }
                 return {
                   alertText: output.hourglass({
-                    healer: data.party.member(healerName).job,
-                    dps: data.party.member(dpsName).job,
+                    healer: data.party.member(healerName),
+                    dps: data.party.member(dpsName),
                   }),
                 };
               }
