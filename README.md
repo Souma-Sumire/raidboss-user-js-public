@@ -13,7 +13,7 @@
 
 1. **P1~P4与自带的触发器重复报**  
    关掉默认自带的触发器
-   ![795c401924a050f7eeeaef22b1d1b0c2](https://github.com/user-attachments/assets/09864f99-1a61-4111-803b-f5dce0bd921b)
+   ![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
 
 1. **雾龙怎么不报**  
    雾龙功能默认关闭，需要手动到 **config 面板** 勾选开启
