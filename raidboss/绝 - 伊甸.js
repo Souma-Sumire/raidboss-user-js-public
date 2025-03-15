@@ -338,52 +338,25 @@ Options.Triggers.push({
       default: 'H1/H2/D1/D2/D3/D4',
     },
     {
-      id: '伊甸P1踩塔补位式固定北塔',
-      name: { en: 'P1踩塔 补位式 固定北塔者' },
-      type: 'select',
-      options: {
-        en: {
-          'H1': 'H1',
-          'H2': 'H2',
-          'D1': 'D1',
-          'D2': 'D2',
-          'D3': 'D3',
-          'D4': 'D4',
-        },
-      },
-      default: 'H1',
+      id: '伊甸P1踩塔补位式北塔人',
+      name: { en: 'P1踩塔 补位式 北塔人' },
+      type: 'string',
+      default: 'H1/D1',
+      comment: { en: '写在前面的固定站，写在后面的负责补位' },
     },
     {
-      id: '伊甸P1踩塔补位式固定中塔',
-      name: { en: 'P1踩塔 补位式 固定中塔者' },
-      type: 'select',
-      options: {
-        en: {
-          'H1': 'H1',
-          'H2': 'H2',
-          'D1': 'D1',
-          'D2': 'D2',
-          'D3': 'D3',
-          'D4': 'D4',
-        },
-      },
-      default: 'D4',
+      id: '伊甸P1踩塔补位式中塔人',
+      name: { en: 'P1踩塔 补位式 中塔人' },
+      type: 'string',
+      default: 'H2/D2',
+      comment: { en: '写在前面的固定站，写在后面的负责补位' },
     },
     {
-      id: '伊甸P1踩塔补位式固定南塔',
-      name: { en: 'P1踩塔 补位式 固定南塔者' },
-      type: 'select',
-      options: {
-        en: {
-          'H1': 'H1',
-          'H2': 'H2',
-          'D1': 'D1',
-          'D2': 'D2',
-          'D3': 'D3',
-          'D4': 'D4',
-        },
-      },
-      default: 'H2',
+      id: '伊甸P1踩塔补位式南塔人',
+      name: { en: 'P1踩塔 补位式 南塔人' },
+      type: 'string',
+      default: 'D4/D3',
+      comment: { en: '写在前面的固定站，写在后面的负责补位' },
     },
     {
       id: '伊甸P2光暴打法',
@@ -2162,35 +2135,50 @@ hideall "--sync--"
             c3: towers[2].count,
           });
         }
-        let priority = data.triggerSetConfig.伊甸P1踩塔填充优先级.toString().split(/[,\\/，]/).map((
-          v,
-        ) => (v.trim().toUpperCase()));
         const rp = getRpByName(data, data.me);
-        const seat = [
-          Array.from({ length: towers[0].count }),
-          Array.from({ length: towers[1].count }),
-          Array.from({ length: towers[2].count }),
-        ];
         if (data.triggerSetConfig.伊甸P1踩塔基准 === 'mmw') {
-          const fixed = [
-            data.triggerSetConfig.伊甸P1踩塔补位式固定北塔.toString(),
-            data.triggerSetConfig.伊甸P1踩塔补位式固定中塔.toString(),
-            data.triggerSetConfig.伊甸P1踩塔补位式固定南塔.toString(),
-          ];
-          priority = priority.filter((v) => !fixed.includes(v));
-          seat[0][0] = fixed[0];
-          seat[1][0] = fixed[1];
-          seat[2][0] = fixed[2];
+          const [northFixed, northFlex] = data.triggerSetConfig.伊甸P1踩塔补位式北塔人.toString().split(
+            /[,\\/，]/,
+          ).map((v) => (v.trim().toUpperCase()));
+          const [middleFixed, middleFlex] = data.triggerSetConfig.伊甸P1踩塔补位式中塔人.toString().split(
+            /[,\\/，]/,
+          ).map((v) => (v.trim().toUpperCase()));
+          const [southFiexed, southFlex] = data.triggerSetConfig.伊甸P1踩塔补位式南塔人.toString().split(
+            /[,\\/，]/,
+          ).map((v) => (v.trim().toUpperCase()));
+          const fiexeds = [northFixed, middleFixed, southFiexed];
+          const flexs = [northFlex, middleFlex, southFlex];
+          if (fiexeds.includes(rp)) {
+            return output[`place${fiexeds.indexOf(rp)}`]();
+          }
+          const flexsIndex = flexs.findIndex((v) => v === rp);
+          if (flexsIndex === -1) {
+            return output.unknown();
+          }
+          if (towers[flexsIndex].count === 1) {
+            return output[`place${towers.findIndex((v) => v.count === 3)}`]();
+          }
+          return output[`place${flexs.indexOf(rp)}`]();
         }
-        for (let i = 0; i < seat.length; i++) {
-          for (let j = 0; j < seat[i].length; j++) {
-            if (seat[i][j] === undefined) {
-              seat[i][j] = priority.shift();
+        if (data.triggerSetConfig.伊甸P1踩塔基准 === 'mgl') {
+          const priority = data.triggerSetConfig.伊甸P1踩塔填充优先级.toString().split(/[,\\/，]/).map((
+            v,
+          ) => (v.trim().toUpperCase()));
+          const seat = [
+            Array.from({ length: towers[0].count }),
+            Array.from({ length: towers[1].count }),
+            Array.from({ length: towers[2].count }),
+          ];
+          for (let i = 0; i < seat.length; i++) {
+            for (let j = 0; j < seat[i].length; j++) {
+              if (seat[i][j] === undefined) {
+                seat[i][j] = priority.shift();
+              }
             }
           }
+          const myIndex = seat.findIndex((v) => v.includes(rp));
+          return output[`place${myIndex}`]();
         }
-        const myIndex = seat.findIndex((v) => v.includes(rp));
-        return output[`place${myIndex}`]();
       },
       run: (data) => {
         data.soumaP1塔.length = 0;
@@ -3470,7 +3458,7 @@ hideall "--sync--"
         '0顺人群车头': { en: '人群四二、车头CA' },
         '0逆人群车头': { en: '人群一三、车头AC' },
         '1顺人群车头': { en: '人群DB、车头四二' },
-        '1逆人群车头': { en: '人群AC、车头四二' },
+        '1逆人群车头': { en: '人群AC、车头二四' },
         '2顺人群车头': { en: '人群一三、车头DB' },
         '2逆人群车头': { en: '人群四二、车头DB' },
         '3顺人群车头': { en: '人群AC、车头一三' },
