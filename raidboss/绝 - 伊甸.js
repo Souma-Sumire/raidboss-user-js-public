@@ -2038,7 +2038,7 @@ hideall "--sync--"
       },
       outputStrings: {
         text: {
-          en: '火：两侧 => 中间击退',
+          en: '直线 => 击退',
         },
       },
     },
@@ -2065,7 +2065,7 @@ hideall "--sync--"
       },
       outputStrings: {
         text: {
-          en: '雷：两侧 => 两侧远离',
+          en: '直线 => 去外侧',
         },
       },
     },
@@ -2121,7 +2121,7 @@ hideall "--sync--"
         capture: false,
       },
       condition: (data) => data.soumaPhase === 'P1' && data.role !== 'tank',
-      delaySeconds: 0.5,
+      delaySeconds: 2,
       suppressSeconds: 1,
       infoText: (data, _matches, output) => {
         const towers = data.soumaP1塔.sort((a, b) => a.y - b.y).slice();
