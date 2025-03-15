@@ -32,6 +32,16 @@ const markTypeOptions = {
   三角: 'triangle',
   方块: 'square',
 };
+const p1LinesHandler = {
+  '线1': [1, 3],
+  '线2': [2, 4],
+  '线3': [1, 3],
+  '线4': [2, 4],
+  '闲1': [1, 3],
+  '闲2': [1, 3],
+  '闲3': [2, 4],
+  '闲4': [2, 4],
+};
 const p1Towers = {
   // 1人塔 火
   '9CC3': 1,
@@ -231,6 +241,13 @@ Options.Triggers.push({
         },
       },
       default: 'D1',
+    },
+    {
+      id: 'P1雷火线打法',
+      name: { en: 'P1雷火线 打法' },
+      type: 'select',
+      options: { en: { '常规AC': 'ac', 'BD闲固': 'bd' } },
+      default: 'ac',
     },
     {
       id: 'P1连线机制闲人优先级',
@@ -1784,21 +1801,45 @@ hideall "--sync--"
           switch: { en: '换换换！' },
           fire: { en: '火' },
           thunder: { en: '雷' },
-          line1: { en: '1${el}：上↑正点' },
-          line2: { en: '2${el}：下↓正点' },
-          line3: { en: '3${el}：上↑最外' },
-          line4: { en: '4${el}：下↓最外 ${handleOrder}' },
-          nothing1: { en: '闲1：上↑' },
-          nothing2: { en: '闲2：上↑' },
-          nothing3: { en: '闲3：下↓' },
-          nothing4: { en: '闲4：下↓' },
-          handleEl: { en: '${el1} => ${el2}' },
+          line1ac: { en: '1${el}：上↑正点' },
+          line2ac: { en: '2${el}：下↓正点' },
+          line3ac: { en: '3${el}：上↑最外 ${handleOrder}' },
+          line4ac: { en: '4${el}：下↓最外 ${handleOrder}' },
+          line1bdfire: { en: '1火：左上' },
+          line1bdthunder: { en: '1雷：左中' },
+          line2bdfire: { en: '2火：右上' },
+          line2bdthunder: { en: '2雷：右中' },
+          line3bdfirePfire: { en: '3火：左中吃火 => 换位放火' },
+          line3bdfirePthunder: { en: '3火：左上引雷 => 原地放火' },
+          line3bdthunderPfire: { en: '3雷：左中吃火 => 原地放雷' },
+          line3bdthunderPthunder: { en: '3雷：左上引雷 => 换位放雷' },
+          line4bdfirePfire: { en: '4火：右中吃火 => 换位放火' },
+          line4bdfirePthunder: { en: '4火：右上引雷 => 原地放火' },
+          line4bdthunderPfire: { en: '4雷：右中吃火 => 原地放雷' },
+          line4bdthunderPthunder: { en: '4雷：右上引雷 => 换位放雷' },
+          nothing1ac: { en: '闲1：上↑' },
+          nothing2ac: { en: '闲2：上↑' },
+          nothing3ac: { en: '闲3：下↓' },
+          nothing4ac: { en: '闲4：下↓' },
+          nothing1bd: { en: '闲1：左←正点' },
+          nothing2bd: { en: '闲2：左←下' },
+          nothing3bd: { en: '闲3：右→下' },
+          nothing4bd: { en: '闲4：右→正点' },
+          handleElLine: { en: '${el1} => ${el2}' },
+          handleElNothingfirefire: { en: '火火：保持集合' },
+          handleElNothingfirethunder: { en: '火雷：集合 => 散开' },
+          handleElNothingthunderfire: { en: '雷火：散开 => 集合' },
+          handleElNothingthunderthunder: { en: '雷雷：保持散开' },
+          linebdfirefire: { en: '放火 => 换位吃火' },
+          linebdfirethunder: { en: '放火 => 原地引雷' },
+          linebdthunderfire: { en: '放雷 => 原地吃火' },
+          linebdthunderthunder: { en: '放雷 => 换位引雷' },
           text: { en: '${switcherRes}（分摊点：${lines}）' },
           needSwitch: { en: '${rp}换' },
           dontSwitch: { en: '不用换' },
-          stack: { en: '分摊点名（不用换）' },
-          stackHigh: { en: '高优先级：近A' },
-          stackDown: { en: '低优先级：近C' },
+          stack: { en: '分摊（不换）' },
+          stackUp: { en: '分摊（换边）' },
+          stackDown: { en: '分摊（换边）' },
           handleOrder: { en: '${gimmick} ${handleOrder}' },
         };
         // 第一次连线机制 双分摊
@@ -1822,17 +1863,16 @@ hideall "--sync--"
           }
           const povRp = getRpByName(data, data.me);
           if (lines[0] === povRp) {
-            // if (switcher === undefined)
-            //   return { alertText: output.stack!() };
-            return { alarmText: output.stackHigh() };
-          }
-          if (lines[1] === povRp) {
-            // if (switcher === undefined) {
-            //   return { alertText: output.stack!() };
-            // }
-            return { alarmText: output.stackDown() };
-          }
-          if (switcher === povRp) {
+            if (northGroup.includes(povRp) || switcher === undefined) {
+              return { infoText: output.stack() };
+            }
+            return { alertText: output.stackUp() };
+          } else if (lines[1] === povRp) {
+            if (southGroup.includes(povRp) || switcher === undefined) {
+              return { infoText: output.stack() };
+            }
+            return { alertText: output.stackDown() };
+          } else if (switcher === povRp) {
             return { alarmText: output.switch() };
           }
           const switcherRes = switcher !== undefined
@@ -1843,6 +1883,7 @@ hideall "--sync--"
             tts: switcher === povRp ? output.switch() : switcherRes,
           };
         }
+        const guide = data.triggerSetConfig.P1雷火线打法.toString();
         // 第二次连线机制 四根雷火线
         if (data.soumaP1线存储.length === 3) {
           // console.debug('P1线');
@@ -1855,10 +1896,19 @@ hideall "--sync--"
           if (data.soumaP1线存储[2]?.target === data.me) {
             data.soumaP1线处理 = '线1';
             const element = data.soumaP1线存储[2].id === '00F9' ? 'fire' : 'thunder';
-            return { alertText: output.line1({ el: output[element]() }) };
+            if (guide === 'ac') {
+              return { alertText: output[`line1ac`]({ el: output[element]() }) };
+            }
+            if (guide === 'bd') {
+              return { alertText: output[`line1bd${element}`]() };
+            }
           }
           return;
         }
+        const elements = data.soumaP1线存储.map((v) => v.id === '00F9' ? 'fire' : 'thunder').slice(
+          2,
+          6,
+        );
         if (data.soumaP1线存储.length === 4) {
           if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
             mark(
@@ -1869,7 +1919,12 @@ hideall "--sync--"
           if (data.soumaP1线存储[3]?.target === data.me) {
             data.soumaP1线处理 = '线2';
             const element = data.soumaP1线存储[3].id === '00F9' ? 'fire' : 'thunder';
-            return { alertText: output.line2({ el: output[element]() }) };
+            if (guide === 'ac') {
+              return { alertText: output[`line2ac`]({ el: output[element]() }) };
+            }
+            if (guide === 'bd') {
+              return { alertText: output[`line2bd${element}`]() };
+            }
           }
           return;
         }
@@ -1883,7 +1938,19 @@ hideall "--sync--"
           if (data.soumaP1线存储[4]?.target === data.me) {
             data.soumaP1线处理 = '线3';
             const element = data.soumaP1线存储[4].id === '00F9' ? 'fire' : 'thunder';
-            return { alertText: output.line3({ el: output[element]() }) };
+            const partnerElement = data.soumaP1线存储[4 - 2].id === '00F9' ? 'fire' : 'thunder';
+            const playerHandle = p1LinesHandler.线3;
+            const el1 = output[elements[playerHandle[0] - 1]]();
+            const el2 = output[elements[playerHandle[1] - 1]]();
+            const handleOrder = output.handleElLine({ el1, el2 });
+            if (guide === 'ac') {
+              return {
+                alertText: output.line3ac({ el: output[element](), handleOrder: handleOrder }),
+              };
+            }
+            if (guide === 'bd') {
+              return { alertText: output[`line3bd${element}P${partnerElement}`]() };
+            }
           }
           return;
         }
@@ -1913,14 +1980,15 @@ hideall "--sync--"
           if (nothing.length !== 4) {
             throw new Error('nothing长度不等于4');
           }
-          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
+          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开') {
             mark(parseInt(nothing[0].id, 16), data.triggerSetConfig.伊甸P1标闲1.toString(), false);
-          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
             mark(parseInt(nothing[1].id, 16), data.triggerSetConfig.伊甸P1标闲2.toString(), false);
-          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
             mark(parseInt(nothing[2].id, 16), data.triggerSetConfig.伊甸P1标闲3.toString(), false);
-          if (data.triggerSetConfig.伊甸P1连线机制标点 === '开')
             mark(parseInt(nothing[3].id, 16), data.triggerSetConfig.伊甸P1标闲4.toString(), false);
+          }
+          if (data.soumaP1线存储[4]?.target === data.me) {
+            return;
+          }
           if (nothing[0]?.name === data.me) {
             data.soumaP1线处理 = '闲1';
           }
@@ -1933,39 +2001,57 @@ hideall "--sync--"
           if (nothing[3]?.name === data.me) {
             data.soumaP1线处理 = '闲4';
           }
-          const handler = {
-            '线1': [1, 3],
-            '线2': [2, 4],
-            '线3': [1, 3],
-            '线4': [2, 4],
-            '闲1': [1, 3],
-            '闲2': [1, 3],
-            '闲3': [2, 4],
-            '闲4': [2, 4],
-          };
-          const playerHandle = handler[data.soumaP1线处理];
-          const elements = data.soumaP1线存储.map((v) => v.id === '00F9' ? 'fire' : 'thunder').slice(
-            2,
-            6,
-          ).map((v) => output[v]());
+          const playerHandle = p1LinesHandler[data.soumaP1线处理];
           const youIsNothing = nothing.findIndex((v) => v.name === data.me);
           const gimmick = `${
-            youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}`]() : ''
+            youIsNothing >= 0 ? output[`nothing${(youIsNothing + 1).toString()}${guide}`]() : ''
           }`;
-          const handleOrder = output.handleEl({
-            el1: elements[playerHandle[0] - 1],
-            el2: elements[playerHandle[1] - 1],
-          });
           if (data.soumaP1线存储[5]?.target === data.me) {
+            const el1 = output[elements[playerHandle[0] - 1]]();
+            const el2 = output[elements[playerHandle[1] - 1]]();
+            const handleOrder = output.handleElLine({ el1, el2 });
             const element = data.soumaP1线存储[5].id === '00F9' ? 'fire' : 'thunder';
-            return {
-              alertText: output.line4({ el: output[element](), handleOrder: handleOrder }),
-            };
+            if (guide === 'ac') {
+              return {
+                alertText: output.line4ac({ el: output[element](), handleOrder: handleOrder }),
+              };
+            }
+            if (guide === 'bd') {
+              const partnerElement = data.soumaP1线存储[5 - 2].id === '00F9' ? 'fire' : 'thunder';
+              return {
+                alertText: output[`line4bd${element}P${partnerElement}`]({
+                  el: output[element](),
+                }),
+              };
+            }
           }
-          return {
-            infoText: output.handleOrder({ gimmick, handleOrder }),
-            // tts: gimmick,
-          };
+          if (guide === 'ac' && data.soumaP1线处理?.at(0) === '闲') {
+            // ac打法所有闲人
+            const el1 = elements[playerHandle[0] - 1];
+            const el2 = elements[playerHandle[1] - 1];
+            const handleOrder = output[`handleElNothing${el1}${el2}`]();
+            return { infoText: output.handleOrder({ gimmick, handleOrder }) };
+          }
+          if (guide === 'bd' && data.soumaP1线处理?.at(0) === '线') {
+            // bd打法的线12
+            let l1;
+            let l2;
+            if (data.soumaP1线处理 === '线1') {
+              l1 = data.soumaP1线存储[2].id === '00F9' ? 'fire' : 'thunder';
+              l2 = data.soumaP1线存储[4].id === '00F9' ? 'fire' : 'thunder';
+            } else if (data.soumaP1线处理 === '线2') {
+              l1 = data.soumaP1线存储[3].id === '00F9' ? 'fire' : 'thunder';
+              l2 = data.soumaP1线存储[5].id === '00F9' ? 'fire' : 'thunder';
+            } else {
+              throw new Error('不可能');
+            }
+            return { infoText: output[`linebd${l1}${l2}`]() };
+          }
+          // ac打法的线12 与 bd打法的所有闲人
+          const el1 = output[elements[playerHandle[0] - 1]]();
+          const el2 = output[elements[playerHandle[1] - 1]]();
+          const handleOrder = output.handleElLine({ el1, el2 });
+          return { infoText: output.handleOrder({ gimmick, handleOrder }) };
         }
         return undefined;
       },
@@ -2492,8 +2578,8 @@ hideall "--sync--"
           // 备用4: { en: '下3：去左下↙' },
           // 备用5: { en: '下2：去上中↑' },
           // 备用6: { en: '下1：去右下↘' },
-          unknown: { en: '未知，自己看' },
-          error: { en: '线乱了，自己看' },
+          unknown: { en: '未知错误，各凭本事' },
+          error: { en: '线乱了，各凭本事' },
         };
         if (data.soumaP2光之暴走连线.length === 6) {
           const upperHalfPlayerCount = data.soumaCombatantData.filter((player) =>
@@ -3087,7 +3173,6 @@ hideall "--sync--"
           return output.text({ dir: output[Directions.outputFrom8DirNum(finallyDir)]() });
         }
       },
-      tts: null,
       outputStrings: {
         // 上↑
         dirN: 'A点↑',
