@@ -2099,7 +2099,7 @@ hideall "--sync--"
     },
     {
       id: 'Souma 绝伊甸 P1 塔 collect',
-      type: 'StartsUsing',
+      type: 'StartsUsingExtra',
       netRegex: {
         id: Object.keys(p1Towers),
         capture: true,
