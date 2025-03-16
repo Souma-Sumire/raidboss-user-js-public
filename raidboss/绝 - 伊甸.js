@@ -326,7 +326,7 @@ Options.Triggers.push({
         en: {
           '仅塔人数': 'simple',
           '全填充式（小学数学）': 'mgl',
-          '3固定3补位式': 'mmw',
+          '3固定3补位（龙诗补塔）': 'mmw',
         },
       },
       default: 'mmw',
@@ -2156,7 +2156,11 @@ hideall "--sync--"
             return output.unknown();
           }
           if (towers[flexsIndex].count === 1) {
-            return output[`place${towers.findIndex((v) => v.count === 3)}`]();
+            const flexIndex = towers.findIndex((v) => v.count >= 3);
+            if (flexIndex === -1) {
+              return output.unknown();
+            }
+            return output[`flex${flexIndex}`]();
           }
           return output[`place${flexs.indexOf(rp)}`]();
         }
@@ -2189,6 +2193,9 @@ hideall "--sync--"
         place0: { en: '踩 北 塔' },
         place1: { en: '踩 中间 塔' },
         place2: { en: '踩 南 塔' },
+        flex0: { en: '补 北 塔' },
+        flex1: { en: '补 中间 塔' },
+        flex2: { en: '补 南 塔' },
       },
     },
     // #endregion P1
