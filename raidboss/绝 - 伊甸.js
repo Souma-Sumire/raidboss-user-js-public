@@ -60,6 +60,16 @@ const p1Towers = {
   // 4人塔 雷
   '9CBF': 4,
 };
+const p2LrGray9 = [
+  'C//',
+  '1C/',
+  '21C',
+  '421',
+  '342',
+  'A34',
+  '/A3',
+  '//A',
+];
 const p3buffs = {
   // 延迟咏唱：黑暗神圣 分摊
   '摊': '996',
@@ -364,13 +374,13 @@ Options.Triggers.push({
       type: 'select',
       options: { en: { '田园郡（六芒星）': 'mgl', '灰9': 'gray9' } },
       default: 'mgl',
+      comment: { en: '田园郡（六芒星）不需要填写优先级，会以玩家x轴坐标进行判断。默认玩家上下44分组。' },
     },
     {
       id: '伊甸P2光暴灰九拨号盘',
       name: { en: 'P2光暴 灰九式 拨号盘顺序' },
       type: 'string',
       default: 'MT/D4/ST/D2/H2/D1/H1/D3',
-      comment: { en: '若修改此处，则下方触发器ID"Souma 伊甸 P2 光之暴走连线灰9"中的密码表部分也需要同步修改' },
     },
     {
       id: '伊甸P2光暴机制标点',
@@ -380,7 +390,7 @@ Options.Triggers.push({
       default: '关',
       comment: {
         en:
-          '预站位TN站上半场，DPS站下半场。上面锁链123从左到右，下面攻击123从左到右。默认玩家上下44分组。若未正常44分组，则会忽视攻略的优先级，暴力标出一套可以通过该机制的点。只支持田园郡或乱站。',
+          '上面锁链123从左到右，下面攻击123从左到右。仅支持田园郡打法。若判定时上下半场没有站好各4个人，则会暴力标出一套可以通过该机制的标点作为最后的兜底（没实测过，应该是对的）。',
       },
     },
     {
@@ -2575,44 +2585,33 @@ hideall "--sync--"
           // 备用6: { en: '下1：去右下↘' },
           unknown: { en: '未知错误，各凭本事' },
           error: { en: '线乱了，各凭本事' },
+          final0: { en: '去左上↖' },
+          final1: { en: '去下中↓' },
+          final2: { en: '去右上↗' },
+          final3: { en: '去左下↙' },
+          final4: { en: '去上中↑' },
+          final5: { en: '去右下↘' },
         };
         if (data.soumaP2光之暴走连线.length === 6) {
+          const lr = data.soumaP2光之暴走连线.map((v) => {
+            const decId = parseInt(v.sourceId, 16);
+            const name = v.source;
+            const { PosX: x, PosY: y } = data.soumaCombatantData.find((w) => w.ID === decId);
+            const rp = getRpByName(data, name);
+            return { decId, name, x, y, rp };
+          });
           const upperHalfPlayerCount = data.soumaCombatantData.filter((player) =>
             player.PosY < 100
           ).length;
-          const lowerHalfPlayerCount = data.soumaCombatantData.filter((player) =>
-            player.PosY >= 100
-          ).length;
-          if (upperHalfPlayerCount === 4 && lowerHalfPlayerCount === 4) {
-            // 99%的情况：上下半场站好了各4个人，以当时x轴排序，以保证站错了也能标出可以处理的标点，如果站的对就跟攻略解法的result一样。
-            const sortGroup = ['TN', 'DPS'];
-            const lightRampant = data.soumaP2光之暴走连线.map((v) => {
-              const x = data.soumaCombatantData.find((w) => w.ID === parseInt(v.sourceId, 16)).PosX;
-              const y = data.soumaCombatantData.find((w) => w.ID === parseInt(v.sourceId, 16)).PosY;
-              const rp = getRpByName(data, v.source);
-              const role = ['MT', 'ST', 'H1', 'H2'].includes(rp) ? 'TN' : 'DPS';
-              return {
-                decId: parseInt(v.sourceId, 16),
-                name: v.source,
-                rp: rp,
-                role: role,
-                x: x,
-                y: y,
-              };
-            }).sort((a, b) => {
-              if (a.role === b.role) {
-                return a.x - b.x;
-              }
-              return sortGroup.indexOf(a.role) - sortGroup.indexOf(b.role);
-            });
-            const topGroup = lightRampant.filter((v) => v.y < 100);
-            const bottomGroup = lightRampant.filter((v) => v.y >= 100);
-            if (topGroup.length === 2) {
+          if (upperHalfPlayerCount === 4) {
+            // 99%的情况：上下半场站好了各4个人
+            lr.sort((a, b) => a.x - b.x);
+            const topGroup = lr.filter((v) => v.y < 100);
+            const bottomGroup = lr.filter((v) => v.y >= 100);
+            if (topGroup.length === 2)
               topGroup.push(bottomGroup.pop());
-            }
-            if (bottomGroup.length === 2) {
+            if (bottomGroup.length === 2)
               bottomGroup.push(topGroup.pop());
-            }
             if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
               // console.debug('P2光暴');
               mark(topGroup[0].decId, markTypeOptions.锁链1, false);
@@ -2624,42 +2623,36 @@ hideall "--sync--"
               clearMark(18);
             }
             data.soumaP2光之暴走连线.length = 0;
-            const player = lightRampant.find((v) => v.name === data.me);
-            if (player === undefined) {
+            if (lr.find((v) => v.name === data.me) === undefined)
               return { alarmText: output.圈() };
-            }
-            const playerGroup = topGroup.find((v) => v.name === data.me) ? 'top' : 'bottom';
             const index = [...topGroup, ...bottomGroup].findIndex((v) => v.name === data.me) % 3 +
               1;
-            if (index === 0) {
-              console.error(data.me, playerGroup, topGroup, bottomGroup);
+            if (index === 0)
               return { infoText: output.unknown(), tts: null };
-            }
-            return { infoText: output[`${playerGroup === 'bottom' ? '下' : '上'}${index}`]() };
+            const group = topGroup.find((v) => v.name === data.me) ? '上' : '下';
+            return { infoText: output[`${group}${index}`]() };
           }
-          // 有SB连上下站位都没做到，则无视攻略，暴力标出一套可以处理的标点
-          console.error('有人没按上下分组站位，光之暴走进入备用逻辑');
-          const lr = data.soumaP2光之暴走连线.map((v) => ({
-            name: v.source,
-            decId: parseInt(v.sourceId, 16),
-          }));
-          if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
-            mark(lr[0].decId, data.triggerSetConfig.伊甸P2光暴标上1.toString(), false);
-            mark(lr[1].decId, data.triggerSetConfig.伊甸P2光暴标上2.toString(), false);
-            mark(lr[2].decId, data.triggerSetConfig.伊甸P2光暴标上3.toString(), false);
-            mark(lr[3].decId, data.triggerSetConfig.伊甸P2光暴标下1.toString(), false);
-            mark(lr[4].decId, data.triggerSetConfig.伊甸P2光暴标下2.toString(), false);
-            mark(lr[5].decId, data.triggerSetConfig.伊甸P2光暴标下3.toString(), false);
-            clearMark(18);
-          }
-          // const index = lr.findIndex((v) => v.name === data.me);
+          // 有人没预占位
+          console.error('有人没预占位，光之暴走进入备用逻辑');
+          // 选出一个人作为“上1”基准，尽量让更少的人被分配到陌生的位置上
+          const THD = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+          const firstTH = lr.map((v) => v.rp).sort((a, b) => THD.indexOf(a) - THD.indexOf(b))[0];
+          while (lr[0].rp !== firstTH)
+            lr.push(lr.shift());
           data.soumaP2光之暴走连线.length = 0;
           data.soumaCombatantData = [];
-          // if (index === -1) {
+          if (data.triggerSetConfig.伊甸P2光暴机制标点 === '开') {
+            mark(lr[0].decId, markTypeOptions.锁链1, false);
+            mark(lr[1].decId, markTypeOptions.攻击2, false);
+            mark(lr[2].decId, markTypeOptions.锁链3, false);
+            mark(lr[3].decId, markTypeOptions.攻击1, false);
+            mark(lr[4].decId, markTypeOptions.锁链2, false);
+            mark(lr[5].decId, markTypeOptions.攻击3, false);
+            clearMark(18);
+            const i = lr.findIndex((v) => v.name === data.me);
+            return { infoText: output[`final${i}`]() };
+          }
           return { infoText: output.error(), tts: null };
-          // }
-          // 好像不对  算了不报了
-          // return { infoText: output[`备用${index + 1}`]!() };
         }
       },
     },
@@ -2685,15 +2678,6 @@ hideall "--sync--"
         // cactbot-builtin-response
         output.responseOutputStrings = {
           '圈': { en: '放圈' },
-          'MT': { en: 'C//' },
-          'D4': { en: '1C/' },
-          'ST': { en: '21C' },
-          'D2': { en: '421' },
-          'H2': { en: '342' },
-          'D1': { en: 'A34' },
-          'H1': { en: '/A3' },
-          'D3': { en: '//A' },
-          'text': { en: '${t}' },
           'A': { en: '上(A点)塔' },
           'B': { en: '右(B点)塔' },
           'C': { en: '下(C点)塔' },
@@ -2718,13 +2702,11 @@ hideall "--sync--"
           if (player === undefined) {
             return { alarmText: output.圈() };
           }
-          const index = dialPad.indexOf(player.rp);
+          const dialPadindex = dialPad.indexOf(player.rp);
           const lightIndex = lightRampant.findIndex((v) => v.rp === player.rp);
-          const diff = index - lightIndex;
-          const password = output[player.rp]().at(diff);
-          const t = output[password]();
-          const infoText = output.text({ t });
-          return { infoText };
+          const diff = dialPadindex - lightIndex;
+          const password = p2LrGray9[dialPadindex].at(diff);
+          return { infoText: output[password]() };
         }
       },
     },
@@ -4054,7 +4036,7 @@ hideall "--sync--"
         长红高: { en: '长红（高）：去左下↙' },
         长红低: { en: '长红（低）：去右下↘' },
         暗钢铁: { en: '蓝暗：去上半场紫线' },
-        黄分摊: { en: '蓝风：去下半场紫线' },
+        黄分摊: { en: '蓝分摊：去下半场紫线' },
         冰月环: { en: '蓝冰：去下半场紫线' },
         水分摊: { en: '蓝水：去下半场紫线' },
       },
