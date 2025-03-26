@@ -435,12 +435,6 @@ Options.Triggers.push({
       comment: { en: '先报的那个点是TH组，后报的是DPS组。（均以A1D4分）' },
     },
     {
-      id: 'P4二运同BUFF优先级',
-      name: { en: 'P4二运 同BUFF优先级' },
-      type: 'string',
-      default: 'MT/ST/H1/H2/D1/D2/D3/D4',
-    },
-    {
       id: 'P4一运打法',
       name: { en: 'P4一运打法' },
       type: 'select',
@@ -467,6 +461,12 @@ Options.Triggers.push({
       type: 'string',
       default: 'MT/ST/H1/H2/D1/D2/D3/D4',
       comment: { en: '以基准点为北，左边从上到下+右边从上到下。报点也是以基准点为北。' },
+    },
+    {
+      id: 'P4二运同BUFF优先级',
+      name: { en: 'P4二运 同BUFF优先级' },
+      type: 'string',
+      default: 'MT/ST/H1/H2/D1/D2/D3/D4',
     },
     {
       id: '伊甸P4二运机制标点',
@@ -531,6 +531,19 @@ Options.Triggers.push({
       type: 'select',
       options: { en: markTypeOptions },
       default: markTypeOptions.攻击4,
+    },
+    {
+      id: '伊甸P4二运击退处理',
+      name: { en: 'P4二运 击退处理方法' },
+      type: 'select',
+      options: {
+        en: {
+          '正攻': 'normal',
+          'Y字': 'y',
+        },
+      },
+      default: 'normal',
+      comment: { en: '若选择Y字，则回返点只报AC。且会提醒你开防击退（时机未实测）' },
     },
     {
       id: 'P5死亡轮回后谁拉BOSS',
@@ -4072,6 +4085,29 @@ hideall "--sync--"
       },
     },
     {
+      id: 'Souma 伊甸 P4 时间结晶 回返',
+      type: 'GainsEffect',
+      netRegex: { effectId: '994', capture: false },
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '分散' },
+      },
+    },
+    {
+      id: 'Souma 伊甸 P4 时间结晶 回返2',
+      comment: { en: '没用过，不知道时间准不准，请反馈' },
+      type: 'GainsEffect',
+      netRegex: { effectId: '994', capture: false, duration: '7.00' },
+      condition: (data) => data.triggerSetConfig.伊甸P4二运击退处理 === 'y',
+      delaySeconds: 7 - 3.5,
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '防击退' },
+      },
+    },
+    {
       id: 'Souma 伊甸 P4 时间结晶 地火',
       type: 'StartsUsingExtra',
       netRegex: { id: ['9D3B', '9D3C'] },
@@ -4085,14 +4121,19 @@ hideall "--sync--"
         const dirs = data.soumaP4地火.map((v) =>
           Directions.xyTo4DirNum(parseInt(v.x), parseInt(v.y), 100, 100)
         ).sort((a, b) => a - b);
-        // console.log(data.soumaP4地火);
-        return output[dirs.join('')]();
+        if (data.triggerSetConfig.伊甸P4二运击退处理 === 'normal')
+          return output[dirs.join('')]();
+        return output[`${dirs.join('')}y`]();
       },
       outputStrings: {
         '01': { en: '2点' },
         '12': { en: '3点' },
         '23': { en: '4点' },
         '03': { en: '1点' },
+        '01y': { en: 'A点击退' },
+        '12y': { en: 'C点击退' },
+        '23y': { en: 'C点击退' },
+        '03y': { en: 'A点击退' },
       },
     },
     // #endregion P4
