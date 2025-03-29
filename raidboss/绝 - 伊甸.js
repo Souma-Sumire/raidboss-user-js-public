@@ -4088,6 +4088,7 @@ hideall "--sync--"
       id: 'Souma 伊甸 P4 时间结晶 回返',
       type: 'GainsEffect',
       netRegex: { effectId: '994', capture: false },
+      condition: (data) => data.soumaPhase === 'P4' && data.soumaP4阶段 === '二运',
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
