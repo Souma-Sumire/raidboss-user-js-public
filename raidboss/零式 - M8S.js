@@ -1,5 +1,3 @@
-// import Util from '../../../../../resources/util';
-// import { Directions } from '../../../../../resources/util';
 console.log('已加载M8S');
 const getRotationDirection = (p1, p2) => {
   const center = { x: 100, y: 100 };
@@ -30,13 +28,13 @@ const getSafe = (katana, dir) => {
 };
 const WolfSHeadDelay = {
   // 1风
-  'wind-21.00': 21 - 11,
+  'wind-21.00': 21 - 11.5,
   // 2风
   'wind-37.00': 37 - 12,
   // 3风
   'wind-54.00': 54 - 14.5,
   // 1土
-  'earth-21.00': 21 - 5.5,
+  'earth-21.00': 21 - 6,
   // 2土
   'earth-37.00': 37 - 6.5,
   // 3土
@@ -54,6 +52,12 @@ const RotationMap = {
 };
 const getBuffer = (res1, res2) => {
   return res1.number.find((v) => res2.number.includes(v));
+};
+const 光牙Map = {
+  '93.64 93.64 //': { stack: '偏左上', spread: '偏右下' },
+  '97.88 97.88 //': { stack: '偏右下', spread: '偏左上' },
+  '93.64 106.36 \\\\': { stack: '偏左下', spread: '偏右上' },
+  '97.88 102.12 \\\\': { stack: '偏右上', spread: '偏左下' },
 };
 Options.Triggers.push({
   id: 'SoumaAacCruiserweightM4Savage',
@@ -81,10 +85,93 @@ Options.Triggers.push({
       },
     },
   ],
+  overrideTimelineFile: true,
+  timeline: `
+hideall "--Reset--"
+hideall "--sync--"
+0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
+0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
+11.4 "--sync--" StartsUsing { id: "A3DA" }
+12.9 "空间斩"
+30.3 "土/土/风之魔技"
+40.5 "回/薙之群狼剑"
+40.8 "回/薙之群狼剑"
+44.5 "群狼剑"
+47.6 "群狼剑"
+51.8 "空间斩"
+67.6 "千年风化"
+78.3 "暴风"
+93.9 "暴风"
+102.1 "连震击"
+113.9 "空间斩"
+125.2 "一刀两断"
+140 "大地的呼唤"
+144.7 "斩空剑"
+147.9 "光牙召唤"
+160.6 "回/薙之群狼剑"
+160.8 "回/薙之群狼剑"
+164.5 "群狼剑"
+167.6 "群狼剑"
+180.2 "光狼召唤"
+277.2 "光牙召唤"
+279.3 "--sync--" StartsUsing { id: "A3BE" } window 20,20
+282.3 "大地之怒"
+291.4 "残影剑"
+306.8 "回/薙之群狼剑"
+307 "回/薙之群狼剑"
+310.7 "群狼剑"
+313.8 "群狼剑"
+327.7 "一刀两断"
+342 "幻狼召唤"
+349.1 "大地之怒"
+372.4 "土/风之魔技"
+381.6 "连震击"
+393.3 "空间斩"
+408.2 "空间斩？"
+464 "--sync--" StartsUsing { id: "A45A" } window 20,20
+468.9 "爆震"
+481.1 "魔光"
+492.3 "双牙击"
+503.6 "不堪一击"
+514.8 "魔光"
+526 "爆震"
+538.3 "刚刃一闪"
+546.4 "风震魔印"
+550.6 "贪狼之剑"
+556.7 "风狼阵"
+567.9 "魔狼战型·天岚之相"
+577 "双牙暴风击"
+584.2 "双牙暴风击"
+591.3 "双牙暴风击"
+598.4 "双牙暴风击"
+610.6 "光牙召唤"
+622.1 "回天动地"
+626.5 "回天动地"
+630.8 "回天动地"
+635.2 "回天动地"
+639.5 "回天动地"
+650 "爆震"
+664.1 "魔光"
+675.3 "双牙击"
+690.5 "魔狼战型·咒刃之相"
+695.7 "孤狼诅咒"
+705.9 "风狼阵"
+723.1 "不堪一击"
+736.3 "魔光"
+750.8 "八连光弹"
+761.3 "刚刃一闪"
+770.4 "八连光弹"
+780.9 "刚刃一闪"
+790.1 "八连光弹"
+800.5 "刚刃一闪"
+809.7 "八连光弹"
+820.1 "刚刃一闪"
+829.3 "八连光弹"
+846.5 "狂暴了"`,
   initData: () => {
     return {
       soumaCombatantData: [],
-      soumaKages: [],
+      // soumaKages: [],
       soumaWolfs: [],
       soumaTethers: [],
       souma竹子预占位: [],
@@ -92,9 +179,11 @@ Options.Triggers.push({
       souma四连半场阶段: false,
       souma四连CloneIDs: [],
       souma四连导航: [],
+      souma二穿一站位: undefined,
     };
   },
   triggers: [
+    // #region 门神
     {
       id: 'R8S Souma 空间斩',
       type: 'StartsUsing',
@@ -293,7 +382,7 @@ Options.Triggers.push({
         return output.text();
       },
       outputStrings: {
-        text: { en: '连续分摊 x8' },
+        text: { en: '连续分摊(8次)' },
       },
     },
     {
@@ -471,7 +560,19 @@ Options.Triggers.push({
       netRegex: { id: '008B' },
       // 四连不报 避免打扰看分身
       condition: (data, matches) => matches.target === data.me && !data.souma四连半场阶段,
-      response: Responses.spread(),
+      infoText: (data, _matches, output) => {
+        if (data.souma二穿一站位 !== undefined) {
+          return output[data.souma二穿一站位.spread]();
+        }
+        return output.text();
+      },
+      outputStrings: {
+        text: '分散',
+        偏左上: '分散,偏左上',
+        偏右下: '分散,偏右下',
+        偏右上: '分散,偏右上',
+        偏左下: '分散,偏左下',
+      },
     },
     {
       id: 'R8S Souma 分摊点名',
@@ -491,9 +592,18 @@ Options.Triggers.push({
         }
         return false;
       },
-      infoText: (_data, _matches, output) => output.text(),
+      infoText: (data, _matches, output) => {
+        if (data.souma二穿一站位 !== undefined) {
+          return output[data.souma二穿一站位.stack]();
+        }
+        return output.text();
+      },
       outputStrings: {
         text: { en: '分摊' },
+        偏左上: '分摊,偏左上',
+        偏右下: '分摊,偏右下',
+        偏右上: '分摊,偏右上',
+        偏左下: '分摊,偏左下',
       },
     },
     {
@@ -625,7 +735,7 @@ Options.Triggers.push({
         buffer1234: { en: '${b12} => ${b34} => ${w4}' },
         buffer23: { en: '${b23} => ${w4}' },
         stay: { en: '准备${w4}' },
-        last: { en: '躲龙头' },
+        last: { en: '正点躲龙头' },
       },
     },
     {
@@ -637,53 +747,45 @@ Options.Triggers.push({
       // eslint-disable-next-line rulesdir/cactbot-output-strings
       alarmText: (data) => data.souma四连导航.shift(),
     },
-    // 旧方案 先留着万一有用
-    // {
-    //   id: 'R8S Souma 分身左右刀B',
-    //   type: 'StartsUsingExtra',
-    //   // A3C2 右手发光
-    //   // A3C3 左手发光
-    //   netRegex: { id: 'A3C[23]' },
-    //   preRun: (data, matches) => {
-    //     const sourceId = matches.sourceId;
-    //     const katana = matches.id === 'A3C2' ? 'right' : 'left';
-    //     const dir = Directions.xyTo4DirNum(parseFloat(matches.x), parseFloat(matches.y), 100, 100);
-    //     const safe = getSafe(katana, dir);
-    //     data.soumaKages.push({ katana, dir, safe, sourceId });
-    //   },
-    //   durationSeconds: (data) => data.soumaKages.length === 4 ? 6 : 3,
-    //   response: (data, _matches, output) => {
-    //     // cactbot-builtin-response
-    //     output.responseOutputStrings = {
-    //       kata1: { en: '${alphabet}' },
-    //       kata2: { en: '${alphabet}' },
-    //       kata4: { en: '${number}=> ${alphabet}' },
-    //     };
-    //     const kages = data.soumaKages;
-    //     if (kages.length === 1) {
-    //       // 一刀报半场
-    //       return { infoText: output.kata1!({ alphabet: kages[0]!.safe.alphabet }) };
-    //     }
-    //     if (kages.length === 2) {
-    //       // 二刀报半场
-    //       return { infoText: output.kata2!({ alphabet: kages[1]!.safe.alphabet }) };
-    //     }
-    //     if (kages.length === 3) {
-    //       // 三刀不报等四
-    //       return;
-    //     }
-    //     if (kages.length === 4) {
-    //       // 四报34交集然后半场
-    //       const k3 = kages[2]!.safe.number;
-    //       const k4 = kages[3]!.safe.number;
-    //       const safe = k4.filter((x) => k3.includes(x))[0]!;
-    //       if (safe === undefined)
-    //         console.error('Souma 分身左右刀 交集错误', kages[1], kages[2]);
-    //       const kage4 = kages[3]!.safe.alphabet;
-    //       data.soumaKages.length = 0;
-    //       return { alertText: output.kata4!({ number: safe, alphabet: kage4 }) };
-    //     }
-    //   },
-    // },
+    {
+      id: 'R8S Souma 十字光牙2',
+      type: 'StartsUsing',
+      netRegex: { id: 'A3D6', capture: true },
+      condition: (_data, matches) => parseFloat(matches.x) < 100,
+      preRun: (data, matches, _output) => {
+        const heading = parseFloat(matches.heading) > 0 ? '//' : '\\\\';
+        const result = 光牙Map[`${matches.x} ${matches.y} ${heading}`];
+        data.souma二穿一站位 = result;
+      },
+      delaySeconds: 2,
+      run: (data) => {
+        data.souma二穿一站位 = undefined;
+      },
+    },
+    {
+      id: 'R8S Souma 十字光牙2-',
+      type: 'Ability',
+      netRegex: { id: 'A3D6', capture: false },
+      suppressSeconds: 10,
+      infoText: (_data, _matches, output) => {
+        return output.text();
+      },
+      outputStrings: {
+        text: { en: '穿' },
+      },
+    },
+    {
+      id: 'R8S Souma 风狼豪波',
+      type: 'StartsUsing',
+      netRegex: { id: 'A789', capture: false },
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '龙头后面' },
+      },
+    },
+    // #endregion
+    // #region 本体
+    // #endregion
   ],
 });
