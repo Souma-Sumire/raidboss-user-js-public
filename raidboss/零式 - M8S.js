@@ -988,10 +988,19 @@ hideall "--sync--"
       },
     },
     {
-      id: 'R8S Souma 刚刃一闪',
-      type: 'StartsUsing',
-      netRegex: { id: 'A464', capture: false },
+      id: 'R8S Souma 刚刃一闪1',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A465', capture: true },
       alertText: (_data, _matches, output) => output.text(),
+      run: (data, matches) => {
+        const heading = parseFloat(matches.heading);
+        // N = 0, NNE = 1, ..., NNW = 15
+        const dir = Directions.hdgTo16DirNum(heading);
+        const damagedFloor = HdgDirToFloor[dir.toString()];
+        // 剩下四座平台相对于被破坏的平台的序号（从逆时针开始1234）
+        data.souma线塔对应 = (n) => (n - damagedFloor + 5) % 5;
+        console.warn('刚刃一闪', data.souma线塔对应);
+      },
       outputStrings: { text: '走！' },
     },
     {
@@ -1048,7 +1057,11 @@ hideall "--sync--"
       netRegex: { id: 'A46F', capture: true },
       preRun: (data, matches) => {
         const towerPos = getFloor(parseFloat(matches.x), parseFloat(matches.y));
-        data.souma风狼阵.push({ name: matches.target, index: towerPos });
+        const realIndex = data.souma线塔对应(towerPos);
+        if (!realIndex) {
+          throw new Error('未找到对应位置');
+        }
+        data.souma风狼阵.push({ name: matches.target, index: realIndex });
       },
     },
     {
@@ -1469,7 +1482,7 @@ hideall "--sync--"
       outputStrings: { text: { en: '第${count}轮八连分摊' } },
     },
     {
-      id: 'R8S Souma 刚刃一闪',
+      id: 'R8S Souma 刚刃一闪2',
       type: 'StartsUsingExtra',
       netRegex: { id: 'A74C', capture: true },
       promise: async (data) => {
