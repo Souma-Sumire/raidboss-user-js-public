@@ -11,6 +11,21 @@ const getRotationDirection = (p1, p2) => {
     return 'clockwise';
   return 'colinear';
 };
+const getWeapon = (id) => {
+  switch (id) {
+    case 'A47B':
+    case 'A47D':
+      return 'in';
+    case 'A47C':
+      return 'out';
+    case 'A47A':
+      return 'mid';
+    case 'A479':
+      return 'side';
+    default:
+      throw new Error(`Unknown weapon id: ${id}`);
+  }
+};
 const getSafe = (katana, dir) => {
   // dir 0=N, 1=E, 2=S, 3=W (direction)
   // way 1=NW, 2=NE, 3=SW, 4=SE (waymark)
@@ -58,6 +73,112 @@ const 光牙Map = {
   '97.88 97.88 //': { stack: '偏右下', spread: '偏左上' },
   '93.64 106.36 \\\\': { stack: '偏左下', spread: '偏右上' },
   '97.88 102.12 \\\\': { stack: '偏右上', spread: '偏左下' },
+};
+const HdgDirToFloor = {
+  '2': 2,
+  '5': 1,
+  '8': 5,
+  '11': 4,
+  '14': 3,
+};
+/*
+   3 2
+  4 o 1
+    5
+  116.64 105.41 return 1 地图右下
+  110.29  85.84 return 2 地图右上
+  89.71  85.84 return 3 地图左上
+  83.36 105.41 return 4 地图左下
+  100.00 117.50 return 5 地图南边（Y坐标不完全精确）
+*/
+const FloorPos = [
+  { x: 116.64, y: 105.41 },
+  { x: 110.29, y: 85.84 },
+  { x: 89.71, y: 85.84 },
+  { x: 83.36, y: 105.41 },
+  { x: 100.00, y: 117.50 },
+];
+const getFloor = (x, y) => {
+  const distances = FloorPos.map((tower) => {
+    const dx = tower.x - x;
+    const dy = tower.y - y;
+    return Math.sqrt(dx * dx + dy * dy);
+  });
+  const minDistance = Math.min(...distances);
+  const index = distances.indexOf(minDistance);
+  return index + 1;
+};
+const BitsPos = [
+  {
+    'x': 127.384,
+    'y': 104.709,
+    'floor': 1,
+    'safe': 'left',
+  },
+  {
+    'x': 124.912,
+    'y': 112.308,
+    'floor': 1,
+    'safe': 'right',
+  },
+  {
+    'x': 112.919,
+    'y': 75.411,
+    'floor': 2,
+    'safe': 'left',
+  },
+  {
+    'x': 119.388,
+    'y': 80.111,
+    'floor': 2,
+    'safe': 'right',
+  },
+  {
+    'x': 80.599,
+    'y': 80.111,
+    'floor': 3,
+    'safe': 'left',
+  },
+  {
+    'x': 87.069,
+    'y': 75.411,
+    'floor': 3,
+    'safe': 'right',
+  },
+  {
+    'x': 75.076,
+    'y': 112.308,
+    'floor': 4,
+    'safe': 'left',
+  },
+  {
+    'x': 72.604,
+    'y': 104.709,
+    'floor': 4,
+    'safe': 'right',
+  },
+  {
+    'x': 104.007,
+    'y': 127.506,
+    'floor': 5,
+    'safe': 'left',
+  },
+  {
+    'x': 96.011,
+    'y': 127.506,
+    'floor': 5,
+    'safe': 'right',
+  },
+];
+const getBit = (x, y) => {
+  const distances = BitsPos.map((bit) => {
+    const dx = bit.x - x;
+    const dy = bit.y - y;
+    return Math.sqrt(dx * dx + dy * dy);
+  });
+  const minDistance = Math.min(...distances);
+  const index = distances.indexOf(minDistance);
+  return BitsPos[index];
 };
 Options.Triggers.push({
   id: 'SoumaAacCruiserweightM4Savage',
@@ -128,9 +249,10 @@ hideall "--sync--"
 381.6 "连震击"
 393.3 "空间斩"
 408.2 "空间斩？"
-464 "--sync--" StartsUsing { id: "A45A" } window 20,20
+464 "--sync--" StartsUsing { id: "A45A" } window 30,30
 468.9 "爆震"
 481.1 "魔光"
+482.0 "回初始平台"
 492.3 "双牙击"
 503.6 "不堪一击"
 514.8 "魔光"
@@ -158,30 +280,67 @@ hideall "--sync--"
 705.9 "风狼阵"
 723.1 "不堪一击"
 736.3 "魔光"
-750.8 "八连光弹"
-761.3 "刚刃一闪"
-770.4 "八连光弹"
-780.9 "刚刃一闪"
-790.1 "八连光弹"
-800.5 "刚刃一闪"
-809.7 "八连光弹"
-820.1 "刚刃一闪"
-829.3 "八连光弹"
+750.8 "八连光弹#1"
+761.3 "刚刃一闪#1"
+770.4 "八连光弹#2"
+780.9 "刚刃一闪#2"
+790.1 "八连光弹#3"
+800.5 "刚刃一闪#3"
+809.7 "八连光弹#4"
+820.1 "刚刃一闪#4"
+829.3 "八连光弹#5"
 846.5 "狂暴了"`,
   initData: () => {
     return {
       soumaCombatantData: [],
-      // soumaKages: [],
       soumaWolfs: [],
       soumaTethers: [],
       souma竹子预占位: [],
       soumaPhase: 'P1-前',
-      souma四连半场阶段: false,
       souma四连CloneIDs: [],
       souma四连导航: [],
       souma二穿一站位: undefined,
+      souma不堪一击: [],
+      souma风震魔印T: false,
+      souma风狼阵: [],
+      souma风狼阵处理: [],
+      souma回天动地: [],
+      souma闪光炮: [],
+      souma连击闪光炮: [],
+      souma八连光弹Counter: 0,
     };
   },
+  timelineTriggers: [
+    {
+      id: 'R8S Souma Timeline 魔光',
+      regex: /^魔光$/,
+      beforeSeconds: 10.7,
+      durationSeconds: 10.7,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: {
+          en: '魔光排队',
+        },
+      },
+    },
+    {
+      id: 'R8S Souma Timeline 回初始平台',
+      regex: /^回初始平台$/,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: {
+          en: '回初始平台',
+        },
+      },
+    },
+    {
+      id: 'R8S Souma Timeline 八连光弹',
+      regex: /^八连光弹#1$/,
+      beforeSeconds: 15,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '人群集合' } },
+    },
+  ],
   triggers: [
     // #region 门神
     {
@@ -316,10 +475,10 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        '0': { en: 'AA' },
-        '2': { en: 'CC' },
-        'clockwise': { en: '<= 顺' },
-        'counter-clockwise': { en: '逆 =>' },
+        '0': { en: 'A' },
+        '2': { en: 'C' },
+        'clockwise': { en: '<= 向左走' },
+        'counter-clockwise': { en: '向右走 =>' },
       },
     },
     {
@@ -453,10 +612,10 @@ hideall "--sync--"
         return '';
       },
       outputStrings: {
-        '1': { en: '1 1 1' },
-        '2': { en: '2 2 2' },
-        '3': { en: '3 3 3' },
-        '4': { en: '4 4 4' },
+        '1': { en: '1,1,1' },
+        '2': { en: '2,2,2' },
+        '3': { en: '3,3,3' },
+        '4': { en: '4,4,4' },
       },
     },
     {
@@ -558,8 +717,7 @@ hideall "--sync--"
       id: 'R8S Souma 分散点名',
       type: 'HeadMarker',
       netRegex: { id: '008B' },
-      // 四连不报 避免打扰看分身
-      condition: (data, matches) => matches.target === data.me && !data.souma四连半场阶段,
+      condition: (data, matches) => matches.target === data.me,
       infoText: (data, _matches, output) => {
         if (data.souma二穿一站位 !== undefined) {
           return output[data.souma二穿一站位.spread]();
@@ -579,10 +737,6 @@ hideall "--sync--"
       type: 'HeadMarker',
       netRegex: { id: '005D' },
       condition: (data, matches) => {
-        if (data.souma四连半场阶段) {
-          // 四连不报 避免打扰看分身
-          return;
-        }
         if (data.soumaPhase === 'P1-后大地1' || data.soumaPhase === 'P1-后大地2') {
           const targetRole = data.party.nameToRole_[matches.target] === 'dps' ? 'dps' : 'th';
           const myRole = data.role === 'dps' ? 'dps' : 'th';
@@ -623,28 +777,11 @@ hideall "--sync--"
       id: 'R8S Souma 幻狼召唤',
       type: 'StartsUsing',
       netRegex: { id: 'A3C1', capture: false },
-      promise: async (data) => {
-        data.soumaCombatantData = (await callOverlayHandler({ call: 'getCombatants' })).combatants
-          .filter((v) => v.BNpcID === 18217);
-      },
       infoText: (_data, _matches, output) => output.text(),
-      run: (data) => {
-        data.souma四连半场阶段 = true;
-      },
       outputStrings: {
         text: { en: '4连半场刀' },
       },
     },
-    {
-      id: 'R8S Souma 幻狼召唤结束',
-      type: 'StartsUsing',
-      netRegex: { id: 'A3C1', capture: false },
-      delaySeconds: 30,
-      run: (data) => {
-        data.souma四连半场阶段 = false;
-      },
-    },
-    // 新方案，报的更快，但需要更多测试
     {
       id: 'R8S Souma 分身105',
       type: 'CombatantMemory',
@@ -786,6 +923,592 @@ hideall "--sync--"
     },
     // #endregion
     // #region 本体
+    {
+      id: 'R8S Souma 进入本体',
+      type: 'ActorControl',
+      netRegex: { command: '80000001', data0: '4EB6' },
+      run: (data) => {
+        data.soumaPhase = 'P2';
+        data.soumaCombatantData.length = 0;
+        data.soumaWolfs.length = 0;
+        data.soumaTethers.length = 0;
+        data.souma竹子预占位.length = 0;
+        data.souma四连CloneIDs.length = 0;
+        data.souma四连导航.length = 0;
+        data.souma二穿一站位 = undefined;
+      },
+    },
+    {
+      id: 'R8S Souma 爆震',
+      type: 'StartsUsing',
+      netRegex: { id: 'A45A', capture: false },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: { en: '双奶分摊' },
+      },
+    },
+    {
+      id: 'R8S Souma 魔光',
+      type: 'HeadMarker',
+      netRegex: { id: '000E', capture: true },
+      condition: Conditions.targetIsYou(),
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '魔光点名' } },
+    },
+    {
+      id: 'R8S Souma 双牙击',
+      type: 'StartsUsing',
+      netRegex: { id: 'A4CD' },
+      response: Responses.tankBuster(),
+    },
+    // A45F A460 A463 外右安全
+    // A45F A460 A464 内右安全
+    // A461 A462 A464 内左安全
+    // A461 A462 A463 外左安全
+    {
+      id: 'R8S Souma 不堪一击',
+      type: 'StartsUsing',
+      netRegex: { id: ['A45F', 'A461', 'A463', 'A464'], capture: true },
+      condition: (data) => data.souma远近线 === undefined,
+      preRun: (data, matches) => data.souma不堪一击.push(matches),
+      delaySeconds: 0.5,
+      durationSeconds: 6.7 - 0.5,
+      alertText: (data, _matches, output) => {
+        if (data.souma不堪一击.length === 2) {
+          const res = output[data.souma不堪一击.map((v) => v.id).sort().join('+')]();
+          data.souma不堪一击.length = 0;
+          return res;
+        }
+      },
+      outputStrings: {
+        'A45F+A463': '外+右',
+        'A45F+A464': '内+右',
+        'A461+A463': '外+左',
+        'A461+A464': '内+左',
+      },
+    },
+    {
+      id: 'R8S Souma 刚刃一闪',
+      type: 'StartsUsing',
+      netRegex: { id: 'A464', capture: false },
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: '走！' },
+    },
+    {
+      id: 'R8S Souma 风震魔印',
+      type: 'HeadMarker',
+      netRegex: { id: '0017' },
+      condition: (data, matches) => data.party.nameToRole_[matches.target] === 'tank',
+      response: (data, matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          tankBuster: { en: '风圈点名' },
+          text: { en: '风圈点${player}' },
+        };
+        if (matches.target === data.me) {
+          data.souma风震魔印T = true;
+          return { alarmText: output.tankBuster() };
+        }
+        return {
+          infoText: output.text({ player: data.party.member(matches.target) }),
+        };
+      },
+    },
+    // 不考虑开无敌的情况，不然没法写了
+    {
+      id: 'R8S Souma 风震魔印人群',
+      type: 'GainsEffect',
+      netRegex: { effectId: '112B' },
+      infoText: (data, _matches, output) => {
+        if (data.souma风震魔印T) {
+          data.souma风震魔印T = false;
+          return output.wind();
+        }
+        if (data.role === 'tank') {
+          return output.nonWindTank();
+        }
+        return output.text();
+      },
+      outputStrings: {
+        wind: { en: '风圈' },
+        nonWindTank: { en: '死刑刀' },
+        text: { en: '分摊' },
+      },
+    },
+    {
+      id: 'R8S Souma 风震魔印人群',
+      type: 'StartsUsing',
+      netRegex: { id: 'A46E', capture: false },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '踩塔分组' } },
+    },
+    {
+      id: 'R8S Souma 风狼阵',
+      type: 'Ability',
+      netRegex: { id: 'A46F', capture: true },
+      preRun: (data, matches) => {
+        const towerPos = getFloor(parseFloat(matches.x), parseFloat(matches.y));
+        data.souma风狼阵.push({ name: matches.target, index: towerPos });
+      },
+    },
+    {
+      id: 'R8S Souma 风狼阵2',
+      type: 'Ability',
+      netRegex: { id: 'A46F', capture: false },
+      delaySeconds: 0.5,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        const myIndex = data.souma风狼阵.find((v) => v.name === data.me).index;
+        if (myIndex === 1 || myIndex === 4) {
+          return output['14']();
+        }
+        if (myIndex === 2 || myIndex === 3) {
+          return output['23']();
+        }
+        return output.unknown();
+      },
+      outputStrings: {
+        '14': { en: '原地等线' },
+        '23': { en: '去送线' },
+        'unknown': { en: '???' },
+      },
+    },
+    {
+      id: 'R8S Souma 风狼阵线',
+      type: 'Tether',
+      netRegex: { id: '0054', capture: true },
+      suppressSeconds: 999,
+      response: (data, matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          line: { en: '带线远离' },
+          in: { en: '返回 => 靠近引导' },
+          leftStart: { en: '左起，返回' },
+          rightStart: { en: '右起，返回' },
+        };
+        const targetIndex = data.souma风狼阵.find((v) => v.name === matches.target).index;
+        const myIndex = data.souma风狼阵.find((v) => v.name === data.me).index;
+        if (targetIndex === 1 || targetIndex === 2) {
+          data.souma风狼阵处理 = [
+            // { line: 1, in: 3 },
+            { line: 2, in: 4 },
+            { line: 3, in: 1 },
+            { line: 4, in: 2 },
+          ];
+          if (myIndex === 1) {
+            return { alertText: output.line() };
+          }
+          if (myIndex === 3) {
+            return { alertText: output.in() };
+          }
+          return { infoText: output.leftStart() };
+        }
+        if (targetIndex === 3 || targetIndex === 4) {
+          data.souma风狼阵处理 = [
+            // { line: 4, in: 2 },
+            { line: 3, in: 1 },
+            { line: 2, in: 4 },
+            { line: 1, in: 3 },
+          ];
+          if (myIndex === 2) {
+            return { alertText: output.in() };
+          }
+          if (myIndex === 4) {
+            return { alertText: output.line() };
+          }
+          return { infoText: output.rightStart() };
+        }
+      },
+    },
+    {
+      id: 'R8S Souma 风狼阵 Ability',
+      type: 'Ability',
+      netRegex: { id: 'A472', capture: false },
+      suppressSeconds: 1,
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          line: { en: '接线后远离' },
+          in: { en: '靠近引导' },
+          text: { en: '${line}线${in}引' },
+          back: { en: '回初始平台' },
+        };
+        const turn = data.souma风狼阵处理.shift();
+        const myIndex = data.souma风狼阵.find((v) => v.name === data.me).index;
+        if (turn) {
+          if (myIndex === turn.line) {
+            return { alertText: output.line() };
+          }
+          if (myIndex === turn.in) {
+            return { alertText: output.in() };
+          }
+          return { infoText: output.text({ line: turn.line, in: turn.in }) };
+        }
+        return { infoText: output.back() };
+      },
+    },
+    // A47B in
+    // A47D in
+    // A47C out
+    // A47A mid(!)
+    // A479 side
+    {
+      id: 'R8S Souma 回天动地收集',
+      type: 'StartsUsingExtra',
+      netRegex: { id: ['A47D', 'A47A', 'A479', 'A47C', 'A47B'], capture: true },
+      preRun: (data, matches) => {
+        const id = matches.id;
+        const weapon = getWeapon(id);
+        if (id === 'A47A') {
+          // 月环不看面相，而是坐标
+          const dir = Directions.xyTo16DirNum(
+            parseFloat(matches.x),
+            parseFloat(matches.y),
+            100,
+            100,
+          );
+          const floor = HdgDirToFloor[dir.toString()];
+          data.souma回天动地.push({ floor, weapon });
+        } else {
+          const heading = parseFloat(matches.heading);
+          // N = 0, NNE = 1, ..., NNW = 15
+          const dir = Directions.hdgTo16DirNum(heading);
+          const floor = HdgDirToFloor[dir.toString()];
+          data.souma回天动地.push({ floor, weapon });
+        }
+      },
+    },
+    {
+      id: 'R8S Souma 回天动地 全归档',
+      type: 'HeadMarker',
+      netRegex: { id: ['01F5', '01F6'] },
+      // 01F5 橙色 <<<
+      // 01F6 蓝色 >>>
+      delaySeconds: 0.5,
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+        })).combatants.filter((v) => data.party.details.find((p) => p.name === v.Name));
+      },
+      alertText: (data, matches, output) => {
+        const handler = (f) =>
+          matches.id === '01F5' ? (f === 1 ? 5 : (f - 1)) : (f === 5 ? 1 : (f + 1));
+        data.souma回天动地Iterator = () => {
+          data.souma回天动地 = data.souma回天动地.map((v) => {
+            const f = v.floor;
+            const newF = handler(f);
+            return { weapon: v.weapon, floor: newF };
+          });
+        };
+        // 第一次报点
+        const gimmicks = data.souma回天动地.sort((a, b) =>
+          matches.id === '01F5' ? (a.floor - b.floor) : (b.floor - a.floor)
+        );
+        const playersFloor = data.soumaCombatantData.map((v) => getFloor(v.PosX, v.PosY));
+        // 以玩家数量最多的台子作为起始点
+        const maxFloor = playersFloor.reduce((a, b) => Math.max(a, b));
+        while (gimmicks[0].floor.toString() !== maxFloor.toString()) {
+          gimmicks.push(gimmicks.shift());
+        }
+        return output.text({
+          w1: output[gimmicks[0].weapon](),
+          w2: output[gimmicks[1].weapon](),
+          w3: output[gimmicks[2].weapon](),
+          w4: output[gimmicks[3].weapon](),
+          w5: output[gimmicks[4].weapon](),
+        });
+      },
+      outputStrings: {
+        'text': { en: '${w1}${w2}${w3}${w4}${w5}' },
+        'in': { en: '内' },
+        'out': { en: '外' },
+        'side': { en: '侧' },
+        'mid': { en: '中' },
+      },
+    },
+    {
+      id: 'R8S Souma 连击闪光炮收集',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A476', capture: true },
+      preRun: (data, matches) => data.souma连击闪光炮.push(matches),
+    },
+    {
+      id: 'R8S Souma 连击闪光炮',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A476', capture: false },
+      delaySeconds: 0.5,
+      suppressSeconds: 1,
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          names: [data.me],
+        })).combatants;
+      },
+      infoText: (data, _matches, output) => {
+        if (data.soumaCombatantData.length === 0) {
+          return;
+        }
+        const bits = data.souma连击闪光炮.map((v) => {
+          const x = parseFloat(v.x);
+          const y = parseFloat(v.y);
+          const bit = getBit(x, y);
+          return bit;
+        });
+        const nowFloor = getFloor(data.soumaCombatantData[0].PosX, data.soumaCombatantData[0].PosY);
+        const nowBit = bits.find((v) => v.floor === nowFloor);
+        const nowGimmick = data.souma回天动地.find((v) => v.floor === nowFloor);
+        // console.warn(data.souma回天动地);
+        data.souma回天动地Iterator();
+        return output[`${nowGimmick.weapon}-${nowBit.safe}`]();
+      },
+      run: (data) => data.souma连击闪光炮.length = 0,
+      outputStrings: {
+        'in-left': { en: '靠近+左' },
+        'in-right': { en: '靠近+右' },
+        'out-left': { en: '远离+左' },
+        'out-right': { en: '远离+右' },
+        'mid-left': { en: '中间+左' },
+        'mid-right': { en: '中间+右' },
+        'side-left': { en: '左+外侧' },
+        'side-right': { en: '右+外侧' },
+      },
+    },
+    {
+      id: 'R8S Souma 闪光炮收集',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A45E', capture: true },
+      preRun: (data, matches) => data.souma闪光炮.push(matches),
+      delaySeconds: 4,
+      run: (data) => data.souma闪光炮.length = 0,
+    },
+    {
+      id: 'R8S Souma 闪光炮',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A45E', capture: false },
+      delaySeconds: 0.5,
+      suppressSeconds: 1,
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          names: [data.me],
+        })).combatants;
+      },
+      infoText: (data, _matches, output) => {
+        if (data.soumaCombatantData.length === 0) {
+          return output.unknown();
+        }
+        const nowFloor = getFloor(data.soumaCombatantData[0].PosX, data.soumaCombatantData[0].PosY);
+        const bits = data.souma闪光炮.map((v) => {
+          const x = parseFloat(v.x);
+          const y = parseFloat(v.y);
+          const bit = getBit(x, y);
+          return bit;
+        });
+        const nowBit = bits.find((v) => v.floor === nowFloor);
+        return output[nowBit.safe]();
+      },
+      outputStrings: {
+        unknown: { en: '躲浮游炮' },
+        left: { en: '左半安全' },
+        right: { en: '右半安全' },
+      },
+    },
+    {
+      id: 'R8S Souma 转移平台',
+      type: 'GainsEffect',
+      netRegex: { effectId: 'A12', capture: true },
+      condition: (data, matches) => data.me === matches.target && data.souma闪光炮.length > 0,
+      delaySeconds: 0.5,
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          names: [data.me],
+        })).combatants;
+      },
+      infoText: (data, _matches, output) => {
+        if (data.soumaCombatantData.length === 0) {
+          return output.unknown();
+        }
+        const nowFloor = getFloor(data.soumaCombatantData[0].PosX, data.soumaCombatantData[0].PosY);
+        const bits = data.souma闪光炮.map((v) => {
+          const x = parseFloat(v.x);
+          const y = parseFloat(v.y);
+          const bit = getBit(x, y);
+          return bit;
+        });
+        const nowBit = bits.find((v) => v.floor === nowFloor);
+        return output[nowBit.safe]();
+      },
+      outputStrings: {
+        unknown: { en: '躲浮游炮' },
+        left: { en: '左半安全' },
+        right: { en: '右半安全' },
+      },
+    },
+    {
+      id: 'R8S Souma 魔狼战型·咒刃之相',
+      type: 'StartsUsing',
+      netRegex: { id: 'A82C', capture: false },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '远近线站位' } },
+    },
+    {
+      id: 'R8S Souma 远近线',
+      type: 'Tether',
+      // 013D 近线
+      // 013E 远线
+      netRegex: { id: '013[DE]', capture: true },
+      condition: (data, matches) => matches.target === data.me || matches.source === data.me,
+      durationSeconds: 21,
+      alertText: (data, matches, output) => {
+        const line = matches.id === '013D' ? 'near' : 'far';
+        data.souma远近线 = line;
+        return output[`${line}-${data.role}`]({ player: data.party.member(matches.target) });
+      },
+      outputStrings: {
+        'near-tank': { en: '近线：与${player}踩双人塔' },
+        'far-tank': { en: '远线：等待${player}移动2次，再向右移动' },
+        'near-healer': { en: '近线：与${player}贴贴' },
+        'far-healer': { en: '远线：与${player}' },
+        'near-dps': { en: '近线：与${player}贴贴' },
+        'far-dps': { en: '远线：向右移动两次 (与${player})' },
+      },
+    },
+    {
+      id: 'R8S Souma 魔狼战型·咒刃之相2',
+      type: 'StartsUsing',
+      netRegex: { id: 'A82C', capture: false },
+      delaySeconds: 23,
+      infoText: (data, _matches, output) => output[`${data.souma远近线}-${data.role}`](),
+      outputStrings: {
+        'near-tank': { en: '踩双人塔' },
+        'far-tank': { en: '踩单人塔（站在边缘）' },
+        'near-healer': { en: '踩三人塔' },
+        'far-healer': { en: '踩三人塔（站在边缘）' },
+        'near-dps': { en: '踩三人塔' },
+        'far-dps': { en: '踩三人塔（站在边缘）' },
+      },
+    },
+    {
+      id: 'R8S Souma 最后一次不堪一击',
+      type: 'StartsUsing',
+      netRegex: { id: ['A45F', 'A461', 'A463', 'A464'], capture: true },
+      condition: (data) => data.souma远近线 !== undefined,
+      preRun: (data, matches) => data.souma不堪一击.push(matches),
+      delaySeconds: 0.5,
+      durationSeconds: 6.7 - 0.5,
+      promise: async (data) => {
+        if (data.souma不堪一击.length === 2) {
+          data.soumaCombatantData = (await callOverlayHandler({
+            call: 'getCombatants',
+            names: [data.me],
+          })).combatants;
+        }
+      },
+      alertText: (data, _matches, output) => {
+        if (data.souma不堪一击.length === 2) {
+          // A45F 右安全
+          // A45F 右安全
+          // A461 左安全
+          // A461 左安全
+          const heading = data.souma不堪一击.filter((v) =>
+            v.id === 'A45F' || v.id === 'A461'
+          )[0].heading;
+          const headingFloor =
+            HdgDirToFloor[Directions.hdgTo16DirNum(parseFloat(heading)).toString()];
+          if (data.soumaCombatantData.length === 0) {
+            return output[`${data.souma不堪一击.map((v) => v.id).sort().join('+')}`]();
+          }
+          const nowFloor = getFloor(
+            data.soumaCombatantData[0].PosX,
+            data.soumaCombatantData[0].PosY,
+          );
+          const rawSub = nowFloor - headingFloor;
+          const sub = (Math.abs(rawSub) >= 3 && Math.abs(rawSub) <= 5)
+            ? (rawSub < 0 ? rawSub + 5 : rawSub - 5)
+            : rawSub;
+          const res = output[`sub${sub}+${data.souma不堪一击.map((v) => v.id).sort().join('+')}`]();
+          data.souma不堪一击.length = 0;
+          return res;
+        }
+      },
+      outputStrings: {
+        'A45F+A463': '去右边+远离',
+        'A45F+A464': '去右边+靠近',
+        'A461+A463': '去左边+远离',
+        'A461+A464': '去左边+靠近',
+        'sub0+A45F+A463': '原地 外+右',
+        'sub0+A45F+A464': '原地 内+右',
+        'sub0+A461+A463': '原地 外+左',
+        'sub0+A461+A464': '原地 内+左',
+        'sub1+A45F+A463': '原地远离',
+        'sub1+A45F+A464': '原地靠近',
+        'sub1+A461+A463': '左1格 => 外+左',
+        'sub1+A461+A464': '左1格 => 内+左',
+        'sub2+A45F+A463': '原地远离',
+        'sub2+A45F+A464': '原地靠近',
+        'sub2+A461+A463': '右1格 => 外+右',
+        'sub2+A461+A464': '右1格 => 内+右',
+        'sub-1+A45F+A463': '右1格 => 外+右',
+        'sub-1+A45F+A464': '右1格 => 内+右',
+        'sub-1+A461+A463': '原地远离',
+        'sub-1+A461+A464': '原地靠近',
+        'sub-2+A45F+A463': '左1格 => 外+左',
+        'sub-2+A45F+A464': '左1格 => 内+左',
+        'sub-2+A461+A463': '原地远离',
+        'sub-2+A461+A464': '原地靠近', // 左1格 => 内+右
+      },
+    },
+    // 暂时不知为何2种ID 似乎AA02是第一轮 之后都是A494
+    {
+      id: 'R8S Souma 八连光弹',
+      type: 'StartsUsing',
+      netRegex: { id: ['AA02', 'A494'], capture: false },
+      preRun: (data) => data.souma八连光弹Counter++,
+      alertText: (data, _matches, output) => output.text({ count: data.souma八连光弹Counter }),
+      outputStrings: { text: { en: '第${count}轮八连分摊' } },
+    },
+    {
+      id: 'R8S Souma 刚刃一闪',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'A74C', capture: true },
+      promise: async (data) => {
+        data.soumaCombatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          names: [data.me],
+        })).combatants;
+      },
+      response: (data, matches, output) => {
+        if (data.soumaCombatantData.length === 0) {
+          return { infoText: output.unknown() };
+        }
+        const heading = parseFloat(matches.heading);
+        // N = 0, NNE = 1, ..., NNW = 15
+        const dir = Directions.hdgTo16DirNum(heading);
+        const playerFloor = getFloor(
+          data.soumaCombatantData[0].PosX,
+          data.soumaCombatantData[0].PosY,
+        );
+        const damagedFloor = HdgDirToFloor[dir.toString()];
+        if (playerFloor === damagedFloor) {
+          return { alarmText: output.change() };
+        }
+        return { infoText: output.text() };
+      },
+      outputStrings: {
+        change: { en: '走！' },
+        text: { en: '不动' },
+        unknown: { en: '拆地板' },
+      },
+    },
+    {
+      id: 'R8S Souma 刚刃一闪·终',
+      type: 'StartsUsing',
+      netRegex: { id: 'A49D', capture: false },
+      countdownSeconds: (_data, matches) => parseFloat(matches.duration),
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '狂暴' } },
+    },
     // #endregion
   ],
 });
