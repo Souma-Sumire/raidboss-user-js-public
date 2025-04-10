@@ -3,20 +3,25 @@
 ## 手动下载
 
 1. [下载本仓库](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-1. 将 **raidboss** 文件夹中 _你需要的_ `.js` 文件，放入你的文件夹
+
+1. 将 **raidboss** 文件夹中 _你需要的_ `.js` 文件，放入对应文件夹
     - 🐱 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
     - ☕ 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
 
-## 常见问题
-
-### 绝伊甸相关
-
-1. **P1~P4与自带的触发器重复报**  
-   关掉默认自带的触发器
+1. 关掉对应副本的默认自带触发器，以绝伊甸为例
    ![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
 
-1. **雾龙怎么不报**  
+1. 刷新 _Cactbot Raidboss_ 悬浮窗 或 重启ACT
+
+## 常见问题
+
+### 绝伊甸雾龙怎么不报
+
    雾龙功能默认关闭，需要手动到 **config 面板** 勾选开启
+
+### 切换机制打法
+
+   同样到 **config 面板** 具体文件的菜单中切换，高难副本几乎所有解法均有适配
 
 ### 设置职能位置（我是MT/ST/H1/H2/D1/D2/D3/D4）
 
@@ -59,6 +64,10 @@
 - `零式 - M2S`：略
 - `零式 - M3S`：略
 - `零式 - M4S`：首周代码存档，适配Game8攻略
+- `零式 - M5S`：通用
+- `零式 - M6S`：通用
+- `零式 - M7S`：通用
+- `零式 - M8S`：门神MMW，本体瑞凌
 - `零式 - P1S`：略
 - `零式 - P2S`：略
 - `零式 - P3S`：略
