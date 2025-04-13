@@ -1,52 +1,50 @@
 # raidboss-user-js-public
 
-## 安装
+## 安装准备（前置条件）
 
-### 下崽器
+在开始之前，请确保你已经准备好以下内容：
 
-1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases) 并在 ACT 中加载
-1. 选择你需要的文件，点击下崽按钮
-1. 每次下崽成功后，手动刷新 _Cactbot Raidboss_ 悬浮窗 或 重启ACT，使文件生效
+- ✅ **ACT (Advanced Combat Tracker)**  —— 通常包含在“呆萌”或“咖啡”整合包中
+- ✅ **悬浮窗插件 (OverlayPlugin)** —— 通常包含在“呆萌”或“咖啡”整合包中
+- ✅ **Cactbot 触发器 (Raidboss)** —— 通常包含在“呆萌”或“咖啡”整合包中
+- **鲶鱼精邮差 (PostNamazu)** —— 用于标点功能 [下载链接](https://github.com/Natsukage/PostNamazu/releases)
 
-### 手动
+## 安装方法
 
-1. 下载 [仓库 ZIP](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
-1. 将 **raidboss** 文件夹中 _你需要的_ `.js` 文件，放入 ACT 对应文件夹
-    - 🐱 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
-    - ☕ 咖啡：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
-1. 每次文件放置完毕后，手动刷新 _Cactbot Raidboss_ 悬浮窗 或 重启ACT，使文件生效
+### 方法1：使用下载器（推荐）
 
-## 注意
+1. 下载 [SoumaDownloader](https://github.com/Souma-Sumire/SoumaDownloader/releases)
+2. 在 ACT 中启用该插件，选择你需要的触发器文件，点击"开始下崽"
+3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
-为防止重复报点，请禁用对应地图的默认自带触发器集合，以绝伊甸为例（每个地图只需要禁用一次）
-   ![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
+### 方法2：手动安装
+
+1. 下载 [仓库ZIP](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
+2. 解压后，将 `raidboss` 文件夹里的 .js 文件复制到：
+   - 呆萌整合：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
+   - 咖啡整合：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
+3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
+
+> ⚠️ **注意**：  
+> 无论是下载器还是手动安装，都需要禁用 Cactbot Raidboss 对应地图的内置默认触发器，避免内容重复 ![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
 
 ## 设置
 
 ### 分配职能位置
 
-为了知道谁是MT/ST/H1/H2/D1/D2/D3/D4，你需要新建一个悬浮窗：
+1. 在 OverlayPlugin 中新建一个悬浮窗：
+   - 名称：随意（如"职责分配"）
+   - 类型：数据统计
+   - 悬浮窗地址：<https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>
+2. 进入副本后，在悬浮窗中手动分配每个人的职位（MT/ST/H1/H2/D1-D4）
+3. 如果未分配，触发器会按默认顺序（战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青）自动处理
 
-1. 在 `OverlayPlugin悬浮窗插件` 中，左下角点击 `新建` 按钮
-1. 名称任意输入，预设选择 `自定义悬浮窗`，类型选择 `数据统计`
-1. 切换到该标签，在右侧空白的 `悬浮窗地址` 输入框中填入：`https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime`
-1. 移动至合适位置、调整大小后，勾选 `锁定悬浮窗`
-1. 组成小队后，在该悬浮窗中分配每个人的正确职能位置
+### 修改触发器设置
 
-![image](https://github.com/user-attachments/assets/1a9ccfc6-35d1-4f93-a3b8-0a41c698d946)
-
-如果你跳过了此步骤，将默认以 `战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青` 的顺序自动分配
-
-### 切换打法、调整各种设置、修改输出文本等等
-
-我提供的几乎所有 JS 文件都暴露了一些配置选项，在 **config 面板** 中可以进行自由切换或输入
-
+1. 打开 OverlayPlugin → Cactbot Config → Raidboss → 具体 JS 文件
+2. 找到对应设置，按需调整
+3. 所有更改会保存到 OverlayPlugin 配置中，不会因更新文件而丢失
 ![image](https://github.com/user-attachments/assets/3efa5c75-e02d-46c2-a987-eaf008c9e039)
-
-- 你在 Config 面板进行的任何修改都将保存至悬浮窗插件的 `RainbowMage.OverlayPlugin.config.json` 文件中。这能防止你所做的更改在今后的更新中被覆盖失效
-
-- 我的设计哲学要求任何可能会打扰到队友的功能都是默认关闭的
-- 标点功能需要 [鲶鱼精邮差](https://github.com/Natsukage/PostNamazu/releases)，请自行加载最新版
 
 ## 按文件说明
 
@@ -56,12 +54,12 @@
 
 ### 绝本系列
 
-- `绝 - 神兵 三连桶`：单纯的三连桶标记，默认关闭，**需要[分配职能位置](#分配职能位置)、鲶鱼精邮差**
-- `绝 - 龙诗`：兼容常见打法（除了P5鸡排），**需要[分配职能位置](#分配职能位置)**
-- `绝 - 欧米茄.o`：适配莫古力攻略，[自动标点图示](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)，**需要[分配职能位置](#分配职能位置)**
-- `绝 - 欧米茄 P2铁匠警察`：当P2有人使用单体技能攻击防火墙目标时，发出通报批评，**需要鲶鱼精邮差。**
-- `绝 - 伊甸`：默认“MMW&MGL合作攻略”一套，兼容常见打法，**需要[分配职能位置](#分配职能位置)**
-- `绝 - 伊甸 P4未来碎片保镖`：当P4未来碎片被错误攻击时，发出通报并抓出凶手，**需要鲶鱼精邮差**
+- `绝 - 神兵 三连桶`：三连桶标记，需要[分配职能位置](#分配职能位置)、鲶鱼精邮差
+- `绝 - 龙诗`：兼容常见打法（除了P5鸡排），需要[分配职能位置](#分配职能位置)
+- `绝 - 欧米茄.o`：适配莫古力攻略，[自动标点图示](https://docs.qq.com/doc/DTXZHb1lXcUZ4eXBh)，需要[分配职能位置](#分配职能位置)
+- `绝 - 欧米茄 P2铁匠警察`：当P2有人使用单体技能攻击防火墙目标时，发出通报批评，需要鲶鱼精邮差。
+- `绝 - 伊甸`：默认“MMW&MGL合作攻略”一套，兼容常见打法，需要[分配职能位置](#分配职能位置)
+- `绝 - 伊甸 P4未来碎片保镖`：当P4未来碎片被错误攻击时，发出通报并抓出凶手，需要鲶鱼精邮差
 
 ### 零式系列
 
@@ -81,23 +79,23 @@
 - `零式 - P1S`：略
 - `零式 - P2S`：略
 - `零式 - P3S`：略
-- `零式 - P4S`：适配海豹式拉线、被窝攻略，**需要[分配职能位置](#分配职能位置)**
+- `零式 - P4S`：适配海豹式拉线、被窝攻略，需要[分配职能位置](#分配职能位置)
 - `零式 - P5S`：略
-- `零式 - P6S`：适配 uptime 打法，**需要[分配职能位置](#分配职能位置)**
+- `零式 - P6S`：适配 uptime 打法，需要[分配职能位置](#分配职能位置)
 - `零式 - P7S`：略
-- `零式 - P8S`：适配菓子攻略等，**需要[分配职能位置](#分配职能位置)**
+- `零式 - P8S`：适配菓子攻略等，需要[分配职能位置](#分配职能位置)
 - `零式 - P9S`：略
 - `零式 - P10S`：略
 - `零式 - P11S`：适配"光与暗的调和"机制（Game8/美服uptime）
-- `零式 - P12S`：适配Game8、菓子、NL改、papan等解法，**需要[分配职能位置](#分配职能位置)**
+- `零式 - P12S`：适配Game8、菓子、NL改、papan等解法，需要[分配职能位置](#分配职能位置)
 
 ### 杂项
 
 - `灭 - 暗黑之云`：首周存档，不再维护
 - `挖宝 - 曼德拉标点`：标记曼德拉顺序，需要鲶鱼精邮差
 - `玩具 - 食物警察`：检查队友食物是否（即将）到期
-- `异闻零式 - 阿罗阿罗岛`：云编写，适配MMW/肉桂攻略，未经测试，**需要[分配职能位置](#分配职能位置)**
-- `易用性 - TTS不念出东南西北`：屏蔽TTS中的方向词（不影响文本提示）
+- `异闻零式 - 阿罗阿罗岛`：云编写，适配 MMW/肉桂攻略，未经测试，需要[分配职能位置](#分配职能位置)
+- `易用性 - TTS不念出东南西北`：屏蔽 TTS 中的方向词（不影响文本提示）
 - `易用性 - 风脉泉标记`：宏指令 `/e fengmai`
 - `易用性 - 关闭提示音`：关闭默认的触发器音效
-- `易用性 - 招募满人提醒`：若切屏时招募组满人，循环播放"人齐了"语音
+- `易用性 - 招募满人提醒`：若切屏时招募组满人，循环播放“人齐了”语音
