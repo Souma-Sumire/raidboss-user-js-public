@@ -193,17 +193,11 @@ Options.Triggers.push({
           '正点安全区：D C B': 'waymark',
           '玩家怎么转：左右右': 'rotation',
           '12刀交集 => 34刀交集 => 4刀半场': 'buffer1234',
+          '2刀半场 => 34刀交集 => 4刀半场': 'buffer34',
           '23刀交集 => 4刀半场': 'buffer23',
         },
       },
-      default: 'buffer1234',
-      comment: {
-        en: `正点安全区：最传统的方法，建议提前找到34交集以增加4刀容错。<br/>
-        玩家怎么转：减少思考量的一种解决方案，同样建议提前找到34交集以增加4刀容错。<br/>
-        12刀交集 => 34刀交集：默认方案，以2次移动为代价，得到了报34交集的优势，可以让4刀更容易就位。<br/>
-        23刀交集：仅需要移动2次，但有概率对穿半场。<br/>
-        请自行选用最适合自己的报法。`,
-      },
+      default: 'buffer34',
     },
   ],
   overrideTimelineFile: true,
@@ -836,6 +830,12 @@ hideall "--sync--"
             data.souma四连导航 = [b12.toString(), b34.toString(), w4, last];
             return { alertText: buffer };
           }
+          if (data.triggerSetConfig.四连刀报点方式 === 'buffer34') {
+            const b34 = output[getBuffer(res[2], res[3])]();
+            const buffer = output.buffer34({ w2, b34, w4 });
+            data.souma四连导航 = [w2, b34.toString(), w4, last];
+            return { alertText: buffer };
+          }
           if (data.triggerSetConfig.四连刀报点方式 === 'buffer23') {
             const b23 = output[getBuffer(res[1], res[2])]();
             const buffer = output.buffer23({ b23, w4 });
@@ -870,6 +870,7 @@ hideall "--sync--"
         waymark: { en: '${w2} => ${w3} => ${w3}' },
         rotation: { en: '${r2} => ${r3} => ${r4}' },
         buffer1234: { en: '${b12} => ${b34} => ${w4}' },
+        buffer34: { en: '${w2} => ${b34} => ${w4}' },
         buffer23: { en: '${b23} => ${w4}' },
         stay: { en: '准备${w4}' },
         last: { en: '正点躲龙头' },
@@ -999,7 +1000,7 @@ hideall "--sync--"
         const damagedFloor = HdgDirToFloor[dir.toString()];
         // 剩下四座平台相对于被破坏的平台的序号（从逆时针开始1234）
         data.souma线塔对应 = (n) => (n - damagedFloor + 5) % 5;
-        console.warn('刚刃一闪', data.souma线塔对应);
+        // console.warn('刚刃一闪', data.souma线塔对应);
       },
       outputStrings: { text: '走！' },
     },
@@ -1379,12 +1380,12 @@ hideall "--sync--"
         return output[`${line}-${data.role}`]({ player: data.party.member(matches.target) });
       },
       outputStrings: {
-        'near-tank': { en: '近线：与${player}踩双人塔' },
-        'far-tank': { en: '远线：等待${player}移动2次，再向右移动' },
-        'near-healer': { en: '近线：与${player}贴贴' },
-        'far-healer': { en: '远线：与${player}' },
-        'near-dps': { en: '近线：与${player}贴贴' },
-        'far-dps': { en: '远线：向右移动两次 (与${player})' },
+        'near-tank': { en: '近线 与${player}' },
+        'far-tank': { en: '远线 与${player}' },
+        'near-healer': { en: '近线 与${player}' },
+        'far-healer': { en: '远线 与${player}' },
+        'near-dps': { en: '近线 与${player}' },
+        'far-dps': { en: '远线 与${player}' },
       },
     },
     {
