@@ -2,7 +2,7 @@
 
 ## 安装
 
-### 自动安装
+### 下崽器
 
 1. 下载 [下崽器](https://github.com/Souma-Sumire/SoumaDownloader/releases) 并在 ACT 中加载
 1. 选择你需要的文件，点击下崽按钮
@@ -12,7 +12,7 @@
 
 ### 手动安装
 
-1. 下崽 [仓库 ZIP](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
+1. 下载 [仓库 ZIP](https://github.com/Souma-Sumire/raidboss-user-js-public/archive/refs/heads/main.zip)
 
 1. 将 **raidboss** 文件夹中 _你需要的_ `.js` 文件，放入 ACT 对应文件夹
     - 🐱 呆萌：`ACT.DieMoe\Plugins\ACT.OverlayPlugin\cactbot\user\raidboss`
