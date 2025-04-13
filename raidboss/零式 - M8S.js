@@ -1046,14 +1046,14 @@ hideall "--sync--"
       },
     },
     {
-      id: 'R8S Souma 风震魔印人群',
+      id: 'R8S Souma 风狼阵0',
       type: 'StartsUsing',
       netRegex: { id: 'A46E', capture: false },
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '踩塔分组' } },
     },
     {
-      id: 'R8S Souma 风狼阵',
+      id: 'R8S Souma 风狼阵1',
       type: 'Ability',
       netRegex: { id: 'A46F', capture: true },
       preRun: (data, matches) => {
@@ -1377,7 +1377,8 @@ hideall "--sync--"
       alertText: (data, matches, output) => {
         const line = matches.id === '013D' ? 'near' : 'far';
         data.souma远近线 = line;
-        return output[`${line}-${data.role}`]({ player: data.party.member(matches.target) });
+        const target = matches.target === data.me ? matches.source : matches.target;
+        return output[`${line}-${data.role}`]({ player: data.party.member(target) });
       },
       outputStrings: {
         'near-tank': { en: '近线 与${player}' },
