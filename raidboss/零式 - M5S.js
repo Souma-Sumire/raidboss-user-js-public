@@ -1,4 +1,19 @@
 // 全部是main分支复制来的，不是我写的，仅仅删除了source的限制，以适配汉化端
+/*
+/p 【AB固定】   |   【狂欢夜】      |【波浪重叠】
+/p     H1       |      MT   ST      |    MT   ST
+/p MT    远D    |   H1         H2   |    D1   D2
+/p ST     近D   |   D3         D4   |    H1   H2
+/p     H2       |      D1   D2      |    D3   D4
+/p 【聚光灯】西:MT组 东:ST组 内圈:近战 外圈:远程
+/p 【音响炸弹】从北边按秒数由短到长配对列队
+/p 【青蛙舞者1次】      |【迪斯科舞者】
+/p MT组:西北 ST组:东南  | (扇形引导) TH→DPS
+/p   分摊分组:横向相邻  |
+/p          ★          |    MTD3    H2D4
+/p   MT/ST   D1/D2      |         ★
+/p   H1/H2   D3/D4      |   H1D1     STD2
+*/
 console.log('已加载M5S');
 // map of ids to number of hits and first safe side
 const snapTwistIdMap = {
