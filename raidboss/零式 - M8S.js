@@ -1376,17 +1376,18 @@ hideall "--sync--"
       durationSeconds: 21,
       alertText: (data, matches, output) => {
         const line = matches.id === '013D' ? 'near' : 'far';
-        data.souma远近线 = line;
-        const target = matches.target === data.me ? matches.source : matches.target;
-        return output[`${line}-${data.role}`]({ player: data.party.member(target) });
+        const partner = matches.target === data.me ? matches.source : matches.target;
+        const partnerRole = data.party.nameToRole_[partner];
+        data.souma远近线 = { line: line, partner: partner, partnerRole: partnerRole };
+        return output[`${line}-${data.role}`]({ player: data.party.member(partner) });
       },
       outputStrings: {
-        'near-tank': { en: '近线 与${player}' },
-        'far-tank': { en: '远线 与${player}' },
-        'near-healer': { en: '近线 与${player}' },
-        'far-healer': { en: '远线 与${player}' },
-        'near-dps': { en: '近线 与${player}' },
-        'far-dps': { en: '远线 与${player}' },
+        'near-tank': { en: '近线 (与${player})' },
+        'far-tank': { en: '远线 (与${player})' },
+        'near-healer': { en: '近线 (与${player})' },
+        'far-healer': { en: '远线 (与${player})' },
+        'near-dps': { en: '近线 (与${player})' },
+        'far-dps': { en: '远线 (与${player})' },
       },
     },
     {
@@ -1394,14 +1395,19 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: 'A82C', capture: false },
       delaySeconds: 23,
-      infoText: (data, _matches, output) => output[`${data.souma远近线}-${data.role}`](),
+      infoText: (data, _matches, output) =>
+        output[`${data.role}-${data.souma远近线.line}-w/${data.souma远近线.partnerRole}`]({
+          partner: data.souma远近线.partner,
+        }),
       outputStrings: {
-        'near-tank': { en: '踩双人塔' },
-        'far-tank': { en: '踩单人塔（站在边缘）' },
-        'near-healer': { en: '踩三人塔' },
-        'far-healer': { en: '踩三人塔（站在边缘）' },
-        'near-dps': { en: '踩三人塔' },
-        'far-dps': { en: '踩三人塔（站在边缘）' },
+        'dps-near-w/tank': { en: '双人塔' },
+        'dps-far-w/tank': { en: '单人塔（站在边缘）' },
+        'dps-near-w/healer': { en: '三人塔' },
+        'dps-far-w/healer': { en: '单人塔（站在边缘）' },
+        'tank-near-w/dps': { en: '双人塔' },
+        'tank-far-w/dps': { en: '单人塔（站在边缘）' },
+        'healer-near-w/dps': { en: '三人塔' },
+        'healer-far-w/dps': { en: '三人塔（站在边缘）' },
       },
     },
     {
