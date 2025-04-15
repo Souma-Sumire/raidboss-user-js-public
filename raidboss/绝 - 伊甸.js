@@ -610,19 +610,19 @@ Options.Triggers.push({
       id: 'P5挡枪顺序2',
       name: { en: 'P5挡枪 第2组' },
       type: 'string',
-      default: 'H1/H2',
+      default: 'D1/D2',
     },
     {
       id: 'P5挡枪顺序3',
       name: { en: 'P5挡枪 第3组' },
       type: 'string',
-      default: 'D1/D2',
+      default: 'D3/D4',
     },
     {
       id: 'P5挡枪顺序4',
       name: { en: 'P5挡枪 第4组' },
       type: 'string',
-      default: 'D3/D4',
+      default: 'H1/H2',
     },
   ],
   initData: () => {
