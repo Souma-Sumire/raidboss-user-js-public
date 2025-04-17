@@ -6,14 +6,14 @@
 
 - ✅ **ACT (Advanced Combat Tracker)**  —— 通常包含在“呆萌”或“咖啡”整合包中
 - ✅ **悬浮窗插件 (OverlayPlugin)** —— 通常包含在“呆萌”或“咖啡”整合包中
-- ✅ **Cactbot 触发器 (Raidboss)** —— 通常包含在“呆萌”或“咖啡”整合包中
-- **鲶鱼精邮差 (PostNamazu)** —— 用于标点功能 [下载链接](https://github.com/Natsukage/PostNamazu/releases)
+- ✅ **Cactbot 触发器 (Cactbot Raidboss)** —— 通常包含在“呆萌”或“咖啡”整合包中
+- **鲶鱼精邮差 (PostNamazu)** —— 可选，用于标点功能 [下载链接](https://github.com/Natsukage/PostNamazu/releases)
 
 ## 安装方法
 
 ### 方法1：使用下载器（推荐）
 
-1. 下载 [SoumaDownloader](https://github.com/Souma-Sumire/SoumaDownloader/releases)
+1. 下载 [SoumaDownloader.dll](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 2. 在 ACT 中启用该插件，选择你需要的触发器文件，点击"开始下崽"
 3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
@@ -26,7 +26,9 @@
 3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
 > ⚠️ **注意**：  
-> 无论是下载器还是手动安装，都需要禁用 Cactbot Raidboss 对应地图的内置默认触发器，避免内容重复 ![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
+> 无论是下载器还是手动安装，都需要禁用 Cactbot Raidboss 对应地图的内置默认触发器，避免内容重复
+![795c401924a050f7eeeaef22b1d1b0c2](/img/eden.png)
+> 如果你在国际服汉化了敌人名称，这一行为本身就会使所有 Cactbot Raidboss 默认触发器失效，那么你不需要做这一步
 
 ## 设置
 
