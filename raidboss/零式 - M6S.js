@@ -1,46 +1,16 @@
 console.log('已加载M6S');
 const getSafe = (bNpcID, dir) => {
-  // N = 0, E = 1, S = 2, W = 3
-  const handler = {
-    // 18340 魔界花
-    '18340': (dir) => {
-      return {
-        0: [1, 2],
-        1: [2, 3],
-        2: [3, 4],
-        3: [4, 1],
-      }[dir.toString()];
-    },
-    // 18341 梦魇
-    '18341': (dir) => {
-      return {
-        0: [3, 4],
-        1: [4, 1],
-        2: [1, 2],
-        3: [2, 3],
-      }[dir.toString()];
-    },
-    // 18336 炸弹
-    '18336': (dir) => {
-      return {
-        0: [3, 4],
-        1: [4, 1],
-        2: [1, 2],
-        3: [2, 3],
-      }[dir.toString()];
-    },
-    // 18337 翅膀炸弹
-    '18337': (dir) => {
-      return {
-        0: [1, 2],
-        1: [2, 3],
-        2: [3, 4],
-        3: [4, 1],
-      }[dir.toString()];
-    },
+  const patterns = {
+    // 魔界花
+    18340: [[1, 2], [2, 3], [3, 4], [4, 1]],
+    // 梦魇
+    18341: [[3, 4], [4, 1], [1, 2], [2, 3]],
+    // 炸弹
+    18336: [[3, 4], [4, 1], [1, 2], [2, 3]],
+    // 翅膀炸弹
+    18337: [[1, 2], [2, 3], [3, 4], [4, 1]],
   };
-  const result = handler[bNpcID](dir);
-  return result;
+  return patterns[bNpcID]?.[dir] ?? [];
 };
 Options.Triggers.push({
   id: 'SoumaAacCruiserweightM2Savage',
@@ -222,10 +192,22 @@ Options.Triggers.push({
         return output[maxSafeKey]();
       },
       outputStrings: {
-        '1': { en: '3跳1' },
-        '3': { en: '1跳3' },
-        '4': { en: '2跳4' },
-        '2': { en: '4跳2' },
+        '1': { en: '右下 跳 左上' },
+        '3': { en: '左上 跳 右下' },
+        '4': { en: '右上 跳 左下' },
+        '2': { en: '左下 跳 右上' },
+      },
+    },
+    {
+      id: 'R6S Souma 沙漠buff大圈预警',
+      type: 'GainsEffect',
+      netRegex: { effectId: '1166', capture: true },
+      condition: (data, matches) => data.me === matches.target && data.role !== 'healer',
+      infoText: (_data, _matches, output) => output.defamationLater(),
+      outputStrings: {
+        defamationLater: {
+          en: '大圈点名 (稍后放置)',
+        },
       },
     },
     {
@@ -278,6 +260,73 @@ Options.Triggers.push({
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '松鼠AoE' } },
+    },
+    {
+      id: 'R6S Souma 旋风',
+      type: 'StartsUsing',
+      netRegex: { id: 'A69D', capture: false },
+      suppressSeconds: 1,
+      response: Responses.moveAway(),
+    },
+    {
+      id: 'R6S Souma 避雷针',
+      type: 'HeadMarker',
+      netRegex: { id: '025A', capture: true },
+      condition: Conditions.targetIsYou(),
+      response: Responses.spread('alert'),
+    },
+    {
+      id: 'R6S Souma 布丁派对',
+      type: 'HeadMarker',
+      netRegex: { id: '0131', capture: false },
+      infoText: (_data, _matches, output) => output.stack(),
+      outputStrings: { stack: { en: '连续分摊 (5次)' } },
+    },
+    {
+      id: 'R6S 炸脖龙',
+      type: 'HeadMarker',
+      netRegex: { id: '0017', capture: true },
+      condition: Conditions.targetIsYou(),
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '炸脖龙盯上你了' } },
+    },
+  ],
+  timelineReplace: [
+    {
+      'locale': 'cn',
+      'replaceText': {
+        'Artistic Anarchy': '无规则艺术',
+        'Bad Breath': '臭气',
+        'Brûlée': '热放散',
+        'Burst': '爆炸',
+        'Color Clash': '色彩碰撞',
+        'Color Riot': '色彩暴乱',
+        'Cool Bomb': '冷色漆弹',
+        'Crowd Brûlée': '重热放散',
+        'Dark Mist': '暗黑雾',
+        'Double Style': '双重涂鸦',
+        'Layer': '色彩调配',
+        'Levin Drop': '雷流',
+        'Lightning Bolt': '闪电',
+        'Lightning Storm': '百雷',
+        'Live Painting': '即兴涂鸦',
+        'Moussacre': '慕斯大游行',
+        'Mousse Drip': '湿漉漉慕斯',
+        'Mousse Mural': '慕斯骤雨',
+        'Pudding Graf': '爆弹软糊怪',
+        'Pudding Party': '布丁派对',
+        'Ready Ore Not': '送你原石',
+        'Rush': '突进',
+        'Single Style': '单体涂鸦',
+        'Soul Sugar': '糖果制魂',
+        'Spray Pain': '飞针射击',
+        'Sticky Mousse': '黏黏慕斯',
+        'Sugarscape': '风景彩绘',
+        'Taste of Fire': '糖果火炎',
+        'Taste of Thunder': '糖果闪雷',
+        'Warm Bomb': '暖色漆弹',
+        'Wingmark': '翼之印记',
+      },
     },
   ],
 });
