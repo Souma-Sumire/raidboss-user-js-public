@@ -199,6 +199,13 @@ Options.Triggers.push({
       },
       default: 'buffer34',
     },
+    {
+      id: '四连刀时报分散分摊',
+      name: { en: '四连刀时报分散分摊' },
+      type: 'checkbox',
+      default: false,
+      comment: { en: '会干扰安全区的报点。开不开看个人喜好吧。' },
+    },
   ],
   overrideTimelineFile: true,
   timeline: `
@@ -261,11 +268,11 @@ hideall "--sync--"
 591.3 "双牙暴风击"
 598.4 "双牙暴风击"
 610.6 "光牙召唤"
-622.1 "回天动地"
-626.5 "回天动地"
-630.8 "回天动地"
-635.2 "回天动地"
-639.5 "回天动地"
+622.1 "回天动地#1"
+626.5 "回天动地#2"
+630.8 "回天动地#3"
+635.2 "回天动地#4"
+639.5 "回天动地#5"
 650 "爆震"
 664.1 "魔光"
 675.3 "双牙击"
@@ -302,6 +309,7 @@ hideall "--sync--"
       souma闪光炮: [],
       souma连击闪光炮: [],
       souma八连光弹Counter: 0,
+      souma四连中: false,
     };
   },
   timelineTriggers: [
@@ -414,7 +422,7 @@ hideall "--sync--"
       id: 'R8S Souma 薙之群狼剑',
       type: 'StartsUsing',
       netRegex: { id: 'A91[12]', capture: false },
-      delaySeconds: 2,
+      delaySeconds: 1.5,
       durationSeconds: 10,
       infoText: (_data, _matches, output) => {
         return output.text();
@@ -429,7 +437,7 @@ hideall "--sync--"
       id: 'R8S Souma 回之群狼剑',
       type: 'StartsUsing',
       netRegex: { id: 'A91[34]', capture: false },
-      delaySeconds: 2,
+      delaySeconds: 1.5,
       durationSeconds: 10,
       infoText: (_data, _matches, output) => {
         return output.text();
@@ -713,6 +721,9 @@ hideall "--sync--"
       netRegex: { id: '008B' },
       condition: (data, matches) => matches.target === data.me,
       infoText: (data, _matches, output) => {
+        if (data.triggerSetConfig.四连刀时报分散分摊 === false && data.souma四连中) {
+          return;
+        }
         if (data.souma二穿一站位 !== undefined) {
           return output[data.souma二穿一站位.spread]();
         }
@@ -731,6 +742,9 @@ hideall "--sync--"
       type: 'HeadMarker',
       netRegex: { id: '005D' },
       condition: (data, matches) => {
+        if (data.triggerSetConfig.四连刀时报分散分摊 === false && data.souma四连中) {
+          return;
+        }
         if (data.soumaPhase === 'P1-后大地1' || data.soumaPhase === 'P1-后大地2') {
           const targetRole = data.party.nameToRole_[matches.target] === 'dps' ? 'dps' : 'th';
           const myRole = data.role === 'dps' ? 'dps' : 'th';
@@ -772,8 +786,20 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: 'A3C1', capture: false },
       infoText: (_data, _matches, output) => output.text(),
+      run: (data) => {
+        data.souma四连中 = true;
+      },
       outputStrings: {
         text: { en: '4连半场刀' },
+      },
+    },
+    {
+      id: 'R8S Souma 幻狼召唤结束',
+      type: 'StartsUsing',
+      netRegex: { id: 'A3C1', capture: false },
+      delaySeconds: 30,
+      run: (data) => {
+        data.souma四连中 = false;
       },
     },
     {
@@ -1454,37 +1480,37 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        'A45F+A463': '去右边+远离',
-        'A45F+A464': '去右边+靠近',
-        'A461+A463': '去左边+远离',
-        'A461+A464': '去左边+靠近',
-        'sub0+A45F+A463': '原地 外+右',
-        'sub0+A45F+A464': '原地 内+右',
-        'sub0+A461+A463': '原地 外+左',
-        'sub0+A461+A464': '原地 内+左',
-        // 左1格 => 外+右
+        'A45F+A463': '右+远离',
+        'A45F+A464': '右+靠近',
+        'A461+A463': '左+远离',
+        'A461+A464': '左+靠近',
+        'sub0+A45F+A463': '原地 右+远离',
+        'sub0+A45F+A464': '原地 右+靠近',
+        'sub0+A461+A463': '原地 左+远离',
+        'sub0+A461+A464': '原地 左+靠近',
+        // 左1格 => 右+远离
         'sub1+A45F+A463': '原地远离',
-        // 左1格 => 内+右
+        // 左1格 => 右+靠近
         'sub1+A45F+A464': '原地靠近',
-        'sub1+A461+A463': '左1格 => 外+左',
-        'sub1+A461+A464': '左1格 => 内+左',
-        // 右1格 => 外+左
+        'sub1+A461+A463': '向左1格 => 左+远离',
+        'sub1+A461+A464': '向左1格 => 左+靠近',
+        // 向右1格 => 左+远离
         'sub2+A45F+A463': '原地远离',
-        // 右1格 => 内+左
+        // 向右1格 => 左+靠近
         'sub2+A45F+A464': '原地靠近',
-        'sub2+A461+A463': '右1格 => 外+右',
-        'sub2+A461+A464': '右1格 => 内+右',
-        'sub-1+A45F+A463': '右1格 => 外+右',
-        'sub-1+A45F+A464': '右1格 => 内+右',
-        // 右1格 => 外+左
+        'sub2+A461+A463': '向右1格 => 右+远离',
+        'sub2+A461+A464': '向右1格 => 右+靠近',
+        'sub-1+A45F+A463': '向右1格 => 右+远离',
+        'sub-1+A45F+A464': '向右1格 => 右+靠近',
+        // 向右1格 => 左+远离
         'sub-1+A461+A463': '原地远离',
-        // 右1格 => 内+左
+        // 向右1格 => 左+靠近
         'sub-1+A461+A464': '原地靠近',
-        'sub-2+A45F+A463': '左1格 => 外+左',
-        'sub-2+A45F+A464': '左1格 => 内+左',
-        // 左1格 => 外+右
+        'sub-2+A45F+A463': '向左1格 => 左+远离',
+        'sub-2+A45F+A464': '向左1格 => 左+靠近',
+        // 向左1格 => 右+远离
         'sub-2+A461+A463': '原地远离',
-        // 左1格 => 内+右
+        // 向左1格 => 右+靠近
         'sub-2+A461+A464': '原地靠近',
       },
     },
