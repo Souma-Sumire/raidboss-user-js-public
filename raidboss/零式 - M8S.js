@@ -893,7 +893,7 @@ hideall "--sync--"
         3: { en: '3' },
         4: { en: '4' },
         first: { en: '${s1}' },
-        waymark: { en: '${w2} => ${w3} => ${w3}' },
+        waymark: { en: '${w2} => ${w3} => ${w4}' },
         rotation: { en: '${r2} => ${r3} => ${r4}' },
         buffer1234: { en: '${b12} => ${b34} => ${w4}' },
         buffer34: { en: '${w2} => ${b34} => ${w4}' },
