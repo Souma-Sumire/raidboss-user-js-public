@@ -1,5 +1,5 @@
 if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_timeline_only/.test(location.href)) {
-  const defaultPriority = 'MT/ST/D1/D2/D3/D4/H2/H1';
+  const defaultPriority = 'MT/ST/D1/D2/D3/D4/H1/H2';
   const { getRpByName, mark } = Util.souma;
   Options.Triggers.push({
     id: "Souma_TheWeaponsRefrainUltimate",
