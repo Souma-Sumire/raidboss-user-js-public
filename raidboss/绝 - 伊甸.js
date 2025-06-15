@@ -480,7 +480,7 @@ Options.Triggers.push({
       id: "P4二运同BUFF优先级",
       name: { en: "P4二运 同BUFF优先级" },
       type: "string",
-      default: "MT/ST/H1/H2/D1/D2/D3/D4",
+      default: "H1/H2/MT/ST/D1/D2/D3/D4",
     },
     {
       id: "伊甸P4二运机制标点",
