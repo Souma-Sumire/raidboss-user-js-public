@@ -79,7 +79,6 @@ const getSafeDirsForCloneCleave = (matches) => {
 Options.Triggers.push({
   id: '_AacCruiserweightM1Savage',
   zoneId: ZoneId.AacCruiserweightM1Savage,
-  timelineFile: 'r5s.txt',
   initData: () => ({
     deepCutTargets: [],
     discoInfernalCount: 0,
