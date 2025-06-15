@@ -15,7 +15,6 @@ Options.Triggers.push({
   triggers: [
     { id: "R7S Brutal Impact", disabled: true },
     { id: "R7S Stoneringer", disabled: true },
-    { id: ["A55D", "A55E", "A57F", "A580"], disabled: true },
     { id: "R7S Smash Here/There", disabled: true },
     { id: "R7S Sinister Seeds", disabled: true },
     { id: "R7S Impact", disabled: true },
@@ -24,7 +23,6 @@ Options.Triggers.push({
     { id: "R7S Pulp Smash", disabled: true },
     { id: "R7S Neo Bombarian Special", disabled: true },
     { id: "R7S Brutish Swing", disabled: true },
-    { id: ["A592", "A593", "A5A3", "A5A5"], disabled: true },
     { id: "R7S Glower Power", disabled: true },
     { id: "R7S Revenge of the Vines", disabled: true },
     { id: "R7S Thorny Deathmatch", disabled: true },
@@ -32,7 +30,6 @@ Options.Triggers.push({
     { id: "R7S Demolition Deathmatch", disabled: true },
     { id: "R7S Strange Seeds", disabled: true },
     { id: "R7S Tendrils of Terror", disabled: true },
-    { id: ["A599", "A59A", "A59C", "A59D"], disabled: true },
     { id: "R7S Killer Seeds", disabled: true },
     { id: "R7S Powerslam", disabled: true },
     { id: "R7S Stoneringer 2: Stoneringers", disabled: true },
