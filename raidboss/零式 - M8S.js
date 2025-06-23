@@ -184,7 +184,7 @@ Options.Triggers.push({
   config: [
     {
       id: "四连刀报点方式",
-      name: { en: "四连刀报点方式" },
+      name: { en: '四连刀(后三刀)报点方式' },
       type: "select",
       options: {
         en: {
