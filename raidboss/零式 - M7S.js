@@ -1,4 +1,5 @@
 console.log("已加载M7S");
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const isMeleeOrTank = (x) => Util.isMeleeDpsJob(x) || Util.isTankJob(x);
 Options.Triggers.push({
   id: "SoumaAacCruiserweightM3Savage",
@@ -13,35 +14,34 @@ Options.Triggers.push({
     };
   },
   triggers: [
-    { id: "R7S Brutal Impact", disabled: true },
+    // @ts-ignore
     { id: "R7S Stoneringer", disabled: true },
+    // @ts-ignore
     { id: "R7S Smash Here/There", disabled: true },
+    // @ts-ignore
     { id: "R7S Sinister Seeds", disabled: true },
-    { id: "R7S Impact", disabled: true },
+    // @ts-ignore
     { id: "R7S Quarry Swamp", disabled: true },
-    { id: "R7S Explosion", disabled: true },
+    // @ts-ignore
     { id: "R7S Pulp Smash", disabled: true },
+    // @ts-ignore
     { id: "R7S Neo Bombarian Special", disabled: true },
+    // @ts-ignore
     { id: "R7S Brutish Swing", disabled: true },
+    // @ts-ignore
     { id: "R7S Glower Power", disabled: true },
+    // @ts-ignore
     { id: "R7S Revenge of the Vines", disabled: true },
-    { id: "R7S Thorny Deathmatch", disabled: true },
-    { id: "R7S Abominable Blink", disabled: true },
-    { id: "R7S Demolition Deathmatch", disabled: true },
-    { id: "R7S Strange Seeds", disabled: true },
-    { id: "R7S Tendrils of Terror", disabled: true },
-    { id: "R7S Killer Seeds", disabled: true },
+    // @ts-ignore
     { id: "R7S Powerslam", disabled: true },
-    { id: "R7S Stoneringer 2: Stoneringers", disabled: true },
-    { id: "R7S Lashing Lariat", disabled: true },
-    { id: "R7S Slaminator", disabled: true },
+    // @ts-ignore
     { id: "R7S Debris Deathmatch", disabled: true },
-    {
-      id: "R7S Souma 粉碎冲击",
-      type: "StartsUsing",
-      netRegex: { id: "A55B", capture: false },
-      response: Responses.aoe(),
-    },
+    // @ts-ignore
+    { id: "R7S Pollen", disabled: true },
+    // @ts-ignore
+    { id: "R7S Lashing Lariat", disabled: true },
+    // @ts-ignore
+    { id: "R7S Killer Seeds", disabled: true },
     {
       id: "R7S Souma 荆棘世界",
       type: "StartsUsing",
@@ -196,6 +196,9 @@ Options.Triggers.push({
     },
     {
       id: "R7S Souma 小怪安全区",
+      comment: {
+        en: "近战职业报内场的，远程职业报外场的。玩黑魔D2的自己适应。",
+      },
       type: "MapEffect",
       // P1 0D 11 远左上右下 内左下右上 P3 1D?21
       // P1 05 09 远左下右上 内左上右下 P3 15 19
@@ -288,8 +291,8 @@ Options.Triggers.push({
       netRegex: { id: "A5A[79]" },
       alarmText: (_data, matches, output) => output[matches.id](),
       outputStrings: {
-        A5A7: { en: "右 =>" },
-        A5A9: { en: "<= 左" },
+        A5A7: { en: "右右右 =>" },
+        A5A9: { en: "<= 左左左" },
       },
     },
     {

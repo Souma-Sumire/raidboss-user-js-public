@@ -1,19 +1,4 @@
 // 全部是main分支复制来的，不是我写的，仅仅删除了source的限制，以适配汉化端
-/*
-/p 【AB固定】   |   【狂欢夜】      |【波浪重叠】
-/p     H1       |      MT   ST      |    MT   ST
-/p MT    远D    |   H1         H2   |    D1   D2
-/p ST     近D   |   D3         D4   |    H1   H2
-/p     H2       |      D1   D2      |    D3   D4
-/p 【聚光灯】西:MT组 东:ST组 内圈:近战 外圈:远程
-/p 【音响炸弹】从北边按秒数由短到长配对列队
-/p 【青蛙舞者1次】      |【迪斯科舞者】
-/p MT组:西北 ST组:东南  | (扇形引导) TH→DPS
-/p   分摊分组:横向相邻  |
-/p          ★          |    MTD3    H2D4
-/p   MT/ST   D1/D2      |         ★
-/p   H1/H2   D3/D4      |   H1D1     STD2
-*/
 console.log('已加载M5S');
 // map of ids to number of hits and first safe side
 const snapTwistIdMap = {
@@ -78,7 +63,7 @@ const getSafeDirsForCloneCleave = (matches) => {
 };
 Options.Triggers.push({
   id: '_AacCruiserweightM1Savage',
-  zoneId: ZoneId.AacCruiserweightM1Savage,
+  zoneId: 1257,
   initData: () => ({
     deepCutTargets: [],
     discoInfernalCount: 0,
@@ -93,7 +78,7 @@ Options.Triggers.push({
   triggers: [
     {
       // headmarkers with self-targeted cast
-      id: 'R5S Deep Cut',
+      id: '_R5S Deep Cut',
       type: 'HeadMarker',
       netRegex: { id: '01D7' },
       infoText: (data, matches, output) => {
@@ -114,7 +99,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Flip to AB Side',
+      id: '_R5S Flip to AB Side',
       type: 'StartsUsing',
       netRegex: { id: ['A780', 'A781'] },
       infoText: (data, matches, output) => {
@@ -136,9 +121,9 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S X-Snap Twist',
+      id: '_R5S X-Snap Twist',
       type: 'StartsUsing',
-      netRegex: { id: Object.keys(snapTwistIdMap), },
+      netRegex: { id: Object.keys(snapTwistIdMap) },
       durationSeconds: 10,
       alertText: (data, matches, output) => {
         const snapTwist = snapTwistIdMap[matches.id];
@@ -170,20 +155,20 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Celebrate Good Times',
+      id: '_R5S Celebrate Good Times',
       type: 'StartsUsing',
       netRegex: { id: 'A723', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R5S Disco Inferno',
+      id: '_R5S Disco Inferno',
       type: 'StartsUsing',
       netRegex: { id: 'A756', capture: false },
       response: Responses.bigAoe(),
       run: (data) => data.discoInfernalCount++,
     },
     {
-      id: 'R5S Burn Baby Burn 1 Early',
+      id: '_R5S Burn Baby Burn 1 Early',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -216,7 +201,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Burn Baby Burn 1 Cleanse',
+      id: '_R5S Burn Baby Burn 1 Cleanse',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -237,7 +222,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Burn Baby Burn 2 First',
+      id: '_R5S Burn Baby Burn 2 First',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -270,7 +255,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Burn Baby Burn 2 Second',
+      id: '_R5S Burn Baby Burn 2 Second',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -304,7 +289,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Inside Out',
+      id: '_R5S Inside Out',
       type: 'StartsUsing',
       netRegex: { id: 'A77C', capture: false },
       durationSeconds: 8.5,
@@ -321,7 +306,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Outside In',
+      id: '_R5S Outside In',
       type: 'StartsUsing',
       netRegex: { id: 'A77E', capture: false },
       durationSeconds: 8.5,
@@ -343,7 +328,7 @@ Options.Triggers.push({
       //
       // Wavelength β debuff timers are applied with 45.5, 30.5, 20.5, 25.5 or
       //  43.0, 28.0, 18.0, 23.0 durations depending on which group gets hit first
-      id: 'R5S Wavelength Merge Order',
+      id: '_R5S Wavelength Merge Order',
       type: 'GainsEffect',
       netRegex: { effectId: ['116E', '116F'] },
       preRun: (data, matches) => {
@@ -428,7 +413,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Wavelength Merge Reminder',
+      id: '_R5S Wavelength Merge Reminder',
       type: 'GainsEffect',
       netRegex: { effectId: ['116E', '116F'] },
       condition: Conditions.targetIsYou(),
@@ -446,7 +431,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Quarter Beats',
+      id: '_R5S Quarter Beats',
       type: 'StartsUsing',
       netRegex: { id: 'A75B', capture: false },
       infoText: (_data, _matches, output) => output.quarterBeats(),
@@ -455,7 +440,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Eighth Beats',
+      id: '_R5S Eighth Beats',
       type: 'StartsUsing',
       netRegex: { id: 'A75D', capture: false },
       infoText: (_data, _matches, output) => output.eighthBeats(),
@@ -465,13 +450,13 @@ Options.Triggers.push({
     },
     {
       // cast order of the 8 adds is always W->E, same as firing order
-      id: 'R5S Arcady Night Fever + Encore Collect',
+      id: '_R5S Arcady Night Fever + Encore Collect',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(feverIdMap) },
       run: (data, matches) => data.feverSafeDirs.push(feverIdMap[matches.id] ?? 'unknown'),
     },
     {
-      id: 'R5S Let\'s Dance!',
+      id: '_R5S Let\'s Dance!',
       type: 'StartsUsing',
       // A76A - Let's Dance!; A390 - Let's Dance! Remix
       // Remix is faster, so use a shorter duration
@@ -490,13 +475,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: 'R5S Let\'s Pose',
+      id: '_R5S Let\'s Pose',
       type: 'StartsUsing',
       netRegex: { id: 'A770', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: 'R5S Do the Hustle',
+      id: '_R5S Do the Hustle',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(hustleMap) },
       preRun: (data, matches) => data.storedHustleCleaves.push(matches),
@@ -510,7 +495,7 @@ Options.Triggers.push({
         ];
         if (
           data.storedHustleCleaves.length <
-          (expectedCountMap[data.hustleCleaveCount] ?? 0)
+            (expectedCountMap[data.hustleCleaveCount] ?? 0)
         )
           return;
         const cleaves = data.storedHustleCleaves;
@@ -570,149 +555,6 @@ Options.Triggers.push({
       },
       outputStrings: {
         ...Directions.outputStrings16Dir,
-      },
-    },
-  ],
-  timelineReplace: [
-    {
-      'locale': 'en',
-      'replaceText': {
-        '2-snap Twist & Drop the Needle/3-snap Twist & Drop the Needle/4-snap Twist & Drop the Needle':
-          '2/3/4-snap Twist',
-        'Flip to A-side/Flip to B-side': 'Flip to A/B-side',
-        'Play A-side/Play B-side': 'Play A/B-side',
-      },
-    },
-    {
-      'locale': 'de',
-      'missingTranslations': true,
-      'replaceSync': {
-        'Dancing Green': 'Springhis Khan',
-        'Frogtourage': 'Schenkelschwinger',
-      },
-      'replaceText': {
-        '\\(Cleave\\)': '(Cleave)',
-        '\\(Echo\\)': '(Echo)',
-        '\\(In\\+Protean\\+Echo\\)': '(Rein+Himmelsrichtungen+Echo)',
-        '\\(Out\\+Protean\\+Echo\\)': '(Raus+Himmelsrichtungen+Echo)',
-        '\\(Out\\+Protean\\)': '(Raus+Himmelsrichtungen)',
-        '\\(all\\)': '(Alle)',
-        '\\(boss\\)': '(Boss)',
-        '\\(dancers\\)': '(Tänzer)',
-        '\\(enrage\\)': '(Finalangriff)',
-        '2-snap Twist & Drop the Needle/3-snap Twist & Drop the Needle/4-snap Twist & Drop the Needle':
-          '2/3/4-fachzeig, Pose, Musik ab!',
-        'Arcady Night Encore': 'Tanzfieber-Zugabe',
-        'Arcady Night Encore Starts': 'Tanzfieber-Zugabe startet',
-        'Arcady Night Fever': 'Arkadion-Tanzfieber',
-        'Back-up Dance': 'Wilde Welle',
-        'Celebrate Good Times': 'Völlig losgelöst',
-        'Deep Cut': 'Tiefschnitt',
-        'Disco Infernal': 'Disco Pogo',
-        'Do the Hustle': 'Schüttel deinen Speck',
-        '(?<!& )Drop the Needle': 'Musik ab!',
-        'Eighth Beats': 'Achteltakt',
-        'Ensemble Assemble': 'Gruppen-Groove',
-        'Fire': '',
-        'Flip to A-side': 'A-Seite auflegen',
-        'Flip to B-side': 'B-Seite auflegen',
-        'Freak Out': 'Schallexplosion',
-        'Frogtourage Finale': 'Finaler Groove',
-        'Frogtourage(?! )': 'Schenkelschwinger',
-        'Funky Floor': 'Tanzflächen-Tango',
-        'Get Down!': 'Hoch die Hände!',
-        'Hi-NRG Fever': 'Totales Tanzfieber',
-        'Inside Out': 'Innerer Rhythmus',
-        'Let\'s Dance!(?! )': 'Fühl\' dich Disco!',
-        'Let\'s Dance! Remix': 'Fühl\' dich Disco, Disco, Disco!',
-        'Let\'s Pose!': 'Perfekte Pose',
-        'Moonburn': 'Mondglühen',
-        'Outside In': 'Äußerer Rhythmus',
-        'Play A-side': 'Spiele A-Seite',
-        'Play B-side': 'Spiele B-Seite',
-        'Quarter Beats': 'Vierteltakt',
-        'Ride the Waves': 'Perfekte Welle',
-      },
-    },
-    {
-      'locale': 'fr',
-      'missingTranslations': true,
-      'replaceSync': {
-        'Dancing Green': 'Dancing Green',
-        'Frogtourage': 'danceur batracien',
-      },
-      'replaceText': {
-        '2-snap Twist & Drop the Needle': 'Doublé pointé, pose & NUIT DE FOLIE !',
-        '3-snap Twist & Drop the Needle': 'Triple pointé, pose & NUIT DE FOLIE !',
-        '4-snap Twist & Drop the Needle': 'Quadruple pointé, pose & NUIT DE FOLIE !',
-        'Arcady Night Encore': 'Fièvre de l\'Arcadion : rappel',
-        'Arcady Night Fever': 'Fièvre de l\'Arcadion',
-        'Back-up Dance': 'Vague dansante',
-        'Celebrate Good Times': 'Lève les bras, balance-toi !',
-        'Deep Cut': 'Entaille profonde',
-        'Disco Infernal': 'Enfer du disco',
-        'Do the Hustle': 'Danse le Mia !',
-        'Eighth Beats': 'Tempo octuple',
-        'Ensemble Assemble': 'Rassemblement des danseurs',
-        'Flip to A-side': 'Programmation : face A',
-        'Flip to B-side': 'Programmation : face B',
-        'Freak Out': 'Déflagration acoustique',
-        'Frogtourage Finale': 'Rassemblement final',
-        'Frogtourage(?! )': 'danceur batracien',
-        'Funky Floor': 'Terrain de danse',
-        'Get Down!': 'Bouge de là !',
-        'Hi-NRG Fever': 'Fièvre de la nuit survoltée',
-        'Inside Out': 'Pas extérieur',
-        'Let\'s Dance!(?! )': 'Alors on danse !',
-        'Let\'s Dance! Remix': 'Alors on danse, danse, danse !',
-        'Let\'s Pose!': 'Prends la pose !',
-        'Moonburn': 'Flambée lunaire',
-        'Outside In': 'Pas intérieur',
-        'Play A-side': 'Jingle fracassant A',
-        'Play B-side': 'Jingle fracassant B',
-        'Quarter Beats': 'Tempo quadruple',
-        'Ride the Waves': 'Roulement de vagues',
-      },
-    },
-    {
-      'locale': 'ja',
-      'missingTranslations': true,
-      'replaceSync': {
-        'Dancing Green': 'ダンシング・グリーン',
-        'Frogtourage': 'フロッグダンサー',
-      },
-      'replaceText': {
-        '2-snap Twist & Drop the Needle': '2ポイント、ポーズ＆ジングル',
-        '3-snap Twist & Drop the Needle': '3ポイント、ポーズ＆ジングル',
-        '4-snap Twist & Drop the Needle': '4ポイント、ポーズ＆ジングル',
-        'Arcady Night Encore': 'ナイトフィーバー・アンコール',
-        'Arcady Night Encore Starts': 'ナイトフィーバー・アンコール',
-        'Arcady Night Fever': 'アルカディア・ナイトフィーバー',
-        'Back-up Dance': 'ダンシングウェーブ',
-        'Celebrate Good Times': 'セレブレート・グッドタイムズ',
-        'Deep Cut': 'ディープカット',
-        'Disco Infernal': 'ディスコインファーナル',
-        'Do the Hustle': 'ドゥ・ザ・ハッスル',
-        'Eighth Beats': '8ビート',
-        'Ensemble Assemble': 'ダンサーズ・アッセンブル',
-        'Flip to A-side': 'ジングル予約A',
-        'Flip to B-side': 'ジングル予約B',
-        'Freak Out': '音響爆発',
-        'Frogtourage Finale': 'ファイナル・アッセンブル',
-        'Frogtourage(?! )': 'フロッグダンサー',
-        'Funky Floor': 'ダンシングフィールド',
-        'Get Down!': 'ゲットダウン！',
-        'Hi-NRG Fever': 'ハイエナジー・ナイトフィーバー',
-        'Inside Out': 'インサイドアウト',
-        'Let\'s Dance!(?! )': 'レッツダンス！',
-        'Let\'s Dance! Remix': 'レッツダンス・ダンス・ダンス！',
-        'Let\'s Pose!': 'レッツポーズ！',
-        'Moonburn': 'ムーンバーン',
-        'Outside In': 'アウトサイドイン',
-        'Play A-side': 'ラウドジングルA',
-        'Play B-side': 'ラウドジングルB',
-        'Quarter Beats': '4ビート',
-        'Ride the Waves': 'ウェーブ・オン・ウェーブ',
       },
     },
   ],

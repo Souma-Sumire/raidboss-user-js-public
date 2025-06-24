@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 console.log("已加载M8S");
 const getRotationDirection = (p1, p2) => {
   const center = { x: 100, y: 100 };
@@ -184,7 +185,7 @@ Options.Triggers.push({
   config: [
     {
       id: "四连刀报点方式",
-      name: { en: '四连刀(后三刀)报点方式' },
+      name: { en: "四连刀(后三刀)报点方式" },
       type: "select",
       options: {
         en: {
@@ -342,53 +343,101 @@ hideall "--sync--"
     },
   ],
   triggers: [
+    // @ts-ignore
     { id: "R8S Phase Tracker", disabled: true },
+    // @ts-ignore
     { id: "R8S Phase Two Tracker", disabled: true },
+    // @ts-ignore
     { id: "R8S Extraplanar Pursuit", disabled: true },
+    // @ts-ignore
     { id: "R8S Windfang/Stonefang", disabled: true },
+    // @ts-ignore
     { id: "R8S Eminent/Revolutionary Reign", disabled: true },
+    // @ts-ignore
     { id: "R8S Eminent/Revolutionary Reign Direction", disabled: true },
+    // @ts-ignore
     { id: "R8S Millenial Decay", disabled: true },
+    // @ts-ignore
     { id: "R8S Breath of Decay Rotation", disabled: true },
+    // @ts-ignore
     { id: "R8S Aero III", disabled: true },
+    // @ts-ignore
     { id: "R8S Prowling Gale Tower/Tether", disabled: true },
+    // @ts-ignore
     { id: "R8S Terrestrial Titans Towerfall Safe Spots", disabled: true },
+    // @ts-ignore
     { id: "R8S Titanic Pursuit", disabled: true },
+    // @ts-ignore
     { id: "R8S Terrestrial Titans Safe Spot", disabled: true },
+    // @ts-ignore
     { id: "R8S Tracking Tremors", disabled: true },
+    // @ts-ignore
     { id: "R8S Great Divide", disabled: true },
+    // @ts-ignore
     { id: "R8S Howling Havoc", disabled: true },
+    // @ts-ignore
     { id: "R8S Tactical Pack Tethers", disabled: true },
+    // @ts-ignore
     { id: "R8S Tactical Pack Debuffs", disabled: true },
+    // @ts-ignore
     { id: "R8S Pack Predation", disabled: true },
+    // @ts-ignore
     { id: "R8S Tactical Pack First Pop", disabled: true },
+    // @ts-ignore
     { id: "R8S Tactical Pack Cleanup", disabled: true },
+    // @ts-ignore
     { id: "R8S Tactical Pack Second Pop", disabled: true },
+    // @ts-ignore
     { id: "R8S Ravenous Saber", disabled: true },
+    // @ts-ignore
     { id: "R8S Spread/Stack Collect", disabled: true },
+    // @ts-ignore
     { id: "R8S Terrestrial Rage Spread/Stack", disabled: true },
+    // @ts-ignore
     { id: "R8S Shadowchase Rotate", disabled: true },
+    // @ts-ignore
     { id: "R8S Weal of Stone", disabled: true },
+    // @ts-ignore
     { id: "R8S Beckon Moonlight Quadrants", disabled: true },
+    // @ts-ignore
     { id: "R8S Beckon Moonlight Spread/Stack", disabled: true },
+    // @ts-ignore
     { id: "R8S Beckon Moonlight Quadrant Two", disabled: true },
+    // @ts-ignore
     { id: "R8S Weal of Stone Cardinals", disabled: true },
+    // @ts-ignore
     { id: "R8S Quake III", disabled: true },
+    // @ts-ignore
     { id: "R8S Ultraviolent Ray Target", disabled: true },
+    // @ts-ignore
     { id: "R8S Gleaming Beam", disabled: true },
+    // @ts-ignore
     { id: "R8S Twinbite", disabled: true },
+    // @ts-ignore
     { id: "R8S Fanged Maw/Perimeter Collect", disabled: true },
+    // @ts-ignore
     { id: "R8S Hero's Blow", disabled: true },
+    // @ts-ignore
     { id: "R8S Mooncleaver", disabled: true },
+    // @ts-ignore
     { id: "R8S Elemental Purge Targets", disabled: true },
+    // @ts-ignore
     { id: "R8S Twofold Tempest Tether Tracker", disabled: true },
+    // @ts-ignore
     { id: "R8S Twofold Tempest Initial Tether", disabled: true },
+    // @ts-ignore
     { id: "R8S Twofold Tempest Tether Pass", disabled: true },
+    // @ts-ignore
     { id: "R8S Champion's Circuit Direction Collect", disabled: true },
+    // @ts-ignore
     { id: "R8S Champion's Circuit Mechanic Order", disabled: true },
+    // @ts-ignore
     { id: "R8S Champion's Circuit Safe Spot", disabled: true },
+    // @ts-ignore
     { id: "R8S Lone Wolf's Lament Tethers", disabled: true },
+    // @ts-ignore
     { id: "R8S Howling Eight", disabled: true },
+    // @ts-ignore
     { id: "R8S Mooncleaver (Enrage Sequence)", disabled: true },
     // #region 门神
     {

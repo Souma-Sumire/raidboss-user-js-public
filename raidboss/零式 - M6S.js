@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 console.log("已加载M6S");
 const getSafe = (bNpcID, dir) => {
   const patterns = {
@@ -46,33 +47,40 @@ Options.Triggers.push({
     };
   },
   triggers: [
+    // @ts-ignore
     { id: "R6S Mousse Mural", disabled: true },
+    // @ts-ignore
     { id: "R6S ActorSetPos Tracker", disabled: true },
+    // @ts-ignore
     { id: "R6S Sticky Mousse", disabled: true },
+    // @ts-ignore
     { id: "R6S Color Riot Debuff Tracker", disabled: true },
+    // @ts-ignore
     { id: "R6S Color Riot", disabled: true },
+    // @ts-ignore
     { id: "R6S Color Clash", disabled: true },
+    // @ts-ignore
     { id: "R6S Color Clash Followup", disabled: true },
+    // @ts-ignore
     { id: "R6S Double Style Tracker", disabled: true },
+    // @ts-ignore
     { id: "R6S Double Style Tether Tracker", disabled: true },
+    // @ts-ignore
     { id: "R6S Heating Up Early Warning", disabled: true },
+    // @ts-ignore
     { id: "R6S Heating Up", disabled: true },
+    // @ts-ignore
     { id: "R6S Pudding Graf", disabled: true },
+    // @ts-ignore
     { id: "R6S Jabberwock Bind Marker", disabled: true },
-    { id: "R6S Ready Ore Not", disabled: true },
-    { id: "R6S Single Style", disabled: true },
+    // @ts-ignore
     { id: "R6S Double Style Taste of Fire/Thunder", disabled: true },
+    // @ts-ignore
     { id: "R6S Taste of Thunder (Twister/Stepped Leader)", disabled: true },
+    // @ts-ignore
     { id: "R6S Lightning Storm", disabled: true },
+    // @ts-ignore
     { id: "R6S Pudding Party", disabled: true },
-    { id: "R6S Cactus Spam Pattern Identifier", disabled: true },
-    { id: "R6S Cactus Quicksand Pattern Identifier", disabled: true },
-    { id: "R6S Tempest Piece Spawn Collector", disabled: true },
-    { id: "R6S Tempest Piece Rotation Detector", disabled: true },
-    { id: "R6S Tempest Piece Cleanup 1", disabled: true },
-    { id: "R6S Tempest Piece Cleanup 2", disabled: true },
-    { id: "R6S First Towers Detector", disabled: true },
-    { id: "R6S Second Towers Collector", disabled: true },
     {
       id: "R6S Souma 慕斯骤雨",
       type: "StartsUsing",
@@ -317,7 +325,7 @@ Options.Triggers.push({
       type: "StartsUsing",
       netRegex: { id: "A69D", capture: false },
       suppressSeconds: 1,
-      response: Responses.moveAway(),
+      response: Responses.moveAway("alarm"),
     },
     {
       id: "R6S Souma 避雷针",
@@ -340,44 +348,6 @@ Options.Triggers.push({
       condition: Conditions.targetIsYou(),
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: "炸脖龙盯上你了" } },
-    },
-  ],
-  timelineReplace: [
-    {
-      locale: "cn",
-      replaceText: {
-        "Artistic Anarchy": "无规则艺术",
-        "Bad Breath": "臭气",
-        "Brûlée": "热放散",
-        "Burst": "爆炸",
-        "Color Clash": "色彩碰撞",
-        "Color Riot": "色彩暴乱",
-        "Cool Bomb": "冷色漆弹",
-        "Crowd Brûlée": "重热放散",
-        "Dark Mist": "暗黑雾",
-        "Double Style": "双重涂鸦",
-        "Layer": "色彩调配",
-        "Levin Drop": "雷流",
-        "Lightning Bolt": "闪电",
-        "Lightning Storm": "百雷",
-        "Live Painting": "即兴涂鸦",
-        "Moussacre": "慕斯大游行",
-        "Mousse Drip": "湿漉漉慕斯",
-        "Mousse Mural": "慕斯骤雨",
-        "Pudding Graf": "爆弹软糊怪",
-        "Pudding Party": "布丁派对",
-        "Ready Ore Not": "送你原石",
-        "Rush": "突进",
-        "Single Style": "单体涂鸦",
-        "Soul Sugar": "糖果制魂",
-        "Spray Pain": "飞针射击",
-        "Sticky Mousse": "黏黏慕斯",
-        "Sugarscape": "风景彩绘",
-        "Taste of Fire": "糖果火炎",
-        "Taste of Thunder": "糖果闪雷",
-        "Warm Bomb": "暖色漆弹",
-        "Wingmark": "翼之印记",
-      },
     },
   ],
 });
