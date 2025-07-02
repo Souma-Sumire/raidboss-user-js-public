@@ -78,7 +78,7 @@ Options.Triggers.push({
   triggers: [
     {
       // headmarkers with self-targeted cast
-      id: '_R5S Deep Cut',
+      id: 'R5S Deep Cut',
       type: 'HeadMarker',
       netRegex: { id: '01D7' },
       infoText: (data, matches, output) => {
@@ -99,7 +99,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Flip to AB Side',
+      id: 'R5S Flip to AB Side',
       type: 'StartsUsing',
       netRegex: { id: ['A780', 'A781'] },
       infoText: (data, matches, output) => {
@@ -121,7 +121,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S X-Snap Twist',
+      id: 'R5S X-Snap Twist',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(snapTwistIdMap) },
       durationSeconds: 10,
@@ -155,20 +155,20 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Celebrate Good Times',
+      id: 'R5S Celebrate Good Times',
       type: 'StartsUsing',
       netRegex: { id: 'A723', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: '_R5S Disco Inferno',
+      id: 'R5S Disco Inferno',
       type: 'StartsUsing',
       netRegex: { id: 'A756', capture: false },
       response: Responses.bigAoe(),
       run: (data) => data.discoInfernalCount++,
     },
     {
-      id: '_R5S Burn Baby Burn 1 Early',
+      id: 'R5S Burn Baby Burn 1 Early',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -201,7 +201,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Burn Baby Burn 1 Cleanse',
+      id: 'R5S Burn Baby Burn 1 Cleanse',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -222,7 +222,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Burn Baby Burn 2 First',
+      id: 'R5S Burn Baby Burn 2 First',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -255,7 +255,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Burn Baby Burn 2 Second',
+      id: 'R5S Burn Baby Burn 2 Second',
       type: 'GainsEffect',
       netRegex: { effectId: '116D' },
       condition: (data, matches) =>
@@ -289,7 +289,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Inside Out',
+      id: 'R5S Inside Out',
       type: 'StartsUsing',
       netRegex: { id: 'A77C', capture: false },
       durationSeconds: 8.5,
@@ -306,7 +306,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Outside In',
+      id: 'R5S Outside In',
       type: 'StartsUsing',
       netRegex: { id: 'A77E', capture: false },
       durationSeconds: 8.5,
@@ -328,7 +328,7 @@ Options.Triggers.push({
       //
       // Wavelength β debuff timers are applied with 45.5, 30.5, 20.5, 25.5 or
       //  43.0, 28.0, 18.0, 23.0 durations depending on which group gets hit first
-      id: '_R5S Wavelength Merge Order',
+      id: 'R5S Wavelength Merge Order',
       type: 'GainsEffect',
       netRegex: { effectId: ['116E', '116F'] },
       preRun: (data, matches) => {
@@ -413,7 +413,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Wavelength Merge Reminder',
+      id: 'R5S Wavelength Merge Reminder',
       type: 'GainsEffect',
       netRegex: { effectId: ['116E', '116F'] },
       condition: Conditions.targetIsYou(),
@@ -431,7 +431,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Quarter Beats',
+      id: 'R5S Quarter Beats',
       type: 'StartsUsing',
       netRegex: { id: 'A75B', capture: false },
       infoText: (_data, _matches, output) => output.quarterBeats(),
@@ -440,7 +440,7 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Eighth Beats',
+      id: 'R5S Eighth Beats',
       type: 'StartsUsing',
       netRegex: { id: 'A75D', capture: false },
       infoText: (_data, _matches, output) => output.eighthBeats(),
@@ -450,13 +450,13 @@ Options.Triggers.push({
     },
     {
       // cast order of the 8 adds is always W->E, same as firing order
-      id: '_R5S Arcady Night Fever + Encore Collect',
+      id: 'R5S Arcady Night Fever + Encore Collect',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(feverIdMap) },
       run: (data, matches) => data.feverSafeDirs.push(feverIdMap[matches.id] ?? 'unknown'),
     },
     {
-      id: '_R5S Let\'s Dance!',
+      id: 'R5S Let\'s Dance!',
       type: 'StartsUsing',
       // A76A - Let's Dance!; A390 - Let's Dance! Remix
       // Remix is faster, so use a shorter duration
@@ -475,13 +475,13 @@ Options.Triggers.push({
       },
     },
     {
-      id: '_R5S Let\'s Pose',
+      id: 'R5S Let\'s Pose',
       type: 'StartsUsing',
       netRegex: { id: 'A770', capture: false },
       response: Responses.bigAoe(),
     },
     {
-      id: '_R5S Do the Hustle',
+      id: 'R5S Do the Hustle',
       type: 'StartsUsing',
       netRegex: { id: Object.keys(hustleMap) },
       preRun: (data, matches) => data.storedHustleCleaves.push(matches),
