@@ -192,7 +192,7 @@ Options.Triggers.push({
       options: {
         en: {
           '字母点（1A2标点）': 'alphabet',
-          '上下左右': 'direction',
+          '上下左右（北基准）': 'direction',
         },
       },
       default: 'alphabet',
@@ -203,11 +203,11 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '正攻选：报': 'true',
-          '四分之一选：不报': 'false',
+          '正攻：报': 'true',
+          '四分之一(MMW)：不报': 'false',
         },
       },
-      default: 'true',
+      default: 'false',
     },
     {
       id: '四连刀报点方式',
@@ -218,12 +218,12 @@ Options.Triggers.push({
           '正攻：正点安全区：D C B': 'waymark',
           '正攻：玩家怎么转：左右右': 'rotation',
           '正攻：12刀交集 => 34刀交集 => 4刀半场': 'buffer1234',
-          '正攻：2刀半场 => 34刀交集 => 4刀半场': 'buffer34',
+          '正攻(推荐)：2刀半场 => 34刀交集 => 4刀半场': 'buffer34',
           '正攻：23刀交集 => 4刀半场': 'buffer23',
-          '四分之一：12刀交集 => 34刀交集': '1/4',
+          '四分之一(MMW)：12刀交集 => 34刀交集': '1/4',
         },
       },
-      default: 'buffer34',
+      default: '1/4',
     },
     {
       id: '四连刀时报分散分摊',
