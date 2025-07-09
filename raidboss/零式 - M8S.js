@@ -233,90 +233,6 @@ Options.Triggers.push({
       comment: { en: '会干扰安全区的报点。开不开看个人喜好吧。' },
     },
   ],
-  overrideTimelineFile: true,
-  timeline: `
-hideall "--Reset--"
-hideall "--sync--"
-0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
-0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
-11.4 "--sync--" StartsUsing { id: "A3DA" }
-12.9 "空间斩"
-30.3 "土/土/风之魔技"
-40.5 "回/薙之群狼剑"
-40.8 "回/薙之群狼剑"
-44.5 "群狼剑"
-47.6 "群狼剑"
-51.8 "空间斩"
-67.6 "千年风化"
-78.3 "暴风"
-93.9 "暴风"
-102.1 "连震击"
-113.9 "空间斩"
-125.2 "一刀两断"
-140 "大地的呼唤"
-144.7 "斩空剑"
-147.9 "光牙召唤"
-160.6 "回/薙之群狼剑"
-160.8 "回/薙之群狼剑"
-164.5 "群狼剑"
-167.6 "群狼剑"
-180.2 "光狼召唤"
-277.2 "光牙召唤"
-279.3 "--sync--" StartsUsing { id: "A3BE" } window 20,20
-282.3 "大地之怒"
-291.4 "残影剑"
-306.8 "回/薙之群狼剑"
-307 "回/薙之群狼剑"
-310.7 "群狼剑"
-313.8 "群狼剑"
-327.7 "一刀两断"
-342 "幻狼召唤"
-349.1 "大地之怒"
-372.4 "土/风之魔技"
-381.6 "连震击"
-393.3 "空间斩"
-408.2 "空间斩？"
-464 "--sync--" StartsUsing { id: "A45A" } window 30,30
-468.9 "爆震"
-481.1 "魔光"
-482.0 "回初始平台"
-492.3 "双牙击"
-503.6 "不堪一击"
-514.8 "魔光"
-526 "爆震"
-538.3 "刚刃一闪"
-546.4 "风震魔印"
-550.6 "贪狼之剑"
-556.7 "风狼阵"
-567.9 "魔狼战型·天岚之相"
-577 "双牙暴风击"
-584.2 "双牙暴风击"
-591.3 "双牙暴风击"
-598.4 "双牙暴风击"
-610.6 "光牙召唤"
-622.1 "回天动地#1"
-626.5 "回天动地#2"
-630.8 "回天动地#3"
-635.2 "回天动地#4"
-639.5 "回天动地#5"
-650 "爆震"
-664.1 "魔光"
-675.3 "双牙击"
-690.5 "魔狼战型·咒刃之相"
-695.7 "孤狼诅咒"
-705.9 "风狼阵"
-723.1 "不堪一击"
-736.3 "魔光"
-750.8 "八连光弹#1"
-761.3 "刚刃一闪#1"
-770.4 "八连光弹#2"
-780.9 "刚刃一闪#2"
-790.1 "八连光弹#3"
-800.5 "刚刃一闪#3"
-809.7 "八连光弹#4"
-820.1 "刚刃一闪#4"
-829.3 "八连光弹#5"
-846.5 "狂暴了"`,
   initData: () => {
     return {
       soumaCombatantData: [],
@@ -338,37 +254,6 @@ hideall "--sync--"
       souma四连中: false,
     };
   },
-  timelineTriggers: [
-    {
-      id: 'R8S Souma Timeline 魔光',
-      regex: /^魔光$/,
-      beforeSeconds: 10.7,
-      durationSeconds: 10.7,
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: {
-        text: {
-          en: '魔光排队',
-        },
-      },
-    },
-    {
-      id: 'R8S Souma Timeline 回初始平台',
-      regex: /^回初始平台$/,
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: {
-        text: {
-          en: '回初始平台',
-        },
-      },
-    },
-    {
-      id: 'R8S Souma Timeline 八连光弹',
-      regex: /^八连光弹#1$/,
-      beforeSeconds: 15,
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: { text: { en: '人群集合' } },
-    },
-  ],
   triggers: [
     // @ts-ignore
     { id: 'R8S Phase Tracker', disabled: true },
