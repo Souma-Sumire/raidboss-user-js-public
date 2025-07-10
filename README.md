@@ -14,8 +14,9 @@
 ### 方法1：使用下载器（推荐）
 
 1. 下载 [SoumaDownloader.dll](https://github.com/Souma-Sumire/SoumaDownloader/releases)
-2. 在 ACT 中启用该插件，选择你需要的触发器文件，点击"开始下崽"
-3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
+2. 至少有过一次：“在启动 OverlayPlugin 悬浮窗插件的情况下关闭ACT”，然后在 ACT 中加载该插件（否则无法自动获取目录）
+3. 选择你需要的触发器文件，点击"开始下崽"
+4. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
 ### 方法2：手动安装
 
