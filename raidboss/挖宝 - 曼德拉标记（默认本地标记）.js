@@ -108,6 +108,12 @@ if (
             13244, // Turali garlic
             13245, // Turali tomato
             13246, // Tuligora queen
+
+            14016, // vault onion
+            14017, // vault eggplant
+            14018, // vault garlic
+            14019, // vault tomato
+            14020, // vault queen
           ],
           capture: true,
         },
