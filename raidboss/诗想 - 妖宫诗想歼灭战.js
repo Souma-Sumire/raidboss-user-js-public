@@ -33,6 +33,63 @@ const 快慢刀ID = {
 Options.Triggers.push({
   id: 'Souma妖宫诗想',
   zoneId: 1311,
+  timeline: `
+hideall "--Reset--"
+hideall "--sync--"
+0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
+0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
+30 "吸引+石柱"
+46 "踩塔"
+50 "躲地火"
+56.9 "辣翅辣尾/旋风热风"
+70 "拉锁链+十字火"
+90.1 "挡枪碎玻璃（左）"
+94.9 "挡枪判定"
+106.2 "光锁debuff"
+114.2 "吸引，开防击退"
+123.3 "T踩塔"
+125.1 "惩罚光锁"
+127.3 "地火喷发x3"
+133.9 "T踩塔"
+139.3 "AOE+流血"
+148.3 "T踩塔"
+175.4 "地火喷发x3"
+190.5 "吸引+石柱"
+205.6 "躲地火"
+226.4 "黑白配"
+237.4 "辣翅辣尾/旋风热风"
+256.6 "挡枪碎玻璃（右）"
+271.6 "挡枪判定"
+286 "吸引+石柱"
+286 "拉锁链+十字火"
+306 "黑白配"
+319.7 "以太吸收#1"
+325.7 "以太吸收#2"
+335.8 "流血AOE"
+356.8 "火人阶段"
+364 "火人可选中"
+369.7 "自爆#1"
+374.7 "融合"
+381.4 "自爆#2"
+390.6 "自爆#3"
+396.9 "辣翅辣尾/旋风热风"
+412 "踩塔"
+413.3 "吸引+石柱"
+419 "挡枪碎玻璃（中）"
+430 "黑白配+挡枪判定"
+440 "躲地火+打小怪"
+456 "拉锁链+十字火"
+464.2 "T踩塔"
+477.2 "地火喷发x3"
+485.2 "以太吸收#1"
+489.2 "以太吸收#2"
+502.3 "地火喷发x3"
+505.3 "吸引+石柱"
+516 "辣翅辣尾/旋风热风"
+533.1 "流血+AOE"
+533.1 "27秒狂暴读条"
+560 "狂暴！！"
+`,
   initData: () => {
     return {
       combatantData: [],
@@ -44,6 +101,12 @@ Options.Triggers.push({
     };
   },
   triggers: [
+    {
+      id: 'Souma FVQ 流血AOE',
+      type: 'StartsUsing',
+      netRegex: { id: 'AC83', capture: false },
+      response: Responses.bleedAoe(),
+    },
     {
       id: 'Souma FVQ 地火方向',
       type: 'StartsUsing',
@@ -247,6 +310,9 @@ Options.Triggers.push({
         }
         const key = data.快慢刀.slice().sort((a, b) => a.castTime - b.castTime).map((v) => v.gimmick);
         data.快慢刀.length = 0;
+        if (key[0] === '热风') {
+          return output.热风连击({ g2: output[key[0]](), g1: output[key[1]]() });
+        }
         return output.text({ g1: output[key[0]](), g2: output[key[1]]() });
       },
       outputStrings: {
@@ -254,6 +320,7 @@ Options.Triggers.push({
         热风: '别动',
         打中间: '两侧',
         打两侧: '中间',
+        热风连击: '${g1}${g2}',
         text: '${g1} => ${g2}',
       },
     },
@@ -299,8 +366,7 @@ Options.Triggers.push({
     //   alertText: (_data, _matches, output) => output.text!(),
     //   outputStrings: {
     //     text: {
-    //       en: 'Get Light debuff',
-    //       cn: '吃光',
+    //       en: '吃光',
     //     },
     //   },
     // },
@@ -315,8 +381,7 @@ Options.Triggers.push({
     //   alertText: (_data, _matches, output) => output.text!(),
     //   outputStrings: {
     //     text: {
-    //       en: 'Get Dark debuff',
-    //       cn: '吃暗',
+    //       en: '吃暗',
     //     },
     //   },
     // },
