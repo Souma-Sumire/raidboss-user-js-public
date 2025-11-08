@@ -5,7 +5,7 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
     zoneId: [1290, 1311, 1333],
     initData: () => {
       const t = Array.from(total.entries());
-      if (t.length > 0) {
+      if (t.length > 1) {
         const str = t
           .sort((a, b) => b[1] - a[1])
           .map(([name, count]) => `${name}(${count}次)`)
@@ -23,11 +23,13 @@ if (new URLSearchParams(location.search).get("alerts") !== "0" && !/raidboss_tim
         run: (data, matches) => {
           const { type, source, flags, targetIndex, ownerName } = matches;
           const name = ownerName || source;
-          if (/1..$/.test(flags) && (type === "21" || (type === "22" && targetIndex === "0"))) {
+          if (/103$/.test(flags) && (type === "21" || (type === "22" && targetIndex === "0"))) {
             if (name === data.me) {
               callOverlayHandler({ call: "cactbotSay", text: "叮！" });
             }
-            total.set(name, (total.get(name) || 0) + 1);
+            if (data.party.inParty(name)) {
+              total.set(name, (total.get(name) || 0) + 1);
+            }
           }
         },
       },
