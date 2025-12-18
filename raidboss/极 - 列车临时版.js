@@ -41,6 +41,7 @@ const arenas = {
 Options.Triggers.push({
   id: '改HellOnRailsExtreme',
   zoneId: ZoneId.HellOnRailsExtreme,
+  overrideTimelineFile: true,
   timeline: `
 hideall "--sync--"
 hideall "--Reset--"
