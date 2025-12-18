@@ -1,4 +1,5 @@
-// 在pr#847（原作者 valarnin）的提交基础上进行的修改。2025年12月18日 10:59:31。
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// 在pr#847（原作者 valarnin）的提交基础上进行的修改。2025年12月19日 00:31:11
 // @TODO:
 // Could get a slightly more accurate prediction for add phase train stop location
 // by adding additional rotation based on delta time between the mechanic headmarker
@@ -38,9 +39,17 @@ const arenas = {
     y: 350,
   },
 };
+const normalizeDelta = (a) => {
+  const TAU = Math.PI * 2;
+  a = (a + Math.PI) % TAU;
+  if (a < 0)
+    a += TAU;
+  return a - Math.PI;
+};
 Options.Triggers.push({
   id: '改HellOnRailsExtreme',
   zoneId: ZoneId.HellOnRailsExtreme,
+  zoneLabel: { en: '极火车 Souma特供版' },
   overrideTimelineFile: true,
   timeline: `
 hideall "--sync--"
@@ -85,7 +94,7 @@ hideall "--Reset--"
 191.5 "火车技#2"
 207.6 "火车技#3"
 230.8 "转场AoE" Ability { id: "B24D" } window 60,60
-243.4 "小AoE"
+243.4 "小AoE?"
 253.5 "--sync--" StartsUsing { id: "B25C" } #雷电爆发
 258.4 "双T死刑"
 260.6 "--sync--" StartsUsing { id: "B250" } #脱轨捶打
@@ -161,6 +170,7 @@ hideall "--Reset--"
     改actorPositions: {},
     改cleaveTrainId: '',
     改addCleaveOnMe: false,
+    改trainCleaveDir: -1,
     改cleaveTrainSpeed: 'slow',
     改phase: 'car1',
     改turretDir: 'east',
@@ -498,7 +508,8 @@ hideall "--Reset--"
     {
       id: '改 DoomtrainEx Turret Side',
       type: 'StartsUsing',
-      netRegex: { id: 'B271', capture: true },
+      netRegex: { id: ['B271', 'B272', 'B273', 'B276'], capture: true },
+      suppressSeconds: 1,
       run: (data, matches) =>
         data.改turretDir = parseFloat(matches.x) < arenas[2].x ? 'west' : 'east',
     },
@@ -565,30 +576,22 @@ hideall "--Reset--"
     {
       id: '改 DoomtrainEx Add Actor Finder',
       type: 'ActorMove',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      regex:
-        /^(?<type>270)\|(?<timestamp>[^|]*)\|(?<id>[^|]*)\|(?<heading>[^|]*)\|(?:[^|]*\|)(?<moveType>(?:0096|00FA))\|(?<x>[^|]*)\|(?<y>[^|]*)\|(?<z>[^|]*)\|/i,
-      suppressSeconds: 9999,
+      regex: /^.{14} 270 10E:(?<id>4.{7}):[^:]+:[^:]+:(?<moveType>0096|00FA):/,
+      // suppressSeconds: 9999,
       run: (data, matches) => {
-        data.改cleaveTrainId = matches.id;
+        if (data.改cleaveTrainId === '') {
+          data.改cleaveTrainId = matches.id;
+        }
       },
     },
     {
       id: '改 DoomtrainEx Add Train Speed Collector',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      type: 'ActorMove',
       // @ts-ignore
-      regex:
-        /^(?<type>270)\|(?<timestamp>[^|]*)\|(?<id>[^|]*)\|(?<heading>[^|]*)\|(?:[^|]*\|)(?<moveType>(?:0096|00FA))\|(?<x>[^|]*)\|(?<y>[^|]*)\|(?<z>[^|]*)\|/i,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      regex: /^.{14} 270 10E:(?<id>4.{7}):[^:]+:[^:]+:(?<moveType>0096|00FA):/,
       condition: (data, matches) => matches.id === data.改cleaveTrainId,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       run: (data, matches) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         data.改cleaveTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
       },
     },
@@ -597,9 +600,14 @@ hideall "--Reset--"
       type: 'HeadMarker',
       netRegex: { id: ['027D', '027E'], capture: true },
       infoText: (data, matches, output) => {
+        data.改trainCleaveDir ??= 0;
         const addMech = matches.id === '027D' ? 'healerStacks' : 'spread';
         const mech = data.改addCleaveOnMe ? output.cleave() : output[addMech]();
+        const dirNum = Directions.hdgTo16DirNum(data.改trainCleaveDir);
+        const dirTxt = dirNum !== undefined ? Directions.output16Dir[dirNum ?? -1] : 'unknown';
+        const dir = output[dirTxt ?? 'unknown']();
         return output.text({
+          dir: dir,
           mech: mech,
         });
       },
@@ -610,8 +618,28 @@ hideall "--Reset--"
         unknown: Outputs.unknown,
         ...Directions.outputStrings16Dir,
         text: {
-          en: '${mech}',
+          en: '火车${dir}, ${mech}',
         },
+      },
+    },
+    {
+      id: '改 DoomtrainEx Add Tank Cleave Location Prediction',
+      type: 'HeadMarker',
+      netRegex: { id: '019C', capture: false },
+      suppressSeconds: 1,
+      run: (data) => {
+        const actor = data.改actorPositions[data.改cleaveTrainId];
+        if (actor === undefined)
+          return;
+        data.改trainCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
+        if (data.改cleaveTrainSpeed === 'slow') {
+          data.改trainCleaveDir -= 2;
+        } else {
+          data.改trainCleaveDir -= 3;
+        }
+        if (data.改trainCleaveDir < -Math.PI) {
+          data.改trainCleaveDir += Math.PI * 2;
+        }
       },
     },
     {
@@ -760,34 +788,34 @@ hideall "--Reset--"
           data.改hailLastPos = Directions.outputCardinalDir[(oldIdx + 2) % 4] ?? 'unknown';
         } else if (data.改hailMoveCount === 3) {
           // Now we determine CW or CCW
-          const actor = data.改actorPositions[data.改cleaveTrainId];
-          if (actor === undefined)
+          const actor = data.改actorPositions[data.改hailActorId];
+          if (actor === undefined) {
+            console.error('No actor position for hail of thunder calc');
             return;
+          }
           const arena = data.改phase === 'car4' ? 4 : 6;
-          const oldAngle = Math.PI - ((oldIdx / 4) * (Math.PI * 2));
+          const oldAngle = Math.PI - (oldIdx / 4) * (Math.PI * 2);
           const newAngle = Math.atan2(actor.x - arenas[arena].x, actor.y - arenas[arena].y);
-          if (oldAngle < newAngle)
-            data.改hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
+          const delta = normalizeDelta(newAngle - oldAngle);
+          if (delta > 0)
+            data.改hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
           else
-            data.改hailLastPos = Directions.outputCardinalDir[Math.abs((oldIdx - 3) % 4)] ??
-              'unknown';
+            data.改hailLastPos = Directions.outputCardinalDir[(oldIdx - 1 + 4) % 4] ?? 'unknown';
         }
         const idx = (Directions.outputCardinalDir.indexOf(data.改hailLastPos) + 2) % 4;
         return output.text({
+          // step: data.改hailMoveCount.toString(),
           dir: output[Directions.outputCardinalDir[idx] ?? 'unknown'](),
         });
       },
       outputStrings: {
         dirN: { en: '前' },
-        dirNE: { en: '右前' },
         dirE: { en: '右' },
-        dirSE: { en: '右后' },
         dirS: { en: '后' },
-        dirSW: { en: '左后' },
         dirW: { en: '左' },
-        dirNW: { en: '左前' },
         unknown: Outputs.unknown,
-        text: { en: '${dir} => 分摊' },
+        text: { en: '${dir} + 分摊' },
+        // text: { en: '（${step}步） ${dir} + 分摊' },
       },
     },
     {
@@ -811,10 +839,10 @@ hideall "--Reset--"
       },
       outputStrings: {
         spreadIntoBait: {
-          en: '分散 => 引导旋风',
+          en: '处理黄圈 => 引导旋风',
         },
         spreadIntoBuster: {
-          en: '分散 => 坦克死刑',
+          en: '处理黄圈 => 坦克死刑',
         },
       },
     },
@@ -833,10 +861,10 @@ hideall "--Reset--"
       run: (data) => data.改car6MechCount++,
       outputStrings: {
         up: {
-          en: '高 (避开炮台)',
+          en: '左高台上',
         },
         down: {
-          en: '低 (避开炮台)',
+          en: '左箱体侧',
         },
         east: Outputs.east,
         west: Outputs.west,
