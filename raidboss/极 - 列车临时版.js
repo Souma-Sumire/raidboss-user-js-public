@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// 在pr#847（原作者 valarnin）的提交基础上进行的修改。2025年12月19日 00:31:11
+// 在pr#847（原作者 valarnin）的提交基础上进行的修改。2025年12月20日 00:04:52。
 // @TODO:
 // Could get a slightly more accurate prediction for add phase train stop location
 // by adding additional rotation based on delta time between the mechanic headmarker
@@ -48,7 +48,7 @@ const normalizeDelta = (a) => {
 };
 Options.Triggers.push({
   id: '改HellOnRailsExtreme',
-  zoneId: ZoneId.HellOnRailsExtreme,
+  zoneId: 1308,
   zoneLabel: { en: '极火车 Souma特供版' },
   overrideTimelineFile: true,
   timeline: `
@@ -168,10 +168,10 @@ hideall "--Reset--"
 `,
   initData: () => ({
     改actorPositions: {},
-    改cleaveTrainId: '',
+    改addTrainId: '',
     改addCleaveOnMe: false,
-    改trainCleaveDir: -1,
-    改cleaveTrainSpeed: 'slow',
+    改addCleaveDir: -1,
+    改addTrainSpeed: 'slow',
     改phase: 'car1',
     改turretDir: 'east',
     改car2MechCount: 0,
@@ -181,6 +181,7 @@ hideall "--Reset--"
     改hailActorId: '',
     改hailRotationDir: 'CW',
     改psychokinesisCount: 0,
+    改addTrainDir: 'unknown',
   }),
   timelineTriggers: [
     {
@@ -288,12 +289,6 @@ hideall "--Reset--"
       netRegex: { id: '_', capture: false },
     },
     {
-      id: 'DoomtrainEx Add Tank Cleave Location Prediction',
-      type: 'StartsUsing',
-      disabled: true,
-      netRegex: { id: '_', capture: false },
-    },
-    {
       id: 'DoomtrainEx Add Tank Cleave Headmarker Collector',
       type: 'StartsUsing',
       disabled: true,
@@ -385,6 +380,12 @@ hideall "--Reset--"
     },
     {
       id: 'DoomtrainEx Dead Man\'s Express/Windpipe Car6',
+      type: 'StartsUsing',
+      disabled: true,
+      netRegex: { id: '_', capture: false },
+    },
+    {
+      id: 'DoomtrainEx Add Train Direction Predictor',
       type: 'StartsUsing',
       disabled: true,
       netRegex: { id: '_', capture: false },
@@ -580,8 +581,8 @@ hideall "--Reset--"
       regex: /^.{14} 270 10E:(?<id>4.{7}):[^:]+:[^:]+:(?<moveType>0096|00FA):/,
       // suppressSeconds: 9999,
       run: (data, matches) => {
-        if (data.改cleaveTrainId === '') {
-          data.改cleaveTrainId = matches.id;
+        if (data.改addTrainId === '') {
+          data.改addTrainId = matches.id;
         }
       },
     },
@@ -590,56 +591,73 @@ hideall "--Reset--"
       type: 'ActorMove',
       // @ts-ignore
       regex: /^.{14} 270 10E:(?<id>4.{7}):[^:]+:[^:]+:(?<moveType>0096|00FA):/,
-      condition: (data, matches) => matches.id === data.改cleaveTrainId,
+      condition: (data, matches) =>
+        matches.id === data.改addTrainId && data.改addTrainDir === 'unknown',
       run: (data, matches) => {
-        data.改cleaveTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
+        data.改addTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
+      },
+    },
+    {
+      id: '改 DoomtrainEx Add Train Direction Predictor',
+      type: 'HeadMarker',
+      netRegex: { id: '027F', capture: true },
+      infoText: (data, matches, output) => {
+        const actor = data.改actorPositions[data.改addTrainId];
+        if (actor === undefined)
+          return;
+        let addCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
+        // Slow rotates 3.122 rads base
+        const slowMoveBase = 3.122;
+        // Plus 0.0005666 rads per millisecond of delay since ActorMove was last recorded
+        const slowMoveDelta = 0.0005666;
+        // Same info, but for fast movement
+        const fastMoveBase = 4.1697;
+        const fastMoveDelta = 0.00061112;
+        const deltaMs = new Date(matches.timestamp).getTime() - actor.time;
+        if (data.改addTrainSpeed === 'slow') {
+          addCleaveDir -= slowMoveBase + (slowMoveDelta * deltaMs);
+        } else {
+          addCleaveDir -= fastMoveBase + (fastMoveDelta * deltaMs);
+        }
+        if (addCleaveDir < -Math.PI) {
+          addCleaveDir += Math.PI * 2;
+        }
+        const dirNum = Directions.hdgTo16DirNum(addCleaveDir);
+        data.改addTrainDir = dirNum !== undefined
+          ? Directions.output16Dir[dirNum] ?? 'unknown'
+          : 'unknown';
+        return output.text({ dir: output[data.改addTrainDir]() });
+      },
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        text: {
+          en: 'Train cleaves from ${dir}',
+          cn: '车到${dir}',
+        },
       },
     },
     {
       id: '改 DoomtrainEx Add Mechanics',
       type: 'HeadMarker',
       netRegex: { id: ['027D', '027E'], capture: true },
-      infoText: (data, matches, output) => {
-        data.改trainCleaveDir ??= 0;
+      alertText: (data, matches, output) => {
         const addMech = matches.id === '027D' ? 'healerStacks' : 'spread';
         const mech = data.改addCleaveOnMe ? output.cleave() : output[addMech]();
-        const dirNum = Directions.hdgTo16DirNum(data.改trainCleaveDir);
-        const dirTxt = dirNum !== undefined ? Directions.output16Dir[dirNum ?? -1] : 'unknown';
-        const dir = output[dirTxt ?? 'unknown']();
         return output.text({
-          dir: dir,
           mech: mech,
         });
+      },
+      run: (data) => {
+        data.改addCleaveOnMe = false;
       },
       outputStrings: {
         healerStacks: Outputs.healerGroups,
         spread: Outputs.spread,
         cleave: Outputs.tankCleaveOnYou,
         unknown: Outputs.unknown,
-        ...Directions.outputStrings16Dir,
         text: {
-          en: '火车${dir}, ${mech}',
+          en: '${mech}',
         },
-      },
-    },
-    {
-      id: '改 DoomtrainEx Add Tank Cleave Location Prediction',
-      type: 'HeadMarker',
-      netRegex: { id: '019C', capture: false },
-      suppressSeconds: 1,
-      run: (data) => {
-        const actor = data.改actorPositions[data.改cleaveTrainId];
-        if (actor === undefined)
-          return;
-        data.改trainCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
-        if (data.改cleaveTrainSpeed === 'slow') {
-          data.改trainCleaveDir -= 2;
-        } else {
-          data.改trainCleaveDir -= 3;
-        }
-        if (data.改trainCleaveDir < -Math.PI) {
-          data.改trainCleaveDir += Math.PI * 2;
-        }
       },
     },
     {
