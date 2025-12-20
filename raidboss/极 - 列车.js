@@ -179,9 +179,9 @@ hideall "--Reset--"
     改hailLastPos: 'dirN',
     改hailMoveCount: -1,
     改hailActorId: '',
-    改hailRotationDir: 'CW',
     改psychokinesisCount: 0,
     改addTrainDir: 'unknown',
+    改hailNeedMotion: true,
   }),
   timelineTriggers: [
     {
@@ -386,6 +386,12 @@ hideall "--Reset--"
     },
     {
       id: 'DoomtrainEx Add Train Direction Predictor',
+      type: 'StartsUsing',
+      disabled: true,
+      netRegex: { id: '_', capture: false },
+    },
+    {
+      id: 'DoomtrainEx Hail of Thunder Stacks',
       type: 'StartsUsing',
       disabled: true,
       netRegex: { id: '_', capture: false },
@@ -649,6 +655,7 @@ hideall "--Reset--"
       },
       run: (data) => {
         data.改addCleaveOnMe = false;
+        data.改addTrainDir = 'unknown';
       },
       outputStrings: {
         healerStacks: Outputs.healerGroups,
@@ -696,6 +703,7 @@ hideall "--Reset--"
       type: 'StartsUsing',
       netRegex: { id: 'B284', capture: false },
       infoText: (_data, _matches, output) => output.text(),
+      run: (data) => data.改hailActorId = '',
       outputStrings: {
         text: {
           en: '踩塔 x4 => 下一节车厢',
@@ -770,7 +778,10 @@ hideall "--Reset--"
       id: '改 DoomtrainEx Arcane Revelation',
       type: 'StartsUsing',
       netRegex: { id: 'B9A7', capture: false },
-      run: (data) => data.改hailActorId = 'need',
+      run: (data) => {
+        data.改hailActorId = 'need';
+        data.改hailLastPos = 'dirN';
+      },
     },
     {
       id: '改 DoomtrainEx Hail of Thunder Move Count Collector',
@@ -787,16 +798,28 @@ hideall "--Reset--"
     },
     {
       id: '改 DoomtrainEx Hail of Thunder Actor Finder',
-      type: 'SpawnNpcExtra',
-      netRegex: { capture: true },
+      type: 'CombatantMemory',
+      netRegex: {
+        change: 'Add',
+        id: '4[0-9A-F]{7}',
+        pair: [{ key: 'BNpcID', value: '4A36' }],
+        capture: true,
+      },
       condition: (data) => data.改hailActorId === 'need',
       run: (data, matches) => data.改hailActorId = matches.id,
+    },
+    {
+      id: '改 DoomtrainEx Hail of Thunder Stacks',
+      type: 'Ability',
+      netRegex: { id: 'B292', capture: false },
+      run: (data) => data.改hailNeedMotion = true,
     },
     {
       id: '改 DoomtrainEx Hail of Thunder Motion Detector',
       type: 'ActorMove',
       netRegex: { capture: true },
-      condition: (data, matches) => data.改hailActorId === matches.id,
+      condition: (data, matches) => data.改hailActorId === matches.id && data.改hailNeedMotion,
+      preRun: (data) => data.改hailNeedMotion = false,
       suppressSeconds: 14,
       infoText: (data, _matches, output) => {
         // Easy cases first
@@ -827,10 +850,10 @@ hideall "--Reset--"
         });
       },
       outputStrings: {
-        dirN: { en: '前' },
-        dirE: { en: '右' },
-        dirS: { en: '后' },
-        dirW: { en: '左' },
+        dirN: { en: '前面安全' },
+        dirE: { en: '右侧安全' },
+        dirS: { en: '后面安全' },
+        dirW: { en: '左侧安全' },
         unknown: Outputs.unknown,
         text: { en: '${dir} + 分摊' },
         // text: { en: '（${step}步） ${dir} + 分摊' },
@@ -898,16 +921,34 @@ hideall "--Reset--"
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.改phase === 'car6',
       infoText: (data, matches, output) => {
+        let mech1;
+        if (matches.id === 'B266') {
+          mech1 = output.express({ knockback: output.knockback() });
+        } else {
+          mech1 = output.windpipe({ drawIn: output.drawIn() });
+        }
+        const mech3 = data.改car6MechCount === 3
+          ? output.tbFollowup({ mech3: output.tankbuster() })
+          : '';
         return output.text({
-          mech1: output[matches.id === 'B266' ? 'knockback' : 'drawIn'](),
+          mech1: mech1,
           mech2: output[data.改storedKBMech ?? 'unknown'](),
-          mech3: output.tankbuster(),
+          mech3: mech3,
         });
       },
       run: (data) => data.改car6MechCount++,
       outputStrings: {
         text: {
-          en: '${mech1} => ${mech2} => ${mech3}',
+          en: '${mech1} => ${mech2}${mech3}',
+        },
+        express: {
+          en: '${knockback}',
+        },
+        windpipe: {
+          en: '${drawIn}',
+        },
+        tbFollowup: {
+          en: ' => ${mech3}',
         },
         unknown: Outputs.unknown,
         knockback: Outputs.knockback,
