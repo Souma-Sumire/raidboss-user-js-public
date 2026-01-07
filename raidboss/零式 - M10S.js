@@ -563,7 +563,6 @@ hideall "--sync--"
         const gimmick = matches.count === '3ED' ? 'stack' : 'spread';
         return output[gimmick]();
       },
-      tts: '',
       outputStrings: {
         stack: { en: '分摊' },
         spread: { en: '散开' },
