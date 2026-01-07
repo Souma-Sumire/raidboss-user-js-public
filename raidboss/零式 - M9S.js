@@ -14,7 +14,7 @@ const center = {
   y: 100,
 };
 Options.Triggers.push({
-  id: 'AacHeavyweightM1Savage',
+  id: 'SoumaAacHeavyweightM1Savage',
   zoneId: ZoneId.AacHeavyweightM1Savage,
   overrideTimelineFile: true,
   timeline: `hideall "--Reset--"
@@ -138,7 +138,6 @@ hideall "--sync--"
       id: 'souma r9s Headmarker Tankbuster 01D4',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData['01D4'], capture: true },
-      condition: Conditions.targetIsYou(),
       response: Responses.tankBuster(),
     },
     {
