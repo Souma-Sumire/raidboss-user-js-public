@@ -723,9 +723,9 @@ hideall "--sync--"
           if (Math.abs(x - center.x) < 1)
             dangerZone = 'center';
           else if (x < center.x)
-            dangerZone = 'left';
-          else
             dangerZone = 'right';
+          else
+            dangerZone = 'left';
         } else if (surfDir === 'E') {
           if (Math.abs(y - center.y) < 1)
             dangerZone = 'center';
