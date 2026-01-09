@@ -26,6 +26,7 @@ const headMarkerData = {
 Options.Triggers.push({
   id: 'SoumaM10S',
   zoneId: ZoneId.AacHeavyweightM2Savage,
+  zoneLabel: { en: 'M10S Souma特供版' },
   config: [
     {
       id: 'soumaM10SfireWater',
@@ -751,7 +752,7 @@ hideall "--sync--"
       },
       outputStrings: {
         N: 'A',
-        E: 'Bee',
+        E: 'Boy',
         S: 'C',
         W: 'Dog',
         center: { en: '中间' },
