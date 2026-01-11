@@ -207,10 +207,10 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        dirN: { en: '南' },
-        dirE: { en: '西' },
-        dirS: { en: '北' },
-        dirW: { en: '东' },
+        dirN: { en: '远离南' },
+        dirE: { en: '远离西' },
+        dirS: { en: '远离北' },
+        dirW: { en: '远离东' },
         text: { en: '${dir}' },
       },
     },
