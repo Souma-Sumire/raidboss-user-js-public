@@ -1,6 +1,39 @@
-if (
-    new URLSearchParams(location.search).get("alerts") !== "0" &&
-    /(?:raidemulator|raidboss)\.html/.test(location.href)
-  ) {
-    {!function(){function t(t,n){(null==n||n>t.length)&&(n=t.length);for(var e=0,r=new Array(n);e<n;e++)r[e]=t[e];return r}var n=!0,e="人齐了！",r=/^.{14} ChatLog 00:0039::(?:招募队员结束，队员已经集齐。|Party recruitment ended\. All places have been filled\.|パーティ募集の人数を満たしたため終了します。)/;function a(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:e;callOverlayHandler({call:"cactbotSay",text:t})}function o(){a();var t=setInterval((function(){return n?clearInterval(t):a()}),1500)}addOverlayListener("onGameActiveChangedEvent",(function(t){var e,r;return n=null===(e=null==t||null===(r=t.detail)||void 0===r?void 0:r.active)||void 0===e||e})),addOverlayListener("onLogEvent",(function(n){var e,a=function(n,e){var r="undefined"!=typeof Symbol&&n[Symbol.iterator]||n["@@iterator"];if(!r){if(Array.isArray(n)||(r=function(n,e){if(n){if("string"==typeof n)return t(n,e);var r=Object.prototype.toString.call(n).slice(8,-1);return"Object"===r&&n.constructor&&(r=n.constructor.name),"Map"===r||"Set"===r?Array.from(n):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?t(n,e):void 0}}(n))||e&&n&&"number"==typeof n.length){r&&(n=r);var a=0,o=function(){};return{s:o,n:function(){return a>=n.length?{done:!0}:{done:!1,value:n[a++]}},e:function(t){throw t},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var l,i=!0,u=!1;return{s:function(){r=r.call(n)},n:function(){var t=r.next();return i=t.done,t},e:function(t){u=!0,l=t},f:function(){try{i||null==r.return||r.return()}finally{if(u)throw l}}}}(n.detail.logs);try{for(a.s();!(e=a.n()).done;){var l=e.value;r.test(l)&&o()}}catch(t){a.e(t)}finally{a.f()}}))}();}
+if (new URLSearchParams(location.search).get("alerts") !== "0" &&
+    /(?:raidemulator|raidboss)\.html/.test(location.href)) {
+
+        let isGameInactive = true; //
+        const ALERT_TEXT = "人齐了！";
+        const RECRUIT_DONE_REGEX = /^.{14} ChatLog 00:0039::(?:招募队员结束，队员已经集齐。|Party recruitment ended\. All places have been filled\.|パーティ募集の人数を満たしたため終了します。)/;
+
+        function say(text = ALERT_TEXT) {
+            callOverlayHandler({
+                call: "cactbotSay",
+                text: text
+            });
+        }
+
+        function startAlertLoop() {
+            say();
+            const interval = setInterval(() => {
+                if (!isGameInactive) {
+                    clearInterval(interval);
+                } else {
+                    say();
+                }
+            }, 1500);
+        }
+
+        addOverlayListener("onGameActiveChangedEvent", (data) => {
+
+            isGameInactive = !(data?.detail?.active ?? true);
+        });
+
+        addOverlayListener("onLogEvent", (data) => {
+            const logs = data.detail.logs;
+            for (const line of logs) {
+                if (RECRUIT_DONE_REGEX.test(line)) {
+                    startAlertLoop();
+                }
+            }
+        });
 }
