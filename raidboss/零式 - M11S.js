@@ -148,10 +148,10 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        dirN: { en: '翻转' },
-        dirE: { en: '逆转' },
-        dirS: { en: '正常' },
-        dirW: { en: '顺转' },
+        dirN: { en: '远离南' },
+        dirE: { en: '远离西' },
+        dirS: { en: '远离北' },
+        dirW: { en: '远离东' },
         text: { en: '${dir}' },
       },
     },
