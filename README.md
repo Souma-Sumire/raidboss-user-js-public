@@ -26,29 +26,11 @@
    - 咖啡整合：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
 3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
-## 设置
-
-### 分配职能位置
-
-1. 在 OverlayPlugin 中新建一个悬浮窗：
-   - 名称：随意（如"职责分配"）
-   - 类型：数据统计
-   - 悬浮窗地址：<https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>
-2. 进入副本后，在悬浮窗中手动分配每个人的职位（MT/ST/H1/H2/D1-D4）
-3. 如果未分配，触发器会按默认顺序（战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青）自动处理
-
-### 修改触发器设置
-
-1. 打开 OverlayPlugin → Cactbot Config → Raidboss → 具体 JS 文件
-2. 找到对应设置，按需调整
-3. 所有更改会保存到 OverlayPlugin 配置中，不会因更新文件而丢失
-![image](https://github.com/user-attachments/assets/3efa5c75-e02d-46c2-a987-eaf008c9e039)
-
 ## 按文件说明
 
 ### 核心依赖
 
-- `[必装] 依赖 - Souma拓展运行库`：核心依赖，请无脑安装
+- `[必装] 依赖 - Souma拓展运行库`：用于实现职能位置分配通信与一些特殊方法。
 
 ### 绝本系列
 
@@ -71,6 +53,10 @@
 - `零式 - M6S`：通用
 - `零式 - M7S`：通用
 - `零式 - M8S`：门神MMW，本体瑞凌
+- `零式 - M9S`：通用，呆萌ACT已自带此文件，无需手动下载
+- `零式 - M10S`：通用，呆萌ACT已自带此文件，无需手动下载
+- `零式 - M11S`：通用，呆萌ACT已自带此文件，无需手动下载
+- `零式 - M12S`：门神通用。本体一运传统刀，四运盗火改，呆萌ACT已自带此文件，无需手动下载。
 
 #### 万魔殿
 
@@ -97,3 +83,21 @@
 - `易用性 - 风脉泉标记`：宏指令 `/e fengmai`
 - `易用性 - 关闭提示音`：关闭默认的触发器音效
 - `易用性 - 招募满人提醒`：若切屏时招募组满人，循环播放“人齐了”语音
+
+## 设置
+
+### 分配职能位置
+
+1. 在 OverlayPlugin 中新建一个悬浮窗：
+   - 名称：随意（如"职责分配"）
+   - 类型：数据统计
+   - 悬浮窗地址：<https://souma.diemoe.net/ff14-overlay-vite/#/cactbotRuntime>
+2. 进入副本后，在悬浮窗中手动分配每个人的职位（MT/ST/H1/H2/D1-D4）
+3. 如果未分配，触发器会按默认顺序（战暗枪骑占白贤学蛇侍忍钐龙僧舞诗机绘黑召赤青）自动处理
+
+### 修改触发器设置
+
+1. 打开 OverlayPlugin → Cactbot Config → Raidboss → 具体 JS 文件
+2. 找到对应设置，按需调整
+3. 所有更改会保存到 OverlayPlugin 配置中，不会因更新文件而丢失
+![image](https://github.com/user-attachments/assets/3efa5c75-e02d-46c2-a987-eaf008c9e039)
