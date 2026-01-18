@@ -1,3 +1,15 @@
+const deepClone = (obj) => {
+  if (obj === null || typeof obj !== 'object')
+    return obj;
+  if (Array.isArray(obj))
+    return obj.map((item) => deepClone(item));
+  const clone = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key))
+      clone[key] = deepClone(obj[key]);
+  }
+  return clone;
+};
 const mjMap = {
   BBC: '1麻',
   BBD: '2麻',
@@ -6,13 +18,19 @@ const mjMap = {
   1292: 'beta',
   1290: 'alpha',
 };
+const towers = {
+  '1EBF25': '风',
+  '1EBF26': '暗',
+  '1EBF27': '土',
+  '1EBF28': '火',
+};
 const center = { x: 100, y: 100 };
 const equal = (num, target, diff = 0.1) => {
   return Math.abs(num - target) < diff;
 };
 const getDis = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 Options.Triggers.push({
-  id: 'SoumaAacHeavyweightM4Savage',
+  id: 'AacHeavyweightM4Savage',
   zoneId: ZoneId.AacHeavyweightM4Savage,
   zoneLabel: { en: 'M12S Souma特供版' },
   overrideTimelineFile: true,
@@ -20,7 +38,7 @@ Options.Triggers.push({
 hideall "--sync--"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
 0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
-11 "补天之手?/境中奇焰?" StartsUsing { id: "B4D7" } window 20,20 #Lindwurm（Boss）
+11 "--sync--" StartsUsing { id: "B4D7" } window 20,20 #Lindwurm（Boss）
 15.9 "补天之手" # Ability { id: "B4D7" } #Lindwurm（Boss）
 41.3 "致命灾变" # Ability { id: "B495" } #Lindwurm（Boss）
 70.7 "细胞附身·早期" # Ability { id: "BEBD" } #Lindwurm（Boss）
@@ -68,7 +86,7 @@ hideall "--sync--"
 1040 "天顶猛击" # Ability { id: "B4DD" } #人型分体（分身）
 1040.3 "天顶猛击" # Ability { id: "B4DE" } #人型分体（分身）
 1041.3 "强力魔法" # Ability { id: "B4E0" } #リンドブルム（分身）
-1046 "蛇踢" # Ability { id: "B527" } #リンドブルム（Boss）
+1046 "蛇踢" Ability { id: "B527" } #リンドブルム（Boss）
 1061.5 "天顶猛击" # Ability { id: "B4DD" } #人型分体（分身）
 1061.5 "强力魔法" # Ability { id: "B4DF" } #人型分体（分身）
 1061.8 "天顶猛击" # Ability { id: "B4DE" } #人型分体（分身）
@@ -85,7 +103,7 @@ hideall "--sync--"
 1136.2 "重猛击" # Ability { id: "B4E8" } #人型分体（分身）
 1137.5 "细胞附身" # Ability { id: "B4EA" } #リンドブルム（分身）
 1138 "指向性冲击波" # Ability { id: "B4EB" } #リンドブルム（分身）
-1141.6 "蛇踢" # Ability { id: "B527" } #リンドブルム（Boss）
+1141.6 "蛇踢" Ability { id: "B527" } #リンドブルム（Boss）
 1151.8 "时空重现" # Ability { id: "B4EC" } #リンドブルム（Boss）
 1159.9 "落火飞溅" # Ability { id: "B4ED" } #人型分体（分身）
 1160 "近/远界阴怒" # Ability { id: "B52F" } #リンドブルム（Boss）
@@ -118,11 +136,11 @@ hideall "--sync--"
 1291.7 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
 1297.8 "自我复制" # Ability { id: "B4D8" } #リンドブルム（Boss）
 1310.3 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
-1311.3 "蛇踢" # Ability { id: "B511" } #人型分体（分身）
+1311.3 "蛇踢" Ability { id: "B511" } #人型分体（分身）
 1311.3 "力量喷涌" # Ability { id: "B510" } #人型分体（分身）
 1316.5 "自我复制" # Ability { id: "B4D8" } #リンドブルム（Boss）
 1336.1 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
-1340.5 "蛇踢" # Ability { id: "BE95" } #リンドブルム（分身）
+1340.5 "蛇踢" Ability { id: "BE95" } #リンドブルム（分身）
 1340.7 "力量喷涌" # Ability { id: "B516" } #リンドブルム（分身）
 1344.6 "林德布鲁姆陨石" # Ability { id: "B4F2" } #リンドブルム（Boss）
 1350.7 "陨落" # Ability { id: "B4F3" } #リンドブルム（Boss）
@@ -139,12 +157,12 @@ hideall "--sync--"
 1419 "空间裂断" # Ability { id: "B51C" } #リンドブルム（Boss）
 1431.6 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
 1432.6 "力量喷涌" # Ability { id: "B50F" } #人型分体（分身）
-1432.6 "蛇踢" # Ability { id: "BCAF" } #人型分体（分身）
+1432.6 "蛇踢" Ability { id: "BCAF" } #人型分体（分身）
 1437.7 "时空重现" # Ability { id: "B4EC" } #リンドブルム（Boss）
 1441.1 "魔力爆发" # Ability { id: "BBE3" } #リンドブルム（分身）
 1441.3 "重猛击" # Ability { id: "BE5D" } #リンドブルム（分身）
 1446.9 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
-1451.3 "蛇踢" # Ability { id: "BE95" } #リンドブルム（分身）
+1451.3 "蛇踢" Ability { id: "BE95" } #リンドブルム（分身）
 1451.6 "力量喷涌" # Ability { id: "B516" } #リンドブルム（分身）
 1454.4 "心象投影" # Ability { id: "BBE2" } #リンドブルム（Boss）
 1460.8 "魔力爆发" # Ability { id: "B4EE" } #人型分体（分身）
@@ -192,6 +210,9 @@ hideall "--sync--"
       s四运长记忆1: undefined,
       s四运分摊分散玩家机制: undefined,
       s四运分摊分散正点机制: undefined,
+      s四运B9D9: [],
+      sCombatantMemory: {},
+      sActorPositionsClone: {},
     };
   },
   triggers: [
@@ -232,6 +253,34 @@ hideall "--sync--"
           y: parseFloat(matches.y),
           heading: parseFloat(matches.heading),
         };
+      },
+    },
+    {
+      id: 'souma r12s CombatantMemory Tracker',
+      type: 'CombatantMemory',
+      netRegex: {
+        change: 'Add',
+        id: '4[0-9A-Fa-f]{7}',
+        pair: [{
+          key: 'BNpcID',
+          value: Object.keys(towers),
+        }],
+        capture: true,
+      },
+      run: (data, matches) => {
+        if (
+          matches.pairBNpcID !== undefined &&
+          matches.pairPosX !== undefined &&
+          matches.pairPosY !== undefined
+        ) {
+          data.sCombatantMemory[matches.id] = {
+            id: matches.id,
+            x: parseFloat(matches.pairPosX),
+            y: parseFloat(matches.pairPosY),
+            bNpcId: matches.pairBNpcID,
+            tower: towers[matches.pairBNpcID],
+          };
+        }
       },
     },
     // #region 门神
@@ -416,9 +465,9 @@ hideall "--sync--"
       netRegex: { effectId: ['1292', '1290'], capture: true },
       condition: Conditions.targetIsYou(),
       delaySeconds: (_data, matches) => parseFloat(matches.duration) + 1,
-      countdownSeconds: 14,
       durationSeconds: 14,
       suppressSeconds: 999,
+      countdownSeconds: 14,
       alertText: (data, _matches, output) => {
         if (data.sMj?.mj === '1麻' || data.sMj?.mj === '2麻') {
           if (data.sMj.sym === 'alpha') {
@@ -557,11 +606,11 @@ hideall "--sync--"
         ],
         capture: false,
       },
+      condition: (data) => data.sPhase === '第一次细胞',
       delaySeconds: 0.5,
       durationSeconds: 16.5,
-      countdownSeconds: 16.5,
       suppressSeconds: 30,
-      condition: (data) => data.sPhase === '第一次细胞',
+      countdownSeconds: 16.5,
       alertText: (data, _matches, output) => {
         const buff = data.sSpreadStack.find((v) => v.target === data.me)?.effectId === '1299'
           ? 'spread'
@@ -861,8 +910,8 @@ hideall "--sync--"
         return output['13']();
       },
       outputStrings: {
-        '24': { en: '二四安全' },
-        '13': { en: '一三安全' },
+        '24': { en: '右上/左下安全' },
+        '13': { en: '左上/右下安全' },
       },
     },
     {
@@ -883,6 +932,12 @@ hideall "--sync--"
       outputStrings: {
         text: { en: 'AoE' },
       },
+    },
+    {
+      id: 'souma r12s 溅血',
+      type: 'StartsUsing',
+      netRegex: { id: 'B9C3', capture: false },
+      response: Responses.aoe(),
     },
     {
       id: 'souma r12s ActorControlExtra2喋血',
@@ -998,7 +1053,7 @@ hideall "--sync--"
       id: 'souma r12s p2 有翼灾变',
       type: 'StartsUsingExtra',
       netRegex: { id: ['B4DC'], capture: true },
-      durationSeconds: 62 - 37,
+      durationSeconds: 3,
       suppressSeconds: 62 - 38,
       infoText: (data, matches, output) => {
         const hdg = (equal(parseFloat(matches.heading), 0.000, 0.1) ||
@@ -1009,8 +1064,8 @@ hideall "--sync--"
         return output[hdg]();
       },
       outputStrings: {
-        'AC': { en: '(分身打上下)' },
-        'BD': { en: '(分身打左右)' },
+        AC: { en: '(分身打上下)' },
+        BD: { en: '(分身打左右)' },
       },
     },
     {
@@ -1029,28 +1084,33 @@ hideall "--sync--"
       preRun: (data, matches) => {
         data.sP2一运buff.push(matches);
       },
-      durationSeconds: 10,
-      infoText: (data, _matches, output) => {
+      delaySeconds: 1,
+      durationSeconds: 11,
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          text: { en: '${side}${hdg}' },
+          dark: { en: '暗找斜' },
+          fire: { en: '火找正' },
+          AC: { en: '(分身打上下)' },
+          BD: { en: '(分身打左右)' },
+        };
         if (data.sP2一运buff.length !== 6)
           return;
         const dark4 = data.sP2一运buff.filter((v) => v.effectId === 'CFB').map((v) => v.target);
         const myGroup = dark4.includes(data.me) ? 'dark' : 'fire';
         data.sP2二运我找谁 = myGroup === 'dark' ? 'fire' : 'dark';
-        return output[myGroup]();
-      },
-      tts: null,
-      outputStrings: {
-        dark: { en: '暗找斜' },
-        fire: { en: '火找正' },
+        const side = output[myGroup]();
+        const hdg = output[data.sP2一运打哪里]();
+        data.sP2一运buff.length = 0;
+        return {
+          infoText: output.text({
+            side: side,
+            hdg: hdg,
+          }),
+          tts: side,
+        };
       },
     },
-    // {
-    //   id: 'souma r12s p2 蛇踢 B511',
-    //   type: 'StartsUsing',
-    //   netRegex: { id: 'B511', capture: false },
-    //   infoText: (_data, _matches, output) => output.text!(),
-    //   outputStrings: { text: { en: '自定义文本' } },
-    // },
     {
       id: 'souma r12s p2 蛇踢 B527',
       type: 'StartsUsing',
@@ -1139,7 +1199,8 @@ hideall "--sync--"
       },
     },
     {
-      id: 'souma r12s p2 蛇踢 B527---',
+      id: 'souma r12s p2 蛇踢 B527-----------',
+      comment: { en: '根据职业判断近战/远程，不考虑D2黑魔的特殊情况。' },
       type: 'StartsUsing',
       netRegex: { id: 'B527', capture: false },
       delaySeconds: 14.3,
@@ -1196,14 +1257,23 @@ hideall "--sync--"
         const caster = warymark[casterAdd].find((v) => wmCaster.includes(v));
         const meleeDir = output[meleeAdd]();
         const casterDir = output[casterAdd]();
+        const attr = output[data.sP2二运我找谁]();
+        const meleeText = output[melee]();
+        const casterText = output[caster]();
         if (data.role === 'tank' || Util.isMeleeDpsJob(data.job)) {
-          return output.melee({ melee: melee, dir: meleeDir });
+          return output.melee({ melee: meleeText, dir: meleeDir, attr: attr });
         }
-        return output.caster({ caster: caster, dir: casterDir });
+        return output.caster({ caster: casterText, dir: casterDir, attr: attr });
       },
       outputStrings: {
-        melee: { en: '去${melee}(分身在${dir})' },
-        caster: { en: '去${caster}(分身在${dir})' },
+        A: { en: 'A' },
+        B: { en: 'B' },
+        C: { en: 'C' },
+        D: { en: 'D' },
+        melee: { en: '去${melee}${attr}(分身在${dir})' },
+        caster: { en: '去${caster}${attr}(分身在${dir})' },
+        fire: { en: '分摊' },
+        dark: { en: '散开' },
         ...Directions.outputStringsIntercardDir,
       },
       // [
@@ -1444,9 +1514,9 @@ hideall "--sync--"
       type: 'GainsEffect',
       netRegex: { effectId: ['12A1', '12A3'] },
       condition: Conditions.targetIsYou(),
+      delaySeconds: (data) => data.role === 'tank' ? 1 : 0,
       durationSeconds: (data, matches) =>
         parseFloat(matches.duration) - (data.role === 'tank' ? 1 : 0) - 1,
-      delaySeconds: (data) => data.role === 'tank' ? 1 : 0,
       countdownSeconds: (data, matches) =>
         parseFloat(matches.duration) - (data.role === 'tank' ? 1 : 0) - 1,
       response: (data, matches, output) => {
@@ -1470,10 +1540,10 @@ hideall "--sync--"
       type: 'GainsEffect',
       netRegex: { effectId: ['12A1', '12A3'] },
       condition: Conditions.targetIsYou(),
-      durationSeconds: (_data, matches) => parseFloat(matches.duration) - 0.5,
       delaySeconds: 0.5,
-      countdownSeconds: (_data, matches) => parseFloat(matches.duration) - 0.5,
+      durationSeconds: (_data, matches) => parseFloat(matches.duration) - 0.5,
       suppressSeconds: 999,
+      countdownSeconds: (_data, matches) => parseFloat(matches.duration) - 0.5,
       infoText: (data, matches, output) => {
         const buff = matches.effectId === '12A1' ? 'a' : 'b';
         if (buff === 'a' && data.role === 'tank')
@@ -1557,11 +1627,6 @@ hideall "--sync--"
             19209,
           ].includes(v.BNpcID)
         );
-        // console.log(
-        //   (await callOverlayHandler({
-        //     call: 'getCombatants',
-        //   })).combatants.filter((v) => v.BNpcNameID === 14382),
-        // );
       },
       alertText: (data, _matches, output) => {
         const left = data.sCombatantData.filter((v) => v.PosX < 100).map((v) => ({
@@ -1769,7 +1834,11 @@ hideall "--sync--"
       netRegex: { 'id': ['0170', '0171'] },
       condition: (data, matches) => data.me === matches.target && data.sPhase === '本体4运',
       suppressSeconds: 999,
-      run: (data, matches) => {
+      response: (data, matches, output) => {
+        output.responseOutputStrings = {
+          circle: { en: '接大圈' },
+          stack: { en: '接分摊' },
+        };
         const source = data.sActorPositions[matches.sourceId];
         if (!source) {
           throw new Error('source not found');
@@ -1779,6 +1848,10 @@ hideall "--sync--"
         const num = dir % 2 === 0 ? '正点' : '斜点';
         data.s四运分摊分散正点是大圈 = (gimmick === '大圈' && num === '正点') ||
           (gimmick === '分摊' && num === '斜点');
+        return {
+          [data.s四运分摊分散玩家机制.gimmick === '大圈' ? 'alertText' : 'infoText']: output
+            [data.s四运分摊分散玩家机制.gimmick === '大圈' ? 'circle' : 'stack'](),
+        };
       },
     },
     // 04:25
@@ -1852,8 +1925,8 @@ hideall "--sync--"
         return output[kage]();
       },
       outputStrings: {
-        A: { en: '1、4安全' },
-        C: { en: '2、3安全' },
+        A: { en: '1、4安全 => 小世界分组' },
+        C: { en: '2、3安全 => 小世界分组' },
       },
     },
     {
@@ -1869,6 +1942,242 @@ hideall "--sync--"
       countdownSeconds: 9.7,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '狂暴' } },
+    },
+    // {
+    //   id: 'souma r12s p2 B4F3',
+    //   type: 'StartsUsing',
+    //   netRegex: { id: ['B4F3'], capture: false },
+    //   preRun: (data) => data.s四运小世界 = true,
+    //   delaySeconds: 15,
+    //   run: (data) => data.s四运小世界 = false,
+    // },
+    {
+      id: 'souma r12s B9D9 后',
+      comment: { en: '根据职业判断近战/远程，不考虑D2黑魔的特殊情况。' },
+      type: 'Ability',
+      netRegex: { id: ['B9D9'], capture: false },
+      delaySeconds: 30,
+      durationSeconds: 12 + 22,
+      suppressSeconds: 30,
+      alertText: (data, _matches, output) => {
+        if (data.s四运踩塔 === undefined) {
+          return output.unknown();
+        }
+        const { tower, position } = data.s四运踩塔;
+        const role = data.role === 'tank' || Util.isMeleeDpsJob(data.job) ? 'melee' : 'caster';
+        return output.text({
+          tower: output[`${tower}${['暗', '风'].includes(tower) ? '' : role}`](),
+          position: output[position](),
+        });
+      },
+      outputStrings: {
+        unknown: { en: '踩塔' },
+        text: { en: '${position}${tower}' },
+        火melee: { en: '火塔（等热风）=> 中间' },
+        火caster: { en: '火塔（等热风）=> 左后' },
+        土melee: { en: '土塔（躲竹笋）=> 中间' },
+        土caster: { en: '土塔（躲竹笋）=> 左后' },
+        暗: { en: '暗塔（射场外）=> 最前' },
+        风: { en: '风塔（被吹飞）=> 右前' },
+        左上: { en: '左上' },
+        右上: { en: '右上' },
+        左下: { en: '左下' },
+        右下: { en: '右下' },
+      },
+    },
+    {
+      id: 'souma r12s B9D9',
+      type: 'Ability',
+      netRegex: { id: ['B9D9'], capture: true },
+      preRun: (data, matches) => data.s四运B9D9.push(matches),
+      // 模拟器现在（在M12S本体限定？）目前有bug，至少要延迟一些，才能拿到正确的坐标
+      // https://github.com/OverlayPlugin/cactbot/issues/957
+      delaySeconds: 1,
+      promise: async (data) => {
+        data.sCombatantData = (await callOverlayHandler({ call: 'getCombatants' })).combatants
+          .filter((v) =>
+            v.ID &&
+            v.ID >= 0x10000000 && v.ID <= 0x1FFFFFFF
+          );
+      },
+      infoText: (data, _matches, output) => {
+        if (data.s四运B9D9.length !== 4)
+          return;
+        const debuffs = data.s四运B9D9.map((v) => v.target);
+        data.s四运B9D9.length = 0;
+        const me = data.sCombatantData.find((v) => v.Name === data.me);
+        if (!me)
+          return;
+        const isMT = me.PosX <= 100;
+        const magicTower = ['土', '火'];
+        const swapPos = { '左上': '右上', '右上': '左上', '左下': '右下', '右下': '左下' };
+        const players = data.sCombatantData
+          .filter((v) => isMT === (v.PosX <= 100))
+          .map((v) => ({ x: v.PosX, y: v.PosY, name: v.Name }))
+          .sort((a, b) => a.x - b.x);
+        const [t1, t2, t3, t4] = Object.values(data.sCombatantMemory)
+          .filter((v) => isMT === (v.x <= 100))
+          .sort((a, b) => a.y === b.y ? a.x - b.x : a.y - b.y);
+        if (players.length !== 4 || !t1 || !t2 || !t3 || !t4) {
+          if (debuffs.includes(data.me))
+            return output.unknownDebuff();
+          return output.unknown();
+        }
+        // 1 2   center   1  2
+        // 3 4   center   3  4
+        const [p1, p3] = players.slice(0, 2).sort((a, b) => a.y - b.y);
+        const [p2, p4] = players.slice(2, 4).sort((a, b) => a.y - b.y);
+        const configs = isMT
+          ? [
+            [p2, t2, [t2, t4], '左上'],
+            [p4, t4, [t2, t4], '右上'],
+            [p1, t1, [t1, t3], '左下'],
+            [p3, t3, [t1, t3], '右下'],
+          ]
+          : [
+            [p3, t3, [t3, t1], '左上'],
+            [p1, t1, [t3, t1], '右上'],
+            [p4, t4, [t4, t2], '左下'],
+            [p2, t2, [t4, t2], '右下'],
+          ];
+        const result = {};
+        for (const [p, originT, sideTs, pos] of configs) {
+          const targetT = sideTs.find((t) =>
+            debuffs.includes(p.name) === magicTower.includes(t.tower)
+          );
+          const isSwapped = originT.tower !== targetT.tower;
+          result[p.name] = {
+            tower: targetT.tower,
+            position: isSwapped ? swapPos[pos] : pos,
+            switch: isSwapped,
+          };
+        }
+        data.s四运踩塔 = result[data.me];
+        return output.text({
+          tower: output[result[data.me].tower](),
+          position: output[result[data.me].position](),
+        });
+      },
+      outputStrings: {
+        unknownDebuff: { en: '踩纯色塔' },
+        unknown: { en: '踩混色塔' },
+        text: {
+          en: '(稍后${position}${tower}塔)',
+        },
+        火: { en: '火' },
+        土: { en: '土' },
+        暗: { en: '暗' },
+        风: { en: '风' },
+        左上: { en: '左上' },
+        右上: { en: '右上' },
+        左下: { en: '左下' },
+        右下: { en: '右下' },
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂断',
+      type: 'StartsUsing',
+      netRegex: { id: ['B51C'], capture: false },
+      infoText: (data, _matches, output) => {
+        return output[data.s四运分身打上下]();
+      },
+      outputStrings: {
+        A: { en: 'A打上下' },
+        C: { en: 'C打上下' },
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂断--',
+      type: 'StartsUsing',
+      netRegex: { id: 'B51C', capture: true },
+      delaySeconds: 0,
+      run: (data) => {
+        data.sActorPositionsClone = deepClone(data.sActorPositions);
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂断-',
+      type: 'Ability',
+      netRegex: { id: ['B51D'], capture: true },
+      infoText: (data, matches, output) => {
+        const kage = data.sActorPositionsClone[matches.sourceId];
+        if (!kage) {
+          return;
+        }
+        if (
+          (kage.y <= 100 && data.s四运分身打上下 === 'A') ||
+          (kage.y > 100 && data.s四运分身打上下 === 'C')
+        ) {
+          data.s四运分身哪安全 = 'Sides';
+          return output.两侧();
+        }
+        data.s四运分身哪安全 = 'Target';
+        return output.目标圈();
+      },
+      outputStrings: {
+        两侧: { en: '两侧' },
+        目标圈: { en: '目标圈' },
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂斩钢铁',
+      type: 'AbilityExtra',
+      netRegex: { id: 'B4D9', capture: true },
+      condition: (data) => data.s四运分身哪安全 !== undefined,
+      infoText: (data, matches, output) => {
+        const kage = data.sActorPositionsClone[matches.sourceId];
+        if (!kage) {
+          return;
+        }
+        if (Math.abs(kage.y - 104.50) < 1) {
+          const safe = kage.x <= 100 ? 'B' : 'D';
+          return output[safe + data.s四运分身哪安全]();
+        }
+      },
+      outputStrings: {
+        BSides: { en: '稍后Boy两侧' },
+        DSides: { en: '稍后Dog两侧' },
+        BTarget: { en: '稍后Boy目标圈' },
+        DTarget: { en: '稍后Dog目标圈' },
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂斩钢铁之之',
+      type: 'AbilityExtra',
+      netRegex: { id: 'B4D9', capture: true },
+      condition: (data) => data.s四运分身哪安全 !== undefined,
+      delaySeconds: 15.5,
+      infoText: (data, matches, output) => {
+        const kage = data.sActorPositionsClone[matches.sourceId];
+        if (!kage) {
+          return;
+        }
+        if (Math.abs(kage.y - 104.50) < 1) {
+          const safe = kage.x <= 100 ? 'B' : 'D';
+          return output[safe + data.s四运分身哪安全]();
+        }
+      },
+      outputStrings: {
+        BSides: { en: 'Boy两侧' },
+        DSides: { en: 'Dog两侧' },
+        BTarget: { en: 'Boy目标圈' },
+        DTarget: { en: 'Dog目标圈' },
+      },
+    },
+    {
+      id: 'souma r12s p2 空间裂斩钢铁之之之之',
+      type: 'AbilityExtra',
+      netRegex: { id: 'B4D9', capture: true },
+      condition: (data) => data.s四运分身哪安全 !== undefined,
+      delaySeconds: 38,
+      suppressSeconds: 99,
+      infoText: (data, _matches, output) => {
+        return output[data.s四运分身哪安全]();
+      },
+      outputStrings: {
+        Sides: { en: 'A两侧' },
+        Target: { en: 'A目标圈' },
+      },
     },
     // #endregion
   ],
