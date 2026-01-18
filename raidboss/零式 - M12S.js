@@ -786,8 +786,21 @@ hideall "--sync--"
     },
     {
       id: 'souma r12s 球',
-      type: 'AddedCombatant',
-      netRegex: { npcNameId: '14378', npcBaseId: ['19200', '19201'], capture: true },
+      // type: 'AddedCombatant',
+      // netRegex: { npcNameId: '14378', npcBaseId: ['19200', '19201'], capture: true },
+      type: 'CombatantMemory',
+      netRegex: {
+        change: 'Add',
+        id: '4[0-9A-Fa-f]{7}',
+        pair: [{
+          key: 'BNpcID',
+          value: ['4B00', '4B01'],
+        }, {
+          key: 'BNpcNameID',
+          value: '382A',
+        }],
+        capture: true,
+      },
       preRun: (data, matches) => {
         data.sBalls.push(matches);
       },
@@ -796,9 +809,9 @@ hideall "--sync--"
         if (data.sBallsOver || data.sBalls.length % 2 !== 0) {
           return;
         }
-        const purples = data.sBalls.filter((v) => v.npcBaseId === '19200');
+        const purples = data.sBalls.filter((v) => v.pairBNpcID === '4B00');
         if (purples.length > 0) {
-          const purpleSide = parseFloat(purples[0].x) < 100 ? 'left' : 'right';
+          const purpleSide = parseFloat(purples[0].pairPosX) < 100 ? 'left' : 'right';
           if (data.role === 'dps') {
             data.sBallsOver = true;
             data.sBallsFirst = true;
@@ -817,8 +830,9 @@ hideall "--sync--"
             data.sBallsOver = true;
             const side = data.sBallsFirst ? '' : output[purpleSide]();
             const ordered = data.sBalls.filter((v) =>
-              purpleSide === 'left' ? parseFloat(v.x) < 100 : parseFloat(v.x) > 100
-            ).map((v) => v.npcBaseId === '19200' ? 't' : 'h');
+              purpleSide === 'left' ? parseFloat(v.pairPosX) < 100 : parseFloat(v.pairPosX) > 100
+            ).map((v) => v.pairBNpcID === '4B00' ? 't' : 'h');
+            // console.log(data.sBalls.slice(), ordered);
             const result = Array.from({ length: 4 }, (_, i) => ordered[i] ?? 'h').map((v) =>
               output[v]()
             ).join('/');
