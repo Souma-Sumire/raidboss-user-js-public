@@ -168,6 +168,7 @@ hideall "--sync--"
       sTetherCount: 0,
       sOrbital: [],
       sOrbitalSafe: [],
+      firstWeapon: true,
     };
   },
   triggers: [
@@ -345,7 +346,8 @@ hideall "--sync--"
       id: 'souma r11s 铸兵之令：轰击',
       type: 'StartsUsing',
       netRegex: { id: ['B422', 'B423'], capture: true },
-      durationSeconds: 10,
+      delaySeconds: (data) => data.firstWeapon ? 4 : 0,
+      durationSeconds: (data) => data.firstWeapon ? 6 : 10,
       response: (data, matches, output) => {
         output.responseOutputStrings = {
           tankStack: { en: '分摊死刑' },
@@ -353,6 +355,7 @@ hideall "--sync--"
           otherStack: { en: '集合分摊' },
           otherSpread: { en: '散开' },
         };
+        data.firstWeapon = false;
         if (matches.id === 'B423') {
           // T扇形死刑 人群集合分摊
           if (data.role === 'tank') {
@@ -672,8 +675,8 @@ hideall "--sync--"
       id: 'souma r11s 碎心击',
       type: 'StartsUsing',
       netRegex: { id: 'B462', capture: true },
-      countdownSeconds: 7.7,
       suppressSeconds: 1,
+      countdownSeconds: 7.7,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -700,8 +703,8 @@ hideall "--sync--"
       netRegex: { id: ['B44E', 'B44C', 'B450', 'B44A'], capture: true },
       delaySeconds: 0.5,
       durationSeconds: 15.2,
-      countdownSeconds: 15.2,
       suppressSeconds: 1,
+      countdownSeconds: 15.2,
       promise: async (data) => {
         const player = (await callOverlayHandler({
           call: 'getCombatants',
