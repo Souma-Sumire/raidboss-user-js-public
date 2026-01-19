@@ -2154,7 +2154,7 @@ hideall "--sync--"
           return;
         }
         if (Math.abs(kage.y - 104.50) < 1) {
-          const safe = kage.x <= 100 ? 'B' : 'D';
+          const safe = parseFloat(matches.x) <= 100 ? 'B' : 'D';
           return output[safe + data.s四运分身哪安全]();
         }
       },
@@ -2177,7 +2177,7 @@ hideall "--sync--"
           return;
         }
         if (Math.abs(kage.y - 104.50) < 1) {
-          const safe = kage.x <= 100 ? 'B' : 'D';
+          const safe = parseFloat(matches.x) <= 100 ? 'B' : 'D';
           return output[safe + data.s四运分身哪安全]();
         }
       },
