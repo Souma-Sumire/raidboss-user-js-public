@@ -24,7 +24,7 @@ const headMarkerData = {
   '029A': '029A',
 };
 Options.Triggers.push({
-  id: 'SoumaM10S',
+  id: 'AacHeavyweightM2Savage',
   zoneId: ZoneId.AacHeavyweightM2Savage,
   zoneLabel: { en: 'M10S Souma特供版' },
   config: [
