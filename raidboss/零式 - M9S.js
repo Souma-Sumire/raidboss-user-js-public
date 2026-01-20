@@ -4,7 +4,7 @@ const headMarkerData = {
   '0131': '0131',
   // Offsets: 00:15, 03:35, 08:53
   // Vfx Path: tank_lockonae_0m_5s_01t
-  'tankbuster': '01D4',
+  '01D4': '01D4',
   // Offsets: 03:08, 03:10, 03:12, 03:14
   // Vfx Path: lockon5_line_1p
   '028C': '028C',
@@ -362,19 +362,10 @@ hideall "--sync--"
       sPlaying: false,
       sSaw: [],
       sTetherId: 0,
-      sSatisfiedCount: 0,
-      sCoffinfillers: [],
-      sFlailPositions: [],
       sHasHellAwaits: false,
     };
   },
   triggers: [
-    {
-      id: 'souma r9s Satisfied Counter',
-      type: 'GainsEffect',
-      netRegex: { effectId: '1277', capture: true },
-      run: (data, matches) => data.sSatisfiedCount = parseInt(matches.count),
-    },
     {
       id: 'souma r9s Headmarker Stack 0131',
       type: 'HeadMarker',
@@ -382,24 +373,10 @@ hideall "--sync--"
       response: Responses.stackMarkerOn(),
     },
     {
-      id: 'souma r9s Headmarker Tankbuster',
+      id: 'souma r9s Headmarker Tankbuster 01D4',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['tankbuster'], capture: true },
-      condition: Conditions.targetIsYou(),
-      alertText: (data, _matches, output) => {
-        if (data.sSatisfiedCount >= 8)
-          return output.bigTankCleave();
-        return output.tankCleaveOnYou();
-      },
-      outputStrings: {
-        tankCleaveOnYou: Outputs.tankCleaveOnYou,
-        bigTankCleave: {
-          en: 'Tank Cleave on YOU (Big)',
-          de: 'Tank Cleave auf DIR (Groß)',
-          cn: '坦克范围死刑点名（大）',
-          ko: '광역 탱버 대상자 (큰)',
-        },
-      },
+      netRegex: { id: headMarkerData['01D4'], capture: true },
+      response: Responses.tankBuster(),
     },
     {
       id: 'souma r9s Headmarker Spread 028C',
@@ -482,6 +459,33 @@ hideall "--sync--"
       },
     },
     {
+      id: 'souma r9s Blast Beat Inner',
+      type: 'ActorControlExtra',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
+      delaySeconds: 4.1,
+      durationSeconds: 5.5,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        const [dir1, dir2] = data.sBats.inner;
+        return output.away({
+          dir1: output[dir1 ?? 'unknown'](),
+          dir2: output[dir2 ?? 'unknown'](),
+        });
+      },
+      run: (data, _matches) => {
+        data.sBats.inner = [];
+      },
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        away: {
+          en: 'Away from bats ${dir1}/${dir2}',
+          fr: 'Loin des chauves-souris ${dir1}/${dir2}',
+          cn: '远离 ${dir1}、${dir2} 蝙蝠',
+          ko: '박쥐 피하기 ${dir1}/${dir2}',
+        },
+      },
+    },
+    {
       id: 'souma r9s 血魅的靴踏音',
       type: 'StartsUsing',
       netRegex: { id: ['B34A', 'B374'], capture: false },
@@ -489,51 +493,16 @@ hideall "--sync--"
       response: Responses.getOut('info'),
     },
     {
-      id: 'souma r9s Blast Beat Middle',
-      type: 'ActorControlExtra',
-      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
-      delaySeconds: 9.7,
-      durationSeconds: 3.4,
-      suppressSeconds: 1,
-      infoText: (data, _matches, output) => {
-        const [dir1, dir2, dir3] = data.sBats.middle;
-        return output.away({
-          dir1: output[dir1 ?? 'unknown'](),
-          dir2: output[dir2 ?? 'unknown'](),
-          dir3: output[dir3 ?? 'unknown'](),
-        });
-      },
-      run: (data, _matches) => {
-        data.sBats.middle = [];
-      },
-      outputStrings: {
-        ...Directions.outputStrings16Dir,
-        away: {
-          en: 'Away from bats ${dir1}/${dir2}/${dir3}',
-          de: 'Weg von den Fledermäusen ${dir1}/${dir2}/${dir3}',
-          fr: 'Loin des chauves-souris ${dir1}/${dir2}/${dir3}',
-          cn: '远离 ${dir1}、${dir2}、${dir3} 蝙蝠',
-          ko: '박쥐 피하기 ${dir1}/${dir2}/${dir3}',
-        },
-      },
-    },
-    {
-      id: 'souma r9s Blast Beat Outer',
-      type: 'ActorControlExtra',
-      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
-      delaySeconds: 13.2,
-      durationSeconds: 3.4,
-      suppressSeconds: 1,
-      response: Responses.goMiddle(),
-      run: (data, _matches) => {
-        data.sBats.outer = [];
-      },
+      id: 'souma r9s 粗暴之雨',
+      type: 'StartsUsing',
+      netRegex: { id: 'B35D', capture: true },
+      response: Responses.stackMarkerOn(),
     },
     {
       id: 'souma r9s 施虐的尖啸',
       type: 'StartsUsing',
       netRegex: { id: 'B333', capture: false },
-      response: Responses.bigAoe(),
+      response: Responses.aoe(),
       run: (data) => data.sPlaying = false,
     },
     {
@@ -543,183 +512,123 @@ hideall "--sync--"
       run: (data) => data.sPlaying = true,
     },
     {
-      id: 'R9S Coffinfiller',
+      id: 'souma r9s 冲出',
       type: 'StartsUsingExtra',
       netRegex: { id: ['B368', 'B369', 'B36A'], capture: true },
-      suppressSeconds: (data) => data.sCoffinfillers.length === 0 ? 0 : 5,
-      run: (data, matches) => {
-        let danger;
-        const xPos = parseFloat(matches.x);
-        if (xPos < 95)
-          danger = 'outerWest';
-        else if (xPos < 100)
-          danger = 'innerWest';
-        else if (xPos < 105)
-          danger = 'innerEast';
-        else
-          danger = 'outerEast';
-        data.sCoffinfillers.push(danger);
+      preRun: (data, matches) => {
+        data.sSaw.push(parseFloat(matches.x));
       },
     },
     {
-      id: 'souma r9s Half Moon',
+      id: 'souma r9s 冲出2',
       type: 'StartsUsingExtra',
-      netRegex: { id: ['B377', 'B379', 'B37B', 'B37D'], capture: true },
-      delaySeconds: 0.3,
-      alertText: (data, matches, output) => {
-        if (data.sCoffinfillers.length < 2) {
-          if (matches.id === 'B377')
-            return output.rightThenLeft();
-          if (matches.id === 'B37B')
-            return output.leftThenRight();
-          return output.bigHalfmoonNoCoffin({
-            dir1: output[matches.id === 'B379' ? 'right' : 'left'](),
-            dir2: output[matches.id === 'B379' ? 'left' : 'right'](),
-          });
-        }
-        const attackDirNum = Directions.hdgTo4DirNum(parseFloat(matches.heading));
-        const dirNum1 = (attackDirNum + 2) % 4;
-        const dir1 = Directions.outputFromCardinalNum(dirNum1);
-        const dirNum2 = attackDirNum;
-        const dir2 = Directions.outputFromCardinalNum(dirNum2);
-        const bigCleave = matches.id === 'B379' || matches.id === 'B37D';
-        const insidePositions = [
-          'innerWest',
-          'innerEast',
-        ];
-        const outsidePositions = [
-          'outerWest',
-          'outerEast',
-        ];
-        const westPositions = [
-          'innerWest',
-          'outerWest',
-        ];
-        const eastPositions = [
-          'innerEast',
-          'outerEast',
-        ];
-        let coffinSafe1 = [
-          'outerWest',
-          'innerWest',
-          'innerEast',
-          'outerEast',
-        ];
-        coffinSafe1 = coffinSafe1.filter((pos) => !data.sCoffinfillers.includes(pos));
-        let coffinSafe2 = [
-          'outerWest',
-          'innerWest',
-          'innerEast',
-          'outerEast',
-        ];
-        // Whatever gets hit first round will be safe second round
-        coffinSafe2 = coffinSafe2.filter((pos) => data.sCoffinfillers.includes(pos));
-        data.sCoffinfillers = [];
-        let dir1Text = output[dir1]();
-        let dir2Text = output[dir2]();
-        if (dir1 === 'dirW') {
-          coffinSafe1 = coffinSafe1.filter((pos) => westPositions.includes(pos));
-          dir1Text = output.leftWest();
-        }
-        if (dir1 === 'dirE') {
-          coffinSafe1 = coffinSafe1.filter((pos) => eastPositions.includes(pos));
-          dir1Text = output.rightEast();
-        }
-        if (dir2 === 'dirW') {
-          coffinSafe2 = coffinSafe2.filter((pos) => westPositions.includes(pos));
-          dir2Text = output.leftWest();
-        }
-        if (dir2 === 'dirE') {
-          coffinSafe2 = coffinSafe2.filter((pos) => eastPositions.includes(pos));
-          dir2Text = output.rightEast();
-        }
-        let coffin1;
-        let coffin2;
-        if (coffinSafe1.every((pos) => insidePositions.includes(pos)))
-          coffin1 = 'inside';
-        else if (coffinSafe1.every((pos) => outsidePositions.includes(pos)))
-          coffin1 = 'outside';
-        else
-          coffin1 = coffinSafe1.find((pos) => insidePositions.includes(pos)) ?? 'unknown';
-        if (coffinSafe2.every((pos) => insidePositions.includes(pos)))
-          coffin2 = 'inside';
-        else if (coffinSafe2.every((pos) => outsidePositions.includes(pos)))
-          coffin2 = 'outside';
-        else
-          coffin2 = coffinSafe2.find((pos) => insidePositions.includes(pos)) ?? 'unknown';
-        if (bigCleave) {
-          return output.bigHalfmoonCombined({
-            coffin1: output[coffin1](),
-            dir1: dir1Text,
-            coffin2: output[coffin2](),
-            dir2: dir2Text,
-          });
-        }
-        return output.combined({
-          coffin1: output[coffin1](),
-          dir1: dir1Text,
-          coffin2: output[coffin2](),
-          dir2: dir2Text,
+      netRegex: { id: ['B368', 'B369', 'B36A'], capture: false },
+      delaySeconds: 0.5,
+      suppressSeconds: 10,
+      infoText: (data, _matches, output) => {
+        const dir = {
+          'right+right': 'front',
+          'right+left': 'back',
+          'right+bottom': 'right',
+          'left+right': 'back',
+          'left+left': 'front',
+          'left+bottom': 'left',
+          'bottom+right': 'right',
+          'bottom+left': 'left',
+        };
+        const start = dir[`${data.sMoon?.side}+${data.sMoon?.dir}`];
+        const end = {
+          'left': 'right',
+          'right': 'left',
+          'front': 'back',
+          'back': 'front',
+        }[start];
+        const diff = Math.abs(data.sSaw.at(0) - data.sSaw.at(1));
+        const isFar = diff > 14 && data.sMoon?.dir === 'bottom';
+        return output.text({
+          start: output[start](),
+          end: output[end](),
+          far: isFar ? output.far() : '',
         });
       },
       outputStrings: {
-        ...Directions.outputStringsCardinalDir,
-        text: {
-          en: '${first} => ${second}',
-          cn: '${first} => ${second}',
-          ko: '${first} => ${second}',
-        },
-        combined: {
-          en: '${coffin1} + ${dir1} => ${coffin2} + ${dir2}',
-          cn: '${coffin1} + ${dir1} => ${coffin2} + ${dir2}',
-          ko: '${coffin1} + ${dir1} => ${coffin2} + ${dir2}',
-        },
-        bigHalfmoonCombined: {
-          en: '${coffin1} + ${dir1} (big) => ${coffin2} + ${dir2} (big)',
-          cn: '${coffin1} + ${dir1} (大) => ${coffin2} + ${dir2} (大)',
-          ko: '${coffin1} + ${dir1} (큰) => ${coffin2} + ${dir2} (큰)',
-        },
-        rightThenLeft: Outputs.rightThenLeft,
-        leftThenRight: Outputs.leftThenRight,
         left: Outputs.left,
-        leftWest: Outputs.leftWest,
         right: Outputs.right,
-        rightEast: Outputs.rightEast,
-        inside: {
-          en: 'Inside',
-          cn: '内侧',
-          ko: '안쪽',
+        front: Outputs.front,
+        back: Outputs.back,
+        text: {
+          en: '${start} => ${end}${far}',
         },
-        outside: {
-          en: 'Outside',
-          cn: '外侧',
-          ko: '바깥쪽',
+        far: {
+          en: 'Far',
+          cn: '（三步）',
         },
-        outerWest: {
-          en: 'Outer West',
-          cn: '左外',
-          ko: '바깥 서쪽',
-        },
-        innerWest: {
-          en: 'Inner West',
-          cn: '左内',
-          ko: '안 서쪽',
-        },
-        innerEast: {
-          en: 'Inner East',
-          cn: '右内',
-          ko: '안 동쪽',
-        },
-        outerEast: {
-          en: 'Outer East',
-          cn: '右外',
-          ko: '바깥 동쪽',
-        },
-        bigHalfmoonNoCoffin: {
+      },
+    },
+    {
+      id: 'souma r9s 冲出3',
+      type: 'StartsUsingExtra',
+      netRegex: { id: ['B368', 'B369', 'B36A'], capture: false },
+      delaySeconds: 10,
+      suppressSeconds: 10,
+      run: (data) => {
+        data.sSaw.length = 0;
+        data.sMoon = undefined;
+      },
+    },
+    {
+      id: 'souma r9s 月之半相',
+      type: 'StartsUsingExtra',
+      netRegex: {
+        id: [
+          'B34E',
+          'B350', // 左侧安全（左边=前，右边=后，前=左）
+        ],
+        capture: true,
+      },
+      infoText: (data, matches, output) => {
+        const side = matches.id === 'B34E' ? 'right' : 'left';
+        if (!data.sPlaying) {
+          // 普通情况
+          return output.text({
+            dir1: output[side](),
+            dir2: output[side === 'left' ? 'right' : 'left'](),
+          });
+        }
+        const dir = parseFloat(matches.y) >= 121
+          ? 'bottom'
+          : (parseFloat(matches.x) >= 100 ? 'right' : 'left');
+        data.sMoon = { side, dir };
+      },
+      outputStrings: {
+        left: Outputs.left,
+        right: Outputs.right,
+        text: { en: '${dir1} => ${dir2}' },
+      },
+    },
+    {
+      id: 'souma r9s 月之半相强化版',
+      type: 'StartsUsingExtra',
+      netRegex: {
+        id: [
+          'B351',
+          'B34F', // 右侧安全（强化版）
+        ],
+        capture: true,
+      },
+      infoText: (_data, matches, output) => {
+        const safe = matches.id === 'B351' ? 'left' : 'right';
+        return output.text({
+          dir1: output[safe](),
+          dir2: output[safe === 'left' ? 'right' : 'left'](),
+        });
+      },
+      outputStrings: {
+        left: Outputs.left,
+        right: Outputs.right,
+        text: {
           en: '${dir1} max melee => ${dir2} max melee',
-          fr: '${dir1} max melée => ${dir2} max melée',
           cn: '${dir1} 最大近战距离 => ${dir2} 最大近战距离',
-          ko: '${dir1} 칼끝딜 => ${dir2} 칼끝딜',
         },
       },
     },
@@ -766,64 +675,12 @@ hideall "--sync--"
       response: Responses.bigAoe(),
     },
     {
-      id: 'souma r9s 刺锤',
-      type: 'StartsUsingExtra',
-      netRegex: { id: 'B38B', capture: true },
-      preRun: (data, matches) => {
-        data.sFlailPositions.push(matches);
-      },
-      infoText: (data, _matches, output) => {
-        const [flail1Match, flail2Match] = data.sFlailPositions;
-        if (flail1Match === undefined || flail2Match === undefined)
-          return;
-        const flail1X = parseFloat(flail1Match.x);
-        const flail1Y = parseFloat(flail1Match.y);
-        const flail2X = parseFloat(flail2Match.x);
-        const flail2Y = parseFloat(flail2Match.y);
-        const flail1Dir = Directions.xyToIntercardDirOutput(flail1X, flail1Y, center.x, center.y);
-        const flail2Dir = Directions.xyToIntercardDirOutput(flail2X, flail2Y, center.x, center.y);
-        const flail1Dist = Math.abs(flail1Y - center.y) < 10 ? 'near' : 'far';
-        const flail2Dist = Math.abs(flail1Y - center.y) < 10 ? 'near' : 'far';
-        return output.text({
-          flail1Dir: output[flail1Dir](),
-          flail2Dir: output[flail2Dir](),
-          flail1Dist: output[flail1Dist](),
-          flail2Dist: output[flail2Dist](),
-        });
-      },
-      run: (data) => {
-        if (data.sFlailPositions.length < 2)
-          return;
-        data.sFlailPositions = [];
-      },
-      outputStrings: {
-        text: {
-          en: 'Flails ${flail1Dist} ${flail1Dir}/${flail2Dist} ${flail2Dir}',
-          de: 'Stachelbombe ${flail1Dist} ${flail1Dir}/${flail2Dist} ${flail2Dir}',
-          fr: 'Fléaux ${flail1Dist} ${flail1Dir}/${flail2Dist} ${flail2Dir}',
-          cn: '刺锤 ${flail1Dist}${flail1Dir}、${flail2Dist}${flail2Dir}',
-          ko: '철퇴 ${flail1Dist} ${flail1Dir}/${flail2Dist} ${flail2Dir}',
-        },
-        near: {
-          en: 'Near',
-          de: 'Nah',
-          fr: 'proche',
-          ja: '近',
-          cn: '近',
-          ko: '가까이',
-          tc: '近',
-        },
-        far: {
-          en: 'Far',
-          de: 'Fern',
-          fr: 'loin',
-          ja: '遠',
-          cn: '远',
-          ko: '멀리',
-          tc: '遠',
-        },
-        ...Directions.outputStringsIntercardDir,
-      },
+      id: 'souma r9s 感电',
+      type: 'StartsUsing',
+      netRegex: { id: 'B709', capture: false },
+      condition: (data) => data.role === 'tank',
+      suppressSeconds: 1,
+      response: Responses.getTowers(),
     },
     {
       id: 'souma r9s 刚刺发射 B38D',
@@ -831,36 +688,6 @@ hideall "--sync--"
       netRegex: { id: 'B38D', capture: false },
       suppressSeconds: 1,
       response: Responses.killAdds('alert'),
-    },
-    {
-      id: 'souma r9s 血蝠死斗',
-      type: 'StartsUsing',
-      netRegex: { id: 'B3A0', capture: false },
-      response: Responses.getTowers('alert'),
-    },
-    {
-      id: 'souma r9s 连线',
-      type: 'Tether',
-      netRegex: { 'id': '0161' },
-      condition: (data, matches) => data.me === matches.source,
-      preRun: (data, matches) => {
-        data.sTetherId = parseInt(matches.targetId, 16);
-      },
-    },
-    {
-      id: 'souma r9s 808',
-      type: 'GainsEffect',
-      netRegex: { effectId: '808', count: ['426', '427'] },
-      condition: (data, matches) => data.sTetherId === parseInt(matches.targetId, 16),
-      durationSeconds: 4,
-      infoText: (_data, matches, output) => {
-        const inout = matches.count === '427' ? 'in' : 'out';
-        return output[inout]();
-      },
-      outputStrings: {
-        in: { en: '月环:靠近蝙蝠' },
-        out: { en: '钢铁:站目标圈' },
-      },
     },
     {
       id: 'souma r9s Hell Awaits Gain Debuff Collector',
@@ -888,21 +715,9 @@ hideall "--sync--"
       response: (data, _matches, output) => {
         output.responseOutputStrings = {
           rolePositions: Outputs.rolePositions,
-          avoid: {
-            en: 'Avoid',
-            de: 'Vermeide',
-            cn: '避开',
-            ko: '피하기:',
-          },
-          text: {
-            en: '${avoid}${mech}',
-            de: '${avoid}${mech}',
-            cn: '${avoid}${mech}',
-            ko: '${avoid}${mech}',
-          },
-          tank: {
-            en: '${mech}+死刑',
-          },
+          avoid: { en: '避开' },
+          text: { en: '${avoid}${mech}' },
+          tank: { en: '${mech} + 死刑' },
         };
         if (data.role === 'tank' && !data.sHasHellAwaits)
           return {
@@ -930,60 +745,204 @@ hideall "--sync--"
       },
       outputStrings: {
         stack: Outputs.getTogether,
-        avoid: {
-          en: 'Avoid',
-          de: 'Vermeide',
-          cn: '避开',
-          ko: '피하기:',
-        },
-        text: {
-          en: '${avoid}${mech}',
-          de: '${avoid}${mech}',
-          cn: '${avoid}${mech}',
-          ko: '${avoid}${mech}',
-        },
+        avoid: { en: '避开' },
+        text: { en: '${avoid}${mech}' },
+      },
+    },
+    {
+      id: 'souma r9s 血蝠死斗',
+      type: 'StartsUsing',
+      netRegex: { id: 'B3A0', capture: false },
+      response: Responses.getTowers(),
+    },
+    {
+      id: 'souma r9s 连线',
+      type: 'Tether',
+      netRegex: { 'id': '0161' },
+      condition: (data, matches) => data.me === matches.source,
+      preRun: (data, matches) => {
+        data.sTetherId = parseInt(matches.targetId, 16);
+      },
+    },
+    {
+      id: 'souma r9s 808',
+      type: 'GainsEffect',
+      netRegex: { effectId: '808', count: ['426', '427'] },
+      condition: (data, matches) => data.sTetherId === parseInt(matches.targetId, 16),
+      durationSeconds: 4,
+      infoText: (_data, matches, output) => {
+        const inout = matches.count === '427' ? 'in' : 'out';
+        return output.text({ inout: output[inout]() });
+      },
+      outputStrings: {
+        in: { en: '月环' },
+        out: { en: '钢铁' },
+        text: { en: '蝙蝠${inout}' },
+      },
+    },
+    // {
+    //   id: 'souma r9s 嗜血抓挠',
+    //   type: 'StartsUsing',
+    //   netRegex: { id: ['B3A4', 'B3A5'],  capture: false },
+    //   infoText: (_data, _matches, output) => output.text!(),
+    //   outputStrings: {
+    //     text: {
+    //       en: 'Custom Text',
+    //       de: 'Benutzerdefinierter Text',
+    //       fr: 'Texte personnalisé',
+    //       cn: '自定义文本',
+    //     },
+    //   },
+    // },
+  ],
+  timelineReplace: [
+    {
+      'locale': 'en',
+      'replaceText': {
+        'Ultrasonic Spread/Ultrasonic Amp': 'Ultrasonic Spread/Amp',
+        'Ultrasonic Amp/Ultrasonic Spread': 'Ultrasonic Amp/Spread',
+      },
+    },
+    {
+      'locale': 'de',
+      'missingTranslations': true,
+      'replaceSync': {
+        'Coffinmaker': 'fatal(?:e|er|es|en) Säge',
+        'Fatal Flail': 'fatal(?:e|er|es|en) Stachelbombe',
+        'Vamp Fatale': 'Vamp Fatale',
+        'Vampette Fatale': 'fatal(?:e|er|es|en) Fledermaus',
+      },
+      'replaceText': {
+        '--coffinmaker--': '--Säge--',
+        '--cell': '--Zelle',
+        '--flail': '--Stachelbombe',
+        '--nail--': '--Blitzableiter--',
+        'Blast Beat': 'Resonanzwelle',
+        'Bloody Bondage': 'Blutige Fesseln',
+        'Breakdown Drop': 'Gebrochene Melodie',
+        'Breakwing Beat': 'Gebrochener Rhythmus',
+        'Coffinfiller': 'Sägenstich',
+        'Crowd Kill': 'Massenmeuchelei',
+        'Dead Wake': 'Sägenmarsch',
+        'Finale Fatale': 'Finale Fatale',
+        'Half Moon': 'Blutiger Halbmond',
+        'Hardcore': 'Dominanz',
+        'Hell in a Cell': 'Höllenkäfig',
+        'Insatiable Thirst': 'Unstillbarer Durst',
+        'Killer Voice': 'Todesecho',
+        'Plummet': 'Abfallen',
+        'Pulping Pulse': 'Zermalmender Puls',
+        'Sadistic Screech': 'Henkersmahl',
+        'Ultrasonic Amp': 'Fokusschall',
+        'Ultrasonic Spread': 'Streuschall',
+        'Undead Deathmatch': 'Fledermaus-Todeskampf',
+        'Vamp Stomp': 'Vampirstampfer',
+      },
+    },
+    {
+      'locale': 'fr',
+      'missingTranslations': true,
+      'replaceSync': {
+        'Coffinmaker': 'torture fatale',
+        'Fatal Flail': 'fléau fatal',
+        'Vamp Fatale': 'Vamp Fatale',
+        'Vampette Fatale': 'chauve-souris fatale',
+      },
+      'replaceText': {
+        'Blast Beat': 'Vague de résonance',
+        'Bloody Bondage': 'Bondage sanglant',
+        'Breakdown Drop': 'Fracas dévastateur',
+        'Breakwing Beat': 'Rythme dévastateur',
+        'Coffinfiller': 'Entaille funèbre',
+        'Crowd Kill': 'Fauchage du public',
+        'Dead Wake': 'Avancée',
+        'Finale Fatale': 'Final fatal',
+        'Half Moon': 'Demi-lunes',
+        'Hardcore': 'Attaque extrême',
+        'Hell in a Cell': 'Enfer carcéral',
+        'Insatiable Thirst': 'Soif insatiable',
+        'Killer Voice': 'Voix mortelle',
+        'Plummet': 'Chute',
+        'Pulping Pulse': 'Pulsation pulvérisante',
+        'Sadistic Screech': 'Crissement sadique',
+        'Ultrasonic Amp': '',
+        'Ultrasonic Spread': '',
+        'Undead Deathmatch': 'Chiroptère mortel',
+        'Vamp Stomp': 'Piétinement fatal',
+      },
+    },
+    {
+      'locale': 'ja',
+      'missingTranslations': true,
+      'replaceSync': {
+        'Coffinmaker': 'トーチャー・ファタール',
+        'Fatal Flail': 'スパイク・ファタール',
+        'Vamp Fatale': 'ヴァンプ・ファタール',
+        'Vampette Fatale': 'ファタールバット',
+      },
+      'replaceText': {
+        'Blast Beat': '共振波',
+        'Bloody Bondage': 'ブラッディボンテージ',
+        'Breakdown Drop': 'ブレイクダウン',
+        'Breakwing Beat': 'ブレイクビーツ',
+        'Coffinfiller': '突き出る',
+        'Crowd Kill': 'クラウドキリング',
+        'Dead Wake': '前進',
+        'Finale Fatale': 'フィナーレ・ファターレ',
+        'Half Moon': 'ハーフムーン',
+        'Hardcore': 'ハードコア',
+        'Hell in a Cell': 'ヘル・イン・ア・セル',
+        'Insatiable Thirst': 'インセーシャブル・サースト',
+        'Killer Voice': 'キラーボイス',
+        'Plummet': '落下',
+        'Pulping Pulse': 'パルピングパルス',
+        'Sadistic Screech': 'サディスティック・スクリーチ',
+        'Ultrasonic Amp': '',
+        'Ultrasonic Spread': '',
+        'Undead Deathmatch': 'バット・デスマッチ',
+        'Vamp Stomp': 'ヴァンプストンプ',
+      },
+    },
+    {
+      'locale': 'cn',
+      'replaceSync': {
+        'Charnel Cell': '致命棘狱',
+        'Coffinmaker': '致命刑锯',
+        'Deadly Doornail': '致命电杖',
+        'Fatal Flail': '致命刺锤',
+        'Vamp Fatale': '致命美人',
+        'Vampette Fatale': '致命蝙蝠',
+      },
+      'replaceText': {
+        '--coffinmaker--': '--致命刑锯--',
+        '--cell': '--致命棘狱',
+        '--flail': '--致命刺锤',
+        '--nail--': '--致命电杖--',
+        'Aetherletting(?! Proteans)': '以太流失',
+        'Aetherletting Proteans': '以太流失扇形',
+        'Blast Beat': '共振波',
+        'Bloody Bondage': '血锁牢狱',
+        'Breakdown Drop': '以太碎击',
+        'Breakwing Beat': '以太碎拍',
+        'Brutal Rain': '粗暴之雨',
+        'Coffinfiller': '冲出',
+        'Crowd Kill': '全场杀伤',
+        'Dead Wake': '前进',
+        'Finale Fatale': '致命的闭幕曲',
+        'Half Moon': '月之半相',
+        'Hardcore': '硬核之声',
+        'Hell in a Cell': '笼中地狱',
+        'Insatiable Thirst': '贪欲无厌',
+        'Killer Voice': '魅亡之音',
+        'Plummet': '掉落',
+        'Pulping Pulse': '碎烂脉冲',
+        'Sadistic Screech': '施虐的尖啸',
+        'Sanguine Scratch': '嗜血抓挠',
+        'Ultrasonic Amp': '音速集聚',
+        'Ultrasonic Spread': '音速流散',
+        'Undead Deathmatch': '血蝠死斗',
+        'Vamp Stomp': '血魅的靴踏音',
       },
     },
   ],
-  timelineReplace: [{
-    'locale': 'cn',
-    'replaceSync': {
-      'Charnel Cell': '致命棘狱',
-      'Coffinmaker': '致命刑锯',
-      'Deadly Doornail': '致命电杖',
-      'Fatal Flail': '致命刺锤',
-      'Vamp Fatale': '致命美人',
-      'Vampette Fatale': '致命蝙蝠',
-    },
-    'replaceText': {
-      '--coffinmaker--': '--致命刑锯--',
-      '--cell': '--致命棘狱',
-      '--flail': '--致命刺锤',
-      '--nail--': '--致命电杖--',
-      'Aetherletting(?! Proteans)': '以太流失',
-      'Aetherletting Proteans': '以太流失扇形',
-      'Blast Beat': '共振波',
-      'Bloody Bondage': '血锁牢狱',
-      'Breakdown Drop': '以太碎击',
-      'Breakwing Beat': '以太碎拍',
-      'Brutal Rain': '粗暴之雨',
-      'Coffinfiller': '冲出',
-      'Crowd Kill': '全场杀伤',
-      'Dead Wake': '前进',
-      'Finale Fatale': '致命的闭幕曲',
-      'Half Moon': '月之半相',
-      'Hardcore': '硬核之声',
-      'Hell in a Cell': '笼中地狱',
-      'Insatiable Thirst': '贪欲无厌',
-      'Killer Voice': '魅亡之音',
-      'Plummet': '掉落',
-      'Pulping Pulse': '碎烂脉冲',
-      'Sadistic Screech': '施虐的尖啸',
-      'Sanguine Scratch': '嗜血抓挠',
-      'Ultrasonic Amp': '音速集聚',
-      'Ultrasonic Spread': '音速流散',
-      'Undead Deathmatch': '血蝠死斗',
-      'Vamp Stomp': '血魅的靴踏音',
-    },
-  }],
 });
