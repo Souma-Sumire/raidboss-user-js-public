@@ -790,26 +790,32 @@ hideall "--sync--"
       // netRegex: { npcNameId: '14378', npcBaseId: ['19200', '19201'], capture: true },
       type: 'CombatantMemory',
       netRegex: {
-        change: 'Add',
+        change: ['Add', 'Change'],
         id: '4[0-9A-Fa-f]{7}',
-        pair: [{
-          key: 'BNpcID',
-          value: ['4B00', '4B01'],
-        }, {
-          key: 'BNpcNameID',
-          value: '382A',
-        }],
         capture: true,
       },
       preRun: (data, matches) => {
-        data.sBalls.push(matches);
+        if (
+          matches.change === 'Add' && matches.pairBNpcNameID === '382A' &&
+          matches.pairBNpcID !== undefined && ['4B00', '4B01'].includes(matches.pairBNpcID)
+        ) {
+          data.sBalls.push(matches);
+        } else if (matches.change === 'Change') {
+          const ball = data.sBalls.find((v) => v.id === matches.id);
+          if (ball) {
+            if (matches.pairPosX !== undefined)
+              ball.pairPosX = matches.pairPosX;
+          }
+        }
       },
       durationSeconds: 20,
       infoText: (data, _matches, output) => {
-        if (data.sBallsOver || data.sBalls.length % 2 !== 0) {
+        const purples = data.sBalls.filter((v) =>
+          v.pairBNpcID === '4B00' && v.pairPosX !== '100.0000'
+        );
+        if (data.sBallsOver || purples.length % 2 !== 0) {
           return;
         }
-        const purples = data.sBalls.filter((v) => v.pairBNpcID === '4B00');
         if (purples.length > 0) {
           const purpleSide = parseFloat(purples[0].pairPosX) < 100 ? 'left' : 'right';
           if (data.role === 'dps') {
@@ -848,7 +854,7 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        text: { en: '${side} ${ordered}' },
+        text: { en: '${side}：${ordered}' },
         t: { en: 'T' },
         h: { en: '奶' },
         left: { en: '左' },
@@ -1148,8 +1154,8 @@ hideall "--sync--"
     },
     {
       id: 'souma r12s p2 天顶猛击',
-      type: 'Ability',
-      netRegex: { 'id': 'B4DE', 'capture': true, 'type': '22' },
+      type: 'AbilityExtra',
+      netRegex: { 'id': 'B4DE', 'capture': true },
       suppressSeconds: 999,
       run: (data, matches) => {
         data.sP2二运火分身 = {
@@ -1163,45 +1169,36 @@ hideall "--sync--"
       id: 'souma r12s p2 蛇踢 B527吧吧吧',
       type: 'StartsUsing',
       netRegex: { id: 'B527', capture: false },
-      delaySeconds: 4,
+      delaySeconds: 13,
       suppressSeconds: 999,
       promise: async (data) => {
         data.sCombatantData = (await callOverlayHandler({
           call: 'getCombatants',
         })).combatants.filter((v) =>
           v.ID &&
-          v.BNpcID === 19204 && v.BNpcNameID === 14380 && v.Job === 0 &&
-          // v.PosX && v.PosY && v.PosZ &&
-          // v.PosZ === 0 &&
-          !(v.PosX === 100 && v.PosY === 100) &&
-          v.Radius === 5 && v.Type === 2 && v.WorldID === 65535 &&
-          v.PosX !== undefined && v.PosY !== undefined
+          v.BNpcID === 19204 && v.BNpcNameID === 14380 &&
+          v.PosX !== undefined && v.PosY !== undefined &&
+          !(v.PosX === 100 && v.PosY === 100)
         );
-        data.sP2二运暗分身.x = data.sActorPositions[data.sP2二运暗分身.id].x;
-        data.sP2二运暗分身.y = data.sActorPositions[data.sP2二运暗分身.id].y;
-        data.sP2二运火分身.x = data.sActorPositions[data.sP2二运火分身.id].x;
-        data.sP2二运火分身.y = data.sActorPositions[data.sP2二运火分身.id].y;
         const fire = data.sP2二运火分身;
         const dark = data.sP2二运暗分身;
         // console.log(fire, dark);
         const origin = data.sCombatantData.map((v) => {
           return {
-            ID: v.ID,
             id: v.ID.toString(16).toUpperCase(),
+            disD: getDis(dark.x, dark.y, v.PosX, v.PosY),
+            disF: getDis(fire.x, fire.y, v.PosX, v.PosY),
             x: v.PosX,
             y: v.PosY,
-            darkDis: getDis(dark.x, dark.y, v.PosX, v.PosY),
-            fireDis: getDis(fire.x, fire.y, v.PosX, v.PosY),
           };
         });
         // console.log(origin.slice());
-        // 近1 = 5，近2 = 5，斜别组近3= 7.4
-        data.sP2二运火分身分身 = origin.filter((v) => (v.fireDis < 6 && v.fireDis > 4)).map((v) => ({
+        data.sP2二运火分身分身 = origin.filter((v) => (v.disF < 6 && v.disF > 4)).map((v) => ({
           id: v.id,
           x: v.x,
           y: v.y,
         }));
-        data.sP2二运暗分身分身 = origin.filter((v) => (v.darkDis < 6 && v.darkDis > 4)).map((v) => ({
+        data.sP2二运暗分身分身 = origin.filter((v) => (v.disD < 6 && v.disD > 4)).map((v) => ({
           id: v.id,
           x: v.x,
           y: v.y,
@@ -1214,7 +1211,7 @@ hideall "--sync--"
       comment: { en: '根据职业判断近战/远程，不考虑D2黑魔的特殊情况。' },
       type: 'StartsUsing',
       netRegex: { id: 'B527', capture: false },
-      delaySeconds: 14.3,
+      delaySeconds: 15,
       durationSeconds: 5.5,
       suppressSeconds: 999,
       promise: async (data) => {
@@ -1223,25 +1220,11 @@ hideall "--sync--"
         })).combatants.filter((v) =>
           v.ID &&
           v.BNpcID === 19204 && v.BNpcNameID === 14380 &&
-          v.PosX !== 100 && v.PosY !== 100
+          v.PosX !== undefined && v.PosY !== undefined &&
+          !(v.PosX === 100 && v.PosY === 100)
         );
       },
       alertText: (data, _matches, output) => {
-        if (!data.sP2二运火分身分身 || !data.sP2二运暗分身分身) {
-          console.error('蛇踢触发器数据缺失:', {
-            火分身分身: data.sP2二运火分身分身,
-            暗分身分身: data.sP2二运暗分身分身,
-            战斗员数据: data.sCombatantData?.length,
-          });
-          return output.error();
-        }
-        if (!data.sP2二运我找谁 || !data.sP2一运打哪里) {
-          console.error('蛇踢触发器buff数据缺失:', {
-            我找谁: data.sP2二运我找谁,
-            打哪里: data.sP2一运打哪里,
-          });
-          return output.error();
-        }
         const fires = data.sCombatantData.filter((v) =>
           data.sP2二运火分身分身.some((v2) => v2.id === v.ID.toString(16).toUpperCase())
         ).map((v) => {
@@ -1252,6 +1235,7 @@ hideall "--sync--"
             dir: Directions.xyToIntercardDirOutput(v.PosX, v.PosY, center.x, center.y),
           };
         }).sort((v1, v2) => v1.dis - v2.dis);
+        // console.log(JSON.stringify(data.sCombatantData));
         const darks = data.sCombatantData.filter((v) =>
           data.sP2二运暗分身分身.some((v2) => v2.id === v.ID.toString(16).toUpperCase())
         ).map((v) => {
@@ -1289,7 +1273,7 @@ hideall "--sync--"
         return output.caster({ caster: casterText, dir: casterDir, attr: attr });
       },
       outputStrings: {
-        error: { en: '⚠️数据错误,请查看控制台' },
+        error: { en: '???' },
         A: { en: 'A' },
         B: { en: 'B' },
         C: { en: 'C' },
