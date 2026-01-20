@@ -33,6 +33,23 @@ Options.Triggers.push({
   id: 'AacHeavyweightM4Savage',
   zoneId: ZoneId.AacHeavyweightM4Savage,
   zoneLabel: { en: 'M12S Souma特供版' },
+  config: [
+    {
+      id: 'soumaM12Sbentiyiyun',
+      name: {
+        en: '本体一运近战报法',
+      },
+      type: 'select',
+      options: {
+        en: {
+          '整合文档（看刀）': 'doc',
+          'MMW（猫猫窝）': 'mmw',
+          '不报安全区（精准）': 'skip',
+        },
+      },
+      default: 'doc',
+    },
+  ],
   overrideTimelineFile: true,
   timeline: `hideall "--Reset--"
 hideall "--sync--"
@@ -1225,6 +1242,8 @@ hideall "--sync--"
         );
       },
       alertText: (data, _matches, output) => {
+        if (data.triggerSetConfig.soumaM12Sbentiyiyun === 'skip')
+          return;
         const fires = data.sCombatantData.filter((v) =>
           data.sP2二运火分身分身.some((v2) => v2.id === v.ID.toString(16).toUpperCase())
         ).map((v) => {
@@ -1260,7 +1279,13 @@ hideall "--sync--"
         const wmCaster = data.sP2一运打哪里 === 'AC' ? ['B', 'D'] : ['A', 'C'];
         const meleeAdd = data.sP2二运我找谁 === 'fire' ? fire1.dir : dark1.dir;
         const casterAdd = data.sP2二运我找谁 === 'fire' ? fire2.dir : dark2.dir;
-        const melee = warymark[meleeAdd].find((v) => wmMelee.includes(v));
+        let melee = warymark[meleeAdd].find((v) => wmMelee.includes(v));
+        if (data.triggerSetConfig.soumaM12Sbentiyiyun === 'doc') {
+          if (data.sP2二运我找谁 === 'fire' || data.role === 'tank')
+            melee = warymark[meleeAdd].find((v) => v === 'A' || v === 'C');
+          else
+            melee = warymark[meleeAdd].find((v) => v === 'B' || v === 'D');
+        }
         const caster = warymark[casterAdd].find((v) => wmCaster.includes(v));
         const meleeDir = output[meleeAdd]();
         const casterDir = output[casterAdd]();
