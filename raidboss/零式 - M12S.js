@@ -49,6 +49,20 @@ Options.Triggers.push({
       },
       default: 'doc',
     },
+    {
+      id: 'soumaM12Sbentisiyun',
+      name: {
+        en: '本体四运分组分摊处理方法',
+      },
+      type: 'select',
+      options: {
+        en: {
+          '盗火改（MT组ST组）': 'stealfire',
+          '盗火uptime（T组远程组近战闲人）': 'uptime',
+        },
+      },
+      default: 'stealfire',
+    },
   ],
   overrideTimelineFile: true,
   timeline: `hideall "--Reset--"
@@ -1797,11 +1811,16 @@ hideall "--sync--"
       durationSeconds: 13,
       suppressSeconds: 999,
       alertText: (data, _matches, output) => {
-        return output[data.s四运长记忆1]();
+        let str = data.s四运长记忆1;
+        if (data.triggerSetConfig.soumaM12Sbentisiyun === 'uptime')
+          str += 'uptime';
+        return output[str]();
       },
       outputStrings: {
         正点先刷: { en: 'MT组去A，ST组去B' },
         斜点先刷: { en: 'MT组去4，ST组去3' },
+        正点先刷uptime: { en: 'T组去A，远组去B，近战去1' },
+        斜点先刷uptime: { en: 'T组去4，远组去3，近战去D' },
       },
     },
     {
@@ -1816,11 +1835,16 @@ hideall "--sync--"
       durationSeconds: 13,
       suppressSeconds: 999,
       alertText: (data, _matches, output) => {
-        return output[data.s四运长记忆1]();
+        let str = data.s四运长记忆1;
+        if (data.triggerSetConfig.soumaM12Sbentisiyun === 'uptime')
+          str += 'uptime';
+        return output[str]();
       },
       outputStrings: {
         正点先刷: { en: 'MT组去4，ST组去3' },
         斜点先刷: { en: 'MT组去A，ST组去B' },
+        正点先刷uptime: { en: 'T组去4，远组去3，近战去D' },
+        斜点先刷uptime: { en: 'T组去A，远组去B，近战去1' },
       },
     },
     {
