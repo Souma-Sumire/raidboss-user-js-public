@@ -1,17 +1,21 @@
+// Build Time: 2026-01-27T20:52:16.489Z
 const headmarkers = {
-  '死刑': '0158',
-  '拉线': '0291',
-  '分摊': '013D',
-  '分散': '0177',
+  '点奶分摊': '00A9',
+  '死刑': '0160',
+  '拉线': '0299',
+  '分摊': '0145',
+  '分散': '017F',
 };
-const firstHeadmarker = parseInt(headmarkers['死刑'], 16);
 const getHeadmarkerId = (data, matches) => {
+  if (data.firstHeadmarker === undefined) {
+    return undefined;
+  }
   if (data.sStage === '本体') {
     // 本体不需要
     return undefined;
   }
   if (data.decOffset === undefined)
-    data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+    data.decOffset = parseInt(matches.id, 16) - parseInt(data.firstHeadmarker, 16);
   return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, '0');
 };
 const deepClone = (obj) => {
@@ -260,6 +264,9 @@ hideall "--sync--"
       s四运B9D9: [],
       sCombatantMemory: {},
       sActorPositionsClone: {},
+      decOffset: undefined,
+      firstHeadmarker: undefined,
+      headmarkers: [],
     };
   },
   triggers: [
@@ -327,6 +334,30 @@ hideall "--sync--"
             bNpcId: matches.pairBNpcID,
             tower: towers[matches.pairBNpcID],
           };
+        }
+      },
+    },
+    {
+      id: 'souma r12s First Headmarker',
+      type: 'HeadMarker',
+      netRegex: {},
+      preRun: (data, matches) => {
+        if (data.decOffset === undefined) {
+          data.headmarkers.push(matches.id);
+        }
+      },
+      delaySeconds: (data) => data.decOffset === undefined ? 0.5 : 0,
+      run: (data, matches) => {
+        if (data.decOffset === undefined) {
+          // data.headmarkers里现在应该有3个id，其中出现一次的就是点奶分摊的ID，出现两次的就是死刑的实际ID
+          const marker = data.headmarkers.find((v) =>
+            data.headmarkers.filter((v2) => v2 === v).length === 1
+          );
+          if (marker !== undefined) {
+            data.firstHeadmarker = headmarkers.点奶分摊;
+            getHeadmarkerId(data, matches);
+            data.headmarkers.length = 0;
+          }
         }
       },
     },
@@ -540,7 +571,7 @@ hideall "--sync--"
       type: 'GainsEffect',
       netRegex: { effectId: ['1292', '1290'], capture: true },
       condition: Conditions.targetIsYou(),
-      delaySeconds: (_data, matches) => parseFloat(matches.duration) + 14,
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) + 12.5,
       suppressSeconds: 999,
       infoText: (data, _matches, output) => {
         if (data.sMj?.mj === '1麻' || data.sMj?.mj === '2麻') {
@@ -716,6 +747,8 @@ hideall "--sync--"
         capture: true,
       },
       condition: Conditions.targetIsYou(),
+      sound: '',
+      soundVolume: 0,
       infoText: (data, matches, output) => {
         data.sWings2 = {
           '436': '前',
@@ -727,10 +760,10 @@ hideall "--sync--"
       },
       tts: null,
       outputStrings: {
-        '前': { en: '(前)' },
-        '右': { en: '(右)' },
-        '后': { en: '(后)' },
-        '左': { en: '(左)' },
+        '前': { en: '(去下)' },
+        '右': { en: '(去左)' },
+        '后': { en: '(去上)' },
+        '左': { en: '(去右)' },
       },
     },
     // 斜点安全
@@ -857,9 +890,9 @@ hideall "--sync--"
       },
       durationSeconds: 20,
       infoText: (data, _matches, output) => {
-        const purples = data.sBalls.filter((v) =>
-          v.pairBNpcID === '4B00' && v.pairPosX !== '100.0000'
-        );
+        const balls = data.sBalls.filter((v) => v.pairPosX !== '100.0000');
+        const purples = balls.filter((v) => v.pairBNpcID === '4B00');
+        const greens = balls.filter((v) => v.pairBNpcID === '4B01');
         if (data.sBallsOver || purples.length % 2 !== 0) {
           return;
         }
@@ -898,6 +931,18 @@ hideall "--sync--"
               ordered: result,
             });
           }
+        }
+        if (greens.length === 6 && purples.length === 0) {
+          // 一边有4个绿，一边有2个绿，找到2个绿的那边当作2紫，报HHTT
+          const leftGreen = greens.filter((v) => parseFloat(v.pairPosX) < 100);
+          const rightGreen = greens.filter((v) => parseFloat(v.pairPosX) > 100);
+          const greenSide = leftGreen.length < rightGreen.length ? 'left' : 'right';
+          data.sBallsOver = true;
+          data.sBallsFirst = true;
+          return output.text({
+            side: output[greenSide](),
+            ordered: [...'hhtt'].map((v) => output[v]()).join('/'),
+          });
         }
       },
       outputStrings: {

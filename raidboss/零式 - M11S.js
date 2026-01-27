@@ -1,3 +1,4 @@
+// Build Time: 2026-01-27T20:52:16.489Z
 const center = {
   x: 100,
   y: 100,
@@ -70,10 +71,10 @@ const headmarkers = {
   '001E': '001E',
   // Offsets: 01:51
   // Vfx Path: target_ae_s5f
-  '008B': '008B',
+  '散开': '008B',
   // Offsets: 01:25, 02:25
   // Vfx Path: com_share3t
-  '00A1': '00A1',
+  '分摊': '00A1',
   // Offsets: 04:54, 05:04, 05:14, 06:36, 07:08
   // Vfx Path: lockon8_t0w
   '00F4': '00F4',
@@ -85,10 +86,12 @@ const headmarkers = {
   '020D': '020D',
   '0164': '0164',
 };
-const firstHeadmarker = parseInt(headmarkers['00A1'], 16);
 const getHeadmarkerId = (data, matches) => {
+  if (data.firstHeadmarker === undefined) {
+    return undefined;
+  }
   if (data.decOffset === undefined)
-    data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+    data.decOffset = parseInt(matches.id, 16) - parseInt(data.firstHeadmarker, 16);
   return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, '0');
 };
 Options.Triggers.push({
@@ -175,6 +178,8 @@ hideall "--sync--"
       sOrbital: [],
       sOrbitalSafe: [],
       firstWeapon: true,
+      headmarkers: [],
+      firstHeadmarker: undefined,
     };
   },
   triggers: [
@@ -315,22 +320,33 @@ hideall "--sync--"
       },
     },
     {
-      id: 'souma r11s Headmarker Spread 008B',
+      id: 'souma r11s First Headmarker',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['008B'],
-      suppressSeconds: 5,
-      response: Responses.spread(),
-    },
-    {
-      id: 'souma r11s Headmarker Stack 00A1',
-      type: 'HeadMarker',
-      netRegex: {},
-      condition: (data, matches) =>
-        getHeadmarkerId(data, matches) === headmarkers['00A1'] && data.sPhase !== '劈刀',
-      suppressSeconds: 1,
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: { text: { en: '分摊' } },
+      preRun: (data, matches) => {
+        if (data.decOffset === undefined) {
+          data.headmarkers.push(matches.id);
+        }
+      },
+      delaySeconds: (data) => data.decOffset === undefined ? 0.5 : 0,
+      infoText: (data, matches, output) => {
+        if (data.decOffset === undefined) {
+          data.firstHeadmarker = data.headmarkers.length === 1 ? headmarkers.分摊 : headmarkers.散开;
+        }
+        const id = getHeadmarkerId(data, matches);
+        if (id === headmarkers.散开 && data.headmarkers.length) {
+          data.headmarkers.length = 0;
+          return output.spread();
+        }
+        if (id === headmarkers.分摊 && data.sPhase !== '劈刀') {
+          data.headmarkers.length = 0;
+          return output.stack();
+        }
+      },
+      outputStrings: {
+        spread: { en: '散开' },
+        stack: { en: '分摊' },
+      },
     },
     {
       id: 'souma r11s Headmarker Healer Groups 0131',

@@ -1,3 +1,4 @@
+// Build Time: 2026-01-27T20:52:16.489Z
 const headmarkers = {
   // Offsets: 00:41, 04:12, 08:13
   // Vfx Path: com_share4a1
