@@ -1,3 +1,19 @@
+const headmarkers = {
+  '死刑': '0158',
+  '拉线': '0291',
+  '分摊': '013D',
+  '分散': '0177',
+};
+const firstHeadmarker = parseInt(headmarkers['死刑'], 16);
+const getHeadmarkerId = (data, matches) => {
+  if (data.sStage === '本体') {
+    // 本体不需要
+    return undefined;
+  }
+  if (data.decOffset === undefined)
+    data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+  return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, '0');
+};
 const deepClone = (obj) => {
   if (obj === null || typeof obj !== 'object')
     return obj;
@@ -895,8 +911,10 @@ hideall "--sync--"
     {
       id: 'souma r12s 拉线之1',
       type: 'HeadMarker',
-      netRegex: { id: '0291', capture: true },
-      condition: (data, matches) => data.sPhase === '第二次细胞' && matches.target === data.me,
+      netRegex: {},
+      condition: (data, matches) =>
+        data.sPhase === '第二次细胞' && matches.target === data.me &&
+        getHeadmarkerId(data, matches) === headmarkers.拉线,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: { en: '集合拉线' },
@@ -1026,8 +1044,9 @@ hideall "--sync--"
     {
       id: 'souma r12s 喋血分摊分散',
       type: 'HeadMarker',
-      netRegex: { id: ['013D'], capture: true },
-      condition: (data) => data.sPhase === '喋血',
+      netRegex: {},
+      condition: (data, matches) =>
+        data.sPhase === '喋血' && getHeadmarkerId(data, matches) === headmarkers.分摊,
       suppressSeconds: 1,
       infoText: (data, matches, output) => {
         const gimmick = (data.party.nameToRole_[matches.target] === 'dps') === (data.role === 'dps')

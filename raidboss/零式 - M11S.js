@@ -64,7 +64,7 @@ const handleOrb = (arr) => {
   const safe = getOrbitalSafe(int.map((x) => x.map((x) => x.toString()).join('')).join(''));
   return { orb, int, safe };
 };
-const headMarkerData = {
+const headmarkers = {
   // Offsets: 08:58
   // Vfx Path: m0017trg_a0c
   '001E': '001E',
@@ -84,6 +84,12 @@ const headMarkerData = {
   // Vfx Path: share_laser_5sec_0t
   '020D': '020D',
   '0164': '0164',
+};
+const firstHeadmarker = parseInt(headmarkers['00A1'], 16);
+const getHeadmarkerId = (data, matches) => {
+  if (data.decOffset === undefined)
+    data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+  return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, '0');
 };
 Options.Triggers.push({
   id: 'AacHeavyweightM3Savage',
@@ -302,7 +308,8 @@ hideall "--sync--"
     {
       id: 'souma r11s Headmarker Custom 001E',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['001E'], capture: true },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['001E'],
       preRun: (data, matches) => {
         data.sMeteor.push(matches.target);
       },
@@ -310,15 +317,17 @@ hideall "--sync--"
     {
       id: 'souma r11s Headmarker Spread 008B',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['008B'], capture: true },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['008B'],
       suppressSeconds: 5,
       response: Responses.spread(),
     },
     {
       id: 'souma r11s Headmarker Stack 00A1',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['00A1'], capture: true },
-      condition: (data) => data.sPhase !== '劈刀',
+      netRegex: {},
+      condition: (data, matches) =>
+        getHeadmarkerId(data, matches) === headmarkers['00A1'] && data.sPhase !== '劈刀',
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '分摊' } },
@@ -326,7 +335,8 @@ hideall "--sync--"
     {
       id: 'souma r11s Headmarker Healer Groups 0131',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['0131'], capture: false },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['0131'],
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.healerGroups(),
       outputStrings: {
@@ -730,7 +740,7 @@ hideall "--sync--"
         const safe = safeLookup[matches.id];
         if (!safe) {
           // Handle the error: log it, return early, or set defaults
-          console.error(`ID ${matches.id} not found in safe mapping`);
+          // console.error(`ID ${matches.id} not found in safe mapping`);
           return;
         }
         const [sideSide, num] = safe;
@@ -755,7 +765,8 @@ hideall "--sync--"
     {
       id: 'souma r11s 陨石点名结算',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['001E'], capture: false },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['001E'],
       delaySeconds: 0.5,
       suppressSeconds: 1,
       response: (data, _matches, output) => {

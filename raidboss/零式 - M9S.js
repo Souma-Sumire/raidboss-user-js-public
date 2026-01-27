@@ -1,4 +1,4 @@
-const headMarkerData = {
+const headmarkers = {
   // Offsets: 00:41, 04:12, 08:13
   // Vfx Path: com_share4a1
   '0131': '0131',
@@ -8,6 +8,12 @@ const headMarkerData = {
   // Offsets: 03:08, 03:10, 03:12, 03:14
   // Vfx Path: lockon5_line_1p
   '028C': '028C',
+};
+const firstHeadmarker = parseInt(headmarkers['01D4'], 16);
+const getHeadmarkerId = (data, matches) => {
+  if (data.decOffset === undefined)
+    data.decOffset = parseInt(matches.id, 16) - firstHeadmarker;
+  return (parseInt(matches.id, 16) - data.decOffset).toString(16).toUpperCase().padStart(4, '0');
 };
 const center = {
   x: 100,
@@ -369,20 +375,23 @@ hideall "--sync--"
     {
       id: 'souma r9s Headmarker Stack 0131',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['0131'], capture: true },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['0131'],
       response: Responses.stackMarkerOn(),
     },
     {
       id: 'souma r9s Headmarker Tankbuster 01D4',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['01D4'], capture: true },
+      netRegex: {},
+      condition: (data, matches) => getHeadmarkerId(data, matches) === headmarkers['01D4'],
       response: Responses.tankBuster(),
     },
     {
       id: 'souma r9s Headmarker Spread 028C',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData['028C'], capture: true },
-      condition: Conditions.targetIsYou(),
+      netRegex: {},
+      condition: (data, matches) =>
+        matches.target === data.me && getHeadmarkerId(data, matches) === headmarkers['028C'],
       infoText: (_data, _matches, output) => output.seed(),
       outputStrings: {
         seed: {
