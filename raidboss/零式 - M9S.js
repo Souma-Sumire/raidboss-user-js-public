@@ -1,4 +1,4 @@
-// Build Time: 2026-01-27T20:52:16.489Z
+// Build Time: 2026-01-29T19:10:06.820Z
 const headmarkers = {
   // Offsets: 00:41, 04:12, 08:13
   // Vfx Path: com_share4a1
@@ -535,7 +535,18 @@ hideall "--sync--"
       netRegex: { id: ['B368', 'B369', 'B36A'], capture: false },
       delaySeconds: 0.5,
       suppressSeconds: 10,
-      infoText: (data, _matches, output) => {
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          left: Outputs.left,
+          right: Outputs.right,
+          front: Outputs.front,
+          back: Outputs.back,
+          text: { en: '${start} => ${end}' },
+          textWithStep: { en: '${start} => ${end} (${step})' },
+          step1: { en: '1 step', cn: '一步' },
+          step2: { en: '2 steps', cn: '两步' },
+          step3: { en: '3 steps', cn: '三步' },
+        };
         const dir = {
           'right+right': 'front',
           'right+left': 'back',
@@ -553,26 +564,42 @@ hideall "--sync--"
           'front': 'back',
           'back': 'front',
         }[start];
-        const diff = Math.abs(data.sSaw.at(0) - data.sSaw.at(1));
-        const isFar = diff > 14 && data.sMoon?.dir === 'bottom';
-        return output.text({
-          start: output[start](),
-          end: output[end](),
-          far: isFar ? output.far() : '',
-        });
-      },
-      outputStrings: {
-        left: Outputs.left,
-        right: Outputs.right,
-        front: Outputs.front,
-        back: Outputs.back,
-        text: {
-          en: '${start} => ${end}${far}',
-        },
-        far: {
-          en: 'Far',
-          cn: '（三步）',
-        },
+        if (data.sMoon?.dir === 'bottom') {
+          const getSawIndex = (x) => {
+            const values = [92.502, 97.057, 102.512, 107.517];
+            return values.reduce(
+              (bestIdx, curr, idx) =>
+                Math.abs(curr - x) < Math.abs(values[bestIdx] - x) ? idx : bestIdx,
+              0,
+            ) + 1;
+          };
+          const indexs = [getSawIndex(data.sSaw[0]), getSawIndex(data.sSaw[1])];
+          const steps = {
+            'left13': 1,
+            'left14': 2,
+            'left23': 2,
+            'left24': 3,
+            'right13': 3,
+            'right14': 2,
+            'right23': 2,
+            'right24': 1,
+          };
+          const step = steps[`${data.sMoon.side}${indexs.join('')}`];
+          return {
+            [step === 3 ? 'alarmText' : step === 2 ? 'alertText' : 'infoText']: output
+              .textWithStep({
+                start: output[start](),
+                end: output[end](),
+                step: output[`step${step}`](),
+              }),
+          };
+        }
+        return {
+          infoText: output.text({
+            start: output[start](),
+            end: output[end](),
+          }),
+        };
       },
     },
     {
