@@ -1,4 +1,4 @@
-// Build Time: 2026-01-27T20:52:16.489Z
+// Build Time: 2026-01-31T14:17:23.743Z
 const headmarkers = {
   '点奶分摊': '00A9',
   '死刑': '0160',
@@ -619,7 +619,7 @@ hideall "--sync--"
       type: 'ActorSetPos',
       netRegex: {
         id: '4[0-9A-Fa-f]{7}',
-        heading: '-0.0001',
+        heading: '0.0000',
         x: [
           '85.0000',
           '96.0000',
