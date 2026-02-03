@@ -1,4 +1,4 @@
-// Build Time: 2026-01-31T14:17:23.743Z
+// Build Time: 2026-02-03T13:53:15.855Z
 const headmarkers = {
   '点奶分摊': '00A9',
   '死刑': '0160',
@@ -917,6 +917,8 @@ hideall "--sync--"
             const side = data.sBallsFirst ? '' : output[purpleSide]();
             const ordered = data.sBalls.filter((v) =>
               purpleSide === 'left' ? parseFloat(v.pairPosX) < 100 : parseFloat(v.pairPosX) > 100
+            ).sort((a, b) =>
+              Math.abs(parseFloat(a.pairPosX) - 100) - Math.abs(parseFloat(b.pairPosX) - 100)
             ).map((v) => v.pairBNpcID === '4B00' ? 't' : 'h');
             // console.log(data.sBalls.slice(), ordered);
             const result = Array.from({ length: 4 }, (_, i) => ordered[i] ?? 'h').map((v) =>
