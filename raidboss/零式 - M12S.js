@@ -1,4 +1,4 @@
-// Build Time: 2026-02-03T13:53:15.855Z
+// Build Time: 2026-02-04T09:50:45.983Z
 const headmarkers = {
   '点奶分摊': '00A9',
   '死刑': '0160',
@@ -893,7 +893,7 @@ hideall "--sync--"
         const balls = data.sBalls.filter((v) => v.pairPosX !== '100.0000');
         const purples = balls.filter((v) => v.pairBNpcID === '4B00');
         const greens = balls.filter((v) => v.pairBNpcID === '4B01');
-        if (data.sBallsOver || purples.length % 2 !== 0) {
+        if (data.sBallsOver || balls.length % 2 !== 0) {
           return;
         }
         if (purples.length > 0) {
@@ -918,7 +918,7 @@ hideall "--sync--"
             const ordered = data.sBalls.filter((v) =>
               purpleSide === 'left' ? parseFloat(v.pairPosX) < 100 : parseFloat(v.pairPosX) > 100
             ).sort((a, b) =>
-              Math.abs(parseFloat(a.pairPosX) - 100) - Math.abs(parseFloat(b.pairPosX) - 100)
+              Math.abs(parseFloat(b.pairPosX) - 100) - Math.abs(parseFloat(a.pairPosX) - 100)
             ).map((v) => v.pairBNpcID === '4B00' ? 't' : 'h');
             // console.log(data.sBalls.slice(), ordered);
             const result = Array.from({ length: 4 }, (_, i) => ordered[i] ?? 'h').map((v) =>

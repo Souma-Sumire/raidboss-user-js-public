@@ -1,4 +1,4 @@
-// Build Time: 2026-01-29T19:10:06.820Z
+// Build Time: 2026-02-04T09:50:45.983Z
 const headmarkers = {
   // Offsets: 00:41, 04:12, 08:13
   // Vfx Path: com_share4a1
@@ -584,7 +584,7 @@ hideall "--sync--"
             'right23': 2,
             'right24': 1,
           };
-          const step = steps[`${data.sMoon.side}${indexs.join('')}`];
+          const step = steps[`${data.sMoon.side}${indexs.sort().join('')}`];
           return {
             [step === 3 ? 'alarmText' : step === 2 ? 'alertText' : 'infoText']: output
               .textWithStep({
