@@ -1,4 +1,4 @@
-// Build Time: 2026-02-04T09:50:45.983Z
+// Build Time: 2026-02-23T01:30:49.774Z
 const headmarkers = {
   '点奶分摊': '00A9',
   '死刑': '0160',
@@ -63,7 +63,7 @@ Options.Triggers.push({
       options: {
         en: {
           '整合文档（看刀）': 'doc',
-          'MMW（猫猫窝）': 'mmw',
+          'MMW（看刀+记刀）': 'mmw',
           '不报安全区（精准）': 'skip',
         },
       },
@@ -239,7 +239,6 @@ hideall "--sync--"
       sMj: undefined,
       sWings: {},
       sPhase: '第一次细胞',
-      sBalls: [],
       sBallsFirst: false,
       sBallsOver: false,
       sMjNikus: [],
@@ -267,6 +266,8 @@ hideall "--sync--"
       decOffset: undefined,
       firstHeadmarker: undefined,
       headmarkers: [],
+      球新实现ID收集: [],
+      球新实现坐标收集: [],
     };
   },
   triggers: [
@@ -858,46 +859,59 @@ hideall "--sync--"
       id: 'souma r12s 初始化球',
       type: 'StartsUsing',
       netRegex: { id: 'B495', capture: false },
+      preRun: (data) => {
+        data.球新实现坐标收集.length = 0;
+        data.球新实现ID收集.length = 0;
+        data.sBallsOver = false;
+        data.sBallsFirst = false;
+      },
+      delaySeconds: 25,
       run: (data) => {
-        data.sBalls = [];
+        data.球新实现坐标收集.length = 0;
+        data.球新实现ID收集.length = 0;
         data.sBallsOver = false;
         data.sBallsFirst = false;
       },
     },
     {
+      id: 'souma r12s 球收集',
+      type: 'AddedCombatant',
+      netRegex: { npcNameId: '14378', npcBaseId: ['19200', '19201'], capture: true },
+      preRun: (data, matches) => {
+        data.球新实现ID收集.push(matches);
+      },
+    },
+    {
       id: 'souma r12s 球',
-      // type: 'AddedCombatant',
-      // netRegex: { npcNameId: '14378', npcBaseId: ['19200', '19201'], capture: true },
       type: 'CombatantMemory',
       netRegex: {
         change: ['Add', 'Change'],
         id: '4[0-9A-Fa-f]{7}',
+        pair: [{ 'key': 'ModelStatus', 'value': '0' }],
         capture: true,
       },
-      preRun: (data, matches) => {
-        if (
-          matches.change === 'Add' && matches.pairBNpcNameID === '382A' &&
-          matches.pairBNpcID !== undefined && ['4B00', '4B01'].includes(matches.pairBNpcID)
-        ) {
-          data.sBalls.push(matches);
-        } else if (matches.change === 'Change') {
-          const ball = data.sBalls.find((v) => v.id === matches.id);
-          if (ball) {
-            if (matches.pairPosX !== undefined)
-              ball.pairPosX = matches.pairPosX;
-          }
-        }
-      },
+      delaySeconds: 0.5,
       durationSeconds: 20,
-      infoText: (data, _matches, output) => {
-        const balls = data.sBalls.filter((v) => v.pairPosX !== '100.0000');
-        const purples = balls.filter((v) => v.pairBNpcID === '4B00');
-        const greens = balls.filter((v) => v.pairBNpcID === '4B01');
-        if (data.sBallsOver || balls.length % 2 !== 0) {
+      infoText: (data, matches, output) => {
+        if (!data.球新实现ID收集.some((m) => m.id === matches.id)) {
           return;
         }
+        data.球新实现坐标收集.push({
+          id: matches.id,
+          x: parseFloat(matches.pairPosX),
+          y: parseFloat(matches.pairPosY),
+          color: data.球新实现ID收集.find((m) => m.id === matches.id)?.npcBaseId === '19200'
+            ? 'purple'
+            : 'green',
+        });
+        if (data.sBallsOver || data.球新实现坐标收集.length % 2 !== 0) {
+          return;
+        }
+        const balls = data.球新实现坐标收集;
+        const purples = balls.filter((v) => v.color === 'purple');
+        const greens = balls.filter((v) => v.color === 'green');
         if (purples.length > 0) {
-          const purpleSide = parseFloat(purples[0].pairPosX) < 100 ? 'left' : 'right';
+          const purpleSide = purples[0].x < 100 ? 'left' : 'right';
           if (data.role === 'dps') {
             data.sBallsOver = true;
             data.sBallsFirst = true;
@@ -915,12 +929,9 @@ hideall "--sync--"
           if (purples.length >= 2) {
             data.sBallsOver = true;
             const side = data.sBallsFirst ? '' : output[purpleSide]();
-            const ordered = data.sBalls.filter((v) =>
-              purpleSide === 'left' ? parseFloat(v.pairPosX) < 100 : parseFloat(v.pairPosX) > 100
-            ).sort((a, b) =>
-              Math.abs(parseFloat(b.pairPosX) - 100) - Math.abs(parseFloat(a.pairPosX) - 100)
-            ).map((v) => v.pairBNpcID === '4B00' ? 't' : 'h');
-            // console.log(data.sBalls.slice(), ordered);
+            const ordered = balls.filter((v) => purpleSide === 'left' ? v.x < 100 : v.x > 100).sort(
+              (a, b) => parseInt(a.id, 16) - parseInt(b.id, 16),
+            ).map((v) => v.color === 'purple' ? 't' : 'h');
             const result = Array.from({ length: 4 }, (_, i) => ordered[i] ?? 'h').map((v) =>
               output[v]()
             ).join('/');
@@ -928,16 +939,13 @@ hideall "--sync--"
               return result;
             }
             data.sBallsFirst = true;
-            return output.text({
-              side: side,
-              ordered: result,
-            });
+            return output.text({ side: side, ordered: result });
           }
         }
         if (greens.length === 6 && purples.length === 0) {
           // 一边有4个绿，一边有2个绿，找到2个绿的那边当作2紫，报HHTT
-          const leftGreen = greens.filter((v) => parseFloat(v.pairPosX) < 100);
-          const rightGreen = greens.filter((v) => parseFloat(v.pairPosX) > 100);
+          const leftGreen = greens.filter((v) => v.x < 100);
+          const rightGreen = greens.filter((v) => v.x > 100);
           const greenSide = leftGreen.length < rightGreen.length ? 'left' : 'right';
           data.sBallsOver = true;
           data.sBallsFirst = true;
