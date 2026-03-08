@@ -75,7 +75,7 @@
 
 ### 异闻多变迷宫
 
-- `异闻 - 商客奇谭`：老一。需要使用我自编译的 [OverlayPlugin](https://github.com/Souma-Sumire/OverlayPlugin/releases)插件才能报 `呼唤家臣` 机制。
+- `异闻 - 商客奇谭`：老一。需要加载 [VfxUnknown184Patch.dll](https://github.com/Souma-Sumire/OverlayPlugin/releases/download/v0.19.88/VfxUnknown184Patch.dll) 插件才能报 `呼唤家臣` 机制。
 
 ### 杂项
 
