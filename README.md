@@ -4,14 +4,14 @@
 
 在开始之前，请确保你已经准备好以下内容：
 
-- ✅ **ACT (Advanced Combat Tracker)**  —— 通常包含在“呆萌”或“咖啡”整合包中
-- ✅ **悬浮窗插件 (OverlayPlugin)** —— 通常包含在“呆萌”或“咖啡”整合包中
-- ✅ **Cactbot 触发器 (Cactbot Raidboss)** —— 通常包含在“呆萌”或“咖啡”整合包中
+- **ACT (Advanced Combat Tracker)**
+- **悬浮窗插件 (OverlayPlugin)**
+- **Cactbot 触发器 (Cactbot Raidboss)**
 - **鲶鱼精邮差 (PostNamazu)** —— 可选，用于标点功能 [下载链接](https://github.com/Natsukage/PostNamazu/releases)
 
 ## 安装方法
 
-### 方法1：使用下载器（推荐）
+### 方法1：使用下载器
 
 1. 下载 [SoumaDownloader.dll](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 2. 至少有过一次：“在启动了 OverlayPlugin 悬浮窗 & Cactbot 插件的情况下关闭ACT”，然后在 ACT 中加载该插件（否则无法自动获取目录）
@@ -73,12 +73,14 @@
 - `零式 - P11S`：适配"光与暗的调和"机制（Game8/美服uptime）
 - `零式 - P12S`：适配Game8、菓子、NL改、papan等解法，需要[分配职能位置](#分配职能位置)
 
+### 异闻多变迷宫
+
+- `异闻 - 商客奇谭`：老一。需要使用我自编译的 [OverlayPlugin](https://github.com/Souma-Sumire/OverlayPlugin/releases)插件才能报 `呼唤家臣` 机制。
+
 ### 杂项
 
 - `灭 - 暗黑之云`：首周存档，不再维护
 - `挖宝 - 曼德拉标点`：标记曼德拉顺序，需要鲶鱼精邮差
-- `玩具 - 食物警察`：检查队友食物是否（即将）到期
-- `异闻零式 - 阿罗阿罗岛`：云编写，适配 MMW/肉桂攻略，未经测试，需要[分配职能位置](#分配职能位置)
 - `易用性 - TTS不念出东南西北`：屏蔽 TTS 中的方向词（不影响文本提示）
 - `易用性 - 风脉泉标记`：宏指令 `/e fengmai`
 - `易用性 - 关闭提示音`：关闭默认的触发器音效
