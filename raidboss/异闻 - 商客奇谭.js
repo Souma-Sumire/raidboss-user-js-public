@@ -1,4 +1,4 @@
-// Build Time: 2026-03-08T18:52:02.110Z
+// Build Time: 2026-03-16T22:47:21.991Z
 const bossPhaseId = {
   'B31C': 'BOSS1-P3',
 };
@@ -16,7 +16,9 @@ const npcBaseIdToZoo = {
   '19101': '豚',
   '19102': '鸟',
 };
+const orientation = ['北', '南', '西', '东'];
 const boss1Center = { x: 375, y: 530 };
+// const boss2Center = { x: 170, y: -815 };
 // 510=0 | 514=1  522=2  [530]=3  538=4  546=5 | 550=6
 const Y_GRID = [510, 514, 522, 530, 538, 546, 550];
 // 355=0 | 359=1  367=2  [375]=3  383=4  391=5 | 395=6
@@ -48,6 +50,25 @@ const boss1Debuffs = {
   '872': '后',
   '873': '左',
   '874': '右',
+};
+const boss2Debuffs = {
+  '12A5': '东',
+  '12A6': '西',
+  '12A7': '东西',
+  '12A8': '南',
+  '12A9': '东南',
+  '12AA': '西南',
+  '12AB': '东西南',
+  '12AC': '北',
+  '12AD': '东北',
+  '12AE': '西北',
+  '12AF': '东西北',
+  '12B0': '南北',
+  '12B1': '东南北',
+  '12B2': '西南北',
+  '12B3': '东西南北',
+  '1366': '东',
+  '1367': '西',
 };
 const makeZooGrid = (positions) => {
   const grid = Array.from({ length: 5 }, () => new Array(5).fill(0));
@@ -129,407 +150,6 @@ const makeHintTrigger = ({ id, netRegex, delay, duration, idx }) => ({
   alertText: (data) => data.zoosResult[idx] ?? '??',
   tts: null,
 });
-// 1680.2 "剑气解放" StartsUsing { id: "B65E" } #剑术大师（Boss）
-// 1685.2 "剑气解放" Ability { id: "B65E" } #剑术大师（Boss）
-// 1692.3 "天界交叉斩·环" StartsUsing { id: "B9CF" } #剑术大师（Boss）
-// 1697.3 "天界交叉斩·环" Ability { id: "B9CF" } #剑术大师（Boss）
-// 1697.6 "天界交叉斩·环" Ability { id: "B660" } #剑术大师（Boss）
-// 1697.7 "天界交叉斩" Ability { id: "B664" } #剑术大师（分身）
-// 1699.7 "天界交叉斩" Ability { id: "B663" } #剑术大师（分身）
-// 1701.8 "四方凶兆" StartsUsing { id: "B665" } #剑术大师（Boss）
-// 1704.7 "四方凶兆" Ability { id: "B665" } #剑术大师（Boss）
-// 1705.7 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1705.7 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1705.7 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1705.7 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1706.7 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1706.7 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1706.7 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1706.7 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1706.9 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1707.7 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1707.7 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1707.7 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1707.7 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1708.2 "变转光波" StartsUsing { id: "B66C" } #剑术大师（Boss）
-// 1708.2 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1708.2 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1712.2 "变转光波" Ability { id: "B66C" } #剑术大师（Boss）
-// 1712.2 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1712.2 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1715.4 "缚链凶兆击" StartsUsing { id: "B66A" } #剑术大师（Boss）
-// 1715.7 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1715.7 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1721.3 "缚链凶兆击" Ability { id: "B66A" } #剑术大师（Boss）
-// 1722.3 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1722.3 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1722.3 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1722.3 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1723.6 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1723.6 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1723.8 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1723.8 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1724.1 "灵击波" Ability { id: "B66F" } #灵击波（分身）
-// 1724.1 "灵击波" Ability { id: "B66F" } #灵击波（分身）
-// 1729.5 "转轮残响" StartsUsing { id: "B670" } #剑术大师（Boss）
-// 1733.5 "转轮残响" Ability { id: "B670" } #剑术大师（Boss）
-// 1733.6 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1733.6 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1733.6 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1733.6 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1737.6 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1737.6 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1737.6 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1737.6 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1737.7 "转轮残响" StartsUsing { id: "B672" } #剑术大师（分身）
-// 1737.7 "转轮残响" StartsUsing { id: "B672" } #剑术大师（分身）
-// 1737.7 "转轮残响" StartsUsing { id: "B672" } #剑术大师（分身）
-// 1737.7 "转轮残响" StartsUsing { id: "B672" } #剑术大师（分身）
-// 1738.7 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1740.1 "时差剑波" StartsUsing { id: "B679" } #剑术大师（Boss）
-// 1740.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1740.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1740.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1740.7 "转轮残响" Ability { id: "B672" } #剑术大师（分身）
-// 1740.7 "转轮残响" Ability { id: "B672" } #剑术大师（分身）
-// 1740.7 "转轮残响" Ability { id: "B672" } #剑术大师（分身）
-// 1740.7 "转轮残响" Ability { id: "B672" } #剑术大师（分身）
-// 1741.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1741.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1741.1 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1742.2 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1742.2 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1742.2 "时差剑波" StartsUsing { id: "B67A" } #剑术大师（分身）
-// 1745.1 "时差剑波" Ability { id: "B679" } #剑术大师（Boss）
-// 1745.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1745.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1745.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1746.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1746.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1746.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1747.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1747.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1747.1 "时差剑波" Ability { id: "B67A" } #剑术大师（分身）
-// 1747.3 "天界交叉斩·圆" StartsUsing { id: "B9CE" } #剑术大师（Boss）
-// 1752.2 "天界交叉斩·圆" Ability { id: "B9CE" } #剑术大师（Boss）
-// 1752.7 "天界交叉斩·圆" Ability { id: "B65F" } #剑术大师（Boss）
-// 1752.7 "天界交叉斩" Ability { id: "B663" } #剑术大师（分身）
-// 1754.8 "天界交叉斩" Ability { id: "B664" } #剑术大师（分身）
-// 1755.8 "八叶回响" StartsUsing { id: "B677" } #剑术大师（Boss）
-// 1759.8 "八叶回响" Ability { id: "B677" } #剑术大师（Boss）
-// 1764.4 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1764.9 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1764.9 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1764.9 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1764.9 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1765 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1766.3 "咬击古狼闪" StartsUsing { id: "B67B" } #剑术大师（Boss）
-// 1766.3 "咬击古狼闪" StartsUsing { id: "B67C" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1767.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1769.6 "咬击古狼闪" Ability { id: "B67B" } #剑术大师（Boss）
-// 1771.2 "咬击古狼闪" Ability { id: "B67C" } #剑术大师（分身）
-// 1774.4 "冥界重光波" StartsUsing { id: "B67D" } #剑术大师（Boss）
-// 1779.4 "冥界重光波" Ability { id: "B67D" } #剑术大师（Boss）
-// 1779.4 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1780.5 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1780.5 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1781.5 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1781.5 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1786.7 "剑气解放" StartsUsing { id: "B680" } #剑术大师（Boss）
-// 1791.7 "剑气解放" Ability { id: "B680" } #剑术大师（Boss）
-// 1794.9 "四方凶兆" StartsUsing { id: "B665" } #剑术大师（Boss）
-// 1797.8 "四方凶兆" Ability { id: "B665" } #剑术大师（Boss）
-// 1798.8 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1798.8 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1798.8 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1798.8 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1799.8 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1799.8 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1799.8 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1799.8 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1801 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1802.3 "光波刚剑舞" StartsUsing { id: "B681" } #剑术大师（Boss）
-// 1802.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1802.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1804.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1804.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1806.3 "光波刚剑舞" Ability { id: "B681" } #剑术大师（Boss）
-// 1806.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1806.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1808.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1808.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1811.4 "灼热回响" StartsUsing { id: "B685" } #剑术大师（Boss）
-// 1811.8 "冥界灵击波" StartsUsing { id: "B682" } #灵击波（分身）
-// 1811.8 "冥界灵击波" StartsUsing { id: "B682" } #灵击波（分身）
-// 1811.8 "冥界灵击波" StartsUsing { id: "B682" } #灵击波（分身）
-// 1811.8 "冥界灵击波" StartsUsing { id: "B682" } #灵击波（分身）
-// 1811.8 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1811.8 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1811.8 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1811.8 "灵击波" StartsUsing { id: "BE0D" } #灵击波（分身）
-// 1815.4 "灼热回响" Ability { id: "B685" } #剑术大师（Boss）
-// 1819.7 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1819.7 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1819.7 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1819.7 "灵击波" Ability { id: "BE0D" } #灵击波（分身）
-// 1819.8 "冥界灵击波" Ability { id: "B682" } #灵击波（分身）
-// 1819.8 "冥界灵击波" Ability { id: "B682" } #灵击波（分身）
-// 1819.8 "冥界灵击波" Ability { id: "B682" } #灵击波（分身）
-// 1819.8 "冥界灵击波" Ability { id: "B682" } #灵击波（分身）
-// 1819.9 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1819.9 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1819.9 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1819.9 "灵击波" Ability { id: "B66E" } #灵击波（分身）
-// 1820.2 "灵击波" Ability { id: "B66F" } #灵击波（分身）
-// 1820.2 "灵击波" Ability { id: "B66F" } #灵击波（分身）
-// 1820.5 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1820.5 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1820.5 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1820.5 "回响剑" Ability { id: "B678" } #剑术大师（分身）
-// 1822.6 "天界交叉斩·圆" StartsUsing { id: "B9D0" } #剑术大师（Boss）
-// 1827.6 "天界交叉斩·圆" Ability { id: "B9D0" } #剑术大师（Boss）
-// 1828 "天界交叉斩·圆" Ability { id: "B661" } #剑术大师（Boss）
-// 1828.1 "天界交叉斩" Ability { id: "B663" } #剑术大师（分身）
-// 1830.1 "天界交叉斩" Ability { id: "B664" } #剑术大师（分身）
-// 1833.2 "四方凶兆" StartsUsing { id: "B665" } #剑术大师（Boss）
-// 1836.2 "四方凶兆" Ability { id: "B665" } #剑术大师（Boss）
-// 1837.1 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1837.1 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1837.1 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1837.1 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1838.2 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1838.2 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1838.2 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1838.2 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1838.3 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1839.7 "四连幻影光波" StartsUsing { id: "B68D" } #剑术大师（Boss）
-// 1839.7 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1839.7 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1841.7 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1841.7 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1843.6 "四连幻影光波" Ability { id: "B68D" } #剑术大师（Boss）
-// 1843.6 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1843.6 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1845.7 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1845.7 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1845.9 "咬击古狼闪" StartsUsing { id: "B67B" } #剑术大师（Boss）
-// 1845.9 "咬击古狼闪" StartsUsing { id: "B67C" } #剑术大师（分身）
-// 1849.2 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1849.2 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1849.2 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1849.2 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1849.3 "咬击古狼闪" Ability { id: "B67B" } #剑术大师（Boss）
-// 1850.8 "咬击古狼闪" Ability { id: "B67C" } #剑术大师（分身）
-// 1853.2 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1853.2 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1853.2 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1853.2 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1854.7 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1854.7 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1854.7 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1854.7 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1858.7 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1858.7 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1858.7 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1858.7 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1860.3 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1860.3 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1860.3 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1860.3 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1860.5 "缚链凶兆击" StartsUsing { id: "B66A" } #剑术大师（Boss）
-// 1864.3 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1864.3 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1864.3 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1864.3 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1865.8 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1865.8 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1865.8 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1865.8 "冥界灵击波" StartsUsing { id: "B69D" } #灵击波（分身）
-// 1866.5 "缚链凶兆击" Ability { id: "B66A" } #剑术大师（Boss）
-// 1867.5 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1867.5 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1867.5 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1867.5 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1867.5 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1867.5 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1867.5 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1867.5 "缚链凶兆击" Ability { id: "B66B" } #剑术大师（分身）
-// 1869.8 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1869.8 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1869.8 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1869.8 "冥界灵击波" Ability { id: "B69D" } #灵击波（分身）
-// 1870.7 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1872 "凶兆击" StartsUsing { id: "B683" } #剑术大师（Boss）
-// 1872 "凶兆击" StartsUsing { id: "B684" } #剑术大师（分身）
-// 1872 "凶兆击" StartsUsing { id: "B684" } #剑术大师（分身）
-// 1872 "凶兆击" StartsUsing { id: "B684" } #剑术大师（分身）
-// 1872 "凶兆击" StartsUsing { id: "B684" } #剑术大师（分身）
-// 1874.9 "凶兆击" Ability { id: "B683" } #剑术大师（Boss）
-// 1875.9 "凶兆击" Ability { id: "B684" } #剑术大师（分身）
-// 1875.9 "凶兆击" Ability { id: "B684" } #剑术大师（分身）
-// 1875.9 "凶兆击" Ability { id: "B684" } #剑术大师（分身）
-// 1875.9 "凶兆击" Ability { id: "B684" } #剑术大师（分身）
-// 1876.2 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1876.2 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1876.2 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1878.1 "冥界重光波" StartsUsing { id: "B67D" } #剑术大师（Boss）
-// 1883.1 "冥界重光波" Ability { id: "B67D" } #剑术大师（Boss）
-// 1883.1 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1884.2 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1884.2 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1885.3 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1885.3 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1890.4 "剑气解放" StartsUsing { id: "B680" } #剑术大师（Boss）
-// 1895.4 "剑气解放" Ability { id: "B680" } #剑术大师（Boss）
-// 1896.5 "掉落" StartsUsing { id: "B68A" } #剑术大师（分身）
-// 1896.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1896.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1896.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1896.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1897.5 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1897.5 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1897.5 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1899.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1899.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1899.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1899.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1900.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1900.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1900.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1900.5 "掉落" StartsUsing { id: "B688" } #剑术大师（分身）
-// 1901.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1901.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1901.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1901.6 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1901.6 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1901.6 "掉落" StartsUsing { id: "B689" } #剑术大师（分身）
-// 1903.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1903.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1903.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1903.5 "掉落" Ability { id: "B688" } #剑术大师（分身）
-// 1905.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1905.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1905.5 "掉落" Ability { id: "B689" } #剑术大师（分身）
-// 1906.5 "掉落" Ability { id: "B68A" } #剑术大师（分身）
-// 1908.1 "剑气咒缚" Ability { id: "B68B" } #剑术大师（Boss）
-// 1913.7 "八叶残响" StartsUsing { id: "B673" } #剑术大师（Boss）
-// 1917.7 "八叶残响" Ability { id: "B673" } #剑术大师（Boss）
-// 1917.8 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1917.8 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1917.8 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1917.8 "残响剑" StartsUsing { id: "B671" } #剑术大师（分身）
-// 1921.8 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1921.8 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1921.8 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1921.8 "残响剑" Ability { id: "B671" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1921.9 "八叶残响" StartsUsing { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1924.9 "八叶残响" Ability { id: "B674" } #剑术大师（分身）
-// 1926.9 "四方凶兆" StartsUsing { id: "B665" } #剑术大师（Boss）
-// 1929.9 "四方凶兆" Ability { id: "B665" } #剑术大师（Boss）
-// 1930.9 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1930.9 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1930.9 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1930.9 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1931.9 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1931.9 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1931.9 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1931.9 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1932.9 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1932.9 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1932.9 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1932.9 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1934.1 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1935.3 "四连幻影光波" StartsUsing { id: "B68D" } #剑术大师（Boss）
-// 1935.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1935.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1937.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1937.3 "光波剑" StartsUsing { id: "B66D" } #剑术大师（分身）
-// 1939.3 "四连幻影光波" Ability { id: "B68D" } #剑术大师（Boss）
-// 1939.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1939.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1941.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1941.3 "光波剑" Ability { id: "B66D" } #剑术大师（分身）
-// 1944.8 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1944.8 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1944.8 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1944.8 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1949.3 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1949.3 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1949.3 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1949.3 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1950.4 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1950.4 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1950.4 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1950.4 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1954.8 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1954.8 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1954.8 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1954.8 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1955.9 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1955.9 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1955.9 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1955.9 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1960.4 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1960.4 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1960.4 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1960.4 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1961.5 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1961.5 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1961.5 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1961.5 "冥界灵击波" StartsUsing { id: "BA93" } #灵击波（分身）
-// 1965.9 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1965.9 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1965.9 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1965.9 "冥界灵击波" Ability { id: "BA93" } #灵击波（分身）
-// 1966.5 "剑气解放" StartsUsing { id: "B65E" } #剑术大师（Boss）
-// 1971.4 "剑气解放" Ability { id: "B65E" } #剑术大师（Boss）
-// 1974.6 "冥界重光波" StartsUsing { id: "B67D" } #剑术大师（Boss）
-// 1979.6 "冥界重光波" Ability { id: "B67D" } #剑术大师（Boss）
-// 1979.7 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1980.7 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1980.7 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1981.8 "冥界重光波" Ability { id: "B67E" } #剑术大师（Boss）
-// 1981.8 "冥界重光波" Ability { id: "B67F" } #剑术大师（分身）
-// 1989.2 "unknown_b60f" Ability { id: "B60F" } #剑术大师（Boss）
-// 1990.4 "四方凶兆" StartsUsing { id: "B665" } #剑术大师（Boss）
-// 1993.4 "四方凶兆" Ability { id: "B665" } #剑术大师（Boss）
-// 1994.4 "凶星爆击打" Ability { id: "B666" } #剑术大师（分身）
-// 1995.5 "凶星爆击打" Ability { id: "B667" } #剑术大师（分身）
-// 1996.4 "凶星爆击打" Ability { id: "B668" } #剑术大师（分身）
-// 1997.5 "凶星爆击打" Ability { id: "B669" } #剑术大师（分身）
-// 1998.6 "人界鏖杀波" StartsUsing { id: "B68E" } #剑术大师（Boss）
-// 1998.6 "人界鏖杀波" StartsUsing { id: "B68F" } #剑术大师（分身）
-// 1998.6 "人界鏖杀波" StartsUsing { id: "B68F" } #剑术大师（分身）
-// 1998.6 "人界鏖杀波" StartsUsing { id: "B68F" } #剑术大师（分身）
-// 1998.6 "人界鏖杀波" StartsUsing { id: "B68F" } #剑术大师（分身）
 // 2528.6 "热波" StartsUsing { id: "B1CD" } #火仙女佩莉（Boss）
 // 2533.6 "热波" Ability { id: "B1CD" } #火仙女佩莉（Boss）
 // 2541.8 "unknown_b16d" Ability { id: "B16D" } #火仙女佩莉（Boss）
@@ -791,7 +411,79 @@ hideall "--sync--"
 1231.1 "水球"
 1241.2 "呼唤家臣" Ability { id: "B2CB" }
 1251.4 "和声重奏曲" Ability { id: "B314" }
-1266.2 "激涌的洋流" Ability { id: "B329" }`,
+1266.2 "激涌的洋流" Ability { id: "B329" }
+2014.2 "剑气解放" Ability { id: "B65E" }
+2026.3 "天界交叉斩·环/圆"
+2026.7 "天界交叉斩"
+2033.7 "四方凶兆"
+2034.7 "凶星爆击打"
+2041.2 "变转光波"
+2041.2 "光波剑"
+2050.3 "缚链凶兆击"
+2051.3 "凶星爆击打"
+2051.3 "缚链凶兆击"
+2052.6 "灵击波"
+2062.5 "转轮残响"
+2066.6 "残响剑"
+2069.7 "转轮残响"
+2074.1 "时差剑波"
+2081.2 "天界交叉斩·圆/环"
+2081.7 "天界交叉斩"
+2088.8 "八叶回响"
+2093.9 "回响剑"
+2096.9 "八叶残响"
+2098.6 "咬击古狼闪"
+2108.4 "冥界重光波"
+2120.7 "剑气解放"
+2126.8 "四方凶兆"
+2127.8 "凶星爆击打"
+2135.3 "光波刚剑舞"
+2135.3 "光波剑"
+2144.4 "灼热回响"
+2148.8 "冥界灵击波"
+2148.9 "灵击波"
+2149.5 "回响剑"
+2156.6 "天界交叉斩·圆/环"
+2157.0 "天界交叉斩·圆/环"
+2157.1 "天界交叉斩"
+2165.2 "四方凶兆"
+2166.1 "凶星爆击打"
+2172.6 "四连幻影光波"
+2172.6 "光波剑"
+2174.7 "光波剑"
+2178.3 "咬击古狼闪"
+2179.8 "咬击古狼闪"
+2182.2 "冥界灵击波"
+2187.7 "冥界灵击波"
+2193.3 "冥界灵击波"
+2195.5 "缚链凶兆击"
+2196.5 "凶星爆击打"
+2198.8 "冥界灵击波"
+2203.9 "凶兆击"
+2205.2 "凶星爆击打"
+2212.1 "冥界重光波"
+2224.4 "剑气解放"
+2228.5 "掉落"
+2232.5 "掉落"
+2234.5 "掉落"
+2237.1 "剑气咒缚"
+2246.7 "八叶残响"
+2250.8 "残响剑"
+2253.9 "八叶残响"
+2258.9 "四方凶兆"
+2259.9 "凶星爆击打"
+2268.3 "四连幻影光波"
+2268.3 "光波剑"
+2270.3 "光波剑"
+2278.3 "冥界灵击波"
+2283.8 "冥界灵击波"
+2289.4 "冥界灵击波"
+2294.9 "冥界灵击波"
+2300.4 "剑气解放"
+2308.6 "冥界重光波"
+2322.4 "四方凶兆"
+2323.4 "凶星爆击打"
+`,
   initData: () => ({
     zoos: [],
     zoosCombatants: [],
@@ -807,6 +499,7 @@ hideall "--sync--"
         data.phase = bossPhaseId[matches.id];
       },
     },
+    // #region BOSS1
     {
       id: 'souma 人鱼达莉娅 尖声坠刺',
       type: 'StartsUsing',
@@ -957,6 +650,226 @@ hideall "--sync--"
         '后': { en: '向后' },
         '左': { en: '向左' },
         '右': { en: '向右' },
+      },
+    },
+    // #endregion
+    // #region BOSS2
+    {
+      id: 'souma 剑术大师 剑气解放',
+      type: 'StartsUsing',
+      netRegex: { id: 'B65E' },
+      response: Responses.aoe(),
+    },
+    {
+      id: 'souma 剑术大师 天界交叉斩·环/圆',
+      type: 'StartsUsing',
+      netRegex: {
+        id: [
+          // 环 1把刀
+          'B9CF',
+          // 环 2把刀
+          'B9D1',
+          // 圆 1把刀
+          'B9CE',
+          // 圆 2把刀
+          'B9D0',
+        ],
+        capture: true,
+      },
+      delaySeconds: 0.5,
+      durationSeconds: 7,
+      alertText: (data, matches, output) => {
+        const res = {
+          // 环 1把刀
+          'B9CF': { '点名': '单吃', '1': '先月环', '2': '后钢铁', '闲人': '闲人' },
+          // 环 2把刀
+          'B9D1': { '点名': '分摊', '1': '先月环', '2': '后钢铁', '闲人': '闲人' },
+          // 圆 1把刀
+          'B9CE': { '点名': '单吃', '1': '先钢铁', '2': '后月环', '闲人': '闲人' },
+          // 圆 2把刀
+          'B9D0': { '点名': '分摊', '1': '先钢铁', '2': '后月环', '闲人': '闲人' },
+        }[matches.id];
+        const key = data.天界交叉斩麻将 ?? '闲人';
+        data.天界交叉斩麻将 = undefined;
+        return output[res[key]]();
+      },
+      outputStrings: {
+        '单吃': { en: '单吃' },
+        '分摊': { en: '分摊' },
+        '先月环': { en: '先月环' },
+        '后月环': { en: '后月环' },
+        '先钢铁': { en: '先钢铁' },
+        '后钢铁': { en: '后钢铁' },
+        '闲人': { en: '闲人' },
+      },
+    },
+    {
+      id: 'souma 剑术大师 天界交叉斩麻将',
+      type: 'HeadMarker',
+      netRegex: {
+        'id': [
+          // 点名
+          '028C',
+          // 1
+          '014C',
+          // 2
+          '014D',
+        ],
+        capture: true,
+      },
+      condition: Conditions.targetIsYou(),
+      preRun: (data, matches) => {
+        data.天界交叉斩麻将 = {
+          '028C': '点名',
+          '014C': '1',
+          '014D': '2',
+        }[matches.id];
+      },
+    },
+    {
+      id: 'souma 剑术大师 轮轮残响',
+      type: 'StartsUsing',
+      netRegex: { id: 'B670' },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '集合放圈 => 月环' } },
+    },
+    {
+      id: 'souma 剑术大师 八叶回响',
+      type: 'StartsUsing',
+      netRegex: { id: 'B677' },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '分散放冰花' } },
+    },
+    {
+      id: 'souma 剑术大师 八叶残响',
+      type: 'StartsUsing',
+      netRegex: { id: 'B673' },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '集合放冰花' } },
+    },
+    {
+      id: 'souma 剑术大师 咬击古狼闪',
+      type: 'StartsUsing',
+      netRegex: { id: 'B67B' },
+      alarmText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '去背后' } },
+      run: (data) => {
+        if (data.phase === 'BOSS2-P2B') {
+          data.phase = 'BOSS2-P3';
+        }
+      },
+    },
+    {
+      id: 'souma 剑术大师 冥界重光波',
+      type: 'StartsUsing',
+      netRegex: { id: 'B67D' },
+      alarmText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '直线分摊 x3' } },
+    },
+    {
+      id: 'souma 剑术大师 光波刚剑舞',
+      type: 'StartsUsing',
+      netRegex: { id: 'B681' },
+      run: (data) => {
+        if (data.phase.startsWith('BOSS1')) {
+          data.phase = 'BOSS2-P2';
+        }
+      },
+    },
+    {
+      id: 'souma 剑术大师 四方凶兆',
+      type: 'StartsUsing',
+      netRegex: { id: 'B665' },
+      run: (data, _matches) => {
+        if (data.phase === 'BOSS2-P2') {
+          data.phase = 'BOSS2-P2B';
+        }
+      },
+    },
+    {
+      id: 'souma 剑术大师 debuff',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.keys(boss2Debuffs) },
+      condition: Conditions.targetIsYou(),
+      run: (data, matches) => {
+        data.破绽 = boss2Debuffs[matches.effectId].split('');
+      },
+    },
+    {
+      id: 'souma 剑术大师 debuff 消失',
+      type: 'LosesEffect',
+      netRegex: { effectId: Object.keys(boss2Debuffs) },
+      condition: Conditions.targetIsYou(),
+      run: (data) => {
+        data.破绽 = undefined;
+      },
+    },
+    {
+      id: 'souma 剑术大师 连线位置',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'BE0D', capture: true },
+      preRun: (data, matches) => {
+        const dir = Directions.hdgTo4DirNum(parseFloat(matches.heading));
+        const pos = ['南', '西', '北', '东'][dir];
+        (data.连线位置 ??= {})[matches.sourceId] = pos;
+      },
+    },
+    {
+      id: 'souma 剑术大师 连线1',
+      type: 'Tether',
+      netRegex: { id: '0173', capture: true },
+      condition: (data, matches) => data.phase === 'BOSS2-P2' && matches.targetId.startsWith('4'),
+      run: (data, matches) => {
+        (data.连线溯源 ??= {})[matches.targetId] = matches.sourceId;
+        data.连线时间 = new Date(matches.timestamp).getTime();
+      },
+    },
+    {
+      id: 'souma 剑术大师 连线2',
+      comment: {
+        en: '由于日志缺少信息，必须拉出折线才能得知你的线在哪，如果初始是直线则会沉默，直到你在3秒内拉出折线。',
+      },
+      type: 'Tether',
+      netRegex: { id: '0173', capture: true },
+      condition: (data, matches) =>
+        data.phase === 'BOSS2-P2' && matches.target === data.me &&
+        data.连线时间 !== undefined && new Date(matches.timestamp).getTime() - data.连线时间 < 3000,
+      suppressSeconds: 20,
+      delaySeconds: 0.1,
+      durationSeconds: 7,
+      alertText: (data, matches, output) => {
+        const source = (data.连线溯源 ??= {})[matches.sourceId];
+        const sourcePos = data.连线位置?.[source];
+        const safe = orientation.filter((v) => !data.破绽.includes(v)).filter((v) => v !== sourcePos)
+          .sort((a, b) => orientation.indexOf(a) - orientation.indexOf(b)).map((v) => output[v]())
+          .join(output['separator']());
+        return safe;
+      },
+      outputStrings: {
+        '东': { en: '东' },
+        '南': { en: '南' },
+        '西': { en: '西' },
+        '北': { en: '北' },
+        'separator': { en: ' 或 ' },
+      },
+    },
+    {
+      id: 'souma 剑术大师 四连幻影光波',
+      type: 'StartsUsing',
+      netRegex: { id: 'B68D' },
+      condition: (data) => data.phase === 'BOSS2-P2B',
+      infoText: (data, _matches, output) => {
+        const safe = orientation.filter((v) => !data.破绽.includes(v));
+        const s1 = output[safe[0]]();
+        const s2 = output[safe[1]]();
+        return output['text']({ s1, s2 });
+      },
+      outputStrings: {
+        'text': { en: '吃${s1}、${s2}' },
+        '东': { en: '东' },
+        '南': { en: '南' },
+        '西': { en: '西' },
+        '北': { en: '北' },
       },
     },
   ],
