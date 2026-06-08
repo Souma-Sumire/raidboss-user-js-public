@@ -1,4 +1,4 @@
-// Build Time: 2026-06-07T22:10:31.151Z
+// Build Time: 2026-06-08T07:25:19.385Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -943,6 +943,68 @@ hideall "--sync--"
       alertText: (_data, _matches, output) => output.goWest(),
       outputStrings: {
         goWest: Outputs.getLeftAndWest,
+      },
+    },
+    {
+      id: 'DMU P1 Gravitational Wave',
+      type: 'ActorControlExtra',
+      netRegex: { category: '019D', param1: '40', param2: '80', capture: true },
+      condition: (data, matches) => data.purpleTowerIds.includes(matches.id),
+      alertText: (_data, _matches, output) => output.goEast(),
+      outputStrings: {
+        goEast: Outputs.getRightAndEast,
+      },
+    },
+    {
+      id: 'DMU P2 双腕',
+      type: 'StartsUsing',
+      netRegex: { id: 'C24D' },
+      response: Responses.sharedTankBuster(),
+    },
+    {
+      id: 'DMU P2 遗弃末世',
+      type: 'StartsUsing',
+      netRegex: { id: 'BABC' },
+      response: Responses.bigAoe(),
+    },
+    {
+      id: 'DMU P2 未来终结',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAD2' },
+      preRun: (data) => {
+        data.p2未来过去count++;
+      },
+      delaySeconds: 5.5,
+      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 6.5,
+      alarmText: (data, _matches, output) => {
+        if (data.p2未来过去count === 4) {
+          return output.text4();
+        }
+        return output.text();
+      },
+      outputStrings: {
+        text: '未来，塔对面，对面，对面',
+        text4: '未来，要穿，要穿，要穿',
+      },
+    },
+    {
+      id: 'DMU P2 过去终结',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAD3' },
+      preRun: (data) => {
+        data.p2未来过去count++;
+      },
+      delaySeconds: 5.5,
+      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 6.5,
+      alarmText: (data, _matches, output) => {
+        if (data.p2未来过去count === 4) {
+          return output.text4();
+        }
+        return output.text();
+      },
+      outputStrings: {
+        text: '过去，塔中间，中间，中间',
+        text4: '过去，留原地，原地，原地',
       },
     },
   ],
