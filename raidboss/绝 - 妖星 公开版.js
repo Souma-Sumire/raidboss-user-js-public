@@ -1,4 +1,4 @@
-// Build Time: 2026-06-08T07:25:19.385Z
+// Build Time: 2026-06-10T23:46:53.058Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -10,20 +10,24 @@ const phases = {
 const p2OutputStirngs = {
   扇形组: '左',
   钢铁组: '右',
-  第1轮踩塔TN: '1轮 踩${lr}塔(你是${gimmick})',
-  第1轮闲人TN: '1轮 闲人${lr}引导(你是${gimmick})',
-  第1轮DPS分摊: '1轮 踩${lr}塔(你是分摊)',
-  第1轮DPS其他: '1轮 ${lr}边看搭档(你是${gimmick})',
-  第2到8轮踩塔单: '${i}轮 踩塔(单${gimmick})',
-  第2到8轮踩塔双: '${i}轮 踩塔(双${gimmick})',
-  第2到8轮引导: '${i}轮 闲人引导(你是${gimmick})',
-  第2到8轮超级跳: '${i}轮 闲人去超级跳',
+  第1轮踩塔TN: '1轮 ${gimmick} 踩${lr}塔',
+  第1轮闲人TN: '1轮 闲人 ${lr}引导',
+  第1轮DPS分摊: '1轮 分摊 踩${lr}塔',
+  第1轮DPS其他: '1轮 ${lr}边看搭档',
+  第2到8轮踩塔单: '${i}轮 (单${gimmick}) 踩塔',
+  第2到8轮踩塔双: '${i}轮 (双${gimmick}) 踩塔',
+  第2到8轮引导: '${i}轮 塔外引导',
+  第2到8轮引导tank: '${i}轮 ←左塔外',
+  第2到8轮引导healer: '${i}轮 ←左塔外',
+  第2到8轮引导dps: '${i}轮 右塔外→',
+  第2到8轮超级跳: '${i}轮 闲人 去超级跳',
+  第2到8轮踩塔分摊: '${i}轮 分摊 踩塔 （另一个分摊是${player}）',
   分摊: '分摊',
   钢铁: '钢铁',
   扇形: '扇形',
-  打法1234: '5轮 闲人中间挂机',
-  打法1238: '8轮 闲人去超级跳',
-  打法1458: '8轮 闲人去超级跳',
+  打法1234: '5轮 闲人 中间挂机',
+  打法1238: '8轮 闲人 去超级跳',
+  打法1458: '8轮 闲人 去超级跳',
 };
 const getP2 = (data, _matches, output) => {
   let me;
@@ -98,6 +102,12 @@ const getP2 = (data, _matches, output) => {
   if (goTower) {
     // 踩塔，每一轮
     data.p2报过了 = true;
+    if (me.buff === '分摊') {
+      const otherStack = data.p2hm[towerCount - 1].find((v) =>
+        v.buff === '分摊' && v.target !== data.me
+      );
+      return output.第2到8轮踩塔分摊({ i: towerCount, player: otherStack.target });
+    }
     return output[`第2到8轮踩塔${isDoubleTurn ? '双' : '单'}`]({
       i: towerCount,
       gimmick: output[me.buff](),
@@ -106,6 +116,15 @@ const getP2 = (data, _matches, output) => {
   if (!goSpjp) {
     // 不踩塔，奇数轮，引导
     data.p2报过了 = true;
+    // // 没buff的人按照TN左DPS右引导
+    if (
+      data.p2BuffCount[data.me] === 0 &&
+      data.triggerSetConfig.p2一运打法 === '1234' &&
+      data.triggerSetConfig.p2一运1234打法没debuff的闲人怎么决定去哪个塔引导 === 'TN左DPS右'
+    ) {
+      return output[`第2到8轮引导${data.role}`]({ i: towerCount });
+    }
+    // }
     return output.第2到8轮引导({ i: towerCount, gimmick: output[me.buff]() });
   }
   // 不踩塔，偶数轮，超级跳
@@ -136,7 +155,7 @@ const arrowBuffs = {
   '130E': '右',
   '130F': '左',
 };
-const p3buff = {
+const p4buff = {
   '15A8': { name: '叉形闪电', true: '雷分散', false: '水分摊', source: '新生艾克斯迪司' },
   '15A9': { name: '水属性压缩', true: '水分摊', false: '雷分散', source: '新生艾克斯迪司' },
   '15A7': { name: '诅咒之嚎', true: '背对眼', false: '面对眼', source: '新生艾克斯迪司' },
@@ -153,6 +172,21 @@ Options.Triggers.push({
   zoneId: 1363,
   config: [
     {
+      id: 'p1击退加真假火冰打法',
+      name: {
+        en: 'p1击退加真假火冰打法',
+      },
+      type: 'select',
+      options: {
+        en: {
+          '正攻（被击退的去下半场）': '正攻',
+          '职能固定（不推荐！）未测试': 'TN左DPS右',
+          // '正攻（报双安全区）未测试': '双安全区',
+        },
+      },
+      default: '正攻',
+    },
+    {
       id: 'p2一运打法',
       name: {
         en: 'p2一运打法',
@@ -162,10 +196,10 @@ Options.Triggers.push({
         en: {
           '1238': '1238',
           '1234（TLB）': '1234',
-          '1458': '1458',
+          '1458 未测试': '1458',
         },
       },
-      default: '1234',
+      default: '1238',
     },
     {
       id: 'p2一运搭档打法',
@@ -175,12 +209,40 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '同职能（MT找ST）': 'same',
-          '异职能（MT找H1）': 'diff',
+          '同职能（MT找ST、DPS自己看）': 'same',
+          '异职能（MT找H1、DPS自己看）未测试': 'diff',
         },
       },
       default: 'same',
     },
+    {
+      id: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
+      name: {
+        en: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
+      },
+      comment: { en: '其他打法我不知道，我们团是这么打的。' },
+      type: 'select',
+      options: {
+        en: {
+          'TN左DPS右': 'TN左DPS右',
+        },
+      },
+      default: 'TN左DPS右',
+    },
+    // {
+    //   id: 'p2一运1238打法4567的闲人怎么决定去哪个塔引导',
+    //   name: {
+    //     en: 'p2一运1238打法4567的闲人怎么决定去哪个塔引导',
+    //   },
+    //   comment: { en: '其他打法我不知道，我们团是这么打的。' },
+    //   type: 'select',
+    //   options: {
+    //     en: {
+    //       'TN左DPS右': 'TN左DPS右',
+    //     },
+    //   },
+    //   default: 'TN左DPS右',
+    // },
   ],
   timeline: `
 hideall "--Reset--"
@@ -488,16 +550,18 @@ hideall "--sync--"
       p2第一轮踩塔人: [],
       p2BuffCount: {},
       p2报过了: false,
-      p3真假: {
+      p4真假: {
         '新生艾克斯迪司': [],
         '卡奥斯': [],
       },
-      p3count: {
+      p4count: {
         '新生艾克斯迪司': 0,
         '卡奥斯': 0,
       },
-      p3CastCount: 0,
-      p3buffs: {},
+      p4CastCount: 0,
+      p4buffs: {},
+      p4Text: {},
+      p1IsTether: false,
     };
   },
   triggers: [
@@ -575,9 +639,11 @@ hideall "--sync--"
         if (data.p1Tethers.length !== 0) {
           if (data.p1Tethers.includes(data.me)) {
             data.p1Tethers = [];
+            data.p1IsTether = true;
             return output.tetherOnYou();
           }
           data.p1Tethers = [];
+          data.p1IsTether = false;
           return output.idle();
         }
       },
@@ -661,7 +727,7 @@ hideall "--sync--"
       id: 'DMU 头标',
       type: 'HeadMarker',
       netRegex: { id: [headMarkerData.stack, headMarkerData.spread] },
-      delaySeconds: 0.5,
+      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 2.1 : 0.9) : 0.5,
       durationSeconds: 6,
       suppressSeconds: 1,
       alertText: (data, matches, output) => {
@@ -682,11 +748,11 @@ hideall "--sync--"
       },
       outputStrings: {
         stack: { en: '分摊' },
-        spread: { en: '散开' },
-        假雷分摊: { en: '雷内+集合' },
-        真雷分摊: { en: '安全区+集合' },
-        假雷分散: { en: '雷内+分散' },
-        真雷分散: { en: '安全区+分散' },
+        spread: { en: '散开！' },
+        假雷分摊: { en: '危险区+分摊' },
+        真雷分摊: { en: '安全区+分摊' },
+        假雷分散: { en: '危险区+散开' },
+        真雷分散: { en: '安全区+散开' },
       },
     },
     {
@@ -696,16 +762,32 @@ hideall "--sync--"
       condition: (data) => data.phase === 'p1-1a',
       durationSeconds: 6,
       suppressSeconds: 1,
-      infoText: (_data, matches, output) => {
+      infoText: (data, matches, output) => {
         const dirNum = Directions.hdgTo8DirNum(parseFloat(matches.heading));
-        const r = [1, 7, 3, 5];
+        const rr = [1, 7, 3, 5];
         const [n1, n2] = ([(dirNum + 2) % 8, (dirNum + 4 + 2) % 8].sort((a, b) => {
-          return r.indexOf(a) - r.indexOf(b);
+          return rr.indexOf(a) - rr.indexOf(b);
         }));
-        return output.text({
-          dir1: output[Directions.outputFrom8DirNum(n1)](),
-          dir2: output[Directions.outputFrom8DirNum(n2)](),
-        });
+        if (data.triggerSetConfig.p1击退加真假火冰打法 === 'TN左DPS右') {
+          return output
+            [`${'TN左DPS右'}${Directions.outputFrom8DirNum([5, 7].includes(n1) ? n1 : n2)}`]();
+        }
+        if (data.triggerSetConfig.p1击退加真假火冰打法 === '正攻') {
+          const n = (data.p1IsTether ? [3, 5] : [1, 7]).includes(n1) ? n1 : n2;
+          const nn = {
+            3: 1,
+            5: 7,
+            1: 1,
+            7: 7,
+          }[n];
+          return output[`${'正攻'}${Directions.outputFrom8DirNum(nn)}${nn !== n ? '击退' : ''}`]();
+        }
+        // if (data.triggerSetConfig.p1击退加真假火冰打法 === '双安全区') {
+        //   return output.text!({
+        //     dir1: output[Directions.outputFrom8DirNum(n1)]!(),
+        //     dir2: output[Directions.outputFrom8DirNum(n2)]!(),
+        //   });
+        // }
       },
       outputStrings: {
         text: { en: '${dir1}${dir2}' },
@@ -713,6 +795,16 @@ hideall "--sync--"
         dirSE: { en: '三' },
         dirSW: { en: '四' },
         dirNW: { en: '一' },
+        正攻dirNE: { en: '右上' },
+        正攻dirNE击退: { en: '右上击退' },
+        正攻dirSE: { en: '右下' },
+        正攻dirSW: { en: '左下' },
+        正攻dirNW: { en: '左上' },
+        正攻dirNW击退: { en: '左上击退' },
+        TN左DPS右dirNE: { en: '右上' },
+        TN左DPS右dirSE: { en: '右下' },
+        TN左DPS右dirSW: { en: '左下' },
+        TN左DPS右dirNW: { en: '左上' },
       },
     },
     {
@@ -974,8 +1066,8 @@ hideall "--sync--"
       preRun: (data) => {
         data.p2未来过去count++;
       },
-      delaySeconds: 5.5,
-      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 6.5,
+      delaySeconds: 7,
+      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 5,
       alarmText: (data, _matches, output) => {
         if (data.p2未来过去count === 4) {
           return output.text4();
@@ -983,8 +1075,8 @@ hideall "--sync--"
         return output.text();
       },
       outputStrings: {
-        text: '未来，塔对面，对面，对面',
-        text4: '未来，要穿，要穿，要穿',
+        text: '未来，塔对面，对面',
+        text4: '未来，要穿，要穿',
       },
     },
     {
@@ -994,8 +1086,8 @@ hideall "--sync--"
       preRun: (data) => {
         data.p2未来过去count++;
       },
-      delaySeconds: 5.5,
-      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 6.5,
+      delaySeconds: 7,
+      durationSeconds: (data) => data.p2未来过去count === 4 ? 10 : 5,
       alarmText: (data, _matches, output) => {
         if (data.p2未来过去count === 4) {
           return output.text4();
@@ -1003,9 +1095,166 @@ hideall "--sync--"
         return output.text();
       },
       outputStrings: {
-        text: '过去，塔中间，中间，中间',
-        text4: '过去，留原地，原地，原地',
+        text: '过去，塔中间，中间',
+        text4: '过去，留原地，原地',
       },
+    },
+    {
+      id: 'DMU P2 HM',
+      type: 'HeadMarker',
+      netRegex: {
+        id: [
+          headMarkerData.分摊,
+          headMarkerData.钢铁,
+          headMarkerData.扇形,
+        ],
+      },
+      preRun: (data, matches) => {
+        data.p2hm[data.p2count - 1] ??= [];
+        data.p2hm[data.p2count - 1].push({
+          target: matches.target,
+          buff: {
+            [headMarkerData.分摊]: '分摊',
+            [headMarkerData.钢铁]: '钢铁',
+            [headMarkerData.扇形]: '扇形',
+          }[matches.id],
+          role: data.party.nameToRole_[matches.target],
+        });
+      },
+    },
+    {
+      id: 'DMU P2 第一轮踩塔',
+      type: 'Ability',
+      netRegex: { id: 'BABE' },
+      preRun: (data, matches) => {
+        if (data.p2第一轮踩塔人.length >= 4) {
+          return;
+        }
+        data.p2第一轮踩塔人.push(matches.target);
+      },
+    },
+    {
+      id: 'DMU P2 踩塔计数',
+      type: 'Ability',
+      netRegex: { id: 'BABE' },
+      preRun: (data) => {
+        data.p2count++;
+        data.p2报过了 = false;
+      },
+      suppressSeconds: 1,
+    },
+    {
+      id: 'DMU P2 事',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: '13DB',
+      },
+      preRun: (data, matches) => {
+        data.p2BuffCount[matches.target] = Number(matches.count);
+      },
+    },
+    {
+      id: 'DMU P2 没事干了',
+      type: 'LosesEffect',
+      netRegex: {
+        effectId: '13DB',
+      },
+      preRun: (data, matches) => {
+        data.p2BuffCount[matches.target] = 0;
+      },
+      delaySeconds: (data) => data.triggerSetConfig.p2一运打法 === '1234' ? 6 : 0.25,
+      infoText: (data, matches, output) => {
+        if (data.p2count === 9) {
+          return;
+        }
+        if (data.p2报过了) {
+          return;
+        }
+        return getP2(data, matches, output);
+      },
+      outputStrings: {
+        ...p2OutputStirngs,
+      },
+    },
+    {
+      id: 'DMU P2 HM判',
+      comment: {
+        en: '为了尽量适配所有打法 + 尽量不引入职能分配悬浮窗。第一轮DPS请自己判断是否进塔……',
+      },
+      type: 'HeadMarker',
+      netRegex: {
+        id: [
+          headMarkerData.分摊,
+          headMarkerData.钢铁,
+          headMarkerData.扇形,
+        ],
+      },
+      delaySeconds: (data) => {
+        return [3, 5, 7].includes(data.p2count) ? 5 : 0.25;
+      },
+      durationSeconds: 10,
+      suppressSeconds: 1,
+      infoText: (data, matches, output) => {
+        if (data.p2报过了) {
+          return;
+        }
+        return getP2(data, matches, output);
+      },
+      outputStrings: {
+        ...p2OutputStirngs,
+      },
+    },
+    {
+      id: 'DMU P2 Light of Judgment',
+      type: 'StartsUsing',
+      netRegex: { id: 'BABD', capture: false },
+      response: Responses.bigAoe('alert'),
+    },
+    {
+      id: 'DMU P2 Single Wing of Destruction',
+      // BACD Wings of Destruction, Left wing highlight
+      // BACE Wingso of Desctruction, Right wing highlight
+      // Halfroom cleaves
+      type: 'StartsUsing',
+      netRegex: { id: ['BACD', 'BACE'], capture: true },
+      infoText: (_data, matches, output) => {
+        if (matches.id === 'BACD')
+          return output.right();
+        return output.left();
+      },
+      outputStrings: {
+        right: Outputs.right,
+        left: Outputs.left,
+      },
+    },
+    {
+      id: 'DMU P2 Wings of Destruction',
+      type: 'StartsUsing',
+      netRegex: { id: 'C487', capture: false },
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          maxMeleeAvoidTanks: {
+            en: 'Max Melee: Avoid Tanks',
+            cn: '最大近战距离，避开坦克',
+          },
+          wingsBeNearFar: {
+            en: 'Wings: Be Near/Far',
+            cn: '双翅膀：近或远',
+          },
+        };
+        if (data.role === 'tank')
+          return { alertText: output.wingsBeNearFar() };
+        return { infoText: output.maxMeleeAvoidTanks() };
+      },
+    },
+    {
+      id: 'DMU P2 Aero III Assault',
+      // Knockback from boss that can't be resisted
+      // Applies 306 Down for the Count
+      type: 'StartsUsing',
+      netRegex: { id: 'C3F7', capture: false },
+      response: Responses.getUnder('alert'),
     },
   ],
   timelineReplace: [
