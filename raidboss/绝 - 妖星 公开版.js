@@ -1,4 +1,4 @@
-// Build Time: 2026-06-10T23:46:53.058Z
+// Build Time: 2026-06-11T17:02:52.925Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -14,6 +14,7 @@ const p2OutputStirngs = {
   第1轮闲人TN: '1轮 闲人 ${lr}引导',
   第1轮DPS分摊: '1轮 分摊 踩${lr}塔',
   第1轮DPS其他: '1轮 ${lr}边看搭档',
+  第1轮TN自由: '1轮 ${lr}边看搭档',
   第2到8轮踩塔单: '${i}轮 (单${gimmick}) 踩塔',
   第2到8轮踩塔双: '${i}轮 (双${gimmick}) 踩塔',
   第2到8轮引导: '${i}轮 塔外引导',
@@ -39,9 +40,8 @@ const getP2 = (data, _matches, output) => {
     if (stack === undefined && me) {
       stack = data.p2hm[data.p2count - i - 1]?.find((v) =>
         v.buff === '分摊' && v.target !== data.me &&
-        (data.triggerSetConfig.p2一运搭档打法 === 'same'
-          ? (v.role === me.role)
-          : (v.role !== me.role))
+        ({ tank: 'tn', healer: 'tn', dps: 'dps' }[v.role] ===
+          { tank: 'tn', healer: 'tn', dps: 'dps' }[me.role])
       );
     }
     if (me) {
@@ -68,8 +68,12 @@ const getP2 = (data, _matches, output) => {
     const lr = output[`${roleGimmick.buff}组`]();
     // 第一轮
     if (data.role === 'tank' || data.role === 'healer') {
-      const inTower = Boolean(me.buff === '分摊' || stack);
       const gimmick = output[me.buff]();
+      if (data.triggerSetConfig.p2一运搭档打法 === 'free' && me.buff !== '分摊') {
+        data.p2报过了 = true;
+        return output.第1轮TN自由({ gimmick, lr });
+      }
+      const inTower = Boolean(me.buff === '分摊' || stack);
       data.p2报过了 = true;
       return output[inTower ? '第1轮踩塔TN' : '第1轮闲人TN']({ gimmick, lr });
     }
@@ -209,8 +213,8 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '同职能（MT找ST、DPS自己看）': 'same',
-          '异职能（MT找H1、DPS自己看）未测试': 'diff',
+          'TH同职能、DPS自己看': 'same',
+          '全都自己看': 'free',
         },
       },
       default: 'same',
@@ -727,7 +731,7 @@ hideall "--sync--"
       id: 'DMU 头标',
       type: 'HeadMarker',
       netRegex: { id: [headMarkerData.stack, headMarkerData.spread] },
-      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 2.1 : 0.9) : 0.5,
+      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 1.65 : 0.7) : 0.5,
       durationSeconds: 6,
       suppressSeconds: 1,
       alertText: (data, matches, output) => {
@@ -1255,6 +1259,43 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: 'C3F7', capture: false },
       response: Responses.getUnder('alert'),
+    },
+    {
+      id: 'DMU P3 究极冲击波',
+      type: 'AbilityExtra',
+      netRegex: { id: 'BAE3' },
+      preRun: (data, matches) => {
+        data.p3究极冲击波hdg.push(parseFloat(matches.heading));
+      },
+      durationSeconds: 20,
+      alertText: (data, _matches, output) => {
+        if (data.p3究极冲击波hdg.length === 2) {
+          const [c1, c2] = data.p3究极冲击波hdg;
+          const dir1 = Directions.hdgTo8DirNum(c1);
+          const dir2 = Directions.hdgTo8DirNum(c2);
+          const start = Directions.outputFrom8DirNum(dir1);
+          const clock = (dir2 - dir1 === 1) || (dir2 === 0 && dir1 === 7);
+          const clk = clock ? '顺' : '逆';
+          return output.text({
+            start: output[start](),
+            clk: output[clk](),
+          });
+        }
+      },
+      outputStrings: {
+        text: '${start} ${clk}',
+        顺: '逆',
+        逆: '顺',
+        dirNW: '1',
+        dirN: 'A',
+        dirNE: '2',
+        dirE: 'B',
+        dirSE: '3',
+        dirS: 'C',
+        dirSW: '4',
+        dirW: 'D',
+        unknown: 'unknown',
+      },
     },
   ],
   timelineReplace: [
