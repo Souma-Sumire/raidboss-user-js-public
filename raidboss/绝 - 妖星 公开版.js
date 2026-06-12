@@ -1,4 +1,4 @@
-// Build Time: 2026-06-11T17:02:52.925Z
+// Build Time: 2026-06-12T14:21:40.636Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -73,7 +73,7 @@ const getP2 = (data, _matches, output) => {
         data.p2报过了 = true;
         return output.第1轮TN自由({ gimmick, lr });
       }
-      const inTower = Boolean(me.buff === '分摊' || stack);
+      const inTower = Boolean(me.buff === '分摊' || (stack && stack.role === data.role));
       data.p2报过了 = true;
       return output[inTower ? '第1轮踩塔TN' : '第1轮闲人TN']({ gimmick, lr });
     }
@@ -159,6 +159,22 @@ const arrowBuffs = {
   '130E': '右',
   '130F': '左',
 };
+const p3buff = {
+  '640': { name: '混沌之炎' },
+  '641': { name: '混沌之水' },
+  '642': { name: '混沌之风' },
+  '643': { name: '混沌之逆风' },
+};
+const p3mj = {
+  '0150': 1,
+  '0151': 2,
+  '0152': 3,
+  '0153': 4,
+  '01B5': 5,
+  '01B6': 6,
+  '01B7': 7,
+  '01B8': 8,
+};
 const p4buff = {
   '15A8': { name: '叉形闪电', true: '雷分散', false: '水分摊', source: '新生艾克斯迪司' },
   '15A9': { name: '水属性压缩', true: '水分摊', false: '雷分散', source: '新生艾克斯迪司' },
@@ -168,6 +184,8 @@ const p4buff = {
   '15AC': { name: '混沌之水', true: '月环', false: '钢铁', source: '卡奥斯' },
   '566': { name: '超越死亡', true: '死超', false: '亚拉戈', source: '新生艾克斯迪司' },
   '1C6': { name: '亚拉戈领域', true: '亚拉戈', false: '死超', source: '新生艾克斯迪司' },
+  '1317': { name: '生者之伤', true: '吃蓝', false: '吃紫', source: '新生艾克斯迪司' },
+  '1318': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
   '15A5': { name: '生者之伤', true: '吃蓝', false: '吃紫', source: '新生艾克斯迪司' },
   '15A6': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
 };
@@ -554,6 +572,8 @@ hideall "--sync--"
       p2第一轮踩塔人: [],
       p2BuffCount: {},
       p2报过了: false,
+      p3buffs: {},
+      p3jjcjb: undefined,
       p4真假: {
         '新生艾克斯迪司': [],
         '卡奥斯': [],
@@ -731,7 +751,7 @@ hideall "--sync--"
       id: 'DMU 头标',
       type: 'HeadMarker',
       netRegex: { id: [headMarkerData.stack, headMarkerData.spread] },
-      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 1.65 : 0.7) : 0.5,
+      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 1.65 : 0.5) : 0.5,
       durationSeconds: 6,
       suppressSeconds: 1,
       alertText: (data, matches, output) => {
@@ -752,7 +772,7 @@ hideall "--sync--"
       },
       outputStrings: {
         stack: { en: '分摊' },
-        spread: { en: '散开！' },
+        spread: { en: '散开散开！' },
         假雷分摊: { en: '危险区+分摊' },
         真雷分摊: { en: '安全区+分摊' },
         假雷分散: { en: '危险区+散开' },
@@ -1054,7 +1074,7 @@ hideall "--sync--"
     {
       id: 'DMU P2 双腕',
       type: 'StartsUsing',
-      netRegex: { id: 'C24D' },
+      netRegex: { id: 'C24C' },
       response: Responses.sharedTankBuster(),
     },
     {
@@ -1261,6 +1281,87 @@ hideall "--sync--"
       response: Responses.getUnder('alert'),
     },
     {
+      id: 'DMU P3 debuff',
+      type: 'StartsUsing',
+      netRegex: { id: ['C2E2', 'C2E3'] },
+      suppressSeconds: 1,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: {
+        text: '获取防火墙',
+      },
+    },
+    {
+      id: 'DMU P3 深层痛楚',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAF2' },
+      response: Responses.aoe(),
+    },
+    {
+      id: 'DMU P3-1 debuff',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: Object.keys(p3buff),
+      },
+      preRun: (data, matches) => {
+        data.p3buffs[matches.target] ??= [];
+        data.p3buffs[matches.target].push({
+          name: p3buff[matches.effectId].name,
+          duration: parseFloat(matches.duration),
+        });
+      },
+    },
+    {
+      id: 'DMU P3-1 debuff 风',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: ['642', '643'],
+      },
+      condition: (data, matches) => {
+        return data.phase === 'p3' && matches.target === data.me;
+      },
+      delaySeconds: 68 - 10,
+      countdownSeconds: 68 - 10 - 3,
+      response: (_data, matches, output) => {
+        return {
+          [matches.id === '642' ? 'infoText' : 'alertText']: output[matches.effectId](),
+        };
+      },
+      outputStrings: {
+        '642': '面向艾克斯迪斯',
+        '643': '背对BOSS',
+      },
+    },
+    {
+      id: 'DMU P3-1 debuff 水火',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: ['640', '641'],
+      },
+      condition: (data, matches) => {
+        // console.warn(data.phase);
+        return data.phase === 'p3' && matches.target === data.me;
+      },
+      delaySeconds: 0.5,
+      suppressSeconds: 200,
+      countdownSeconds: (_data, matches) => {
+        return parseFloat(matches.duration);
+      },
+      infoText: (_data, matches, output) => {
+        return output
+          [
+            `${parseFloat(matches.duration) > 60 ? '长' : '短'}${
+              matches.effectId === '640' ? '火' : '水'
+            }`
+          ]();
+      },
+      outputStrings: {
+        长火: '长火',
+        短火: '短火',
+        长水: '长水',
+        短水: '短水',
+      },
+    },
+    {
       id: 'DMU P3 究极冲击波',
       type: 'AbilityExtra',
       netRegex: { id: 'BAE3' },
@@ -1276,6 +1377,11 @@ hideall "--sync--"
           const start = Directions.outputFrom8DirNum(dir1);
           const clock = (dir2 - dir1 === 1) || (dir2 === 0 && dir1 === 7);
           const clk = clock ? '顺' : '逆';
+          data.p3jjcjb = {
+            c1,
+            c2,
+            clk,
+          };
           return output.text({
             start: output[start](),
             clk: output[clk](),
@@ -1284,8 +1390,8 @@ hideall "--sync--"
       },
       outputStrings: {
         text: '${start} ${clk}',
-        顺: '逆',
-        逆: '顺',
+        顺: '逆←',
+        逆: '顺→',
         dirNW: '1',
         dirN: 'A',
         dirNE: '2',
@@ -1295,6 +1401,40 @@ hideall "--sync--"
         dirSW: '4',
         dirW: 'D',
         unknown: 'unknown',
+      },
+    },
+    {
+      id: 'DMU P3 MJ',
+      type: 'HeadMarker',
+      netRegex: { id: Object.keys(p3mj), capture: true },
+      condition: (data, matches) => data.phase === 'p3' && matches.target === data.me,
+      durationSeconds: 12,
+      infoText: (data, matches, output) => {
+        const n = p3mj[matches.id];
+        // 这里的clk没取反，是boss的冲锋顺序
+        const { c1, clk } = data.p3jjcjb;
+        const dir1 = Directions.hdgTo8DirNum(c1);
+        const g = dir1 * 2 + ((clk !== '顺' ? (+(n - 1)) : (-(n - 1))) * 2) + 1;
+        const r = (g + 16) % 16;
+        const [a1, a2] = [
+          Directions.outputFrom8DirNum(((r - 1 + 16) % 16) / 2),
+          Directions.outputFrom8DirNum(((r + 1) % 16) / 2),
+        ];
+        const r1 = output[a1]();
+        const r2 = output[a2]();
+        // console.log(`${data.me}:${n}麻,起点${dir1}${clk}，a1=${a1},a2=${a2},去${r1}/${r2}`);
+        return output.text({ n, r1, r2 });
+      },
+      outputStrings: {
+        text: '${n}麻，去 ${r1}${r2}之间',
+        dirNW: '1',
+        dirN: 'A',
+        dirNE: '2',
+        dirE: 'B',
+        dirSE: '3',
+        dirS: 'C',
+        dirSW: '4',
+        dirW: 'D',
       },
     },
   ],
