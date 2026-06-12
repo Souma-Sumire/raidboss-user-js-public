@@ -1,4 +1,4 @@
-// Build Time: 2026-06-12T14:21:40.636Z
+// Build Time: 2026-06-12T19:07:28.530Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -1322,8 +1322,10 @@ hideall "--sync--"
       delaySeconds: 68 - 10,
       countdownSeconds: 68 - 10 - 3,
       response: (_data, matches, output) => {
+        // console.warn(_data.me, matches.effect, matches.effectId);
+        // return {};
         return {
-          [matches.id === '642' ? 'infoText' : 'alertText']: output[matches.effectId](),
+          [matches.id === '643' ? 'infoText' : 'alertText']: output[matches.effectId](),
         };
       },
       outputStrings: {
@@ -1411,10 +1413,11 @@ hideall "--sync--"
       durationSeconds: 12,
       infoText: (data, matches, output) => {
         const n = p3mj[matches.id];
-        // 这里的clk没取反，是boss的冲锋顺序
+        // 这里的clk没取反，是boss的冲锋顺序，所以下面的判断是!==
         const { c1, clk } = data.p3jjcjb;
         const dir1 = Directions.hdgTo8DirNum(c1);
-        const g = dir1 * 2 + ((clk !== '顺' ? (+(n - 1)) : (-(n - 1))) * 2) + 1;
+        const p = (clk !== '顺' ? +1 : -1);
+        const g = dir1 * 2 + p + (2 * (n - 1)) * p;
         const r = (g + 16) % 16;
         const [a1, a2] = [
           Directions.outputFrom8DirNum(((r - 1 + 16) % 16) / 2),
@@ -1422,7 +1425,9 @@ hideall "--sync--"
         ];
         const r1 = output[a1]();
         const r2 = output[a2]();
-        // console.log(`${data.me}:${n}麻,起点${dir1}${clk}，a1=${a1},a2=${a2},去${r1}/${r2}`);
+        // console.log(
+        //   `${data.me}:${n}麻,${dir1}${clk}，g=${g},r1=${r1},r2=${r2},去${r1}/${r2}`,
+        // );
         return output.text({ n, r1, r2 });
       },
       outputStrings: {
