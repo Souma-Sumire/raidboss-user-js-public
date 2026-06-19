@@ -26,6 +26,11 @@
    - 咖啡整合：`ACT.ffcafe\Plugins\cactbot-offline\user\raidboss`
 3. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
 
+## 常见问题
+
+**<span style="color:red;font-size:25px">不要</span>** 擅自修改 Cactbot User 目录， **<span style="color:red;font-size:25px">不要</span>** 把他改成 raidboss 文件夹。
+<img width="629" height="110" alt="QQ_1781862470962" src="https://github.com/user-attachments/assets/3b71948a-86e2-42bd-9f91-2073ac880ccd" />
+
 ## 按文件说明
 
 ### 核心依赖
