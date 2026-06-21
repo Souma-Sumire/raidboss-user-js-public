@@ -1,4 +1,4 @@
-// Build Time: 2026-06-19T17:39:36.419Z
+// Build Time: 2026-06-21T18:51:45.936Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -10,13 +10,16 @@ const phases = {
 const centerX = 100;
 const centerY = 100;
 const p2OutputStirngs = {
+  // 如果不是固定扇形右，就改成“扇形组的”或者空格
   扇形组: '左',
+  // 如果不是固定钢铁右，就改成“钢铁组的”或者空格
   钢铁组: '右',
   第1轮踩塔TN: '1轮 ${gimmick} 踩${lr}塔',
   第1轮闲人TN: '1轮 闲人 ${lr}引导',
   第1轮DPS分摊: '1轮 分摊 踩${lr}塔',
   第1轮DPS其他: '1轮 ${lr}边看搭档',
   第1轮TN自由: '1轮 ${lr}边看搭档',
+  第1轮TN自由分摊: '1轮 分摊',
   第2到8轮踩塔单: '${i}轮 (单${gimmick}) 踩塔',
   第2到8轮踩塔双: '${i}轮 (双${gimmick}) 踩塔',
   第2到8轮引导: '${i}轮 塔外引导',
@@ -67,13 +70,18 @@ const getP2 = (data, _matches, output) => {
   }
   if (data.p2count === 1) {
     const roleGimmick = data.p2hm[0].find((v) => v.buff !== '分摊' && v.role === data.role);
-    const lr = output[`${roleGimmick.buff}组`]();
+    const lr = data.triggerSetConfig.p2一运是扇形组左钢铁组右吗 === 'yes'
+      ? output[`${roleGimmick.buff}组`]()
+      : '';
     // 第一轮
     if (data.role === 'tank' || data.role === 'healer') {
       const gimmick = output[me.buff]();
-      if (data.triggerSetConfig.p2一运搭档打法 === 'free' && me.buff !== '分摊') {
+      if (data.triggerSetConfig.p2一运搭档打法 === 'free') {
         data.p2报过了 = true;
-        return output.第1轮TN自由({ gimmick, lr });
+        if (me.buff !== '分摊') {
+          return output.第1轮TN自由({ gimmick, lr });
+        }
+        return output.第1轮TN自由分摊();
       }
       const inTower = Boolean(me.buff === '分摊' || (stack && stack.role === data.role));
       data.p2报过了 = true;
@@ -241,10 +249,10 @@ const p3timeline = [
   // 固定队改
   { id: 'step18', time: 99500, text: '禁止2准备', duration: 2500 },
   { id: 'step19', time: 102000, text: '禁止2接两根', duration: 7000 },
-  { id: 'step20', time: 109000, text: '禁止1接 + 去两侧', duration: 6000 },
-  // { time: 99500, text: '“禁一二”准备', duration: 2500 },
-  // { time: 102000, text: '“禁一二”接', duration: 7000 },
-  // { time: 109000, text: '“禁2”接 + 去两侧', duration: 6000 },
+  { id: 'step20', time: 109000, text: '禁止1接', duration: 6000 },
+  // { time: 99500, text: '“禁止1,2”准备', duration: 2500 },
+  // { time: 102000, text: '“禁止1,2”接', duration: 7000 },
+  // { time: 109000, text: “禁止2接', duration: 6000 },
 ];
 const p5water = {
   '82.292|89.372|0.785': ['A', 'B'],
@@ -253,8 +261,8 @@ const p5water = {
   '103.532|75.242|-0.785': ['D', 'A'],
 };
 const p5buff = {
+  'B56': '火',
   'BB6': '雷',
-  '41C': '风',
   'B57': '冰',
 };
 Options.Triggers.push({
@@ -306,6 +314,20 @@ Options.Triggers.push({
       default: 'same',
     },
     {
+      id: 'p2一运是扇形组左钢铁组右吗',
+      name: {
+        en: 'p2一运是扇形组左钢铁组右吗？',
+      },
+      type: 'select',
+      options: {
+        en: {
+          '是的': 'yes',
+          '不是，你别报左右': 'no',
+        },
+      },
+      default: 'yes',
+    },
+    {
       id: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
       name: {
         en: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
@@ -343,105 +365,79 @@ hideall "准备魔击x3"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
 0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
 # P1
-15.2 "恶狠狠毁荡 1"
-18.3 "恶狠狠毁荡 2"
+15.2 "恶狠狠毁荡 x2"
 37.9 "呼啦啦爆炎"
 42.1 "波动炮"
 45.9 "爆炸"
 49.4 "连环环陷阱"
 62.4 "制裁之光"
-65.6 "超驱动 1"
-67.7 "超驱动 2"
-69.8 "超驱动 3"
+65.6 "超驱动 x3"
 87.2 "重力弹"
 91.2 "岩石弹"
-97.1 "恶狠狠毁荡"
-100.2 "恶狠狠毁荡"
+97.1 "恶狠狠毁荡 x2"
 105.7 "重力弹"
 109.7 "岩石弹"
 118 "连环环陷阱"
 120.7 "强重力"
-123.6 "强重力"
 132.2 "制裁之光"
-135.4 "超驱动 1"
-137.5 "超驱动 2"
-139.6 "超驱动 3"
-159.3 "唰啦啦传送 1"
-162.2 "唰啦啦传送 2"
+135.4 "超驱动 x3"
+159.3 "唰啦啦传送 x2"
 167.7 "连环环陷阱"
-173.3 "睡魔的神气"
-173.4 "圣母的神气"
+173.3 "睡魔/圣母的神气"
 186.4 "圣母颂"
 187 "呼啦啦爆炎"
 # P2
 220.1 "终末双腕"
 235.3 "遗弃末世"
-248.5 "光之波动"
-249.2 "咏唱危机"
-258.1 "过去/未来终结"
-258.6 "光之波动"
-259.2 "咏唱危机"
-269.6 "光之波动"
-270.2 "咏唱危机"
-279.2 "过去/未来终结"
-279.7 "光之波动"
-280.2 "咏唱危机"
-290.6 "光之波动"
-291.3 "咏唱危机"
-300.4 "过去/未来终结"
-300.7 "光之波动"
-301.2 "咏唱危机"
-311.6 "光之波动"
-312.3 "咏唱危机"
-321.5 "过去/未来终结"
-321.7 "光之波动"
-322.3 "咏唱危机"
+248.5 "塔#1"
+258.6 "塔#2"
+269.6 "塔#3"
+279.7 "塔#4"
+290.6 "塔#5"
+300.7 "塔#6"
+311.6 "塔#7"
+321.7 "塔#8"
 342.1 "制裁之光"
 370.7 "破坏之翼"
 377.8 "终末双腕"
 # P3
 450.5 "深层痛楚"
-469.6 "混沌之炎"
-479.1 "暴雷 1"
-482.1 "暴雷 2"
-497.6 "海啸"
+469.6 "混沌之炎/水"
+479.1 "暴雷 x2"
+497.6 "海啸/烈焰"
 507.9 "究极冲击波 x3"
 512.1 "本影爆碎"
 513.9 "究极冲击波 x3"
 519 "龙卷风"
 519.9 "究极冲击波 x4"
-537.6 "暴雷 1"
-540.7 "暴雷 2"
-554.8 "暴雷 1"
-557.8 "暴雷 2"
-567.4 "地震 1"
-571.9 "地震 2"
+537.6 "暴雷 x2"
+554.8 "暴雷 x2"
+567.4 "地震 x2"
 578.6 "重冲击"
-585.9 "无之波动"
-593 "无之波动"
-596.3 "暴雷 1"
-599.3 "暴雷 2"
+585.9 "黑洞（攻1）"
+593 "黑洞（攻12）"
+596.3 "暴雷 x2"
 609 "冲击波"
-616.5 "无之波动"
-618.1 "地震"
-621.5 "无之波动"
-623.2 "地震"
-626.7 "无之波动"
-628.3 "地震"
+616.5 "黑洞（攻123）"
+618.1 "攻1死超"
+621.5 "黑洞（锁1攻23）"
+623.2 "攻2死超"
+626.7 "黑洞（锁12攻3）"
+628.3 "攻3死超"
 637.6 "暴雷"
 640.6 "暴雷"
-650.8 "无之波动"
-652.5 "地震"
-655.9 "无之波动"
-657.5 "地震"
-660.9 "无之波动"
-662.5 "地震"
+650.8 "黑洞（锁123）"
+652.5 "锁1死超"
+655.9 "黑洞（禁1锁23）"
+657.5 "锁2死超"
+660.9 "黑洞（锁12锁3）"
+662.5 "锁3死超"
 672 "白洞"
 677.1 "重冲击"
-684.3 "无之波动"
-685.9 "地震"
-691.3 "无之波动"
-692.9 "地震"
+684.3 "黑洞（禁2）"
+685.9 "禁2死超"
+691.3 "黑洞（禁1）"
+692.9 "禁1死超"
 705.8 "轰击"
 706.1 "轰隆隆跺脚"
 707.5 "轰隆隆跺脚"
@@ -450,37 +446,34 @@ hideall "准备魔击x3"
 711.4 "轰击"
 # P4
 741.4 "闹哄哄魂击" Ability { id: "C2DC" } window 60,60
-755.5 "大十字"
-760.7 "烈焰"
-770.5 "大十字"
-775.6 "海啸"
-785.5 "大十字"
-798.1 "死者暗黑光"
-798.2 "生者暗黑光"
+755.5 "大十字#1"
+760.7 "烈焰/海啸"
+770.5 "大十字#2"
+775.6 "海啸/烈焰"
+785.5 "大十字#3"
+798.1 "鸳鸯锅"
 801.9 "死亡波涛"
-806.6 "死亡波纹"
-806.7 "死亡落雷"
-815.7 "死亡尖叫"
+806.6 "水雷1"
+815.7 "石化眼1"
 824.6 "扑腾腾究极"
-831.6 "死亡落雷"
-831.7 "死亡波纹"
-839.6 "死亡尖叫"
+831.6 "水雷2"
+839.6 "石化眼2"
 863.6 "扑腾腾究极"
 # P5
 902.8 "连续究极 x4" StartsUsing { id: "BB40" } window 20,20
-903.8 "准备魔击x3"
+904.3 "准备魔击x3"
 907.7 "魔击 x3"
 920.3 "混沌洪水 x4"
 933.3 "癫狂交响曲"
 936.5 "混沌核爆/神圣"
 940 "核爆扩散/混沌神圣"
-940.0 "准备魔击x2"
+941.2 "准备魔击x2"
 944.6 "魔击 x2"
 963.3 "三星"
 969.3 "三星"
 975.4 "三星"
 984.8 "连续究极 x4"
-985.8 "准备魔击x2"
+986.3 "准备魔击x2"
 989.7 "魔击 x2"
 1016.3 "混沌涡旋"
 1025.4 "癫狂交响曲"
@@ -537,22 +530,28 @@ hideall "准备魔击x3"
       p5buff: [],
       p5三星塔: [],
       p5三星count: 0,
+      p5三星buff: [],
+      p5三星是闲人: false,
+      p5Tower: { 右上: [], 下: [], 左上: [] },
+      p5三星亮起来: [],
     };
   },
   timelineTriggers: [
     {
       id: 'DMU P5 魔击',
       regex: /^准备魔击x(?<count>2|3)$/,
-      infoText: (_data, matches, output) => output.text({ count: matches.count }),
-      outputStrings: { text: { en: '平A (${count}次)' } },
+      durationSeconds: 5,
+      countdownSeconds: 5,
+      alarmText: (_data, matches, output) => output.text({ count: matches.count }),
+      outputStrings: { text: { en: '准备平A (${count}次)' } },
     },
     {
       id: 'DMU P5 癫狂交响曲',
       regex: /^癫狂交响曲$/,
-      beforeSeconds: 10,
-      durationSeconds: 10,
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: { text: { en: '准备八方' } },
+      beforeSeconds: 7,
+      durationSeconds: 7,
+      alarmText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '癫狂八方' } },
     },
   ],
   triggers: [
@@ -1603,7 +1602,8 @@ hideall "准备魔击x3"
         }
       },
       outputStrings: {
-        text: '看${dir}，${gmk}（${role}去${in}）',
+        // text: '看${dir}，${gmk}（${role}去${in}）',
+        text: '${gmk}（${role}去${in}）',
         all: '都',
         tank: '坦克',
         healer: '治疗',
@@ -1717,6 +1717,500 @@ hideall "准备魔击x3"
       durationSeconds: 4.7,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: { text: '去外面 + 保持移动' },
+    },
+    {
+      id: 'DMU P4 真假雷冰',
+      type: 'StartsUsing',
+      netRegex: { id: 'BA94' },
+      condition: (data) => data.phase === 'p4',
+      delaySeconds: 0.25,
+      alertText: (data, _matches, output) => {
+        return output[`${data.假冰 ? '假' : '真'}冰${data.假雷 ? '假' : '真'}雷`]();
+      },
+      outputStrings: {
+        '真冰真雷': { en: '都躲开' },
+        '真冰假雷': { en: '吃直条' },
+        '假冰真雷': { en: '吃扇形' },
+        '假冰假雷': { en: '都吃' },
+      },
+    },
+    {
+      id: 'DMU P4 真假大十字',
+      type: 'GainsEffect',
+      // 45F = 卡奥斯 假
+      // 460 = 卡奥斯 真
+      // 461 = 新生艾克斯迪司 假
+      // 462 = 新生艾克斯迪司 真
+      netRegex: { effectId: '808' },
+      condition: (data) => data.phase === 'p4',
+      delaySeconds: (data) => data.p4真假.新生艾克斯迪司.length === 3 ? 0 : 3,
+      run: (data, matches) => {
+        data.p4真假[['45F', '460'].includes(matches.count) ? '卡奥斯' : '新生艾克斯迪司'].push([
+          '460',
+          '462',
+        ].includes(matches.count));
+      },
+    },
+    {
+      id: 'DMU P4 BUFF 判定前提示',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.keys(p4buff), capture: true },
+      condition: (data, matches) => {
+        return data.phase === 'p4' &&
+          !['生者之伤', '死者之伤', '亚拉戈领域', '超越死亡'].includes(p4buff[matches.effectId].name);
+      },
+      delaySeconds: (_data, matches) => {
+        return parseFloat(matches.duration) - 8.5;
+      },
+      durationSeconds: 8.5,
+      countdownSeconds: 8.5,
+      alertText: (data, matches, output) => {
+        const resolveTime = (new Date(matches.timestamp).getTime() / 1000) +
+          parseFloat(matches.duration);
+        data.p4ReportedTimes ??= [];
+        if (data.p4ReportedTimes.some((t) => Math.abs(t - resolveTime) <= 1)) {
+          return undefined;
+        }
+        data.p4ReportedTimes.push(resolveTime);
+        // 遍历data.p4buffs,按照time进行归组，相差在1秒钟之内的归为一组，否则新开一组。
+        const groupedByTime = {};
+        Object.entries(data.p4buffs).forEach(([player, v]) => {
+          v.forEach((item) => {
+            if (!['生者之伤', '死者之伤', '亚拉戈领域', '超越死亡'].includes(item.name)) {
+              // 寻找相差在1秒钟之内的组
+              const matchKey = Object.keys(groupedByTime).find((key) => {
+                return Math.abs(item.time - parseFloat(key)) <= 1;
+              });
+              if (matchKey !== undefined) {
+                groupedByTime[parseFloat(matchKey)].push({
+                  player,
+                  ...item,
+                });
+              } else {
+                groupedByTime[item.time] = [{
+                  player,
+                  ...item,
+                }];
+              }
+            }
+          });
+        });
+        // 按照时间顺序排序所有的组
+        const sortedTimes = Object.keys(groupedByTime).map(Number).sort((a, b) => a - b);
+        const myGimmickByTime = {};
+        sortedTimes.forEach((time) => {
+          const group = groupedByTime[time];
+          const myBuffs = group.filter((item) => item.player === data.me);
+          const hasWater = group.some((item) => item.gimmick === '水分摊');
+          if (myBuffs.length > 0) {
+            const gimmickStr = myBuffs.map((item) => output[item.gimmick]()).join(output.plus());
+            const onlySword = myBuffs.every((item) =>
+              item.gimmick === '移动' || item.gimmick === '停手'
+            );
+            if (hasWater && onlySword) {
+              myGimmickByTime[time] = gimmickStr + output.plus() + output['水分摊']();
+            } else {
+              myGimmickByTime[time] = gimmickStr;
+            }
+          } else {
+            if (hasWater) {
+              myGimmickByTime[time] = output['水分摊']();
+            }
+          }
+        });
+        const gTime = sortedTimes.find((t) => Math.abs(t - resolveTime) <= 1);
+        if (gTime === undefined) {
+          return undefined;
+        }
+        const currentGimmick = myGimmickByTime[gTime];
+        if (currentGimmick === undefined) {
+          return undefined;
+        }
+        // 检查上一个自己需要做的机制时间
+        const idx = sortedTimes.indexOf(gTime);
+        let preTime;
+        for (let j = idx - 1; j >= 0; j--) {
+          const t = sortedTimes[j];
+          if (myGimmickByTime[t] !== undefined) {
+            preTime = t;
+            break;
+          }
+        }
+        if (preTime !== undefined) {
+          const diff = Math.abs(preTime - gTime);
+          // 如果这次机制与上一个自己有提示的机制时间相差小于等于3秒，则这次不报
+          if (diff <= 3) {
+            return undefined;
+          }
+        }
+        return currentGimmick;
+      },
+      outputStrings: {
+        plus: { en: '+' },
+        雷分散: { en: '出去分散' },
+        水分摊: { en: '3人分摊' },
+        背对眼: { en: '出去背对' },
+        面对眼: { en: '脚底互看' },
+        停手: { en: '静止停停' },
+        移动: { en: '保持移动' },
+        钢铁: { en: '放钢铁' },
+        月环: { en: '放月环' },
+      },
+    },
+    {
+      id: 'DMU P4 BUFF 长时间提示',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.keys(p4buff), capture: false },
+      condition: (data) => data.phase === 'p4',
+      delaySeconds: 0.25,
+      durationSeconds: (data) => {
+        data.p4CastCount++;
+        return [3, 3, 3, 3, 3, 60][data.p4CastCount];
+      },
+      suppressSeconds: 1,
+      // sound: '',
+      soundVolume: 0,
+      response: (data, _matches, output) => {
+        if (data.p4CastCount > 5)
+          return {};
+        if (data.p4CastCount <= 4) {
+          return {};
+          // return {
+          //   infoText: output.n1t4!({
+          //     text: data.p4buffs[data.me]!.filter((v) => v.count === data.p4CastCount).map((v) =>
+          //       output[v.gimmick]!()
+          //     ).join(output.join1!()),
+          //   }),
+          //   tts: null,
+          // };
+        }
+        // 遍历data.p4buffs,按照time进行归组，相差在1秒钟之内的归为一组，否则新开一组。
+        const groupedByTime = {};
+        Object.entries(data.p4buffs).forEach(([player, v]) => {
+          v.forEach((item) => {
+            if (!['生者之伤', '死者之伤', '亚拉戈领域', '超越死亡'].includes(item.name)) {
+              // 寻找相差在1秒钟之内的组
+              const matchKey = Object.keys(groupedByTime).find((key) => {
+                return Math.abs(item.time - parseFloat(key)) <= 1;
+              });
+              if (matchKey !== undefined) {
+                groupedByTime[parseFloat(matchKey)].push({
+                  player,
+                  ...item,
+                });
+              } else {
+                groupedByTime[item.time] = [{
+                  player,
+                  ...item,
+                }];
+              }
+            }
+          });
+        });
+        // 按照时间顺序排序所有的组
+        const sortedTimes = Object.keys(groupedByTime).map(Number).sort((a, b) => a - b);
+        const myGimmicks = [];
+        sortedTimes.forEach((time) => {
+          const group = groupedByTime[time];
+          // 找到当前玩家在此机制组中的buff
+          const myBuffs = group.filter((item) => item.player === data.me);
+          const hasWater = group.some((item) => item.gimmick === '水分摊');
+          if (myBuffs.length > 0) {
+            // 如果玩家自己有buff，播报自己的buff（有多个则用 plus (+) 连接）
+            const gimmickStr = myBuffs.map((item) => output[item.gimmick]()).join(output.plus());
+            const onlySword = myBuffs.every((item) =>
+              item.gimmick === '移动' || item.gimmick === '停手'
+            );
+            if (hasWater && onlySword) {
+              myGimmicks.push(gimmickStr + output.plus() + output['水分摊']());
+            } else {
+              myGimmicks.push(gimmickStr);
+            }
+          } else {
+            // 如果自己在这个机制轮次里没有对应的buff（即没事可做），且别人有“水分摊”，则需要去帮忙分摊
+            if (hasWater) {
+              myGimmicks.push(output['水分摊']());
+            }
+          }
+        });
+        const text = myGimmicks.join(output.join5());
+        return { alarmText: output.text5({ text }), tts: null };
+      },
+      outputStrings: {
+        雷分散: { en: '雷分散' },
+        水分摊: { en: '水分摊' },
+        背对眼: { en: '真石化' },
+        面对眼: { en: '假石化' },
+        停手: { en: '静剑' },
+        移动: { en: '动剑' },
+        钢铁: { en: '放钢铁' },
+        月环: { en: '放月环' },
+        plus: { en: '+' },
+        // join1: { en: '、' },
+        join5: { en: '→' },
+        // n1t4: '${text}',
+        text5: '${text}',
+      },
+    },
+    {
+      id: 'DMU P4 放钢铁瞬间提示',
+      type: 'GainsEffect',
+      netRegex: { effectId: ['15AB', '15AC'] },
+      condition: (data, matches) => {
+        if (data.phase !== 'p4' || matches.target !== data.me)
+          return false;
+        const buff = p4buff[matches.effectId];
+        if (!buff)
+          return false;
+        const sourceTF = data.p4真假.卡奥斯[data.p4count.卡奥斯 - 1];
+        if (sourceTF === undefined)
+          return false;
+        const gimmick = buff[sourceTF ? 'true' : 'false'];
+        return gimmick === '钢铁';
+      },
+      delaySeconds: (_data, matches) => parseFloat(matches.duration),
+      infoText: (_data, _matches, output) => output.go(),
+      outputStrings: { go: { en: '走!' } },
+    },
+    {
+      id: 'DMU P4 放月环瞬间提示',
+      type: 'GainsEffect',
+      netRegex: { effectId: ['15AB', '15AC'] },
+      condition: (data, matches) => {
+        if (data.phase !== 'p4' || matches.target !== data.me)
+          return false;
+        const buff = p4buff[matches.effectId];
+        if (!buff)
+          return false;
+        const sourceTF = data.p4真假.卡奥斯?.[data.p4count.卡奥斯 - 1];
+        if (sourceTF === undefined)
+          return false;
+        const gimmick = buff[sourceTF ? 'true' : 'false'];
+        return gimmick === '月环';
+      },
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 4,
+      countdownSeconds: 4,
+      infoText: (_data, _matches, output) => output.wait(),
+      tts: null,
+      outputStrings: { wait: { en: '等月环' } },
+    },
+    {
+      id: 'DMU P4 大十字',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB14' },
+      delaySeconds: 2,
+      run: (data) => data.p4count.新生艾克斯迪司++,
+    },
+    {
+      id: 'DMU P4 烈焰/海啸',
+      type: 'StartsUsing',
+      netRegex: { id: ['BB1E', 'BB20', 'BB1F', 'BB21'] },
+      delaySeconds: 2,
+      suppressSeconds: 1,
+      run: (data) => data.p4count.卡奥斯++,
+    },
+    {
+      id: 'DMU P4 BUFF',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.keys(p4buff) },
+      run: (data, matches) => {
+        if (data.phase !== 'p4')
+          return false;
+        const buff = p4buff[matches.effectId];
+        const source = buff.source;
+        const sourceTF = data.p4真假[source][data.p4count[source] - 1];
+        const gimmick = buff[sourceTF ? 'true' : 'false'];
+        (data.p4buffs[matches.target] ??= []).push({
+          name: buff.name,
+          tf: sourceTF ? '真' : '假',
+          gimmick: gimmick,
+          // duration: parseFloat(matches.duration),
+          time: (new Date(matches.timestamp).getTime() / 1000) + parseFloat(matches.duration),
+          count: data.p4CastCount,
+          bossCount: data.p4count[source],
+        });
+        data.p4buffs[matches.target].sort((a, b) => a.time - b.time);
+        // return matches.target === data.me;
+      },
+    },
+    {
+      id: 'DMU P4 无之泛滥',
+      type: 'StartsUsing',
+      netRegex: {
+        id: [
+          'C3A1',
+          'C3A2',
+          'C392',
+          'C393',
+        ],
+      },
+      // C3A1左紫右蓝（假的？）（猜的）
+      // C3A2左蓝右紫（假的）
+      // C392左紫右蓝（真的）
+      // C393左蓝右紫（真的）
+      delaySeconds: 0.5,
+      alertText: (data, matches, output) => {
+        data.p4count.新生艾克斯迪司++;
+        const tf = data.p4真假['新生艾克斯迪司'][3];
+        const buffa = data.p4buffs[data.me].find((v) => v.name === '生者之伤' || v.name === '死者之伤');
+        const buffb = data.p4buffs[data.me].find((v) => v.name === '超越死亡' || v.name === '亚拉戈领域');
+        const see = (matches.id === 'C392' || matches.id === 'C3A1') ? ['紫', '蓝'] : ['蓝', '紫'];
+        // 死同 亚异
+        let color = buffb.name === '亚拉戈领域'
+          ? (buffa.name === '生者之伤' ? '蓝' : '紫')
+          : (buffa.name === '生者之伤' ? '紫' : '蓝');
+        if (tf === false) {
+          color = color === '蓝' ? '紫' : '蓝';
+        }
+        const index = see.findIndex((v) => v === color);
+        const dir = index === 0 ? 'left' : 'right';
+        return output[dir]({ c: color });
+      },
+      outputStrings: {
+        left: '<= 吃左边${c}色',
+        right: '吃右边${c}色 =>',
+      },
+    },
+    {
+      id: 'DMU P4 魔法粗存',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAA4', capture: false },
+      run: (data) => {
+        data.p4魔法储存 = { 假雷: undefined, 假冰: undefined };
+      },
+    },
+    {
+      id: 'DMU P4 劈啪啪暴雷',
+      type: 'StartsUsing',
+      netRegex: { id: 'C5DE' },
+      condition: (data) => data.phase === 'p4' && data.p4魔法储存 !== undefined,
+      delaySeconds: 0.25,
+      alertText: (data, _matches, output) => {
+        const thunder = data.p4魔法储存?.假雷 ? '假雷' : '真雷';
+        // console.log('假雷是', thunder, data.p4魔法储存?.假雷);
+        const buffs = Object.entries(data.p4buffs);
+        const eyes = [];
+        // 只需要背对眼或面对眼的数组
+        buffs.forEach(([k, v]) => {
+          const eye = v.find((p) => p.gimmick === '背对眼' || p.gimmick === '面对眼');
+          if (eye) {
+            eyes.push({
+              player: k,
+              gimmick: eye.gimmick,
+              time: eye.time,
+            });
+          }
+        });
+        eyes.sort((a, b) => a.time - b.time);
+        const isEyes = eyes.find((v, i) => v.player === data.me && i < 2);
+        if (isEyes) {
+          return output.text({
+            t: output[thunder](),
+            e: output[isEyes.gimmick](),
+          });
+        }
+        const t = output[thunder]();
+        const e = output[`人群${eyes[0].gimmick}`]();
+        return output.text({
+          t: t,
+          e: e,
+        });
+      },
+      outputStrings: {
+        'text': { en: '${t}+${e}' },
+        '假雷': { en: '吃直条' },
+        '真雷': { en: '不吃' },
+        '背对眼': { en: '出去背对' },
+        '面对眼': { en: '脚底互看' },
+        '人群背对眼': { en: '躲石化' },
+        '人群面对眼': { en: '看石化' },
+      },
+    },
+    {
+      id: 'DMU P4 第二次石化',
+      type: 'StartsUsing',
+      netRegex: { id: 'C5DE' },
+      condition: (data) => data.phase === 'p4' && data.p4魔法储存 !== undefined,
+      delaySeconds: 24,
+      alertText: (data, _matches, output) => {
+        const buffs = Object.entries(data.p4buffs);
+        const eyes = [];
+        // 只需要背对眼或面对眼的数组
+        buffs.forEach(([k, v]) => {
+          const eye = v.find((p) => p.gimmick === '背对眼' || p.gimmick === '面对眼');
+          if (eye) {
+            eyes.push({
+              player: k,
+              gimmick: eye.gimmick,
+              time: eye.time,
+            });
+          }
+        });
+        // 关键diff
+        eyes.sort((a, b) => b.time - a.time);
+        const isEyes = eyes.find((v, i) => v.player === data.me && i < 2);
+        if (isEyes) {
+          // 石化眼通过个人buff报，这里不管。
+          return;
+        }
+        return output[`人群${eyes[0].gimmick}`]();
+      },
+      outputStrings: {
+        '人群背对眼': { en: '躲石化' },
+        '人群面对眼': { en: '看石化' },
+      },
+    },
+    {
+      id: 'DMU P4 扩大大冰封',
+      type: 'StartsUsing',
+      netRegex: { id: 'BA95' },
+      condition: (data) => data.phase === 'p4' && data.p4魔法储存 !== undefined,
+      delaySeconds: 0.25,
+      alertText: (data, _matches, output) => {
+        const ice = data.p4魔法储存?.假冰 ? '假冰' : '真冰';
+        return output[ice]();
+      },
+      outputStrings: {
+        '假冰': { en: '吃扇形' },
+        '真冰': { en: '不吃' },
+      },
+    },
+    {
+      id: 'DMU P4 扑腾腾究极',
+      type: 'StartsUsing',
+      netRegex: { id: 'C24A', capture: false },
+      response: Responses.aoe(),
+    },
+    {
+      id: 'DMU P4 魔法放出 暂存',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAA5', capture: false },
+      delaySeconds: 1,
+      run: (data, _matches) => {
+        const ice0 = data.p4魔法储存.假冰 ? 1 : 0;
+        const thunder0 = data.p4魔法储存.假雷 ? 1 : 0;
+        const ice1 = data.假冰 ? 1 : 0;
+        const thunder1 = data.假雷 ? 1 : 0;
+        const res = {
+          冰: (ice0 + ice1) % 2 === 0 ? '真冰' : '假冰',
+          雷: (thunder0 + thunder1) % 2 === 0 ? '真雷' : '假雷',
+        };
+        data.p4魔法放出暂存 = `${res.冰}${res.雷}`;
+      },
+    },
+    {
+      id: 'DMU P4 魔法放出 提示',
+      type: 'StartsUsing',
+      netRegex: { id: 'BAA5', capture: false },
+      delaySeconds: 3,
+      durationSeconds: 7,
+      alertText: (data, _matches, output) => output[data.p4魔法放出暂存](),
+      outputStrings: {
+        '真冰真雷': { en: '（稍后）都不吃' },
+        '真冰假雷': { en: '（稍后）吃直条' },
+        '假冰真雷': { en: '（稍后）吃扇形' },
+        '假冰假雷': { en: '（稍后）都吃' },
+      },
     },
   ],
 });
