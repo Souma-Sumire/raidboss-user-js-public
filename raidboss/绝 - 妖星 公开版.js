@@ -1,4 +1,4 @@
-// Build Time: 2026-06-21T18:51:45.936Z
+// Build Time: 2026-06-21T19:26:38.012Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -1193,9 +1193,9 @@ hideall "准备魔击x3"
       },
       tts: null,
       outputStrings: {
-        stack: '分摊(和${target.job})',
-        spread: '钢铁(和${target.job})',
-        fan: '扇形(和${target.job})',
+        stack: '你(和${target.job})是分摊',
+        spread: '你(和${target.job})是钢铁',
+        fan: '你(和${target.job})是扇形',
       },
     },
     {
@@ -1268,7 +1268,9 @@ hideall "准备魔击x3"
       delaySeconds: (data) => {
         return [3, 5, 7].includes(data.p2count) ? 5 : 0.25;
       },
-      durationSeconds: 10,
+      durationSeconds: (data) => {
+        return [3, 5, 7].includes(data.p2count) ? 5.5 : 10.25;
+      },
       suppressSeconds: 1,
       infoText: (data, matches, output) => {
         if (data.p2报过了) {
@@ -1685,7 +1687,7 @@ hideall "准备魔击x3"
       type: 'HeadMarker',
       netRegex: { id: '00A1' },
       condition: (data) => data.phase === 'p3',
-      durationSeconds: 4,
+      durationSeconds: 5.5,
       infoText: (data, matches, output) => {
         const r = data.party.nameToRole_[matches.target];
         if (r === 'dps') {
