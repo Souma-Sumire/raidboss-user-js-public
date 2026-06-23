@@ -1,4 +1,4 @@
-// Build Time: 2026-06-21T19:26:38.012Z
+// Build Time: 2026-06-23T16:40:27.725Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -133,8 +133,8 @@ const getP2 = (data, _matches, output) => {
     // // 没buff的人按照TN左DPS右引导
     if (
       data.p2BuffCount[data.me] === 0 &&
-      data.triggerSetConfig.p2一运打法 === '1234' &&
-      data.triggerSetConfig.p2一运1234打法没debuff的闲人怎么决定去哪个塔引导 === 'TN左DPS右'
+      data.triggerSetConfig.p2一运打法 === '1234'
+      //  && data.triggerSetConfig.p2一运1234打法没debuff的闲人怎么决定去哪个塔引导 === 'TN左DPS右'
     ) {
       return output[`第2到8轮引导${data.role}`]({ i: towerCount });
     }
@@ -279,7 +279,6 @@ Options.Triggers.push({
         en: {
           '正攻（被击退的去下半场）': '正攻',
           '职能固定（不推荐！）未测试': 'TN左DPS右',
-          // '正攻（报双安全区）未测试': '双安全区',
         },
       },
       default: '正攻',
@@ -308,10 +307,10 @@ Options.Triggers.push({
       options: {
         en: {
           'TH同职能、DPS自己看': 'same',
-          '全都自己看': 'free',
+          '其他（都自己看）': 'free',
         },
       },
-      default: 'same',
+      default: 'free',
     },
     {
       id: 'p2一运是扇形组左钢铁组右吗',
@@ -321,40 +320,12 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '是的': 'yes',
-          '不是，你别报左右': 'no',
+          '钢铁左扇形右': 'yes',
+          '闲固（不报左右）': 'no',
         },
       },
-      default: 'yes',
+      default: 'no',
     },
-    {
-      id: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
-      name: {
-        en: 'p2一运1234打法没debuff的闲人怎么决定去哪个塔引导',
-      },
-      comment: { en: '其他打法我不知道，我们团是这么打的。' },
-      type: 'select',
-      options: {
-        en: {
-          'TN左DPS右': 'TN左DPS右',
-        },
-      },
-      default: 'TN左DPS右',
-    },
-    // {
-    //   id: 'p2一运1238打法4567的闲人怎么决定去哪个塔引导',
-    //   name: {
-    //     en: 'p2一运1238打法4567的闲人怎么决定去哪个塔引导',
-    //   },
-    //   comment: { en: '其他打法我不知道，我们团是这么打的。' },
-    //   type: 'select',
-    //   options: {
-    //     en: {
-    //       'TN左DPS右': 'TN左DPS右',
-    //     },
-    //   },
-    //   default: 'TN左DPS右',
-    // },
   ],
   overrideTimelineFile: true,
   timeline: `
@@ -461,25 +432,25 @@ hideall "准备魔击x3"
 863.6 "扑腾腾究极"
 # P5
 902.8 "连续究极 x4" StartsUsing { id: "BB40" } window 20,20
-904.3 "准备魔击x3"
+905.7 "准备魔击x3"
 907.7 "魔击 x3"
 920.3 "混沌洪水 x4"
 933.3 "癫狂交响曲"
 936.5 "混沌核爆/神圣"
 940 "核爆扩散/混沌神圣"
-941.2 "准备魔击x2"
+942.2 "准备魔击x2"
 944.6 "魔击 x2"
 963.3 "三星"
 969.3 "三星"
 975.4 "三星"
 984.8 "连续究极 x4"
-986.3 "准备魔击x2"
+987.3 "准备魔击x2"
 989.7 "魔击 x2"
 1016.3 "混沌涡旋"
 1025.4 "癫狂交响曲"
 1028.6 "混沌核爆/神圣"
 1032.1 "核爆扩散/混沌神圣"
-1032.8 "准备魔击x3"
+1034.7 "准备魔击x3"
 1036.7 "魔击 x3"
 1054.3 "遗弃末世"
 1059.4 "遗弃末狱"
@@ -534,23 +505,26 @@ hideall "准备魔击x3"
       p5三星是闲人: false,
       p5Tower: { 右上: [], 下: [], 左上: [] },
       p5三星亮起来: [],
+      p5魔击count: 0,
+      p5神圣: [],
+      p5软狂暴count: 0,
     };
   },
   timelineTriggers: [
     {
       id: 'DMU P5 魔击',
       regex: /^准备魔击x(?<count>2|3)$/,
-      durationSeconds: 5,
-      countdownSeconds: 5,
-      alarmText: (_data, matches, output) => output.text({ count: matches.count }),
+      beforeSeconds: 0.01,
+      durationSeconds: 3,
+      alertText: (_data, matches, output) => output.text({ count: matches.count }),
       outputStrings: { text: { en: '准备平A (${count}次)' } },
     },
     {
       id: 'DMU P5 癫狂交响曲',
       regex: /^癫狂交响曲$/,
-      beforeSeconds: 7,
-      durationSeconds: 7,
-      alarmText: (_data, _matches, output) => output.text(),
+      beforeSeconds: 5,
+      durationSeconds: 5,
+      alertText: (_data, _matches, output) => output.text(),
       outputStrings: { text: { en: '癫狂八方' } },
     },
   ],
@@ -766,7 +740,7 @@ hideall "准备魔击x3"
       id: 'DMU 头标',
       type: 'HeadMarker',
       netRegex: { id: [headMarkerData.stack, headMarkerData.spread] },
-      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 1.65 : 0.5) : 0.5,
+      delaySeconds: (data) => data.phase === 'p1-1a' ? (data.p1IsTether ? 1.3 : 0.5) : 0.5,
       durationSeconds: 6,
       suppressSeconds: 1,
       alertText: (data, matches, output) => {
@@ -821,12 +795,6 @@ hideall "准备魔击x3"
           }[n];
           return output[`${'正攻'}${Directions.outputFrom8DirNum(nn)}${nn !== n ? '击退' : ''}`]();
         }
-        // if (data.triggerSetConfig.p1击退加真假火冰打法 === '双安全区') {
-        //   return output.text!({
-        //     dir1: output[Directions.outputFrom8DirNum(n1)]!(),
-        //     dir2: output[Directions.outputFrom8DirNum(n2)]!(),
-        //   });
-        // }
       },
       outputStrings: {
         text: { en: '${dir1}${dir2}' },
@@ -1642,6 +1610,7 @@ hideall "准备魔击x3"
       condition: (data) => data.phase === 'p3',
       durationSeconds: 4.7,
       countdownSeconds: 4.7,
+      soundVolume: 0,
       infoText: (_data, _matches, output) => output.text(),
       tts: null,
       outputStrings: { text: '满血检测' },
@@ -1675,11 +1644,11 @@ hideall "准备魔击x3"
         dirNW: '1',
         dirN: 'A',
         dirNE: '2',
-        dirE: 'B',
+        dirE: 'BOY',
         dirSE: '3',
         dirS: 'C',
         dirSW: '4',
-        dirW: 'D',
+        dirW: 'DOG',
       },
     },
     {
@@ -1762,10 +1731,10 @@ hideall "准备魔击x3"
           !['生者之伤', '死者之伤', '亚拉戈领域', '超越死亡'].includes(p4buff[matches.effectId].name);
       },
       delaySeconds: (_data, matches) => {
-        return parseFloat(matches.duration) - 8.5;
+        return parseFloat(matches.duration) - 8;
       },
-      durationSeconds: 8.5,
-      countdownSeconds: 8.5,
+      durationSeconds: 8,
+      countdownSeconds: 8,
       alertText: (data, matches, output) => {
         const resolveTime = (new Date(matches.timestamp).getTime() / 1000) +
           parseFloat(matches.duration);
@@ -1805,12 +1774,21 @@ hideall "准备魔击x3"
           const myBuffs = group.filter((item) => item.player === data.me);
           const hasWater = group.some((item) => item.gimmick === '水分摊');
           if (myBuffs.length > 0) {
+            myBuffs.sort((a, b) => {
+              const aIsSword = a.gimmick === '移动' || a.gimmick === '停手';
+              const bIsSword = b.gimmick === '移动' || b.gimmick === '停手';
+              if (aIsSword && !bIsSword)
+                return 1;
+              if (!aIsSword && bIsSword)
+                return -1;
+              return 0;
+            });
             const gimmickStr = myBuffs.map((item) => output[item.gimmick]()).join(output.plus());
             const onlySword = myBuffs.every((item) =>
               item.gimmick === '移动' || item.gimmick === '停手'
             );
             if (hasWater && onlySword) {
-              myGimmickByTime[time] = gimmickStr + output.plus() + output['水分摊']();
+              myGimmickByTime[time] = output['水分摊']() + output.plus() + gimmickStr;
             } else {
               myGimmickByTime[time] = gimmickStr;
             }
@@ -1853,8 +1831,8 @@ hideall "准备魔击x3"
         水分摊: { en: '3人分摊' },
         背对眼: { en: '出去背对' },
         面对眼: { en: '脚底互看' },
-        停手: { en: '静止停停' },
-        移动: { en: '保持移动' },
+        停手: { en: '静剑停停停' },
+        移动: { en: '动剑动动动' },
         钢铁: { en: '放钢铁' },
         月环: { en: '放月环' },
       },
@@ -1918,13 +1896,22 @@ hideall "准备魔击x3"
           const myBuffs = group.filter((item) => item.player === data.me);
           const hasWater = group.some((item) => item.gimmick === '水分摊');
           if (myBuffs.length > 0) {
+            myBuffs.sort((a, b) => {
+              const aIsSword = a.gimmick === '移动' || a.gimmick === '停手';
+              const bIsSword = b.gimmick === '移动' || b.gimmick === '停手';
+              if (aIsSword && !bIsSword)
+                return 1;
+              if (!aIsSword && bIsSword)
+                return -1;
+              return 0;
+            });
             // 如果玩家自己有buff，播报自己的buff（有多个则用 plus (+) 连接）
             const gimmickStr = myBuffs.map((item) => output[item.gimmick]()).join(output.plus());
             const onlySword = myBuffs.every((item) =>
               item.gimmick === '移动' || item.gimmick === '停手'
             );
             if (hasWater && onlySword) {
-              myGimmicks.push(gimmickStr + output.plus() + output['水分摊']());
+              myGimmicks.push(output['水分摊']() + output.plus() + gimmickStr);
             } else {
               myGimmicks.push(gimmickStr);
             }
@@ -1992,6 +1979,7 @@ hideall "准备魔击x3"
       },
       delaySeconds: (_data, matches) => parseFloat(matches.duration) - 4,
       countdownSeconds: 4,
+      soundVolume: 0,
       infoText: (_data, _matches, output) => output.wait(),
       tts: null,
       outputStrings: { wait: { en: '等月环' } },
@@ -2213,6 +2201,315 @@ hideall "准备魔击x3"
         '假冰真雷': { en: '（稍后）吃扇形' },
         '假冰假雷': { en: '（稍后）都吃' },
       },
+    },
+    {
+      id: 'DMU P5 连续究极',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB40', capture: false },
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: 'AoE x4' },
+    },
+    {
+      id: 'DMU P5 洪水',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'C183' },
+      condition: (data) => data.phase === 'p5',
+      preRun: (data, matches) => {
+        data.p5洪水.push(matches);
+      },
+      durationSeconds: 7,
+      alertText: (data, _matches, output) => {
+        if (data.p5洪水.length === 4) {
+          const w1 = data.p5洪水.slice(0, 2).sort((a, b) => (parseInt(a.x)) - (parseInt(b.x)));
+          const w3 = data.p5洪水.slice(2, 4).sort((a, b) => (parseInt(a.x)) - (parseInt(b.x)));
+          const key1 = `${w1[0]?.x}|${w1[0]?.y}|${w1[0]?.heading}`;
+          const key3 = `${w3[0]?.x}|${w3[0]?.y}|${w3[0]?.heading}`;
+          const s1 = p5water[key1];
+          const s3 = p5water[key3];
+          const start = s1.find((v) => s3.includes(v));
+          const d = s1.find((v) => !s3.includes(v));
+          // console.warn(`s1=${s1.join(',')}, s3=${s3.join(',')}, start=${start}, d=${d}`);
+          const idx1 = ['A', 'B', 'C', 'D'].indexOf(start);
+          const idx2 = ['A', 'B', 'C', 'D'].indexOf(d);
+          const clk = ((idx1 - idx2 + 4) % 4) === 1 ? '顺时针' : '逆时针';
+          return output.text({ start: output[start](), clk: output[clk]() });
+        }
+      },
+      outputStrings: {
+        text: '${start}，${clk}',
+        A: 'A',
+        B: 'BOY',
+        C: 'C',
+        D: 'DOG',
+        顺时针: { en: '左 ←' },
+        逆时针: { en: '右 →' },
+      },
+    },
+    {
+      id: 'DMU P5 神圣',
+      type: 'Ability',
+      netRegex: { id: 'BB54' },
+      condition: (data) => data.phase === 'p5' && data.role !== 'tank',
+      preRun: (data, matches) => data.p5神圣.push(matches),
+      alertText: (data, matches, output) => {
+        if (matches.target === data.me && matches.targetIndex === '0')
+          return output.text();
+      },
+      outputStrings: { text: { en: '出去' } },
+    },
+    {
+      id: 'DMU P5 神圣闲',
+      type: 'Ability',
+      netRegex: { id: 'BB54' },
+      condition: (data) => data.phase === 'p5' && data.role !== 'tank',
+      delaySeconds: 0.2,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        if (data.p5神圣.find((v) => v.target === data.me) === undefined) {
+          return output.text();
+        }
+      },
+      outputStrings: { text: { en: '靠近' } },
+    },
+    {
+      id: 'DMU P5 三星',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: Object.keys(p5buff),
+      },
+      condition: (data) => data.phase === 'p5',
+      preRun: (data, matches) => {
+        data.p5三星buff.push(matches);
+      },
+    },
+    {
+      id: 'DMU P5 三星1判',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: Object.keys(p5buff),
+      },
+      condition: (data) => data.phase === 'p5',
+      delaySeconds: 0.5,
+      durationSeconds: 5,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        data.p5三星count++;
+        if (data.p5三星count === 1) {
+          const towers = data.p5三星塔.map((v) => {
+            const { pairBNpcID, pairPosX, pairPosY, id } = v;
+            const dir = Directions.xyTo16DirNum(
+              parseFloat(pairPosX),
+              parseFloat(pairPosY),
+              centerX,
+              centerY,
+            );
+            const elMap = {
+              '1EC03F': '冰',
+              '1EC040': '雷',
+              '1EC03E': '火',
+            };
+            const el = elMap[pairBNpcID];
+            return { dir, el, id };
+          });
+          const me = data.p5三星buff.find((v) => v.target === data.me);
+          if (me === undefined) {
+            // 无buff
+            data.p5三星是闲人 = true;
+          }
+          // 有debuff
+          const pos = ['左上', '右上', '下'];
+          const getNextPos = (p) => {
+            const idx = pos.indexOf(p);
+            return pos[(idx + 1) % 3];
+          };
+          const tower = {
+            右上: towers.filter((v) => v.dir <= 5.3).sort((a, b) => a.dir - b.dir),
+            下: towers.filter((v) => v.dir > 5.3 && v.dir < 10.6).sort((a, b) => a.dir - b.dir),
+            左上: towers.filter((v) => v.dir > 10.6).sort((a, b) => a.dir - b.dir),
+          };
+          data.p5Tower = tower;
+          if (me === undefined) {
+            return output.none();
+          }
+          const myElPos = (() => {
+            for (const k in tower) {
+              const t = tower[k];
+              if (t[0]?.el === p5buff[me.effectId]) {
+                return k;
+              }
+            }
+            return undefined;
+          })();
+          if (myElPos === undefined) {
+            return;
+          }
+          const next = getNextPos(myElPos);
+          const nextEl = tower[next][0].el;
+          const next2 = output.text({
+            pos: getNextPos(next),
+            el: tower[getNextPos(next)][0].el,
+          });
+          const next3 = output.text({
+            pos: getNextPos(getNextPos(next)),
+            el: tower[getNextPos(getNextPos(next))][0].el,
+          });
+          data.p5三星暂存 = { next2, next3 };
+          return output.text({ pos: next, el: nextEl });
+        }
+        if (data.p5三星count === 2) {
+          return data.p5三星暂存?.next2 ?? undefined;
+        }
+        if (data.p5三星count === 3) {
+          return data.p5三星暂存?.next3 ?? undefined;
+        }
+      },
+      outputStrings: {
+        text: { en: '${pos}找${el}1' },
+        none: { en: '闲人' },
+      },
+    },
+    {
+      id: 'DMU P5 三星塔',
+      type: 'CombatantMemory',
+      netRegex: {
+        change: 'Add',
+        pair: [{
+          key: 'BNpcID',
+          value: [
+            // 冰
+            '1EC03F',
+            // 雷
+            '1EC040',
+            // 火
+            '1EC03E',
+          ],
+        }],
+      },
+      condition: (data) => data.phase === 'p5',
+      preRun: (data, matches) => {
+        data.p5三星塔.push(matches);
+      },
+    },
+    {
+      id: 'DMU P5 二选一',
+      type: 'StartsUsing',
+      netRegex: { id: ['C24E', 'C24F'], capture: true },
+      delaySeconds: (data) => data.p5三星count === 1 ? 0 : 1.5,
+      durationSeconds: (data) => data.p5三星count === 1 ? 4 : 2.5,
+      alertText: (_data, matches, output) => output[matches.id](),
+      outputStrings: {
+        'C24E': { en: '钢铁' },
+        'C24F': { en: '月环' },
+      },
+    },
+    {
+      id: 'DMU P5 三星塔都亮起来吧收集',
+      type: 'ActorControlExtra',
+      netRegex: {
+        'category': '019D',
+        'param1': '10',
+        'param2': '20',
+        'param3': '0',
+        'param4': '0',
+      },
+      condition: (data) => data.phase === 'p5',
+      preRun: (data, matches) => {
+        data.p5三星亮起来.push(matches.id);
+      },
+    },
+    {
+      id: 'DMU P5 三星塔都亮起来吧',
+      type: 'ActorControlExtra',
+      netRegex: {
+        'category': '019D',
+        'param1': '10',
+        'param2': '20',
+        'param3': '0',
+        'param4': '0',
+        'capture': false,
+      },
+      condition: (data) => data.phase === 'p5',
+      delaySeconds: 0.2,
+      durationSeconds: 5,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        if (!data.p5三星是闲人) {
+          return;
+        }
+        const tower = data.p5Tower;
+        // 看一下哪个区域的塔亮起来了2个
+        for (const k in tower) {
+          const t = tower[k];
+          const count = t.filter((v) => data.p5三星亮起来.includes(v.id)).length;
+          if (count === 2) {
+            data.p5三星亮起来.length = 0;
+            return output.text({ pos: k, el: t[0].el });
+          }
+        }
+        data.p5三星亮起来.length = 0;
+        return output.unknown();
+      },
+      outputStrings: {
+        text: { en: '${pos}找${el}2' },
+        unknown: { en: '出错了，自己找' },
+      },
+    },
+    {
+      id: 'DMU P5 魔击A',
+      type: 'Ability',
+      netRegex: { id: 'C654', capture: false },
+      condition: (data) => data.phase === 'p5',
+      durationSeconds: 2.8,
+      suppressSeconds: 1,
+      soundVolume: 0,
+      response: (data, _matches, output) => {
+        output.responseOutputStrings = {
+          text: { en: '还有${n}下' },
+          over: { en: '打完了' },
+        };
+        const n = [3, 2, 1, 2, 1, 2, 1, 3, 2, 1][data.p5魔击count] - 1;
+        data.p5魔击count++;
+        return n === 0 ? { infoText: output.over() } : { alertText: output.text({ n }) };
+      },
+    },
+    {
+      id: 'DMU P5 软狂暴啦',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB35', capture: false },
+      countdownSeconds: 9.7,
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '软狂暴集合' } },
+    },
+    {
+      id: 'DMU P5 软狂暴中途1',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB38', capture: false },
+      countdownSeconds: 4.7,
+      alertText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '走' } },
+    },
+    {
+      id: 'DMU P5 软狂暴中途2',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB38', capture: false },
+      delaySeconds: 4.7,
+      countdownSeconds: 4.7,
+      infoText: (data, _matches, output) => {
+        data.p5软狂暴count++;
+        if (data.p5软狂暴count === 4) {
+          return output.over();
+        }
+        return output.text();
+      },
+      outputStrings: { text: { en: '停' }, over: { en: '结束' } },
+    },
+    {
+      id: 'DMU P5 狂暴啦',
+      type: 'StartsUsing',
+      netRegex: { id: 'BB3A', capture: false },
+      countdownSeconds: 30,
+      infoText: (_data, _matches, output) => output.text(),
+      outputStrings: { text: { en: '狂暴' } },
     },
   ],
 });
