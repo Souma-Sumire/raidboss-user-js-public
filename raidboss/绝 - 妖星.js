@@ -1,4 +1,4 @@
-// Build Time: 2026-06-23T16:40:27.725Z
+// Build Time: 2026-06-28T08:55:22.907Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -325,6 +325,37 @@ Options.Triggers.push({
         },
       },
       default: 'no',
+    },
+    {
+      id: 'p3打铁警察',
+      name: {
+        en: '开启P3打铁警察',
+      },
+      type: 'checkbox',
+      default: false,
+      comment: { en: '需要插件“鲶鱼精邮差”' },
+    },
+    {
+      id: 'p3打铁聊天频道',
+      name: {
+        en: '打铁发送到聊天频道',
+      },
+      type: 'string',
+      default: 'e',
+    },
+    {
+      id: 'p3打铁监控范围',
+      name: {
+        en: '打铁监控范围',
+      },
+      type: 'select',
+      options: {
+        en: {
+          '仅自己': 'me',
+          '所有人': 'all',
+        },
+      },
+      default: 'all',
     },
   ],
   overrideTimelineFile: true,
@@ -1301,6 +1332,57 @@ hideall "准备魔击x3"
       type: 'StartsUsing',
       netRegex: { id: 'C3F7', capture: false },
       response: Responses.getUnder('alert'),
+    },
+    {
+      id: 'DMU P3 简易打铁警察',
+      type: 'Ability',
+      netRegex: { targetId: '4.{7}' },
+      condition: (data, matches) => {
+        if (data.triggerSetConfig.p3打铁警察 === false)
+          return false;
+        if (data.phase !== 'p3')
+          return false;
+        if (!matches.targetId.startsWith('4'))
+          return false;
+        // AOE技能，因为判断太复杂
+        if (matches.type === '22') {
+          return false;
+        }
+        if ((data.triggerSetConfig.p3打铁监控范围 ?? 'all') === 'me') {
+          if (matches.source !== data.me)
+            return false;
+        } else {
+          if (!data.party.partyNames.includes(matches.source))
+            return false;
+        }
+        // 自动攻击
+        if (['07', '08'].includes(matches.id))
+          return false;
+        if (matches.targetIndex !== '0')
+          return false;
+        const damageVal = parseInt(matches.damage ?? '0', 16);
+        if (damageVal !== 0) {
+          return false;
+        }
+        const flagVal = parseInt(matches.flags ?? '0', 16);
+        return (flagVal & 0xFF) === 7;
+      },
+      infoText: (data, matches, output) => {
+        const channel = data.triggerSetConfig.p3打铁聊天频道 ?? 'e';
+        const name = data.party.member(matches.source);
+        const ability = matches.ability;
+        const text = output.singleTarget({ name, ability });
+        void callOverlayHandler({
+          call: 'PostNamazu',
+          c: 'DoTextCommand',
+          p: `/${channel} ${text}`,
+        });
+        return undefined;
+        // return text;
+      },
+      outputStrings: {
+        singleTarget: '恭喜 ${name.job} 打铁成功！${ability}<se.5>',
+      },
     },
     {
       id: 'DMU P3 debuff',
