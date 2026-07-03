@@ -1,4 +1,4 @@
-// Build Time: 2026-06-29T12:08:44.398Z
+// Build Time: 2026-07-03T13:12:44.346Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -9,23 +9,18 @@ const phases = {
 };
 const centerX = 100;
 const centerY = 100;
+const rpSortArr = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
 const p2OutputStirngs = {
-  // 如果不是固定扇形左，就改成“扇形组的”或者空格
-  扇形组: '左',
-  // 如果不是固定钢铁右，就改成“钢铁组的”或者空格
-  钢铁组: '右',
-  第1轮踩塔TN: '1轮 ${gimmick} 踩${lr}塔',
-  第1轮闲人TN: '1轮 闲人 ${lr}引导',
-  第1轮DPS分摊: '1轮 分摊 踩${lr}塔',
-  第1轮DPS其他: '1轮 ${lr}边看搭档',
-  第1轮TN自由: '1轮 ${lr}边看搭档',
-  第1轮TN自由分摊: '1轮 分摊',
+  第1轮fallback: '${gimmick}组+${buff}',
+  第1轮我分摊搭档扇形: '左踩塔（分摊）',
+  第1轮我分摊搭档钢铁: '右踩塔（分摊）',
+  第1轮我扇形搭档分摊: '左踩塔（扇形）',
+  第1轮我钢铁搭档分摊: '右踩塔（钢铁）',
+  第1轮我扇形搭档扇形: '左闲人引导（扇形）',
+  第1轮我钢铁搭档钢铁: '右闲人引导（钢铁）',
   第2到8轮踩塔单: '${i}轮 (单${gimmick}) 踩塔',
   第2到8轮踩塔双: '${i}轮 (双${gimmick}) 踩塔',
   第2到8轮引导: '${i}轮 塔外引导',
-  第2到8轮引导tank: '${i}轮 ←左塔外',
-  第2到8轮引导healer: '${i}轮 ←左塔外',
-  第2到8轮引导dps: '${i}轮 右塔外→',
   第2到8轮超级跳: '${i}轮 闲人 去超级跳',
   第2到8轮踩塔分摊: '${i}轮 分摊 踩塔',
   分摊: '分摊',
@@ -37,17 +32,9 @@ const p2OutputStirngs = {
 };
 const getP2 = (data, _matches, output) => {
   let me;
-  let stack;
   for (let i = 0; i <= data.p2count; i++) {
     if (me === undefined) {
       me = data.p2hm[data.p2count - i - 1]?.find((v) => v.target === data.me);
-    }
-    if (stack === undefined && me) {
-      stack = data.p2hm[data.p2count - i - 1]?.find((v) =>
-        v.buff === '分摊' && v.target !== data.me &&
-        ({ tank: 'tn', healer: 'tn', dps: 'dps' }[v.role] ===
-          { tank: 'tn', healer: 'tn', dps: 'dps' }[me.role])
-      );
     }
     if (me) {
       break;
@@ -68,45 +55,45 @@ const getP2 = (data, _matches, output) => {
     console.error(data.me, ' is undefined', data.p2hm);
     return 'Error';
   }
+  data.p2报过了 = true;
   if (data.p2count === 1) {
-    const roleGimmick = data.p2hm[0].find((v) => v.buff !== '分摊' && v.role === data.role);
-    const lr = data.triggerSetConfig.p2一运是扇形组左钢铁组右吗 === 'yes'
-      ? output[`${roleGimmick.buff}组`]()
-      : '';
-    // 第一轮
-    if (data.role === 'tank' || data.role === 'healer') {
-      const gimmick = output[me.buff]();
-      if (data.triggerSetConfig.p2一运搭档打法 === 'free') {
-        data.p2报过了 = true;
-        if (me.buff !== '分摊') {
-          return output.第1轮TN自由({ gimmick, lr });
+    if (Util?.souma?.getRpByName !== undefined) {
+      const myRp = Util.souma.getRpByName(data, data.me);
+      const partnerMap = data.triggerSetConfig.p2分组 === 'MTH1'
+        ? {
+          'MT': 'H1',
+          'H1': 'MT',
+          'ST': 'H2',
+          'H2': 'ST',
+          'D1': 'D3',
+          'D3': 'D1',
+          'D2': 'D4',
+          'D4': 'D2',
         }
-        return output.第1轮TN自由分摊();
-      }
-      const inTower = Boolean(me.buff === '分摊' || (stack && stack.role === data.role));
-      data.p2报过了 = true;
-      return output[inTower ? '第1轮踩塔TN' : '第1轮闲人TN']({ gimmick, lr });
+        : {
+          'MT': 'ST',
+          'ST': 'MT',
+          'H1': 'H2',
+          'H2': 'H1',
+          'D1': 'D2',
+          'D2': 'D1',
+          'D3': 'D4',
+          'D4': 'D3',
+        };
+      const partner = data.p2hm[0].find((v) => v.rp === partnerMap[myRp]);
+      return output[`第1轮我${me.buff}搭档${partner.buff}`]();
     }
-    if (data.role === 'dps') {
-      if (me.buff === '分摊') {
-        data.p2报过了 = true;
-        return output.第1轮DPS分摊({ lr });
-      }
-      data.p2报过了 = true;
-      return output['第1轮DPS其他']({ gimmick: output[me.buff](), lr: lr });
-    }
+    const roleGimmick = data.p2hm[0].find((v) => v.buff !== '分摊' && v.role === data.role);
+    return output.第1轮fallback({ gimmick: roleGimmick.buff, buff: me.buff });
   }
   if (data.p2BuffCount[data.me] === 0) {
     if (ab.join('') === '1234' && data.p2count === 5) {
-      data.p2报过了 = true;
       return output.打法1234();
     }
     if (ab.join('') === '1238' && data.p2count === 8) {
-      data.p2报过了 = true;
       return output.打法1238();
     }
     if (ab.join('') === '1458' && data.p2count === 8) {
-      data.p2报过了 = true;
       return output.打法1458();
     }
   }
@@ -115,7 +102,6 @@ const getP2 = (data, _matches, output) => {
   // 2-8轮
   if (goTower) {
     // 踩塔，每一轮
-    data.p2报过了 = true;
     if (me.buff === '分摊') {
       const otherStack = data.p2hm[towerCount - 1].find((v) =>
         v.buff === '分摊' && v.target !== data.me
@@ -129,20 +115,9 @@ const getP2 = (data, _matches, output) => {
   }
   if (!goSpjp) {
     // 不踩塔，奇数轮，引导
-    data.p2报过了 = true;
-    // // 没buff的人按照TN左DPS右引导
-    if (
-      data.p2BuffCount[data.me] === 0 &&
-      data.triggerSetConfig.p2一运打法 === '1234'
-      //  && data.triggerSetConfig.p2一运1234打法没debuff的闲人怎么决定去哪个塔引导 === 'TN左DPS右'
-    ) {
-      return output[`第2到8轮引导${data.role}`]({ i: towerCount });
-    }
-    // }
     return output.第2到8轮引导({ i: towerCount, gimmick: output[me.buff]() });
   }
   // 不踩塔，偶数轮，超级跳
-  data.p2报过了 = true;
   return output.第2到8轮超级跳({ i: towerCount });
 };
 const headMarkerData = {
@@ -192,15 +167,11 @@ const p4buff = {
   '15AA': { name: '加速度炸弹', true: '停手', false: '移动', source: '新生艾克斯迪司' },
   '15AB': { name: '混沌之炎', true: '钢铁', false: '月环', source: '卡奥斯' },
   '15AC': { name: '混沌之水', true: '月环', false: '钢铁', source: '卡奥斯' },
-  // ?为什么有2个ID
   '1558': { name: '超越死亡', true: '死超', false: '亚拉戈', source: '新生艾克斯迪司' },
   '566': { name: '超越死亡', true: '死超', false: '亚拉戈', source: '新生艾克斯迪司' },
-  // ?为什么亚拉戈就1个ID
   '1C6': { name: '亚拉戈领域', true: '亚拉戈', false: '死超', source: '新生艾克斯迪司' },
-  // ?为什么有2个ID
   '1317': { name: '生者之伤', true: '吃蓝', false: '吃紫', source: '新生艾克斯迪司' },
   '15A5': { name: '生者之伤', true: '吃蓝', false: '吃紫', source: '新生艾克斯迪司' },
-  // ?为什么有2个ID
   '1318': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
   '15A6': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
 };
@@ -286,7 +257,7 @@ Options.Triggers.push({
     {
       id: 'p2一运打法',
       name: {
-        en: 'p2一运打法',
+        en: 'p2打法',
       },
       type: 'select',
       options: {
@@ -299,41 +270,35 @@ Options.Triggers.push({
       default: '1238',
     },
     {
-      id: 'p2一运搭档打法',
+      id: 'p2分组',
       name: {
-        en: 'p2一运决定自己是否踩塔的方法',
+        en: 'p2分组',
       },
       type: 'select',
       options: {
         en: {
-          'TH同职能、DPS自己看': 'same',
-          '其他（都自己看）': 'free',
+          'MT/H1 ST/H2 D1/D3 D2/D4': 'MTH1',
+          'MT/ST H1/H2 D1/D2 D3/D4': 'MTST',
         },
       },
-      default: 'free',
+      default: 'MTH1',
     },
     {
-      id: 'p2一运是扇形组左钢铁组右吗',
-      name: {
-        en: 'p2一运的初始分组是按职能(TN/DPS）的扇形组左钢铁组右吗？',
-      },
-      type: 'select',
-      options: {
-        en: {
-          '是（同职能是扇形则报左，钢铁报右）': 'yes',
-          '不是（不报）': 'no',
-        },
-      },
-      default: 'no',
-    },
-    {
-      id: 'p3打铁警察',
-      name: {
-        en: '开启P3打铁警察',
-      },
+      id: 'p3麻将发宏',
+      name: { en: '开启P3麻将发小队宏' },
       type: 'checkbox',
       default: false,
       comment: { en: '需要插件“鲶鱼精邮差”' },
+    },
+    {
+      id: 'p3打铁警察',
+      name: { en: '开启P3简易打铁警察' },
+      type: 'checkbox',
+      default: false,
+      comment: {
+        en:
+          '需要插件“鲶鱼精邮差”，只能简单监控，更完整的体验请前往<a href="https://souma.diemoe.net/ff14-overlay-vue/#/dmuBlacksmithPolice">网页分析版</a>',
+      },
     },
     {
       id: 'p3打铁聊天频道',
@@ -1018,6 +983,7 @@ hideall "准备魔击x3"
         if (matches.target === data.me) {
           const id = data.p1收集.find((v) => v.target === data.me).sourceId;
           const x = data.combatantData.find((v) => v.ID === parseInt(id, 16)).PosX;
+          data.combatantData.length = 0;
           if (x < 100) {
             return { alertText: output.a() };
           }
@@ -1114,7 +1080,7 @@ hideall "准备魔击x3"
       },
       outputStrings: {
         text: '未来，塔对面，对面',
-        text4: '未来，要穿，要穿',
+        text4: '未来，对穿，对穿',
       },
     },
     {
@@ -1134,7 +1100,7 @@ hideall "准备魔击x3"
       },
       outputStrings: {
         text: '过去，塔中间，中间',
-        text4: '过去，留原地，原地',
+        text4: '过去，不动，不动',
       },
     },
     {
@@ -1157,44 +1123,44 @@ hideall "准备魔击x3"
             [headMarkerData.扇形]: '扇形',
           }[matches.id],
           role: data.party.nameToRole_[matches.target],
+          rp: Util?.souma?.getRpByName?.(data, matches.target),
         });
       },
       delaySeconds: 0.2,
       durationSeconds: 9,
       soundVolume: 0,
-      alertText: (data, matches, output) => {
-        if (matches.target === data.me) {
-          if (matches.id === headMarkerData.分摊) {
-            const otherStack = data.p2hm[data.p2count - 1].find((v) =>
-              v.target !== data.me && v.buff === '分摊'
-            );
-            if (otherStack) {
-              return output.stack({ target: data.party.member(otherStack.target) });
-            }
-          }
-          if (matches.id === headMarkerData.钢铁) {
-            const otherSpread = data.p2hm[data.p2count - 1].find((v) =>
-              v.target !== data.me && v.buff === '钢铁'
-            );
-            if (otherSpread) {
-              return output.spread({ target: data.party.member(otherSpread.target) });
-            }
-          }
-          if (matches.id === headMarkerData.扇形) {
-            const otherFan = data.p2hm[data.p2count - 1].find((v) =>
-              v.target !== data.me && v.buff === '扇形'
-            );
-            if (otherFan) {
-              return output.fan({ target: data.party.member(otherFan.target) });
-            }
-          }
-        }
+      infoText: (data, matches, output) => {
+        if (matches.target !== data.me)
+          return;
+        const config = {
+          [headMarkerData.分摊]: { buff: '分摊', out: output.stack },
+          [headMarkerData.钢铁]: { buff: '钢铁', out: output.spread },
+          [headMarkerData.扇形]: { buff: '扇形', out: output.fan },
+        }[matches.id];
+        if (!config)
+          return;
+        const otherNames = [output.you()].concat(
+          ...data.p2hm[data.p2count - 1]
+            .filter((v) => v.target !== data.me && v.buff === config.buff)
+            .map((v) =>
+              Util?.souma?.getRpByName === undefined
+                ? (output.target({ target: data.party.member(v.target) }))
+                : Util.souma.getRpByName(data, v.target)
+            ),
+        )
+          .sort((a, b) => rpSortArr.indexOf(a) - rpSortArr.indexOf(b))
+          .join(output.separator());
+        if (otherNames.length)
+          return config.out({ names: otherNames });
       },
       tts: null,
       outputStrings: {
-        stack: '你(和${target.job})是分摊',
-        spread: '你(和${target.job})是钢铁',
-        fan: '你(和${target.job})是扇形',
+        separator: '、',
+        you: '你',
+        target: '${target.job}',
+        stack: '分摊点名：${names}',
+        spread: '钢铁点名：${names}',
+        fan: '扇形点名：${names}',
       },
     },
     {
@@ -1230,6 +1196,7 @@ hideall "准备魔击x3"
     },
     {
       id: 'DMU P2 没事干了',
+      comment: { en: '这里的 output 和"DMU P2 HM判"是完全一样的，如果改的话也都改成一样的。' },
       type: 'LosesEffect',
       netRegex: {
         effectId: '13DB',
@@ -1238,7 +1205,7 @@ hideall "准备魔击x3"
         data.p2BuffCount[matches.target] = 0;
       },
       delaySeconds: (data) => data.triggerSetConfig.p2一运打法 === '1234' ? 6 : 0.25,
-      infoText: (data, matches, output) => {
+      alertText: (data, matches, output) => {
         if (data.p2count === 9) {
           return;
         }
@@ -1253,10 +1220,8 @@ hideall "准备魔击x3"
     },
     {
       id: 'DMU P2 HM判',
-      comment: {
-        en: '为了尽量适配所有打法 + 尽量不引入职能分配悬浮窗。第一轮DPS请自己判断是否进塔……',
-      },
       type: 'HeadMarker',
+      comment: { en: '这里的 output 和"DMU P2 没事干了"是完全一样的，如果改的话也都改成一样的。' },
       netRegex: {
         id: [
           headMarkerData.分摊,
@@ -1271,7 +1236,7 @@ hideall "准备魔击x3"
         return [3, 5, 7].includes(data.p2count) ? 5.5 : 10.25;
       },
       suppressSeconds: 1,
-      infoText: (data, matches, output) => {
+      alertText: (data, matches, output) => {
         if (data.p2报过了) {
           return;
         }
@@ -1387,17 +1352,15 @@ hideall "准备魔击x3"
     {
       id: 'DMU P3 debuff',
       type: 'StartsUsing',
-      netRegex: { id: ['C2E2', 'C2E3'] },
+      netRegex: { id: ['C2E2', 'C2E3'], capture: false },
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.text(),
-      outputStrings: {
-        text: '获取防火墙',
-      },
+      outputStrings: { text: '获取防火墙' },
     },
     {
       id: 'DMU P3 深层痛楚',
       type: 'StartsUsing',
-      netRegex: { id: 'BAF2' },
+      netRegex: { id: 'BAF2', capture: false },
       response: Responses.aoe(),
     },
     {
@@ -1519,6 +1482,7 @@ hideall "准备魔击x3"
       durationSeconds: 12,
       infoText: (data, matches, output) => {
         const n = p3mj[matches.id];
+        let res;
         // 这里的clk没取反，是boss的冲锋顺序，所以下面的判断是!==
         if (data.p3jjcjb === undefined) {
           return output.unknown({ n });
@@ -1526,15 +1490,37 @@ hideall "准备魔击x3"
         const { c1, clk } = data.p3jjcjb;
         const dir1 = Directions.hdgTo8DirNum(c1);
         const p = (clk !== '顺' ? +1 : -1);
-        const g = dir1 * 2 + p + (2 * (n - 1)) * p;
-        const r = (g + 16) % 16;
-        const [a1, a2] = [
-          Directions.outputFrom8DirNum(((r - 1 + 16) % 16) / 2),
-          Directions.outputFrom8DirNum(((r + 1) % 16) / 2),
-        ];
-        const r1 = output[a1]();
-        const r2 = output[a2]();
-        return output.text({ n, r1, r2 });
+        const macro = [];
+        for (let i = 1; i <= 8; i++) {
+          if (data.triggerSetConfig.p3麻将发宏 === false && i !== n) {
+            continue;
+          }
+          const g = dir1 * 2 + p + (2 * (i - 1)) * p;
+          const r = (g + 16) % 16;
+          const [a1, a2] = [
+            Directions.outputFrom8DirNum(((r - 1 + 16) % 16) / 2),
+            Directions.outputFrom8DirNum(((r + 1) % 16) / 2),
+          ];
+          const r1 = output[a1]();
+          const r2 = output[a2]();
+          if (i === n) {
+            res = output.text({ n, r1, r2 });
+          }
+          macro.push({ mj: i, wy: [r1, r2].sort() });
+        }
+        if (res === undefined) {
+          return output.unknown({ n });
+        }
+        if (data.triggerSetConfig.p3麻将发宏) {
+          Util.souma.doQueueActions(macro.map((m, i) => {
+            return {
+              'c': 'DoTextCommand',
+              'p': `/p ${m.mj}麻：${m.wy.join('/')}`,
+              'd': i === 0 ? 0 : 100,
+            };
+          }));
+        }
+        return res;
       },
       outputStrings: {
         unknown: '${n}麻，出错了自己看',
@@ -2218,7 +2204,6 @@ hideall "准备魔击x3"
             });
           }
         });
-        // 关键diff
         eyes.sort((a, b) => b.time - a.time);
         const isEyes = eyes.find((v, i) => v.player === data.me && i < 2);
         if (isEyes) {
