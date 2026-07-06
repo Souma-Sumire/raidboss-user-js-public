@@ -1,4 +1,4 @@
-// Build Time: 2026-07-03T13:12:44.346Z
+// Build Time: 2026-07-06T05:55:33.675Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -778,8 +778,15 @@ hideall "准备魔击x3"
           return rr.indexOf(a) - rr.indexOf(b);
         }));
         if (data.triggerSetConfig.p1击退加真假火冰打法 === 'TN左DPS右') {
-          return output
-            [`${'TN左DPS右'}${Directions.outputFrom8DirNum([5, 7].includes(n1) ? n1 : n2)}`]();
+          const role = data.role === 'dps' ? 'dps' : 'th';
+          const n = (role === 'dps' ? [1, 3] : [5, 7]).includes(n1) ? n1 : n2;
+          const nn = {
+            3: 1,
+            5: 7,
+            1: 1,
+            7: 7,
+          }[n];
+          return output[`${'职能固定'}${Directions.outputFrom8DirNum(nn)}${nn !== n ? '击退' : ''}`]();
         }
         if (data.triggerSetConfig.p1击退加真假火冰打法 === '正攻') {
           const n = (data.p1IsTether ? [3, 5] : [1, 7]).includes(n1) ? n1 : n2;
@@ -804,10 +811,12 @@ hideall "准备魔击x3"
         正攻dirSW: { en: '左下' },
         正攻dirNW: { en: '左上' },
         正攻dirNW击退: { en: '左上击退' },
-        TN左DPS右dirNE: { en: '右上' },
-        TN左DPS右dirSE: { en: '右下' },
-        TN左DPS右dirSW: { en: '左下' },
-        TN左DPS右dirNW: { en: '左上' },
+        职能固定dirNE: { en: '右上' },
+        职能固定dirNE击退: { en: '右上击退' },
+        职能固定dirSE: { en: '右下' },
+        职能固定dirSW: { en: '左下' },
+        职能固定dirNW: { en: '左上' },
+        职能固定dirNW击退: { en: '左上击退' },
       },
     },
     {
@@ -1220,8 +1229,8 @@ hideall "准备魔击x3"
     },
     {
       id: 'DMU P2 HM判',
-      type: 'HeadMarker',
       comment: { en: '这里的 output 和"DMU P2 没事干了"是完全一样的，如果改的话也都改成一样的。' },
+      type: 'HeadMarker',
       netRegex: {
         id: [
           headMarkerData.分摊,
