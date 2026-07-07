@@ -1,4 +1,4 @@
-// Build Time: 2026-07-07T05:17:03.731Z
+// Build Time: 2026-07-07T19:41:31.828Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -788,7 +788,8 @@ hideall "准备魔击x3"
             1: 1,
             7: 7,
           }[n];
-          return output[`${'职能固定'}${Directions.outputFrom8DirNum(nn)}${nn !== n ? '击退' : ''}`]();
+          const dir = output[`职能固定${Directions.outputFrom8DirNum(nn)}`]();
+          return data.p1IsTether ? output.职能固定击退({ dir }) : dir;
         }
         if (data.triggerSetConfig.p1击退加真假火冰打法 === '正攻') {
           const n = (data.p1IsTether ? [3, 5] : [1, 7]).includes(n1) ? n1 : n2;
@@ -814,11 +815,10 @@ hideall "准备魔击x3"
         正攻dirNW: { en: '左上' },
         正攻dirNW击退: { en: '左上击退' },
         职能固定dirNE: { en: '右上' },
-        职能固定dirNE击退: { en: '右上击退' },
         职能固定dirSE: { en: '右下' },
         职能固定dirSW: { en: '左下' },
         职能固定dirNW: { en: '左上' },
-        职能固定dirNW击退: { en: '左上击退' },
+        职能固定击退: { en: '击退到${dir}' },
       },
     },
     {
