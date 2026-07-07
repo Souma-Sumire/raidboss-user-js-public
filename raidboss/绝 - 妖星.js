@@ -1,4 +1,4 @@
-// Build Time: 2026-07-06T05:55:33.675Z
+// Build Time: 2026-07-07T05:17:03.731Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -485,6 +485,7 @@ hideall "准备魔击x3"
       p2报过了: false,
       p3buffs: {},
       p3jjcjb: undefined,
+      p3混沌之泥土: [],
       p4真假: { '新生艾克斯迪司': [], '卡奥斯': [] },
       p4count: { '新生艾克斯迪司': 0, '卡奥斯': 0 },
       p4CastCount: 0,
@@ -543,6 +544,7 @@ hideall "准备魔击x3"
           data.p1Arrow = [];
           data.p1石头count = 1;
           data.p3究极冲击波hdg = [];
+          data.p3混沌之泥土 = [];
           data.p1收集 = [];
           data.eyeTowerIds = [];
           data.fakeEyeTowerIds = [];
@@ -1357,6 +1359,27 @@ hideall "准备魔击x3"
       outputStrings: {
         singleTarget: '恭喜 ${name.job} 打铁成功！${ability}<se.5>',
       },
+    },
+    {
+      id: 'DMU P3 混沌之泥土',
+      type: 'GainsEffect',
+      netRegex: { effectId: '644' },
+      condition: (data) => data.role === 'healer',
+      preRun: (data, matches) => data.p3混沌之泥土.push(matches.target),
+      durationSeconds: 7,
+      alertText: (data, _matches, output) => {
+        if (data.p3混沌之泥土.length === 2) {
+          if (data.party.nameToRole_[data.p3混沌之泥土[0]] === 'dps') {
+            data.p3混沌之泥土.reverse();
+          }
+          return output.text({
+            name1: data.party.member(data.p3混沌之泥土[0]),
+            name2: data.party.member(data.p3混沌之泥土[1]),
+          });
+        }
+        return undefined;
+      },
+      outputStrings: { text: '奶满${name1}和${name2}' },
     },
     {
       id: 'DMU P3 debuff',
