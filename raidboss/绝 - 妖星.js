@@ -1,4 +1,4 @@
-// Build Time: 2026-07-07T19:41:31.828Z
+// Build Time: 2026-07-08T00:55:30.667Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -10,6 +10,17 @@ const phases = {
 const centerX = 100;
 const centerY = 100;
 const rpSortArr = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
+const dmuMark = (actorDecID, markType, localOnly = false) => {
+  if (/raidemulator\.html/.test(location.href)) {
+    console.debug(`尝试标记${markType}给${actorDecID}(${actorDecID.toString(16).toUpperCase()})`);
+    return;
+  }
+  void callOverlayHandler({
+    call: 'PostNamazu',
+    c: 'mark',
+    p: JSON.stringify({ ActorID: actorDecID, MarkType: markType, LocalOnly: localOnly }),
+  });
+};
 const p2OutputStirngs = {
   第1轮fallback: '${gimmick}组+${buff}',
   第1轮我分摊搭档扇形: '左踩塔（分摊）',
@@ -160,6 +171,11 @@ const p3mj = {
   '01B7': 7,
   '01B8': 8,
 };
+const p3tar = {
+  'BBC': 1,
+  'BBD': 2,
+  'BBE': 3,
+};
 const p4buff = {
   '15A8': { name: '叉形闪电', true: '雷分散', false: '水分摊', source: '新生艾克斯迪司' },
   '15A9': { name: '水属性压缩', true: '水分摊', false: '雷分散', source: '新生艾克斯迪司' },
@@ -289,6 +305,44 @@ Options.Triggers.push({
       type: 'checkbox',
       default: false,
       comment: { en: '需要插件“鲶鱼精邮差”' },
+    },
+    {
+      id: 'p3混沌之土标记',
+      name: { en: '开启P3混沌之土标记' },
+      type: 'checkbox',
+      default: false,
+      comment: { en: '需要插件“鲶鱼精邮差”' },
+    },
+    {
+      id: 'p3混沌之土标记方法',
+      name: { en: '开启P3混沌之土标记方法' },
+      type: 'select',
+      options: {
+        en: {
+          '美式（推荐）非泥D/H必是1，双T必是2，泥必是3': '美式',
+          '自定义': '自定义',
+        },
+      },
+      default: '美式',
+    },
+    {
+      id: 'p3混沌之土标记美式优先级',
+      comment: {
+        en: '仅在“美式”方法下生效，此处的D与H必定为“非泥”，mud为“混沌之泥土”。只接受小写"dps"、"healer"、"tank"、"mud"，并用半角“大于号”隔开。',
+      },
+      name: { en: 'P3混沌之土美式优先级' },
+      type: 'string',
+      default: 'dps>healer>tank>mud',
+    },
+    {
+      id: 'p3混沌之土标记自定义优先级',
+      comment: {
+        en:
+          '仅在“自定义”方法下生效，此优先级不考虑混沌之泥土debuff。只接受大写"D1"、"D2"、"D3"、"D4"、"H1"、"H2"、"ST"、"MT"，并用半角“大于号”隔开。必须联动职能分配悬浮窗，若未发现职能则自动降级至美式标记。',
+      },
+      name: { en: 'P3混沌之土自定义优先级' },
+      type: 'string',
+      default: 'MT>ST>H1>H2>D1>D2>D3>D4',
     },
     {
       id: 'p3打铁警察',
@@ -486,6 +540,7 @@ hideall "准备魔击x3"
       p3buffs: {},
       p3jjcjb: undefined,
       p3混沌之泥土: [],
+      p3第N目标: [],
       p4真假: { '新生艾克斯迪司': [], '卡奥斯': [] },
       p4count: { '新生艾克斯迪司': 0, '卡奥斯': 0 },
       p4CastCount: 0,
@@ -1364,11 +1419,10 @@ hideall "准备魔击x3"
       id: 'DMU P3 混沌之泥土',
       type: 'GainsEffect',
       netRegex: { effectId: '644' },
-      condition: (data) => data.role === 'healer',
       preRun: (data, matches) => data.p3混沌之泥土.push(matches.target),
       durationSeconds: 7,
       alertText: (data, _matches, output) => {
-        if (data.p3混沌之泥土.length === 2) {
+        if (data.p3混沌之泥土.length === 2 && data.role === 'healer') {
           if (data.party.nameToRole_[data.p3混沌之泥土[0]] === 'dps') {
             data.p3混沌之泥土.reverse();
           }
@@ -1380,6 +1434,50 @@ hideall "准备魔击x3"
         return undefined;
       },
       outputStrings: { text: '奶满${name1}和${name2}' },
+    },
+    {
+      id: 'DMU P3 第N目标',
+      type: 'GainsEffect',
+      netRegex: { effectId: Object.keys(p3tar) },
+      preRun: (data, matches) =>
+        data.p3第N目标.push({
+          n: p3tar[matches.effectId],
+          target: matches.target,
+          id: parseInt(matches.targetId, 16),
+          mud: data.p3混沌之泥土.includes(matches.target),
+          role: data.party.nameToRole_[matches.target],
+          rp: Util?.souma?.getRpByName?.(data, matches.target) ?? undefined,
+        }),
+      delaySeconds: 0.5,
+      run: (data) => {
+        if (data.p3第N目标.length === 8 && data.triggerSetConfig.p3混沌之土标记) {
+          if (data.triggerSetConfig.p3混沌之土标记方法 === '美式' || data.p3第N目标[0]?.rp === undefined) {
+            if (data.triggerSetConfig.p3混沌之土标记方法 === '自定义' && data.p3第N目标[0]?.rp === undefined) {
+              console.warn('未发现玩家职能，已将 混沌之土 标记方法 降级至美式标记');
+            }
+            const sortArr = data.triggerSetConfig.p3混沌之土标记美式优先级.split('>').map((v) => v.trim());
+            data.p3第N目标.sort((a, b) =>
+              sortArr.indexOf(a.mud ? 'mud' : a.role) -
+              sortArr.indexOf(b.mud ? 'mud' : b.role)
+            );
+          } else if (data.triggerSetConfig.p3混沌之土标记方法 === '自定义') {
+            const sortArr = data.triggerSetConfig.p3混沌之土标记自定义优先级.split('>').map((v) => v.trim());
+            data.p3第N目标.sort((a, b) => sortArr.indexOf(a.rp ?? '') - sortArr.indexOf(b.rp ?? ''));
+          }
+          const m1 = data.p3第N目标.filter((v) => v.n === 1);
+          const m2 = data.p3第N目标.filter((v) => v.n === 2);
+          const m3 = data.p3第N目标.filter((v) => v.n === 3);
+          dmuMark(m1[0].id, 'attack1', false);
+          dmuMark(m1[1].id, 'attack2', false);
+          dmuMark(m1[2].id, 'attack3', false);
+          dmuMark(m2[0].id, 'bind1', false);
+          dmuMark(m2[1].id, 'bind2', false);
+          dmuMark(m2[2].id, 'bind3', false);
+          dmuMark(m3[0].id, 'stop1', false);
+          dmuMark(m3[1].id, 'stop2', false);
+          // console.log(m1, m2, m3);
+        }
+      },
     },
     {
       id: 'DMU P3 debuff',
