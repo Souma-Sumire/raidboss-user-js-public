@@ -1,4 +1,4 @@
-// Build Time: 2026-07-08T05:59:08.625Z
+// Build Time: 2026-07-08T13:38:40.353Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -835,23 +835,23 @@ hideall "准备魔击x3"
       suppressSeconds: 1,
       infoText: (data, matches, output) => {
         const dirNum = Directions.hdgTo8DirNum(parseFloat(matches.heading));
-        const rr = [1, 7, 3, 5];
-        const [n1, n2] = ([(dirNum + 2) % 8, (dirNum + 4 + 2) % 8].sort((a, b) => {
-          return rr.indexOf(a) - rr.indexOf(b);
-        }));
         if (data.triggerSetConfig.p1击退加真假火冰打法 === 'TN左DPS右') {
-          const role = data.role === 'dps' ? 'dps' : 'th';
-          const n = (role === 'dps' ? [1, 3] : [5, 7]).includes(n1) ? n1 : n2;
-          const nn = {
-            3: 1,
-            5: 7,
-            1: 1,
-            7: 7,
-          }[n];
-          const dir = output[`职能固定${Directions.outputFrom8DirNum(nn)}`]();
-          return data.p1IsTether ? output.职能固定击退({ dir }) : dir;
+          const rr = [7, 5, 1, 3];
+          const [n1, n2] = ([(dirNum + 2) % 8, (dirNum + 4 + 2) % 8].sort((a, b) => {
+            return rr.indexOf(a) - rr.indexOf(b);
+          }));
+          const n = data.role === 'dps' ? n2 : n1;
+          const dir = output[`职能固定${Directions.outputFrom8DirNum(n)}`]();
+          if (data.p1IsTether) {
+            return output.职能固定击退({ dir });
+          }
+          return dir;
         }
         if (data.triggerSetConfig.p1击退加真假火冰打法 === '正攻') {
+          const rr = [1, 7, 3, 5];
+          const [n1, n2] = ([(dirNum + 2) % 8, (dirNum + 4 + 2) % 8].sort((a, b) =>
+            rr.indexOf(a) - rr.indexOf(b)
+          ));
           const n = (data.p1IsTether ? [3, 5] : [1, 7]).includes(n1) ? n1 : n2;
           const nn = {
             3: 1,
@@ -863,11 +863,6 @@ hideall "准备魔击x3"
         }
       },
       outputStrings: {
-        text: { en: '${dir1}${dir2}' },
-        dirNE: { en: '二' },
-        dirSE: { en: '三' },
-        dirSW: { en: '四' },
-        dirNW: { en: '一' },
         正攻dirNE: { en: '右上' },
         正攻dirNE击退: { en: '右上击退' },
         正攻dirSE: { en: '右下' },
