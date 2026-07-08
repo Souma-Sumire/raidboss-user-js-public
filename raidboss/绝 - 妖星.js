@@ -1,4 +1,4 @@
-// Build Time: 2026-07-08T00:55:30.667Z
+// Build Time: 2026-07-08T05:59:08.625Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -191,43 +191,23 @@ const p4buff = {
   '1318': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
   '15A6': { name: '死者之伤', true: '吃紫', false: '吃蓝', source: '新生艾克斯迪司' },
 };
-// const p3line = [
-//   [
-//     ['attack1', null, null],
-//     ['attack1', 'attack2', null],
-//   ],
-//   [
-//     ['attack1', 'attack2', 'attack3'],
-//     ['bind1', 'attack2', 'attack3'],
-//     ['bind1', 'bind2', 'attack3'],
-//   ],
-//   [
-//     ['bind1', 'bind2', 'bind3'],
-//     ['stop1', 'bind2', 'bind3'],
-//     ['stop1', 'stop2', 'bind3'],
-//   ],
-//   [
-//     ['stop1', 'stop2', null],
-//     ['stop2', null, null],
-//   ],
-// ];
 // 你听说过古法编程吗
 const p3timeline = [
   // { time: 0, text: '黑洞开始' },
-  { id: 'step1', time: 3326, text: '回中间，攻击1接', duration: 4640 },
+  { id: 'step1', time: 3326, text: '攻击1接', duration: 4640 },
   { id: 'step2', time: 7966, text: '攻击2准备', duration: 2582 },
   { id: 'step3', time: 10548, text: '攻击2接 => 准备暴雷', duration: 8452 },
   { id: 'step4', time: 19000, text: '准备半场+耳光', duration: 10000 },
-  { id: 'step5', time: 29000, text: '攻击准备', duration: 4745 },
-  { id: 'step6', time: 33745, text: '攻击接', duration: 5255 },
+  { id: 'step5', time: 29000, text: '攻击组准备', duration: 4745 },
+  { id: 'step6', time: 33745, text: '攻击组接', duration: 5255 },
   { id: 'step7', time: 39000, text: '锁链1准备', duration: 2662 },
   { id: 'step8', time: 41662, text: '锁链1替攻击1', duration: 2338 },
   // 攻击1结束：41662
   { id: 'step9', time: 44000, text: '锁链2准备', duration: 3000 },
   { id: 'step10', time: 47000, text: '锁链2替攻击2 => 准备半场+两侧+暴雷', duration: 17000 },
-  // 攻击击2结束：47000
-  { id: 'step11', time: 64000, text: '锁链准备', duration: 4762 },
-  { id: 'step12', time: 68762, text: '锁链接', duration: 3238 },
+  // 攻击2结束：47000
+  { id: 'step11', time: 64000, text: '锁链组准备', duration: 4762 },
+  { id: 'step12', time: 68762, text: '锁链组接', duration: 3238 },
   { id: 'step13', time: 72000, text: '禁止1准备', duration: 3000 },
   { id: 'step14', time: 75000, text: '禁止1替锁链1', duration: 4000 },
   { id: 'step15', time: 79000, text: '禁止2准备', duration: 2000 },
@@ -237,9 +217,6 @@ const p3timeline = [
   { id: 'step18', time: 99500, text: '禁止2准备', duration: 2500 },
   { id: 'step19', time: 102000, text: '禁止2接两根', duration: 7000 },
   { id: 'step20', time: 109000, text: '禁止1接', duration: 6000 },
-  // { time: 99500, text: '“禁止1,2”准备', duration: 2500 },
-  // { time: 102000, text: '“禁止1,2”接', duration: 7000 },
-  // { time: 109000, text: “禁止2接', duration: 6000 },
 ];
 const p5water = {
   '82.292|89.372|0.785': ['A', 'B'],
@@ -251,6 +228,18 @@ const p5buff = {
   'B56': '火',
   'BB6': '雷',
   'B57': '冰',
+};
+const markerCodes = {
+  '0': '攻击1',
+  '1': '攻击2',
+  '2': '攻击3',
+  '3': '攻击4',
+  '4': '攻击5',
+  '5': '锁链1',
+  '6': '锁链2',
+  '7': '锁链3',
+  '8': '禁止1',
+  '9': '禁止2',
 };
 Options.Triggers.push({
   id: 'DancingMadUltimate',
@@ -305,6 +294,20 @@ Options.Triggers.push({
       type: 'checkbox',
       default: false,
       comment: { en: '需要插件“鲶鱼精邮差”' },
+    },
+    {
+      id: 'p3接线报法',
+      comment: { en: '使用类似“攻击1”或“攻击组”进行硬编码匹配，如果你修改了output可能导致匹配失效。' },
+      name: { en: 'p3接线报法' },
+      type: 'select',
+      options: {
+        en: {
+          '标记（攻击1）': '标记',
+          '名称（吉田直树）': '名称',
+          '职业（黑魔）': '职业',
+        },
+      },
+      default: '标记',
     },
     {
       id: 'p3混沌之土标记',
@@ -541,6 +544,7 @@ hideall "准备魔击x3"
       p3jjcjb: undefined,
       p3混沌之泥土: [],
       p3第N目标: [],
+      p3TargetMarker: {},
       p4真假: { '新生艾克斯迪司': [], '卡奥斯': [] },
       p4count: { '新生艾克斯迪司': 0, '卡奥斯': 0 },
       p4CastCount: 0,
@@ -600,6 +604,7 @@ hideall "准备魔击x3"
           data.p1石头count = 1;
           data.p3究极冲击波hdg = [];
           data.p3混沌之泥土 = [];
+          data.p3TargetMarker = {};
           data.p1收集 = [];
           data.eyeTowerIds = [];
           data.fakeEyeTowerIds = [];
@@ -1788,6 +1793,19 @@ hideall "准备魔击x3"
         dirW: 'D',
       },
     },
+    {
+      id: 'DMU P3 Player Marker Tracker',
+      type: 'NetworkTargetMarker',
+      netRegex: {},
+      condition: (data) => data.phase === 'p3',
+      run: (data, matches) => {
+        if (matches.operation === 'Add') {
+          data.p3TargetMarker[markerCodes[matches.waymark]] = matches.targetName;
+        } else if (matches.operation === 'Delete') {
+          delete data.p3TargetMarker[markerCodes[matches.waymark]];
+        }
+      },
+    },
     ...p3timeline.map((item) => {
       const { time, text, id } = item;
       return {
@@ -1797,7 +1815,29 @@ hideall "准备魔击x3"
         condition: (data) => data.phase === 'p3',
         durationSeconds: (item.duration / 1000) - 0.5,
         delaySeconds: (time / 1000) - 0.25,
-        infoText: (_data, _matches, output) => output.text(),
+        infoText: (data, _matches, output) => {
+          if (data.triggerSetConfig.p3接线报法 === '标记') {
+            return output.text();
+          }
+          return output.text().replaceAll(/(?<type>攻击|锁链|禁止)(?<n>\d)/g, (v) => {
+            const member = data.party.member(data.p3TargetMarker[v]);
+            return data.triggerSetConfig.p3接线报法 === '名称'
+              ? member.nick
+              : (member.job ?? member.nick);
+          }).replaceAll(/(?<type>攻击|锁链|禁止)组/g, (_match, type) => {
+            const num = { '攻击': 3, '锁链': 3, '禁止': 2 }[type];
+            const res = [];
+            for (let i = 1; i <= num; i++) {
+              const member = data.party.member(data.p3TargetMarker[`${type}${i}`]);
+              res.push(
+                data.triggerSetConfig.p3接线报法 === '名称'
+                  ? member.nick
+                  : (member.job ?? member.nick),
+              );
+            }
+            return res.join(',');
+          });
+        },
         outputStrings: { text: text },
       };
     }),
