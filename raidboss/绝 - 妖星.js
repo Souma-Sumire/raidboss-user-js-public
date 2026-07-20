@@ -1,4 +1,4 @@
-// Build Time: 2026-07-08T21:21:57.101Z
+// Build Time: 2026-07-20T16:01:42.003Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -561,6 +561,7 @@ hideall "准备魔击x3"
       p5三星是闲人: false,
       p5Tower: { 右上: [], 下: [], 左上: [] },
       p5三星亮起来: [],
+      p5三星报过了: false,
       p5魔击count: 0,
       p5神圣: [],
       p5软狂暴count: 0,
@@ -2648,22 +2649,7 @@ hideall "准备魔击x3"
       preRun: (data, matches) => {
         data.p5三星亮起来.push(matches.id);
       },
-    },
-    {
-      id: 'DMU P5 三星塔都亮起来吧',
-      type: 'ActorControlExtra',
-      netRegex: {
-        'category': '019D',
-        'param1': '10',
-        'param2': '20',
-        'param3': '0',
-        'param4': '0',
-        'capture': false,
-      },
-      condition: (data) => data.phase === 'p5',
-      delaySeconds: 0.2,
       durationSeconds: 5,
-      suppressSeconds: 1,
       infoText: (data, _matches, output) => {
         if (!data.p5三星是闲人) {
           return;
@@ -2675,15 +2661,43 @@ hideall "准备魔击x3"
           const count = t.filter((v) => data.p5三星亮起来.includes(v.id)).length;
           if (count === 2) {
             data.p5三星亮起来.length = 0;
+            data.p5三星报过了 = true;
             return output.text({ pos: k, el: t[0].el });
           }
         }
-        data.p5三星亮起来.length = 0;
-        return output.unknown();
       },
       outputStrings: {
         text: { en: '${pos}找${el}2' },
-        unknown: { en: '出错了，自己找' },
+      },
+    },
+    {
+      id: 'DMU P5 三星塔都亮起来吧兜底',
+      type: 'ActorControlExtra',
+      netRegex: {
+        'category': '019D',
+        'param1': '10',
+        'param2': '20',
+        'param3': '0',
+        'param4': '0',
+        'capture': false,
+      },
+      condition: (data) => data.phase === 'p5',
+      delaySeconds: 0.25,
+      durationSeconds: 4.75,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        if (!data.p5三星是闲人) {
+          return;
+        }
+        data.p5三星亮起来.length = 0;
+        if (data.p5三星报过了) {
+          data.p5三星报过了 = false;
+        } else {
+          return output.unknown();
+        }
+      },
+      outputStrings: {
+        unknown: { en: '出错了，自己找塔2' },
       },
     },
     {
