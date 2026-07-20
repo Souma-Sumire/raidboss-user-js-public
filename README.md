@@ -16,7 +16,7 @@
 1. 下载 [SoumaDownloader.dll](https://github.com/Souma-Sumire/SoumaDownloader/releases)
 2. 至少有过一次：“在启动了 OverlayPlugin 悬浮窗 & Cactbot 插件的情况下关闭ACT”，然后在 ACT 中加载该插件（否则无法自动获取目录）
 3. 选择你需要的触发器文件，点击"开始下崽"
-4. 刷新 Cactbot Raidboss 悬浮窗（或重启ACT）
+4. 下崽器（v1.1.1.0及以上）会自动刷新 Cactbot (Raidboss) 悬浮窗，以应用修改。
 
 ### 方法2：手动安装
 
@@ -28,7 +28,7 @@
 
 ## 常见问题
 
-**<span style="color:red;font-size:25px">不要</span>** 擅自修改 Cactbot User 目录， **<span style="color:red;font-size:25px">不要</span>** 把他改成 raidboss 文件夹。
+**不要** 擅自修改 Cactbot User 目录， **不要** 把他改成 raidboss 文件夹。
 <img width="629" height="110" alt="QQ_1781862470962" src="https://github.com/user-attachments/assets/3b71948a-86e2-42bd-9f91-2073ac880ccd" />
 
 ## 按文件说明
@@ -80,7 +80,7 @@
 
 ### 异闻多变迷宫
 
-- `异闻 - 商客奇谭`：老一。需要加载 [VfxUnknown184Patch.dll](https://github.com/Souma-Sumire/OverlayPlugin/releases/download/v0.19.88/VfxUnknown184Patch.dll) 插件才能报 `呼唤家臣` 机制。
+- `异闻 - 商客奇谭`：老一only，不再更新
 
 ### 杂项
 
