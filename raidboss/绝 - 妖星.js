@@ -1,4 +1,4 @@
-// Build Time: 2026-07-20T16:01:42.003Z
+// Build Time: 2026-07-21T20:34:39.999Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -254,7 +254,7 @@ Options.Triggers.push({
       options: {
         en: {
           '正攻（被击退的去下半场）': '正攻',
-          '职能固定（不推荐！）未测试': 'TN左DPS右',
+          '职能固定': 'TN左DPS右',
         },
       },
       default: 'TN左DPS右',
@@ -322,7 +322,7 @@ Options.Triggers.push({
       type: 'select',
       options: {
         en: {
-          '美式（推荐）非泥D/H必是1，双T必是2，泥必是3': '美式',
+          '美式（推荐）非泥D必是1，非泥H/T必是2，泥必是3': '美式',
           '自定义': '自定义',
         },
       },
