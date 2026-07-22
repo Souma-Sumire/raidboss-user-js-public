@@ -1,4 +1,4 @@
-// Build Time: 2026-07-21T20:34:39.999Z
+// Build Time: 2026-07-22T23:28:27.507Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -10,17 +10,32 @@ const phases = {
 const centerX = 100;
 const centerY = 100;
 const rpSortArr = ['MT', 'ST', 'H1', 'H2', 'D1', 'D2', 'D3', 'D4'];
-const dmuMark = (actorDecID, markType, localOnly = false) => {
+const formatQueueAction = (a, idx) => {
+  const delay = a.d !== undefined && a.d > 0 ? ` (${a.d}ms)` : '';
+  try {
+    const { ActorID, Name, MarkType } = JSON.parse(a.p);
+    if (MarkType !== undefined) {
+      const hex = ActorID !== undefined ? `(${ActorID.toString(16).toUpperCase()})` : '';
+      return `${idx + 1}. [${a.c}] ${MarkType} -> ${Name ?? ''}${hex}${delay}`;
+    }
+  } catch {
+    // 非 JSON 保持原样
+  }
+  return `${idx + 1}. [${a.c}] ${a.p}${delay}`;
+};
+const doQueueActions = (actions) => {
   if (/raidemulator\.html/.test(location.href)) {
-    console.debug(`尝试标记${markType}给${actorDecID}(${actorDecID.toString(16).toUpperCase()})`);
+    const list = actions.map(formatQueueAction);
+    console.debug(`尝试执行队列 (${actions.length} 条):\n${list.join('\n')}`);
     return;
   }
   void callOverlayHandler({
     call: 'PostNamazu',
-    c: 'mark',
-    p: JSON.stringify({ ActorID: actorDecID, MarkType: markType, LocalOnly: localOnly }),
+    c: 'queue',
+    p: JSON.stringify(actions),
   });
 };
+const randomNum = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const p2OutputStirngs = {
   第1轮fallback: '${gimmick}组+${buff}',
   第1轮我分摊搭档扇形: '左踩塔（分摊）',
@@ -318,7 +333,7 @@ Options.Triggers.push({
     },
     {
       id: 'p3混沌之土标记方法',
-      name: { en: '开启P3混沌之土标记方法' },
+      name: { en: 'P3混沌之土攻略法' },
       type: 'select',
       options: {
         en: {
@@ -327,6 +342,25 @@ Options.Triggers.push({
         },
       },
       default: '美式',
+    },
+    {
+      id: 'p3混沌之土标记范围',
+      name: { en: 'P3混沌之土标记范围' },
+      type: 'select',
+      options: {
+        en: {
+          '常规1标8': '1标8',
+          '只标自己（用于在正常队伍中模拟手摇，仅建议美式使用）': '只标自己',
+        },
+      },
+      default: '1标8',
+    },
+    {
+      id: 'p3混沌之土标记随机延时范围',
+      comment: { en: '用于模拟手摇，每个标记动作之间都会在此范围内随机延时（标8个则会延迟8次）。"~"前必须有数字，且"~"后数字必须大于"~"前数字。' },
+      name: { en: 'P3混沌之土标记随机延时范围（毫秒）' },
+      type: 'string',
+      default: '100~600',
     },
     {
       id: 'p3混沌之土标记美式优先级',
@@ -338,12 +372,26 @@ Options.Triggers.push({
       default: 'dps>healer>tank>mud',
     },
     {
-      id: 'p3混沌之土标记自定义优先级',
+      id: 'p3混沌之土标记1麻组自定义优先级',
       comment: {
         en:
           '仅在“自定义”方法下生效，此优先级不考虑混沌之泥土debuff。只接受大写"D1"、"D2"、"D3"、"D4"、"H1"、"H2"、"ST"、"MT"，并用半角“大于号”隔开。必须联动职能分配悬浮窗，若未发现职能则自动降级至美式标记。',
       },
-      name: { en: 'P3混沌之土自定义优先级' },
+      name: { en: 'P3混沌之土1麻组自定义优先级' },
+      type: 'string',
+      default: 'MT>ST>H1>H2>D1>D2>D3>D4',
+    },
+    {
+      id: 'p3混沌之土标记2麻组自定义优先级',
+      comment: { en: '同上，但只影响2号麻将' },
+      name: { en: 'P3混沌之土2麻组自定义优先级' },
+      type: 'string',
+      default: 'MT>ST>H1>H2>D1>D2>D3>D4',
+    },
+    {
+      id: 'p3混沌之土标记3麻组自定义优先级',
+      comment: { en: '同上，但只影响3号麻将' },
+      name: { en: 'P3混沌之土3麻组自定义优先级' },
       type: 'string',
       default: 'MT>ST>H1>H2>D1>D2>D3>D4',
     },
@@ -1462,20 +1510,51 @@ hideall "准备魔击x3"
               sortArr.indexOf(b.mud ? 'mud' : b.role)
             );
           } else if (data.triggerSetConfig.p3混沌之土标记方法 === '自定义') {
-            const sortArr = data.triggerSetConfig.p3混沌之土标记自定义优先级.split('>').map((v) => v.trim());
-            data.p3第N目标.sort((a, b) => sortArr.indexOf(a.rp ?? '') - sortArr.indexOf(b.rp ?? ''));
+            const sortArr = [
+              data.triggerSetConfig.p3混沌之土标记1麻组自定义优先级.split('>').map((v) => v.trim()),
+              data.triggerSetConfig.p3混沌之土标记2麻组自定义优先级.split('>').map((v) => v.trim()),
+              data.triggerSetConfig.p3混沌之土标记3麻组自定义优先级.split('>').map((v) => v.trim()),
+            ];
+            data.p3第N目标.sort((a, b) =>
+              sortArr[a.n - 1].indexOf(a.rp ?? '') - sortArr[b.n - 1].indexOf(b.rp ?? '')
+            );
           }
           const m1 = data.p3第N目标.filter((v) => v.n === 1);
           const m2 = data.p3第N目标.filter((v) => v.n === 2);
           const m3 = data.p3第N目标.filter((v) => v.n === 3);
-          dmuMark(m1[0].id, 'attack1', false);
-          dmuMark(m1[1].id, 'attack2', false);
-          dmuMark(m1[2].id, 'attack3', false);
-          dmuMark(m2[0].id, 'bind1', false);
-          dmuMark(m2[1].id, 'bind2', false);
-          dmuMark(m2[2].id, 'bind3', false);
-          dmuMark(m3[0].id, 'stop1', false);
-          dmuMark(m3[1].id, 'stop2', false);
+          const is18 = data.triggerSetConfig.p3混沌之土标记范围 === '1标8';
+          const markTypes = ['attack', 'bind', 'stop'];
+          const actions = [];
+          const delays = data.triggerSetConfig.p3混沌之土标记随机延时范围.split('~').map((v) =>
+            parseInt(v.trim())
+          );
+          if (
+            delays.length !== 2 ||
+            delays[0] === undefined || Number.isNaN(delays[0]) ||
+            delays[1] === undefined || Number.isNaN(delays[1]) ||
+            delays[0] > delays[1]
+          ) {
+            console.warn(`混沌之土 标记延时范围格式错误（${data.triggerSetConfig.p3混沌之土标记随机延时范围}），已使用默认延时。`);
+            delays[0] = 0;
+            delays[1] = 1000;
+          }
+          [m1, m2, m3].forEach((group, gIdx) => {
+            group.forEach((v, idx) => {
+              if (is18 || v.target === data.me) {
+                actions.push({
+                  'c': 'mark',
+                  'p': JSON.stringify({
+                    ActorID: v.id,
+                    Name: v.target,
+                    MarkType: `${markTypes[gIdx]}${idx + 1}`,
+                    LocalOnly: false,
+                  }),
+                  'd': randomNum(delays[0], delays[1]),
+                });
+              }
+            });
+          });
+          doQueueActions(actions);
           // console.log(m1, m2, m3);
         }
       },
@@ -1643,7 +1722,7 @@ hideall "准备魔击x3"
           return output.unknown({ n });
         }
         if (data.triggerSetConfig.p3麻将发宏) {
-          Util.souma.doQueueActions(macro.map((m, i) => {
+          doQueueActions(macro.map((m, i) => {
             return {
               'c': 'DoTextCommand',
               'p': `/p ${m.mj}麻：${m.wy.join('/')}`,
