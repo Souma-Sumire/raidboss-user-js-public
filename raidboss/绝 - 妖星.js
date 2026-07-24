@@ -1,4 +1,4 @@
-// Build Time: 2026-07-22T23:28:27.507Z
+// Build Time: 2026-07-24T15:31:15.357Z
 console.log('绝妖星已加载，开发成本原因，默认报的标点为1A2，其他标点需自己改。');
 const phases = {
   'BAB9': 'p1-3',
@@ -1556,6 +1556,7 @@ hideall "准备魔击x3"
           });
           doQueueActions(actions);
           // console.log(m1, m2, m3);
+          data.p3第N目标.length = 0;
         }
       },
     },
