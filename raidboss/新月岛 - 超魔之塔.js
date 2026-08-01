@@ -1,4 +1,4 @@
-// Build Time: 2026-08-01T21:32:34.375Z
+// Build Time: 2026-08-01T21:38:50.075Z
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -717,9 +717,9 @@ hideall "--sync--"
         '2冰5': { en: 'B2之间' },
         '2冰7': { en: 'B3之间' },
         '火或': { en: '${r1}或${r2}' },
-        '雷dirN': { en: 'A点(罚站位)' },
-        '雷dirS': { en: 'C点(罚站位)' },
-        '雷左右': { en: 'BD点(罚站位)' },
+        '雷dirN': { en: 'A点(外一点)' },
+        '雷dirS': { en: 'C点(外一点)' },
+        '雷左右': { en: 'BD点(外一点)' },
         '冰最终': { en: '(稍后) 冰：${text}' },
         '火最终': { en: '(稍后) 火：${text}' },
         '雷最终': { en: '(稍后) 雷：${text}' },
@@ -925,6 +925,7 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: { id: 'B995' },
       delaySeconds: 1,
+      durationSeconds: 6,
       infoText: (data, _matches, output) => {
         data.boss3地水count++;
         if (data.boss3地水count === 3) {
@@ -935,8 +936,8 @@ hideall "--sync--"
         return output.text({ text });
       },
       outputStrings: {
-        text: '穿 => ${text} + 躲地水',
-        text3: '穿 + 躲地水',
+        text: '穿 => ${text}',
+        text3: '穿',
       },
     },
     {
