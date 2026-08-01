@@ -1,4 +1,4 @@
-// Build Time: 2026-07-31T18:36:36.143Z
+// Build Time: 2026-08-01T12:48:09.219Z
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -218,9 +218,9 @@ hideall "--sync--"
         if (arr.length === 2) {
           const sortArr = [
             'BA0F',
+            'C61D',
             'BA11',
-            'BA10',
-            'C61D', // '场中钢铁 // '剧毒吐息',
+            'BA10', // 'BOSS月环 // '雷电赋格',
           ];
           const [a, b] = arr.sort((a, b) => {
             const indexA = sortArr.indexOf(a);
@@ -235,8 +235,8 @@ hideall "--sync--"
       outputStrings: {
         'BA0F+BA11': { en: '击退到后面' },
         'BA0F+BA10': { en: '击退到前面' },
-        'C61D+BA11': { en: '远离两次' },
-        'C61D+BA10': { en: '靠近两次' },
+        'C61D+BA11': { en: '远离+两侧' },
+        'C61D+BA10': { en: '靠近+两侧' },
       },
     },
     {
@@ -548,8 +548,8 @@ hideall "--sync--"
             const aIndex = map.indexOf(a);
             const bIndex = map.indexOf(b);
             const clock = (bIndex - aIndex) === 1 || (bIndex - aIndex) === -3 ? true : false;
-            const cIndex = (bIndex + (clock ? 1 : -1)) % 4;
-            const dIndex = (bIndex + (clock ? -1 : 1)) % 4;
+            const cIndex = (4 + bIndex + (clock ? 1 : -1)) % 4;
+            const dIndex = (4 + cIndex + (clock ? 1 : -1)) % 4;
             const c = map[cIndex];
             const d = map[dIndex];
             data.boss1召唤Res2 = {
