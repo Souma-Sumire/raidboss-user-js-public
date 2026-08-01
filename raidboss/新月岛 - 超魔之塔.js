@@ -1,4 +1,4 @@
-// Build Time: 2026-08-01T12:48:09.219Z
+// Build Time: 2026-08-01T13:11:50.732Z
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -729,7 +729,7 @@ hideall "--sync--"
         '火或': { en: '${r1}或${r2}' },
         '雷dirN': { en: 'A与BOSS之间' },
         '雷dirS': { en: 'C与BOSS之间' },
-        '雷左右': { en: '左右与BOSS之间' },
+        '雷左右': { en: 'BD与BOSS之间' },
         '冰最终': { en: '(稍后) 冰：${text}' },
         '火最终': { en: '(稍后) 火：${text}' },
         '雷最终': { en: '(稍后) 雷：${text}' },
