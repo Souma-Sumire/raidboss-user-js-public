@@ -1,4 +1,4 @@
-// Build Time: 2026-08-02T01:18:10.603Z
+// Build Time: 2026-08-02T14:30:37.392Z
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -29,7 +29,9 @@ hideall "--Reset--"
 hideall "--sync--"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
 1000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1573" } window 1100,1
-3000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1575" } window 2100,1
+2000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1574" } window 2100,1
+3000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1575" } window 3100,1
+4000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1576" } window 4100,1
 # BOSS 1
 1014.9 "决战" #Ability { id: "C23E" }
 1027.3 "风暴吐息" #Ability { id: "BA0F" }
@@ -80,6 +82,68 @@ hideall "--sync--"
 1295.0 "雷电赋格" #Ability { id: "BA03" }
 1304.8 "雷霜暴风雨" #Ability { id: "BA7B" }
 1314.0 "召唤" #Ability { id: "BA5E" }
+# BOSS2
+2011.0 "剑技风暴" # Ability { id: "C20B" }
+2018.3 "投剑" # Ability { id: "C1D3" }
+2019.3 "突进" # Ability { id: "C55F" }
+2026.9 "回旋" # Ability { id: "C1DC" }
+2026.9 "突进" # Ability { id: "C1D6" }
+2031.0 "回旋" # Ability { id: "C1DC" }
+2031.0 "突进" # Ability { id: "C1D6" }
+2035.2 "回旋" # Ability { id: "C1DC" }
+2035.2 "突进" # Ability { id: "C1D6" }
+2039.5 "突进" # Ability { id: "C1D6" }
+2039.5 "回旋" # Ability { id: "C1D7" }
+2039.8 "秘法剑" # Ability { id: "C1EC" }
+2047.2 "突进"
+2047.3 "回旋" # Ability { id: "C1D7" }
+2047.6 "秘法剑" # Ability { id: "C1E9" }
+2055.6 "回旋" # Ability { id: "C1D7" }
+2055.6 "突进" # Ability { id: "C1D6" }
+2055.9 "秘法剑" # Ability { id: "C1EA" }
+2068.1 "铁臂拳"
+2069.1 "剑技风暴" # Ability { id: "C20B" }
+2083.2 "风旋剑出鞘" # Ability { id: "C1EE" }
+2095.5 "风旋剑" # Ability { id: "C1EF" }
+2096.5 "回转" # Ability { id: "C1F1" }
+2100.5 "突进" # Ability { id: "C20A" }
+2107.0 "剑舞" # Ability { id: "C203" }
+2116.4 "剑舞"
+2120.7 "剑舞"
+2129.8 "剑技风暴" # Ability { id: "C20B" }
+2143.9 "跃进步法" # Ability { id: "C1F6" }
+2144.5 "戳地"
+2148.6 "跃进步法"
+2153.9 "跃进步法" # Ability { id: "C1FB" }
+2158.6 "剑技爆发" # Ability { id: "C217" }
+2160.9 "剑气冲击" # Ability { id: "C1FC" }
+2168.3 "剑气冲击"
+2175.8 "剑气冲击" # Ability { id: "C1FC" }
+2178.2 "突进" # Ability { id: "C20A" }
+2188.8 "风旋剑出鞘" # Ability { id: "C1EE" }
+2205.1 "风旋剑" # Ability { id: "C1EF" }
+2206.1 "回转" # Ability { id: "C1F3" }
+2216.3 "剑舞" # Ability { id: "C203" }
+2225.5 "剑舞"
+2229.7 "剑舞"
+2238.8 "剑技风暴" # Ability { id: "C20B" }
+2250.1 "投剑" # Ability { id: "C1D3" }
+2251.1 "突进" # Ability { id: "C560" }
+2258.8 "回旋" # Ability { id: "C1DB" }
+2258.8 "突进" # Ability { id: "C1D6" }
+2263.0 "回旋" # Ability { id: "C1DB" }
+2263.0 "突进" # Ability { id: "C1D6" }
+2271.3 "突进"
+2271.3 "回旋" # Ability { id: "C1DB" }
+2271.7 "秘法剑" # Ability { id: "C1E9" }
+2279.5 "突进" # Ability { id: "C1D6" }
+2279.6 "回旋" # Ability { id: "C1DB" }
+2280.0 "秘法剑" # Ability { id: "C1EC" }
+2287.8 "回旋" # Ability { id: "C1DB" }
+2287.8 "突进" # Ability { id: "C1D6" }
+2288.1 "秘法剑" # Ability { id: "C1EA" }
+2301.1 "剑技风暴" # Ability { id: "C20B" }
+2313.4 "风旋剑出鞘" # Ability { id: "C1EE" }
 # BOSS3
 3009.6 "核爆雨" Ability { id: "B97A" }
 3015.9 "魔具召唤" #Ability { id: "B97D" }
@@ -155,6 +219,130 @@ hideall "--sync--"
 3284.0 "真空波" #Ability { id: "B98E" }
 3293.1 "碎尸" #Ability { id: "B991" }
 3301.0 "魔具召唤" #Ability { id: "B97D" }
+# BOSS4
+4012.1 "连续咏唱" # Ability { id: "BD17" }
+4019.2 "核爆" # Ability { id: "BD1F" }
+4023.3 "核爆" # Ability { id: "BD48" }
+4033.6 "飞翔指令" # Ability { id: "BD13" }
+4043.9 "跳跃" # Ability { id: "BD14" }
+4050.2 "四连召唤·封印武器" # Ability { id: "BF0B" }
+4050.6 "冲击波" # Ability { id: "BD15" }
+4052.6 "盯准" # Ability { id: "BF11" }
+4054.5 "封印武器" # Ability { id: "C4BB" }
+4055.6 "居合斩" # Ability { id: "BF12" }
+4059.1 "爱之歌" # Ability { id: "BF10" }
+4060.1 "封印武器" # Ability { id: "C4BC" }
+4062.4 "镰鼬之风" # Ability { id: "BF13" }
+4068.3 "连续咏唱" # Ability { id: "BD17" }
+4075.4 "核爆" # Ability { id: "BD1F" }
+4079.5 "核爆" # Ability { id: "BD48" }
+4096.7 "全知烈火" # Ability { id: "C528" }
+4108.8 "元素控制" # Ability { id: "BD0A" }
+4114.9 "元素展开" # Ability { id: "BD0F" }
+4122.8 "冰澈" # Ability { id: "BD30" }
+4124.4 "霹雷" # Ability { id: "BD31" }
+4126.0 "炽炎" # Ability { id: "BD2F" }
+4126.3 "预言" # Ability { id: "BD1C" }
+4129.0 "冰澈" # Ability { id: "BD30" }
+4130.4 "炽炎" # Ability { id: "BD2F" }
+4137.1 "陨石" # Ability { id: "BD43" }
+4137.1 "天崩地裂" # Ability { id: "BD44" }
+4138.1 "暴雷" # Ability { id: "BD2E" }
+4138.1 "冰封" # Ability { id: "BD2D" }
+4141.4 "封印武器" # Ability { id: "BD02" }
+4143.1 "爆炎" # Ability { id: "BD2C" }
+4143.1 "暴雷" # Ability { id: "BD2E" }
+4143.5 "盯准" # Ability { id: "BD27" }
+4145.5 "冰澈" # Ability { id: "BD30" }
+4146.9 "炽炎" # Ability { id: "BD2F" }
+4148.5 "霹雷" # Ability { id: "BD31" }
+4149.9 "冰澈" # Ability { id: "BD30" }
+4151.5 "炽炎" # Ability { id: "BD2F" }
+4153.1 "霹雷" # Ability { id: "BD31" }
+4155.8 "封印武器" # Ability { id: "BD02" }
+4157.2 "冰封" # Ability { id: "BD2D" }
+4157.2 "爆炎" # Ability { id: "BD2C" }
+4157.9 "盯准"
+4163.0 "元素吸收" # Ability { id: "BD33" }
+4171.2 "冰碎" # Ability { id: "BD36" }
+4171.2 "延烧" # Ability { id: "BD35" }
+4171.2 "放电" # Ability { id: "BD37" }
+4176.8 "冰碎" # Ability { id: "BD36" }
+4176.8 "延烧" # Ability { id: "BD35" }
+4176.8 "放电" # Ability { id: "BD37" }
+4182.3 "元素整合" # Ability { id: "BD32" }
+4200.2 "全知烈火" # Ability { id: "C528" }
+4211.3 "召唤" # Ability { id: "BD18" }
+4219.5 "魔法剑·石化" # Ability { id: "BD3C" }
+4225.5 "魔法剑·石化"
+4229.6 "攻击"
+4231.5 "魔法剑·石化"
+4231.5 "全斩" # Ability { id: "BD45" }
+4234.9 "飞羽清风" # Ability { id: "BD42" }
+4238.4 "攻击"
+424.01 "全斩"
+4244.3 "攻击" # Ability { id: "1962" }
+4245.1 "全斩"
+4257.9 "四连召唤·封印武器" # Ability { id: "BF0D" }
+4260.2 "镰鼬之风" # Ability { id: "BF13" }
+4261.4 "封印武器" # Ability { id: "BF0E" }
+4263.5 "爱之歌" # Ability { id: "BF10" }
+4265.5 "封印武器" # Ability { id: "C4BB" }
+4266.6 "居合斩" # Ability { id: "BF12" }
+4269.9 "盯准" # Ability { id: "BF11" }
+4275.8 "连续咏唱" # Ability { id: "BD17" }
+4282.9 "核爆" # Ability { id: "BD1F" }
+4304.1 "全知烈火" # Ability { id: "C528" }
+4316.2 "元素控制" # Ability { id: "BD0A" }
+4322.3 "元素创造" # Ability { id: "BD10" }
+4331.8 "霹雷"
+4331.9 "炽炎" # Ability { id: "BD2F" }
+4336.2 "冰澈" # Ability { id: "BD30" }
+4336.3 "炽炎" # Ability { id: "BD2F" }
+4337.3 "飞翔指令" # Ability { id: "BD13" }
+4339.5 "跳跃" # Ability { id: "BD14" }
+4340.5 "霹雷" # Ability { id: "BD31" }
+4340.6 "冰澈" # Ability { id: "BD30" }
+4345.4 "封印武器" # Ability { id: "BD00" }
+4346.3 "冲击波" # Ability { id: "BD15" }
+4347.2 "爆炎" # Ability { id: "BD2C" }
+4347.2 "暴雷" # Ability { id: "BD2E" }
+4347.4 "爱之歌" # Ability { id: "BD26" }
+4358.1 "炽炎"
+4358.3 "霹雷" # Ability { id: "BD31" }
+4362.5 "炽炎" # Ability { id: "BD2F" }
+4362.5 "冰澈" # Ability { id: "BD30" }
+4364.4 "预言" # Ability { id: "BD1C" }
+4366.8 "冰澈" # Ability { id: "BD30" }
+4366.8 "霹雷" # Ability { id: "BD31" }
+4375.1 "陨石" # Ability { id: "BD43" }
+4375.1 "天崩地裂" # Ability { id: "BD44" }
+4375.7 "暴雷" # Ability { id: "BD2E" }
+4375.7 "冰封" # Ability { id: "BD2D" }
+4379.5 "封印武器" # Ability { id: "BD02" }
+4381.3 "冰封" # Ability { id: "BD2D" }
+4381.3 "爆炎" # Ability { id: "BD2C" }
+4381.6 "盯准" # Ability { id: "BD27" }
+4386.7 "元素吸收" # Ability { id: "BD33" }
+4394.9 "冰碎" # Ability { id: "BD36" }
+4394.9 "延烧" # Ability { id: "BD35" }
+4394.9 "放电" # Ability { id: "BD37" }
+4400.7 "冰碎" # Ability { id: "BD36" }
+4400.7 "延烧" # Ability { id: "BD35" }
+4400.7 "放电" # Ability { id: "BD37" }
+4406.2 "元素整合" # Ability { id: "BD32" }
+4424.4 "全知烈火" # Ability { id: "C528" }
+4435.5 "飞翔指令" # Ability { id: "BD13" }
+4445.7 "跳跃" # Ability { id: "BD14" }
+4452.3 "四连召唤·封印武器" # Ability { id: "BF0A" }
+4452.5 "冲击波" # Ability { id: "BD15" }
+4454.4 "爱之歌" # Ability { id: "BF10" }
+4455.3 "封印武器" # Ability { id: "BF0F" }
+4457.6 "盯准" # Ability { id: "BF11" }
+4459.6 "封印武器" # Ability { id: "C4BB" }
+4460.7 "居合斩" # Ability { id: "BF12" }
+4464.0 "镰鼬之风" # Ability { id: "BF13" }
+4469.9 "连续咏唱" # Ability { id: "BD17" }
 `,
   initData: () => {
     return {
@@ -176,6 +364,7 @@ hideall "--sync--"
       boss3魔力注入res: [],
       boss3真空波count: 0,
       boss3魔力注入中: false,
+      boss3魔力注入count: 0,
       boss3其墓须有三: false,
       boss39F8: [],
       boss3地水count: 0,
@@ -617,6 +806,7 @@ hideall "--sync--"
       run: (data) => {
         data.boss3魔力注入 = {};
         data.boss3魔力注入中 = true;
+        data.boss3魔力注入count++;
         data.boss3B981.length = 0;
         data.boss3魔力注入res.length = 0;
         data.boss3魔力注入temp = { 火: undefined, 冰: undefined, 雷: undefined };
@@ -648,8 +838,7 @@ hideall "--sync--"
       type: 'AbilityExtra',
       netRegex: { id: ['B981'] },
       durationSeconds: 2,
-      tts: null,
-      run: (data, matches) => {
+      infoText: (data, matches, output) => {
         if (data.boss3魔力注入中 === false && data.boss3鸳鸯锅中 === false) {
           return;
         }
@@ -684,18 +873,27 @@ hideall "--sync--"
               const s1 = (d1 - 1.5 + 6) % 6;
               const s2 = (d2 - 1.5 + 6) % 6;
               data.boss3魔力注入temp.火 = [s1, s2];
-              return;
+              if (data.boss3魔力注入count === 1) {
+                const text = output.火或({ r1: output[`火${s1}`](), r2: output[`火${s2}`]() });
+                return output.火稍后({ text });
+              }
             }
             const e = (d1 === 0 || d1 === 3) ? d2 : d1;
             data.boss3魔力注入temp.火 = [(6 - e) % 6];
-            return;
+            if (data.boss3魔力注入count === 1) {
+              const text = output[`火${data.boss3魔力注入temp.火[0]}`]();
+              return output.火稍后({ text });
+            }
           } else if (e1.el === '冰') {
             // 1冰：找斜点那个，去对面（与小怪重合）
             const e = (d1 === 0 || d1 === 3) ? d2 : d1;
             const z = [d1, d2].find((v) => v === 0 || v === 4);
             data.boss3魔力注入正点冰 = z;
             data.boss3魔力注入temp.冰 = (e + 3) % 6;
-            return;
+            if (data.boss3魔力注入count === 1) {
+              const text = output[`冰${data.boss3魔力注入temp.冰}`]();
+              return output.冰稍后({ text });
+            }
           } else if (e1.el === '雷') {
             // 雷：如果AC有，找斜点那个，去水平镜像的对面。如果AC没有，去左右
             const ac = [d1, d2].find((d) => d === 0 || d === 3);
@@ -705,8 +903,38 @@ hideall "--sync--"
             } else {
               data.boss3魔力注入temp.雷 = [2.5, 4.5];
             }
+            if (data.boss3魔力注入count === 1) {
+              const text = data.boss3魔力注入temp.雷.length === 2
+                ? output.雷左右()
+                : output[`雷${data.boss3魔力注入temp.雷[0]}`]();
+              return output.雷稍后({ text });
+            }
           }
         }
+      },
+      tts: null,
+      outputStrings: {
+        '火0.5': { en: '2外' },
+        '火2.5': { en: '3外' },
+        '火3.5': { en: '4外' },
+        '火5.5': { en: '1外' },
+        '火1': { en: '2外' },
+        '火2': { en: '3外' },
+        '火4': { en: '4外' },
+        '火5': { en: '1外' },
+        '火或': { en: '${r1}或${r2}' },
+        '冰1': { en: '2点(头下)' },
+        '冰2': { en: '3点(头下)' },
+        '冰4': { en: '4点(头下)' },
+        '冰5': { en: '1点(头下)' },
+        '雷1': { en: 'A内' },
+        '雷2': { en: 'C内' },
+        '雷4': { en: 'C内' },
+        '雷5': { en: 'A内' },
+        '雷左右': { en: 'B/D中' },
+        '冰稍后': { en: '（稍后）冰：${text}' },
+        '火稍后': { en: '（稍后）火：${text}' },
+        '雷稍后': { en: '（稍后）雷：${text}' },
       },
     },
     {
@@ -938,7 +1166,7 @@ hideall "--sync--"
           '火': { en: '火' },
           'text1': { en: '${a}：${t}' },
           'text3': { en: '${a1}${a2}${a3}(带地水)：${t1} -> ${t2} -> ${t3}' },
-          '鸳鸯锅1': { en: '看"${dir}"去${lr}' },
+          '鸳鸯锅1': { en: '准备看"${dir}"去${lr}' },
           'dirN': { en: 'A' },
           'dirNE': { en: '2' },
           'dirE': { en: 'Boy' },
@@ -969,7 +1197,7 @@ hideall "--sync--"
           let d;
           if (Array.isArray(v) && v.length > 1) {
             if (data.boss39F8[0] === '雷') {
-              return { infoText: output.text1({ a: '雷', g: output['1-左右雷']() }) };
+              return { infoText: output.text1({ a: '雷', t: output['1-左右雷']() }) };
             }
             d = v.reduce((a, b) =>
               Math.abs(a - data.boss3魔力注入正点冰) < Math.abs(b - data.boss3魔力注入正点冰) ? a : b
