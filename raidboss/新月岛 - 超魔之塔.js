@@ -1,4 +1,4 @@
-// Build Time: 2026-08-02T14:30:37.392Z
+// Build Time: 2026/8/3 00:03:05
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -28,11 +28,9 @@ Options.Triggers.push({
 hideall "--Reset--"
 hideall "--sync--"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
-1000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1573" } window 1100,1
-2000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1574" } window 2100,1
-3000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1575" } window 3100,1
-4000.0 "--sync--" SystemLogMessage { id: "7DC", param1: "1576" } window 4100,1
 # BOSS 1
+1009.9 "--sync--" StartsUsing { id: "C23E" } window 1014.9,1
+1014.9 "决战" #Ability { id: "C23E" }
 1014.9 "决战" #Ability { id: "C23E" }
 1027.3 "风暴吐息" #Ability { id: "BA0F" }
 1027.3 "冰柱赋格" #Ability { id: "BA11" }
@@ -83,7 +81,8 @@ hideall "--sync--"
 1304.8 "雷霜暴风雨" #Ability { id: "BA7B" }
 1314.0 "召唤" #Ability { id: "BA5E" }
 # BOSS2
-2011.0 "剑技风暴" # Ability { id: "C20B" }
+2006.0 "剑技风暴" StartsUsing { id: "C20B" } window 2009.0,1
+2011.0 "剑技风暴" Ability { id: "C20B" }
 2018.3 "投剑" # Ability { id: "C1D3" }
 2019.3 "突进" # Ability { id: "C55F" }
 2026.9 "回旋" # Ability { id: "C1DC" }
@@ -145,6 +144,7 @@ hideall "--sync--"
 2301.1 "剑技风暴" # Ability { id: "C20B" }
 2313.4 "风旋剑出鞘" # Ability { id: "C1EE" }
 # BOSS3
+3004.6 "核爆雨" StartsUsing { id: "B97A" }
 3009.6 "核爆雨" Ability { id: "B97A" }
 3015.9 "魔具召唤" #Ability { id: "B97D" }
 3025.8 "魔力注入" #Ability { id: "B97E" }
@@ -360,7 +360,6 @@ hideall "--sync--"
       boss1Boss: {},
       boss3魔力注入: {},
       boss3B981: [],
-      boss3魔力注入1: false,
       boss3魔力注入res: [],
       boss3真空波count: 0,
       boss3魔力注入中: false,
@@ -382,6 +381,41 @@ hideall "--sync--"
     };
   },
   triggers: [
+    {
+      id: '超模之塔 结束战斗',
+      type: 'InCombat',
+      netRegex: { inACTCombat: '0', inGameCombat: '0' },
+      run: (data) => {
+        data.phase = 'boss1';
+        data.boss1吐息赋格 = [];
+        data.boss1冰焰交错 = [];
+        data.boss1双头恐惧 = [];
+        data.boss1魔法阵展开赋格 = [];
+        data.boss1蓝之共鸣诅咒 = null;
+        data.boss1召唤 = false;
+        data.boss1召唤连线ID = [];
+        data.boss1召唤MJ = [];
+        data.boss1召唤Res = [];
+        data.boss1球 = [];
+        data.boss1Boss = {};
+        data.boss3魔力注入 = {};
+        data.boss3B981 = [];
+        data.boss3魔力注入res = [];
+        data.boss3真空波count = 0;
+        data.boss3魔力注入中 = false;
+        data.boss3魔力注入count = 0;
+        data.boss3其墓须有三 = false;
+        data.boss39F8 = [];
+        data.boss3地水count = 0;
+        data.boss3鸳鸯锅中 = false;
+        data.boss3鸳鸯锅9F8 = [];
+        data.boss3鸳鸯锅 = [];
+        data.boss3鸳鸯锅buff = undefined;
+        data.boss3鸳鸯锅count = 0;
+        data.boss3魔力注入temp = { 火: undefined, 冰: undefined, 雷: undefined };
+        data.boss3魔力注入正点冰 = undefined;
+      },
+    },
     // #region BOSS1
     {
       id: '超模之塔 BOSS1 决战',
@@ -1037,6 +1071,14 @@ hideall "--sync--"
       },
     },
     {
+      id: '超模之塔 BOSS3 你撒播',
+      type: 'GainsEffect',
+      netRegex: { effectId: ['1410', '1411'] },
+      delaySeconds: 1,
+      suppressSeconds: 1,
+      run: (data) => data.boss3鸳鸯锅count++,
+    },
+    {
       id: '超模之塔 BOSS3 你撒播啊',
       type: 'GainsEffect',
       netRegex: {
@@ -1046,12 +1088,11 @@ hideall "--sync--"
         ],
       },
       condition: Conditions.targetIsYou(),
-      durationSeconds: 5.9,
+      durationSeconds: 5.7,
       infoText: (data, matches, output) => {
         // TODO: 可优化为直接报场地半场，不用玩家自己看小怪，但现在懒得写。
         data.boss3鸳鸯锅buff = matches.effectId === '1410' ? '蓝' : '紫';
         if (data.boss3鸳鸯锅9F8.length > 0) {
-          data.boss3鸳鸯锅count++;
           const yyg = data.boss3鸳鸯锅9F8[data.boss3鸳鸯锅count];
           if (yyg === undefined) {
             // 最后一次，不用再战斗了
@@ -1176,68 +1217,72 @@ hideall "--sync--"
           'dirW': { en: 'Dog' },
           'dirNW': { en: '1' },
         };
-        if (data.boss3鸳鸯锅中 && ['45D', '45E'].includes(matches.count)) {
-          const id = matches.targetId;
-          const dir = data.boss3鸳鸯锅.find((v) => v.id === id).dir;
-          const el = { '45D': '左蓝右紫', '45E': '左紫右蓝' }[matches.count];
-          data.boss3鸳鸯锅9F8.push({ el, dir, id });
-          if (data.boss3鸳鸯锅9F8.length === 1) {
-            const yyg = [el.at(1), el.at(3)];
-            // 这里不用反 因为小怪的面向已经是反的了 负负得正
-            const safe = yyg.findIndex((v) => v === data.boss3鸳鸯锅buff) === 0 ? '左' : '右';
-            const d = Directions.outputFrom8DirNum(dir);
-            return { infoText: output.鸳鸯锅1({ dir: output[d](), lr: safe }) };
-          }
-        }
-        if (data.boss3其墓须有三 && ['45A', '45B', '45C'].includes(matches.count)) {
-          data.boss39F8.push({ '45A': '火', '45B': '冰', '45C': '雷' }[matches.count]);
-        }
-        if (data.boss39F8.length === 1) {
-          const v = data.boss3魔力注入temp[data.boss39F8[0]];
-          let d;
-          if (Array.isArray(v) && v.length > 1) {
-            if (data.boss39F8[0] === '雷') {
-              return { infoText: output.text1({ a: '雷', t: output['1-左右雷']() }) };
+        if (data.boss3鸳鸯锅中) {
+          if (['45D', '45E'].includes(matches.count)) {
+            const id = matches.targetId;
+            const dir = data.boss3鸳鸯锅.find((v) => v.id === id).dir;
+            const el = { '45D': '左蓝右紫', '45E': '左紫右蓝' }[matches.count];
+            data.boss3鸳鸯锅9F8.push({ el, dir, id });
+            if (data.boss3鸳鸯锅9F8.length === 1) {
+              const yyg = [el.at(1), el.at(3)];
+              // 这里不用反 因为小怪的面向已经是反的了 负负得正
+              const safe = yyg.findIndex((v) => v === data.boss3鸳鸯锅buff) === 0 ? '左' : '右';
+              const d = Directions.outputFrom8DirNum(dir);
+              return { infoText: output.鸳鸯锅1({ dir: output[d](), lr: safe }) };
             }
-            d = v.reduce((a, b) =>
-              Math.abs(a - data.boss3魔力注入正点冰) < Math.abs(b - data.boss3魔力注入正点冰) ? a : b
-            );
           }
-          d = Array.isArray(v) ? v[0] : v;
-          return {
-            infoText: output.text1({
-              a: output[data.boss39F8[0]](),
-              t: output[`1-${d}${data.boss39F8[0]}`](),
-            }),
-          };
         }
-        if (data.boss39F8.length === 3) {
-          const a1 = output[data.boss39F8[0]]();
-          const a2 = output[data.boss39F8[1]]();
-          const a3 = output[data.boss39F8[2]]();
-          const g1 = data.boss3魔力注入temp[data.boss39F8[0]];
-          const g2 = data.boss3魔力注入temp[data.boss39F8[1]];
-          const g3 = data.boss3魔力注入temp[data.boss39F8[2]];
-          const [t1, t2, t3] = [g1, g2, g3].map((v, i) => {
+        if (data.boss3其墓须有三) {
+          if (['45A', '45B', '45C'].includes(matches.count)) {
+            data.boss39F8.push({ '45A': '火', '45B': '冰', '45C': '雷' }[matches.count]);
+          }
+          if (data.boss39F8.length === 1) {
+            const v = data.boss3魔力注入temp[data.boss39F8[0]];
             let d;
             if (Array.isArray(v) && v.length > 1) {
-              if (data.boss39F8[i] === '雷') {
-                return output[`${i + 1}-左右雷`]();
+              if (data.boss39F8[0] === '雷') {
+                return { infoText: output.text1({ a: '雷', t: output['1-左右雷']() }) };
               }
               d = v.reduce((a, b) =>
                 Math.abs(a - data.boss3魔力注入正点冰) < Math.abs(b - data.boss3魔力注入正点冰) ? a : b
               );
             }
             d = Array.isArray(v) ? v[0] : v;
-            // console.log(`${matches.timestamp}, ${i + 1}-${d}${data.boss39F8[i]!}`);
-            return output[`${i + 1}-${d}${data.boss39F8[i]}`]();
-          });
-          data.boss3魔力注入res.push(t2);
-          data.boss3魔力注入res.push(t3);
-          return {
-            alertText: output.text3({ a1, a2, a3, t1, t2, t3 }),
-            tts: null,
-          };
+            return {
+              infoText: output.text1({
+                a: output[data.boss39F8[0]](),
+                t: output[`1-${d}${data.boss39F8[0]}`](),
+              }),
+            };
+          }
+          if (data.boss39F8.length === 3) {
+            const a1 = output[data.boss39F8[0]]();
+            const a2 = output[data.boss39F8[1]]();
+            const a3 = output[data.boss39F8[2]]();
+            const g1 = data.boss3魔力注入temp[data.boss39F8[0]];
+            const g2 = data.boss3魔力注入temp[data.boss39F8[1]];
+            const g3 = data.boss3魔力注入temp[data.boss39F8[2]];
+            const [t1, t2, t3] = [g1, g2, g3].map((v, i) => {
+              let d;
+              if (Array.isArray(v) && v.length > 1) {
+                if (data.boss39F8[i] === '雷') {
+                  return output[`${i + 1}-左右雷`]();
+                }
+                d = v.reduce((a, b) =>
+                  Math.abs(a - data.boss3魔力注入正点冰) < Math.abs(b - data.boss3魔力注入正点冰) ? a : b
+                );
+              }
+              d = Array.isArray(v) ? v[0] : v;
+              // console.log(`${matches.timestamp}, ${i + 1}-${d}${data.boss39F8[i]!}`);
+              return output[`${i + 1}-${d}${data.boss39F8[i]}`]();
+            });
+            data.boss3魔力注入res.push(t2);
+            data.boss3魔力注入res.push(t3);
+            return {
+              alertText: output.text3({ a1, a2, a3, t1, t2, t3 }),
+              tts: null,
+            };
+          }
         }
       },
     },
