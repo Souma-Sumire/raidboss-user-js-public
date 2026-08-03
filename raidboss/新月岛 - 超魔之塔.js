@@ -1,4 +1,4 @@
-// Build Time: 2026/8/3 00:03:05
+// Build Time: 2026/8/3 08:43:50
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -144,7 +144,7 @@ hideall "--sync--"
 2301.1 "剑技风暴" # Ability { id: "C20B" }
 2313.4 "风旋剑出鞘" # Ability { id: "C1EE" }
 # BOSS3
-3004.6 "核爆雨" StartsUsing { id: "B97A" }
+3004.6 "核爆雨" StartsUsing { id: "B97A" } window 3010,1
 3009.6 "核爆雨" Ability { id: "B97A" }
 3015.9 "魔具召唤" #Ability { id: "B97D" }
 3025.8 "魔力注入" #Ability { id: "B97E" }
@@ -220,7 +220,8 @@ hideall "--sync--"
 3293.1 "碎尸" #Ability { id: "B991" }
 3301.0 "魔具召唤" #Ability { id: "B97D" }
 # BOSS4
-4012.1 "连续咏唱" # Ability { id: "BD17" }
+4009.1 "连续咏唱" StartsUsing { id: "BD17" } window 4012,1
+4012.1 "连续咏唱" Ability { id: "BD17" }
 4019.2 "核爆" # Ability { id: "BD1F" }
 4023.3 "核爆" # Ability { id: "BD48" }
 4033.6 "飞翔指令" # Ability { id: "BD13" }
@@ -378,6 +379,8 @@ hideall "--sync--"
         雷: undefined,
       },
       boss3魔力注入正点冰: undefined,
+      boss4封印武器: [],
+      boss4四连召唤中: false,
     };
   },
   triggers: [
@@ -414,6 +417,8 @@ hideall "--sync--"
         data.boss3鸳鸯锅count = 0;
         data.boss3魔力注入temp = { 火: undefined, 冰: undefined, 雷: undefined };
         data.boss3魔力注入正点冰 = undefined;
+        data.boss4封印武器.length = 0;
+        data.boss4四连召唤中 = false;
       },
     },
     // #region BOSS1
@@ -1322,6 +1327,89 @@ hideall "--sync--"
         data.boss3鸳鸯锅中 = false;
         data.boss3鸳鸯锅buff = undefined;
       },
+    },
+    // #endregion
+    // #region BOSS4
+    {
+      id: '超模之塔 BOSS4 核爆',
+      type: 'StartsUsing',
+      netRegex: { id: 'BD1F' },
+      infoText: (_, __, output) => output.text(),
+      outputStrings: { text: 'AoE x2' },
+    },
+    {
+      id: '超模之塔 BOSS4 4连召唤',
+      type: 'StartsUsing',
+      netRegex: {
+        id: ['BF0B', 'BF0D', 'BF0A'],
+      },
+      preRun: (data) => {
+        data.boss4封印武器.length = 0;
+        data.boss4四连召唤中 = true;
+      },
+      delaySeconds: 30,
+      suppressSeconds: 1,
+      run: (data) => {
+        data.boss4四连召唤中 = false;
+      },
+    },
+    // 26|2026-08-01T21:20:29.0690000+08:00|159E|封印武器：弓|9999.00|E0000000||4000496D|目录|401|649637410||
+    // 26|2026-08-01T21:20:32.1030000+08:00|159D|封印武器：刀|9999.00|E0000000||4000496D|目录|402|649637410||
+    // 26|2026-08-01T21:20:35.0920000+08:00|159F|封印武器：琴|9999.00|E0000000||4000496D|目录|404|649637410||
+    // 26|2026-08-01T21:20:38.0770000+08:00|159C|封印武器：铃铛|9999.00|E0000000||4000496D|目录|403|649637410||
+    {
+      id: '超模之塔 BOSS4 封印武器',
+      type: 'GainsEffect',
+      netRegex: {
+        effectId: [
+          '159E',
+          '159D',
+          '159F',
+          '159C', // 铃铛
+        ],
+      },
+      durationSeconds: (data) => data.boss4四连召唤中 ? (data.boss4封印武器.length === 3 ? 25 : 3) : 9,
+      response: (data, matches, output) => {
+        const effectName = {
+          '159E': '弓',
+          '159D': '刀',
+          '159F': '琴',
+          '159C': '铃铛',
+        }[matches.effectId];
+        data.boss4封印武器.push(effectName);
+        if (data.boss4封印武器.length < 4) {
+          return { [data.boss4四连召唤中 ? 'infoText' : 'alertText']: output[`预兆${effectName}`]() };
+        }
+        if (data.boss4封印武器.length === 4) {
+          const res = output.text({
+            s1: output[data.boss4封印武器[0]](),
+            s2: output[data.boss4封印武器[1]](),
+            s3: output[data.boss4封印武器[2]](),
+            s4: output[data.boss4封印武器[3]](),
+          });
+          data.boss4封印武器.length = 0;
+          return { alertText: res };
+        }
+      },
+      outputStrings: {
+        '预兆弓': { en: '弓（场中）' },
+        '预兆刀': { en: '刀（ABC）' },
+        '预兆琴': { en: '琴（外侧）' },
+        '预兆铃铛': { en: '铃铛（123）' },
+        '弓': { en: '场中' },
+        '刀': { en: 'ABC' },
+        '琴': { en: '外侧' },
+        '铃铛': { en: '123' },
+        'text': { en: '${s1} -> ${s2} -> ${s3} -> ${s4}' },
+      },
+    },
+    {
+      id: '超模之塔 BOSS4 CJB',
+      type: 'StartsUsing',
+      netRegex: { id: ['BD15', 'BD3F'] },
+      suppressSeconds: 1,
+      countdownSeconds: 4.7,
+      response: Responses.knockback(),
     },
     // #endregion
   ],
