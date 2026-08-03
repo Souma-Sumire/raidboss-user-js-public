@@ -1,4 +1,4 @@
-// Build Time: 2026/8/3 08:43:50
+// Build Time: 2026/8/3 23:36:02
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -1341,7 +1341,12 @@ hideall "--sync--"
       id: '超模之塔 BOSS4 4连召唤',
       type: 'StartsUsing',
       netRegex: {
-        id: ['BF0B', 'BF0D', 'BF0A'],
+        id: [
+          'BF0A',
+          'BF0B',
+          'BF0C',
+          'BF0D',
+        ],
       },
       preRun: (data) => {
         data.boss4封印武器.length = 0;
@@ -1392,11 +1397,11 @@ hideall "--sync--"
         }
       },
       outputStrings: {
-        '预兆弓': { en: '弓（场中）' },
+        '预兆弓': { en: '弓（月环）' },
         '预兆刀': { en: '刀（ABC）' },
-        '预兆琴': { en: '琴（外侧）' },
+        '预兆琴': { en: '琴（钢铁）' },
         '预兆铃铛': { en: '铃铛（123）' },
-        '弓': { en: '场中' },
+        '弓': { en: '内环' },
         '刀': { en: 'ABC' },
         '琴': { en: '外侧' },
         '铃铛': { en: '123' },
