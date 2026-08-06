@@ -1,4 +1,4 @@
-// Build Time: 2026/8/3 23:36:02
+// Build Time: 2026/8/6 08:58:54
 console.log('已加载超魔之塔');
 const center = {
   boss1: { x: -900, y: 700 },
@@ -1080,7 +1080,8 @@ hideall "--sync--"
       type: 'GainsEffect',
       netRegex: { effectId: ['1410', '1411'] },
       delaySeconds: 1,
-      suppressSeconds: 1,
+      // SE屎山代码，人数过多时发现有至多2.56秒的日志延迟。
+      suppressSeconds: (_data, matches) => matches.sourceId === 'E0000000' ? 30 : 3,
       run: (data) => data.boss3鸳鸯锅count++,
     },
     {
@@ -1147,7 +1148,7 @@ hideall "--sync--"
           return (data.boss39F8.length === 0 ? 2 : 18);
         }
         if (data.boss3鸳鸯锅中) {
-          return 13.695;
+          return data.boss3鸳鸯锅9F8.length < 3 ? 13.695 : 45;
         }
       },
       countdownSeconds: (data) => data.boss3鸳鸯锅中 ? 13.695 : 0,
@@ -1213,6 +1214,9 @@ hideall "--sync--"
           'text1': { en: '${a}：${t}' },
           'text3': { en: '${a1}${a2}${a3}(带地水)：${t1} -> ${t2} -> ${t3}' },
           '鸳鸯锅1': { en: '准备看"${dir}"去${lr}' },
+          '鸳鸯锅转': { en: '${o1}${c1} -> ${o2}${c2}' },
+          'cw': { en: '顺' },
+          'ccw': { en: '逆' },
           'dirN': { en: 'A' },
           'dirNE': { en: '2' },
           'dirE': { en: 'Boy' },
@@ -1234,6 +1238,20 @@ hideall "--sync--"
               const safe = yyg.findIndex((v) => v === data.boss3鸳鸯锅buff) === 0 ? '左' : '右';
               const d = Directions.outputFrom8DirNum(dir);
               return { infoText: output.鸳鸯锅1({ dir: output[d](), lr: safe }) };
+            }
+            if (data.boss3鸳鸯锅9F8.length === 6) {
+              const [a1, a2] = data.boss3鸳鸯锅9F8.slice(0, 2);
+              const [a5, a6] = data.boss3鸳鸯锅9F8.slice(-2);
+              const clk1 = (a2.dir - a1.dir + 8) % 8 === 2 ? 1 : -1;
+              const clk2 = (a6.dir - a5.dir + 8) % 8 === 2 ? 1 : -1;
+              return {
+                alertText: output.鸳鸯锅转({
+                  o1: output[Directions.outputFrom8DirNum(a1.dir)](),
+                  c1: output[clk1 === 1 ? 'cw' : 'ccw'](),
+                  o2: output[Directions.outputFrom8DirNum(a5.dir)](),
+                  c2: output[clk2 === 1 ? 'cw' : 'ccw'](),
+                }),
+              };
             }
           }
         }
@@ -1342,9 +1360,13 @@ hideall "--sync--"
       type: 'StartsUsing',
       netRegex: {
         id: [
+          // 琴起手
           'BF0A',
+          // 弓起手
           'BF0B',
+          // 刀起手
           'BF0C',
+          // 铃铛起手
           'BF0D',
         ],
       },
@@ -1367,10 +1389,10 @@ hideall "--sync--"
       type: 'GainsEffect',
       netRegex: {
         effectId: [
-          '159E',
+          '159C',
           '159D',
-          '159F',
-          '159C', // 铃铛
+          '159E',
+          '159F', // 琴
         ],
       },
       durationSeconds: (data) => data.boss4四连召唤中 ? (data.boss4封印武器.length === 3 ? 25 : 3) : 9,
