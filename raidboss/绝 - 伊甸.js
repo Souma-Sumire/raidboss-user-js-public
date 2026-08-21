@@ -3423,7 +3423,7 @@ hideall "--sync--"
         // 左上↖
         dirNW: "1点↖",
         text: {
-          en: "${dir}方向",
+          en: "${dir}为北",
         },
       },
     },
